@@ -1,0 +1,96 @@
+// Shared across all pages: nav bar + manager color lookups.
+
+const NWL_HOME = { href: 'index.html', label: 'Home' };
+const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Season' };
+
+const NWL_PAGES = [
+  { href: 'pages/hall-of-fame.html', label: 'Hall of Fame' },
+  { href: 'pages/managers.html', label: 'Managers' },
+  { href: 'pages/scorigami.html', label: 'Scorigami' },
+  { href: 'pages/rankings.html', label: 'Team Rankings' },
+  { href: 'pages/draft.html', label: 'Draft' },
+  { href: 'pages/transactions.html', label: 'Transactions' },
+];
+
+function renderNav(activeHref) {
+  const inPages = isInPagesDir();
+  const nav = document.createElement('div');
+  nav.className = 'topnav';
+  const homeHref = inPages ? '../index.html' : 'index.html';
+
+  const resolveHref = (p) => {
+    if (p.href === 'index.html') return homeHref;
+    const filename = p.href.split('/').pop();
+    return inPages ? filename : p.href;
+  };
+
+  const homeActive = activeHref === NWL_HOME.label.toLowerCase();
+  const homeLink = `<a href="${homeHref}" class="${homeActive ? 'active' : ''}">${NWL_HOME.label}</a>`;
+
+  const liveActive = activeHref === NWL_LIVE_PAGE.label.toLowerCase();
+  const liveLink = `<a href="${resolveHref(NWL_LIVE_PAGE)}" class="nav-live ${liveActive ? 'active' : ''}"><span class="nav-live-dot"></span>${NWL_LIVE_PAGE.label}</a>`;
+
+  nav.innerHTML = `
+    <a href="${homeHref}" class="brand">
+      <img src="${inPages ? '../assets/img/nwl_logo.svg' : 'assets/img/nwl_logo.svg'}" alt="NWL" style="height:24px;"> NWL
+    </a>
+    <div class="nav-links">
+      ${homeLink}
+      ${liveLink}
+      <span class="nav-divider"></span>
+      ${NWL_PAGES.map(p => {
+        const isActive = activeHref === p.label.toLowerCase();
+        return `<a href="${resolveHref(p)}" class="${isActive ? 'active' : ''}">${p.label}</a>`;
+      }).join('')}
+    </div>
+  `;
+  document.body.prepend(nav);
+}
+
+function isInPagesDir() {
+  return window.location.pathname.includes('/pages/');
+}
+
+let _managerCache = null;
+async function getManagers() {
+  if (_managerCache) return _managerCache;
+  const base = isInPagesDir() ? '../data/managers.json' : 'data/managers.json';
+  const res = await fetch(base);
+  _managerCache = await res.json();
+  return _managerCache;
+}
+
+function managerColor(managers, name) {
+  const m = managers.find(x => x.manager === name);
+  return m ? m.color : '#7C8798';
+}
+
+function managerTag(managers, name) {
+  const color = managerColor(managers, name);
+  return `<span class="manager-tag"><span class="manager-dot" style="background:${color}"></span>${name}</span>`;
+}
+
+async function loadData(name) {
+  const base = isInPagesDir() ? '../data/' : 'data/';
+  const res = await fetch(base + name + '.json');
+  return res.json();
+}
+
+// Like loadData, but returns fallback instead of throwing if the file doesn't exist yet -
+// used for in-season data (season_2026/*) that isn't generated until the fetch script runs.
+async function loadDataSafe(path, fallback) {
+  const base = isInPagesDir() ? '../data/' : 'data/';
+  try {
+    const res = await fetch(base + path + '.json');
+    if (!res.ok) return fallback;
+    return await res.json();
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function posTag(position) {
+  if (!position) return '';
+  const normalized = position.toUpperCase().replace(/[^A-Z]/g, ''); // D/ST -> DST
+  return `<span class="pos-tag pos-${normalized}">${position}</span>`;
+}

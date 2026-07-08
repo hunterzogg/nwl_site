@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Managers — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.mgr-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  overflow: hidden; transition: border-color 0.15s;
+}
+.mgr-card.expanded { border-color: var(--blue-bright); }
+.mgr-card-header {
+  display: flex; align-items: center; gap: 14px; padding: 16px 18px; cursor: pointer;
+}
+.mgr-avatar-wrap { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+.mgr-avatar-fallback {
+  width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-family: var(--font-display); font-weight: 700;
+  font-size: 1.15rem; color: #0B0F17;
+}
+.mgr-avatar-img {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%; object-fit: cover; border: 2px solid var(--line);
+}
+.mgr-name-block { flex: 1; min-width: 0; }
+.mgr-name-block h3 { margin: 0 0 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mgr-tenure { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-body); }
+.mgr-former-badge {
+  font-family: var(--font-display); font-size: 0.62rem; letter-spacing: 0.05em; text-transform: uppercase;
+  background: rgba(124,135,152,0.18); color: var(--text-muted); padding: 2px 7px; border-radius: 3px;
+}
+.mgr-chevron { color: var(--text-muted); font-size: 0.8rem; transition: transform 0.15s; flex-shrink: 0; }
+.mgr-card.expanded .mgr-chevron { transform: rotate(180deg); }
+.mgr-card-body { display: none; padding: 4px 18px 20px; border-top: 1px solid var(--line); }
+.mgr-card.expanded .mgr-card-body { display: block; }
+.mgr-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 16px 0; }
+.mgr-stat { background: var(--surface-raised); border-radius: 6px; padding: 10px 8px; text-align: center; }
+.mgr-stat-value { font-family: var(--font-mono); font-size: 1.25rem; }
+.mgr-stat-label { font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
+.mgr-subsection-title {
+  font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin: 18px 0 8px;
+}
+.mgr-list-item {
+  display: flex; justify-content: space-between; gap: 10px; padding: 6px 0;
+  border-bottom: 1px solid var(--line); font-size: 0.85rem;
+}
+.mgr-list-item:last-child { border-bottom: none; }
+.mgr-list-item .r { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.8rem; white-space: nowrap; }
+.mgr-empty-note { color: var(--text-muted); font-size: 0.82rem; }
+.mgr-fav-team { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Managers</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">
+    Every manager to ever field a team in the NWL. Click a card for career stats and biggest moves.
+  </p>
+
+  <div class="mgr-grid" id="mgrGrid"></div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+function initials(name) {
+  return name.slice(0, 2).toUpperCase();
+}
+
+function parseTradePlayers(field) {
+  if (!field) return [];
+  return field.split(';').map(s => s.trim()).filter(Boolean).map(s => {
+    const m = s.match(/^([A-Z\/]+)\s*-\s*(.+)$/);
+    return m ? { position: m[1], player: m[2] } : { position: '', player: s };
+  });
+}
+
+async function init() {
+  const [managers, profiles, regSeasons, playoffSeasons, matchups, picks, transactions, trades] = await Promise.all([
+    getManagers(), loadData('manager_profiles'), loadData('team_seasons_regular'),
+    loadData('team_seasons_playoff'), loadData('matchup_results'), loadData('draft_picks'),
+    loadData('transactions_with_dates'), loadData('trades')
+  ]);
+
+  regSeasons.forEach(t => { t.season = parseInt(t.season); t.games = parseInt(t.games); t.total_points = parseFloat(t.total_points); t.final_finish = parseInt(t.final_finish); });
+  playoffSeasons.forEach(t => { t.season = parseInt(t.season); t.games = parseInt(t.games); t.total_points = parseFloat(t.total_points); });
+  matchups.forEach(m => { m.season = parseInt(m.season); });
+  picks.forEach(p => { p.season = parseInt(p.season); p.round = parseInt(p.round); p.overall_pick = parseInt(p.overall_pick); });
+  transactions.forEach(t => { t.season = parseInt(t.season); t.bid_amount = t.bid_amount ? parseFloat(t.bid_amount) : 0; });
+  trades.forEach(t => { t.season = parseInt(t.season); });
+
+  const globalMaxSeason = Math.max(...regSeasons.map(t => t.season));
+
+  const lastPlaceBySeason = {};
+  regSeasons.forEach(t => {
+    if (!isNaN(t.final_finish)) lastPlaceBySeason[t.season] = Math.max(lastPlaceBySeason[t.season] || 0, t.final_finish);
+  });
+
+  const profileMap = {};
+  profiles.forEach(p => profileMap[p.manager] = p);
+
+  const mgrData = managers.map(m => {
+    const seasons = regSeasons.filter(t => t.manager === m.manager).sort((a,b) => a.season - b.season);
+    const minSeason = Math.min(...seasons.map(s => s.season));
+    const maxSeason = Math.max(...seasons.map(s => s.season));
+    const isFormer = maxSeason < globalMaxSeason;
+
+    const gamesTotal = seasons.reduce((a,s) => a + (s.games || 0), 0);
+    const pointsTotal = seasons.reduce((a,s) => a + (s.total_points || 0), 0);
+    const regPpg = gamesTotal ? pointsTotal / gamesTotal : 0;
+
+    const poSeasons = playoffSeasons.filter(t => t.manager === m.manager && t.games > 0);
+    const poGames = poSeasons.reduce((a,s) => a + s.games, 0);
+    const poPoints = poSeasons.reduce((a,s) => a + s.total_points, 0);
+    const playoffPpg = poGames ? poPoints / poGames : 0;
+    const playoffTrips = seasons.filter(s => !isNaN(s.final_finish) && s.final_finish <= 6).length;
+
+    const championships = seasons.filter(s => s.final_finish === 1).length;
+    const sackos = seasons.filter(s => s.final_finish === lastPlaceBySeason[s.season]).length;
+
+    let wins = 0, losses = 0;
+    matchups.forEach(g => {
+      if (g.winner === m.manager) wins++;
+      else if (g.loser === m.manager) losses++;
+    });
+
+    const rosterCounts = {};
+    const bumpRoster = (player, position) => {
+      if (!player) return;
+      if (!rosterCounts[player]) rosterCounts[player] = { player, position, count: 0 };
+      rosterCounts[player].count++;
+      if (!rosterCounts[player].position && position) rosterCounts[player].position = position;
+    };
+    picks.filter(p => p.manager === m.manager).forEach(p => bumpRoster(p.player, p.position));
+    transactions
+      .filter(t => t.manager === m.manager && (t.acquisition_type === 'waiver' || t.acquisition_type === 'free_agent') && t.bid_outcome !== 'lost')
+      .forEach(t => bumpRoster(t.player, t.position));
+    trades.forEach(t => {
+      if (t.team1 === m.manager) parseTradePlayers(t.team1_received).forEach(p => bumpRoster(p.player, p.position));
+      if (t.team2 === m.manager) parseTradePlayers(t.team2_received).forEach(p => bumpRoster(p.player, p.position));
+    });
+    const favoritePlayers = Object.values(rosterCounts)
+      .sort((a,b) => b.count - a.count || a.player.localeCompare(b.player))
+      .slice(0, 5);
+
+    const topAdds = transactions
+      .filter(t => t.manager === m.manager && (t.acquisition_type === 'waiver' || t.acquisition_type === 'free_agent') && t.bid_outcome !== 'lost')
+      .sort((a,b) => b.bid_amount - a.bid_amount || b.season - a.season)
+      .slice(0, 5);
+
+    const tradeAcquisitions = [];
+    trades.slice().sort((a,b) => (b.date || '').localeCompare(a.date || '')).forEach(t => {
+      if (t.team1 === m.manager) parseTradePlayers(t.team1_received).forEach(p => tradeAcquisitions.push({ ...p, date: t.date, season: t.season }));
+      if (t.team2 === m.manager) parseTradePlayers(t.team2_received).forEach(p => tradeAcquisitions.push({ ...p, date: t.date, season: t.season }));
+    });
+
+    const profile = profileMap[m.manager] || { favorite_nfl_team: '', team_names: [] };
+
+    return {
+      manager: m.manager, color: m.color, minSeason, maxSeason, isFormer,
+      seasonCount: seasons.length, regPpg, playoffPpg, playoffAppearances: playoffTrips,
+      championships, sackos, wins, losses, favoritePlayers, topAdds,
+      tradeAcquisitions: tradeAcquisitions.slice(0, 5), profile
+    };
+  });
+
+  mgrData.sort((a,b) => (a.isFormer - b.isFormer) || a.manager.localeCompare(b.manager));
+
+  document.getElementById('mgrGrid').innerHTML = mgrData.map(d => `
+    <div class="mgr-card" data-manager="${d.manager}">
+      <div class="mgr-card-header">
+        <div class="mgr-avatar-wrap">
+          <div class="mgr-avatar-fallback" style="background:${d.color}">${initials(d.manager)}</div>
+          <img class="mgr-avatar-img" src="../assets/img/managers/${d.manager.toLowerCase()}.jpg" onerror="this.remove()">
+        </div>
+        <div class="mgr-name-block">
+          <h3>${d.manager} ${d.isFormer ? '<span class="mgr-former-badge">Former Manager</span>' : ''}</h3>
+          <div class="mgr-tenure">${d.minSeason}&ndash;${d.isFormer ? d.maxSeason : 'present'} &middot; ${d.seasonCount} season${d.seasonCount === 1 ? '' : 's'}</div>
+          ${d.profile.favorite_nfl_team ? `<div class="mgr-fav-team">Favorite team: ${d.profile.favorite_nfl_team}</div>` : ''}
+        </div>
+        <div class="mgr-chevron">&#9660;</div>
+      </div>
+      <div class="mgr-card-body">
+        <div class="mgr-stat-grid">
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.championships}</div><div class="mgr-stat-label">Titles</div></div>
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.sackos}</div><div class="mgr-stat-label">Sackos</div></div>
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.wins}-${d.losses}</div><div class="mgr-stat-label">Career Record</div></div>
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.regPpg.toFixed(1)}</div><div class="mgr-stat-label">Career PPG</div></div>
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.playoffAppearances}</div><div class="mgr-stat-label">Playoff Trips</div></div>
+          <div class="mgr-stat"><div class="mgr-stat-value">${d.playoffPpg ? d.playoffPpg.toFixed(1) : '&mdash;'}</div><div class="mgr-stat-label">Playoff PPG</div></div>
+        </div>
+
+        <div class="mgr-subsection-title">Team Name History</div>
+        ${d.profile.team_names.length ? d.profile.team_names.map(t => `
+          <div class="mgr-list-item"><span>${t.name}</span><span class="r">${t.seasons}</span></div>
+        `).join('') : `<p class="mgr-empty-note">Not added yet.</p>`}
+
+        <div class="mgr-subsection-title">Favorite Players</div>
+        ${d.favoritePlayers.length ? d.favoritePlayers.map(p => `
+          <div class="mgr-list-item"><span>${posTag(p.position)} ${p.player}</span><span class="r">${p.count}&times; on roster</span></div>
+        `).join('') : `<p class="mgr-empty-note">No roster history recorded.</p>`}
+
+        <div class="mgr-subsection-title">Biggest Waiver / FA Pickups</div>
+        ${d.topAdds.length ? d.topAdds.map(t => `
+          <div class="mgr-list-item"><span>${posTag(t.position)} ${t.player}</span><span class="r">${t.bid_amount ? '$' + t.bid_amount : '&mdash;'} &middot; ${t.season}</span></div>
+        `).join('') : `<p class="mgr-empty-note">No waiver/FA pickups recorded.</p>`}
+
+        <div class="mgr-subsection-title">Most Recent Trade Acquisitions</div>
+        ${d.tradeAcquisitions.length ? d.tradeAcquisitions.map(t => `
+          <div class="mgr-list-item"><span>${t.position ? posTag(t.position) + ' ' : ''}${t.player}</span><span class="r">${t.date}</span></div>
+        `).join('') : `<p class="mgr-empty-note">No trades recorded.</p>`}
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.mgr-card-header').forEach(header => {
+    header.addEventListener('click', () => header.closest('.mgr-card').classList.toggle('expanded'));
+  });
+}
+
+renderNav('managers');
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hall of Fame — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.controls-row select {
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 160px;
+}
+.panel { display: none; }
+.panel.active { display: block; }
+.h2h-result { display: flex; gap: 24px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.h2h-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; text-align: center; flex: 1; min-width: 140px; }
+.h2h-box .v { font-family: var(--font-mono); font-size: 1.8rem; }
+.h2h-box .l { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+.records-group-title {
+  font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
+}
+.records-group-title:first-child { margin-top: 0; }
+.season-note { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; color: var(--text-muted); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Hall of Fame</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">League records, head-to-head history, and a year-by-year reference. Career stats live on the Managers page.</p>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="records">League Records</button>
+    <button class="tab-btn" data-tab="h2h">Head-to-Head</button>
+    <button class="tab-btn" data-tab="seasons">Seasons</button>
+  </div>
+
+  <div class="panel active" id="panel-records">
+    <div id="recordsTable"></div>
+  </div>
+
+  </div>
+
+  <div class="panel" id="panel-h2h">
+    <div class="controls-row">
+      <select id="mgrA"></select>
+      <span style="color: var(--text-muted); font-family: var(--font-display);">VS</span>
+      <select id="mgrB"></select>
+    </div>
+    <div id="h2hResult"></div>
+  </div>
+
+  <div class="panel" id="panel-seasons">
+    <div class="controls-row">
+      <select id="seasonSelect"></select>
+    </div>
+    <div id="seasonContent"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+let weekly = [], matchups = [], managers = [], regSeasons = [];
+
+function recordRow(label, value, who) {
+  return `<tr><td>${label}</td><td class="num">${value}</td><td>${who}</td></tr>`;
+}
+
+function buildRecords() {
+  const regular = weekly.filter(r => r.game_type === 'regular');
+
+  let topScore = {score: -1}, lowScore = {score: 99999};
+  weekly.forEach(r => {
+    const s = parseFloat(r.score);
+    if (s > topScore.score) topScore = {...r, score: s};
+    if (s < lowScore.score) lowScore = {...r, score: s};
+  });
+
+  let biggestBlowout = {margin: -1}, closestGame = {margin: 99999};
+  matchups.forEach(m => {
+    const margin = parseFloat(m.winning_score) - parseFloat(m.losing_score);
+    if (margin > biggestBlowout.margin) biggestBlowout = {...m, margin};
+    if (margin < closestGame.margin) closestGame = {...m, margin};
+  });
+
+  const seasonTotals = {};
+  regular.forEach(r => {
+    const key = r.season + '|' + r.manager;
+    if (!seasonTotals[key]) seasonTotals[key] = { season: r.season, manager: r.manager, total: 0, scores: [] };
+    seasonTotals[key].total += parseFloat(r.score);
+    seasonTotals[key].scores.push(parseFloat(r.score));
+  });
+  const seasonTotalsArr = Object.values(seasonTotals);
+  const mostPointsSeason = seasonTotalsArr.reduce((a,b) => b.total > a.total ? b : a);
+  const fewestPointsSeason = seasonTotalsArr.reduce((a,b) => b.total < a.total ? b : a);
+
+  function stdev(arr) {
+    const mean = arr.reduce((a,b)=>a+b,0) / arr.length;
+    const variance = arr.reduce((a,b)=>a + (b-mean)*(b-mean), 0) / arr.length;
+    return Math.sqrt(variance);
+  }
+  const eligibleSeasons = seasonTotalsArr.filter(s => s.scores.length >= 13).map(s => ({...s, sd: stdev(s.scores)}));
+  const mostConsistent = eligibleSeasons.reduce((a,b) => b.sd < a.sd ? b : a);
+
+  const sortedMatchups = matchups.slice().sort((a,b) => a.season - b.season || a.week - b.week);
+  const winsBySeasonMgr = {};
+  sortedMatchups.forEach(m => {
+    const wKey = m.season + '|' + m.winner;
+    winsBySeasonMgr[wKey] = (winsBySeasonMgr[wKey] || 0) + 1;
+  });
+  let mostWinsSeason = {wins: -1};
+  Object.entries(winsBySeasonMgr).forEach(([key, wins]) => {
+    if (wins > mostWinsSeason.wins) {
+      const [season, manager] = key.split('|');
+      mostWinsSeason = { wins, season, manager };
+    }
+  });
+
+  const byManagerGames = {};
+  sortedMatchups.forEach(m => {
+    [m.winner, m.loser].forEach(name => {
+      if (!byManagerGames[name]) byManagerGames[name] = [];
+    });
+    byManagerGames[m.winner].push({ season: m.season, week: m.week, result: 'W' });
+    byManagerGames[m.loser].push({ season: m.season, week: m.week, result: 'L' });
+  });
+  let longestWinStreak = {len: 0}, longestLossStreak = {len: 0};
+  Object.entries(byManagerGames).forEach(([name, games]) => {
+    games.sort((a,b) => a.season - b.season || a.week - b.week);
+    let curW = 0, curL = 0, curWStart = null, curLStart = null;
+    games.forEach(g => {
+      if (g.result === 'W') {
+        if (curW === 0) curWStart = g;
+        curW++; curL = 0;
+        if (curW > longestWinStreak.len) longestWinStreak = { len: curW, manager: name, start: curWStart, end: g };
+      } else {
+        if (curL === 0) curLStart = g;
+        curL++; curW = 0;
+        if (curL > longestLossStreak.len) longestLossStreak = { len: curL, manager: name, start: curLStart, end: g };
+      }
+    });
+  });
+
+  const byManagerSeasonWeeks = {};
+  regular.forEach(r => {
+    const key = r.manager + '|' + r.season;
+    if (!byManagerSeasonWeeks[key]) byManagerSeasonWeeks[key] = [];
+    byManagerSeasonWeeks[key].push({ week: parseInt(r.week), score: parseFloat(r.score) });
+  });
+  let best3wk = {total: -1};
+  Object.entries(byManagerSeasonWeeks).forEach(([key, games]) => {
+    games.sort((a,b) => a.week - b.week);
+    for (let i = 0; i <= games.length - 3; i++) {
+      const a = games[i], b = games[i+1], c = games[i+2];
+      if (b.week === a.week+1 && c.week === b.week+1) {
+        const total = a.score + b.score + c.score;
+        if (total > best3wk.total) {
+          const [manager, season] = key.split('|');
+          best3wk = { total, manager, season, weeks: `${a.week}-${c.week}` };
+        }
+      }
+    }
+  });
+
+  document.getElementById('recordsTable').innerHTML = `
+    <div class="records-group-title">Single-Game Records</div>
+    <table>
+      <tbody>
+        ${recordRow('Highest single-week score', topScore.score.toFixed(1) + ' pts', `${topScore.manager}, Week ${topScore.week} ${topScore.season}`)}
+        ${recordRow('Lowest single-week score', lowScore.score.toFixed(1) + ' pts', `${lowScore.manager}, Week ${lowScore.week} ${lowScore.season}`)}
+        ${recordRow('Biggest blowout', `${biggestBlowout.winning_score}-${biggestBlowout.losing_score}`, `${biggestBlowout.winner} over ${biggestBlowout.loser}, Wk ${biggestBlowout.week} ${biggestBlowout.season}`)}
+        ${recordRow('Closest game', `${closestGame.winning_score}-${closestGame.losing_score}`, `${closestGame.winner} over ${closestGame.loser}, Wk ${closestGame.week} ${closestGame.season}`)}
+      </tbody>
+    </table>
+
+    <div class="records-group-title">Season Records</div>
+    <table>
+      <tbody>
+        ${recordRow('Most points scored, season', mostPointsSeason.total.toFixed(1) + ' pts', `${mostPointsSeason.manager}, ${mostPointsSeason.season}`)}
+        ${recordRow('Fewest points scored, season', fewestPointsSeason.total.toFixed(1) + ' pts', `${fewestPointsSeason.manager}, ${fewestPointsSeason.season}`)}
+        ${recordRow('Most wins, season', mostWinsSeason.wins, `${mostWinsSeason.manager}, ${mostWinsSeason.season}`)}
+        ${recordRow('Most consistent season', '&plusmn;' + mostConsistent.sd.toFixed(1) + ' pts std dev', `${mostConsistent.manager}, ${mostConsistent.season}`)}
+      </tbody>
+    </table>
+
+    <div class="records-group-title">Streaks</div>
+    <table>
+      <tbody>
+        ${recordRow('Longest win streak', longestWinStreak.len + ' games', `${longestWinStreak.manager}, ${longestWinStreak.start.season} Wk${longestWinStreak.start.week} &ndash; ${longestWinStreak.end.season} Wk${longestWinStreak.end.week}`)}
+        ${recordRow('Longest losing streak', longestLossStreak.len + ' games', `${longestLossStreak.manager}, ${longestLossStreak.start.season} Wk${longestLossStreak.start.week} &ndash; ${longestLossStreak.end.season} Wk${longestLossStreak.end.week}`)}
+        ${recordRow('Highest 3-week scoring stretch', best3wk.total.toFixed(1) + ' pts', `${best3wk.manager}, ${best3wk.season} Wks ${best3wk.weeks}`)}
+      </tbody>
+    </table>
+  `;
+}
+
+function buildH2H() {
+  const a = document.getElementById('mgrA').value;
+  const b = document.getElementById('mgrB').value;
+  if (!a || !b || a === b) {
+    document.getElementById('h2hResult').innerHTML = '<p style="color:var(--text-muted)">Pick two different managers.</p>';
+    return;
+  }
+  let aWins = 0, bWins = 0, games = [];
+  matchups.forEach(m => {
+    if (m.winner === a && m.loser === b) { aWins++; games.push(m); }
+    else if (m.winner === b && m.loser === a) { bWins++; games.push(m); }
+  });
+
+  document.getElementById('h2hResult').innerHTML = `
+    <div class="h2h-result">
+      <div class="h2h-box"><div class="v">${aWins}</div><div class="l">${a} wins</div></div>
+      <div class="h2h-box"><div class="v">${games.length}</div><div class="l">Total matchups</div></div>
+      <div class="h2h-box"><div class="v">${bWins}</div><div class="l">${b} wins</div></div>
+    </div>
+    <table style="margin-top: 20px;">
+      <thead><tr><th>Season</th><th>Week</th><th>Winner</th><th class="num">Score</th></tr></thead>
+      <tbody>
+        ${games.sort((x,y) => x.season - y.season || x.week - y.week).map(g => `
+          <tr><td>${g.season}</td><td>${g.week}</td><td>${managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}-${g.losing_score}</td></tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function buildSeason() {
+  const season = parseInt(document.getElementById('seasonSelect').value);
+  if (!season) return;
+
+  const seasonWeekly = weekly.filter(r => r.season === season);
+  const seasonMatchups = matchups.filter(m => m.season === season);
+  const regular = seasonWeekly.filter(r => r.game_type === 'regular');
+  const seasonFinishes = regSeasons.filter(t => t.season === season);
+
+  const standings = {};
+  seasonWeekly.forEach(r => {
+    if (!standings[r.manager]) standings[r.manager] = { manager: r.manager, division: r.division, wins: 0, losses: 0, pf: 0, pa: 0 };
+  });
+  seasonMatchups.forEach(m => {
+    if (standings[m.winner]) { standings[m.winner].wins++; standings[m.winner].pf += parseFloat(m.winning_score); standings[m.winner].pa += parseFloat(m.losing_score); }
+    if (standings[m.loser]) { standings[m.loser].losses++; standings[m.loser].pf += parseFloat(m.losing_score); standings[m.loser].pa += parseFloat(m.winning_score); }
+  });
+  const standingsArr = Object.values(standings).sort((a,b) => b.wins - a.wins || b.pf - a.pf);
+
+  const divisions = [...new Set(standingsArr.map(s => s.division))].sort();
+  const byDivision = {};
+  divisions.forEach(div => {
+    byDivision[div] = standingsArr.filter(s => s.division === div).sort((a,b) => b.wins - a.wins || b.pf - a.pf);
+  });
+
+  const playoff = seasonWeekly.filter(r => r.game_type === 'playoff');
+
+  const weeks = [...new Set(regular.map(r => parseInt(r.week)))].sort((a,b) => a-b);
+  const grid = {};
+  regular.forEach(r => {
+    if (!grid[r.manager]) grid[r.manager] = {};
+    grid[r.manager][r.week] = parseFloat(r.score).toFixed(1);
+  });
+
+  const playoffWeeks = [...new Set(playoff.map(r => parseInt(r.week)))].sort((a,b) => a-b);
+  const playoffGrid = {};
+  playoff.forEach(r => {
+    if (!playoffGrid[r.manager]) playoffGrid[r.manager] = {};
+    playoffGrid[r.manager][r.week] = parseFloat(r.score).toFixed(1);
+  });
+  const playoffManagers = standingsArr.filter(s => playoffGrid[s.manager]);
+
+  const finishSorted = seasonFinishes.slice().sort((a,b) => a.final_finish - b.final_finish);
+  const top3 = finishSorted.slice(0, 3);
+  const lastPlaceRank = Math.max(...seasonFinishes.map(t => t.final_finish));
+  const lastPlace = finishSorted.find(t => t.final_finish === lastPlaceRank);
+  const medals = ['&#129351;', '&#129352;', '&#129353;'];
+
+  document.getElementById('seasonContent').innerHTML = `
+    <div class="season-note">
+      ${top3.map((t,i) => `${medals[i]} ${managerTag(managers, t.manager)}`).join(' &nbsp;&middot;&nbsp; ')}
+      ${lastPlace ? ` &nbsp;&middot;&nbsp; &#128169; ${managerTag(managers, lastPlace.manager)} (last)` : ''}
+    </div>
+
+    <div class="records-group-title">Weekly Scores &mdash; Regular Season</div>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>Manager</th>${weeks.map(w => `<th class="num">Wk${w}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${standingsArr.map(s => `
+          <tr>
+            <td>${managerTag(managers, s.manager)}</td>
+            ${weeks.map(w => `<td class="num">${grid[s.manager] && grid[s.manager][w] !== undefined ? grid[s.manager][w] : '—'}</td>`).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+
+    ${playoffManagers.length ? `
+    <div class="records-group-title">Weekly Scores &mdash; Playoffs</div>
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>Manager</th>${playoffWeeks.map(w => `<th class="num">Wk${w}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${playoffManagers.map(s => `
+          <tr>
+            <td>${managerTag(managers, s.manager)}</td>
+            ${playoffWeeks.map(w => `<td class="num">${playoffGrid[s.manager] && playoffGrid[s.manager][w] !== undefined ? playoffGrid[s.manager][w] : '—'}</td>`).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+    ` : ''}
+
+    <div class="records-group-title">Standings by Division</div>
+    ${divisions.map(div => `
+      <p style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; margin: 16px 0 6px;">${div}</p>
+      <table>
+        <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">PF</th><th class="num">PA</th></tr></thead>
+        <tbody>
+          ${byDivision[div].map(s => `
+            <tr>
+              <td>${managerTag(managers, s.manager)}</td>
+              <td class="num">${s.wins}</td>
+              <td class="num">${s.losses}</td>
+              <td class="num">${s.pf.toFixed(1)}</td>
+              <td class="num">${s.pa.toFixed(1)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `).join('')}
+
+    <div class="records-group-title">That Season's Draft &amp; Transactions</div>
+    <p style="color:var(--text-muted); font-size: 0.88rem;">
+      See the full <a href="draft.html" style="color:var(--blue-bright);">Draft History</a> and
+      <a href="transactions.html" style="color:var(--blue-bright);">Transactions</a> pages and filter by ${season}.
+    </p>
+  `;
+}
+
+async function init() {
+  [weekly, matchups, managers, regSeasons] = await Promise.all([
+    loadData('weekly_scores'), loadData('matchup_results'), getManagers(), loadData('team_seasons_regular')
+  ]);
+  weekly.forEach(r => r.season = parseInt(r.season));
+  matchups.forEach(m => { m.season = parseInt(m.season); m.week = parseInt(m.week); });
+  regSeasons.forEach(t => { t.season = parseInt(t.season); t.final_finish = parseInt(t.final_finish); });
+
+  buildRecords();
+
+  const opts = managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+  document.getElementById('mgrA').innerHTML = '<option value="">Select manager</option>' + opts;
+  document.getElementById('mgrB').innerHTML = '<option value="">Select manager</option>' + opts;
+  document.getElementById('mgrA').addEventListener('change', buildH2H);
+  document.getElementById('mgrB').addEventListener('change', buildH2H);
+
+  const seasons = [...new Set(weekly.map(r => r.season))].sort((a,b) => b-a);
+  document.getElementById('seasonSelect').innerHTML = seasons.map(s => `<option value="${s}">${s}</option>`).join('');
+  document.getElementById('seasonSelect').addEventListener('change', buildSeason);
+  buildSeason();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('hall of fame');
+init();
+</script>
+</body>
+</html>

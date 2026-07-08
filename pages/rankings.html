@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Rankings — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.methodology {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
+}
+.methodology strong { color: var(--text); }
+.rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 28px; display: inline-block; }
+details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem; margin-top: 8px; }
+.tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.panel { display: none; }
+.panel.active { display: block; }
+.sort-row { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+.sort-btn {
+  font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 6px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.sort-btn.active { color: var(--text); border-color: var(--blue-bright); }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Team Rankings</h1>
+  <p style="color: var(--text-muted); margin-bottom: 16px;">Every manager's individual season ranked against every other season in league history.</p>
+
+  <div class="methodology">
+    <strong>Methodology:</strong> Each row is one manager's single season (not a career average).
+    Each season's league-wide average score is compared against the all-time baseline to produce a
+    year adjustment factor, which corrects for rule changes that shifted scoring up or down
+    league-wide. Both the adjusted and raw (unadjusted) average are shown — adjusted is the default
+    sort, but you can switch to raw at any time.
+    <details>
+      <summary>Show year-by-year adjustment factors</summary>
+      <div id="factorTable" style="margin-top: 12px;"></div>
+    </details>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="regular">Regular Season</button>
+    <button class="tab-btn" data-tab="playoff">Playoffs</button>
+  </div>
+
+  <div class="panel active" id="panel-regular">
+    <div class="sort-row">
+      <span style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; text-transform:uppercase;">Filter:</span>
+      <select id="regularManagerFilter" style="background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:4px;font-family:var(--font-body);font-size:0.85rem;"></select>
+      <select id="regularSeasonFilter" style="background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:4px;font-family:var(--font-body);font-size:0.85rem;"></select>
+      <span style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; text-transform:uppercase; margin-left:8px;">Sort by:</span>
+      <button class="sort-btn active" data-sort="adj" data-target="regular">Adjusted PPG</button>
+      <button class="sort-btn" data-sort="raw" data-target="regular">Raw PPG</button>
+      <button class="sort-btn" data-sort="opp" data-target="regular">Opponent PPG</button>
+    </div>
+    <div id="regularTable"></div>
+  </div>
+
+  <div class="panel" id="panel-playoff">
+    <div class="sort-row">
+      <span style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; text-transform:uppercase;">Filter:</span>
+      <select id="playoffManagerFilter" style="background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:4px;font-family:var(--font-body);font-size:0.85rem;"></select>
+      <select id="playoffSeasonFilter" style="background:var(--surface);border:1px solid var(--line);color:var(--text);padding:6px 10px;border-radius:4px;font-family:var(--font-body);font-size:0.85rem;"></select>
+      <span style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; text-transform:uppercase; margin-left:8px;">Sort by:</span>
+      <button class="sort-btn active" data-sort="adj" data-target="playoff">Adjusted PPG</button>
+      <button class="sort-btn" data-sort="raw" data-target="playoff">Raw PPG</button>
+    </div>
+    <div id="playoffTable"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+let factor = {};
+let regularRows = [], playoffRows = [];
+
+function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOpp, hasRankDelta) {
+  let filtered = rows.slice();
+  if (managerFilter) filtered = filtered.filter(r => r.manager === managerFilter);
+  if (seasonFilter) filtered = filtered.filter(r => String(r.season) === seasonFilter);
+  const sorted = filtered.sort((a,b) => {
+    if (sortKey === 'adj') return b.adjPpg - a.adjPpg;
+    if (sortKey === 'raw') return b.rawPpg - a.rawPpg;
+    return b.oppAdjPpg - a.oppAdjPpg;
+  });
+  document.getElementById(targetId).innerHTML = sorted.length === 0
+    ? `<p style="color:var(--text-muted)">No seasons match this filter.</p>`
+    : `
+    <table>
+      <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">Adj. PPG</th><th class="num">Raw PPG</th>${hasOpp ? '<th class="num">Opp. Adj. PPG</th><th class="num">Opp. Raw PPG</th>' : ''}<th class="num">Games</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
+      <tbody>
+        ${sorted.map((r, i) => `
+          <tr>
+            <td><span class="rank-num">${i+1}</span></td>
+            <td>${r.managerTag}</td>
+            <td class="num">${r.season}</td>
+            <td class="num">${r.adjPpg.toFixed(2)}</td>
+            <td class="num">${r.rawPpg.toFixed(2)}</td>
+            ${hasOpp ? `<td class="num">${r.oppAdjPpg.toFixed(2)}</td><td class="num">${r.oppPpg.toFixed(2)}</td>` : ''}
+            <td class="num">${r.games}</td>
+            ${hasRankDelta ? `<td class="num" style="color:${r.rankDelta < 0 ? '#E0524A' : r.rankDelta > 0 ? '#4FA876' : 'inherit'}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</td>` : ''}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function getFilteredRender(target) {
+  const rows = target === 'regular' ? regularRows : playoffRows;
+  const sortKey = document.querySelector(`.sort-btn.active[data-target="${target}"]`)?.dataset.sort || 'adj';
+  const manager = document.getElementById(target + 'ManagerFilter').value;
+  const season = document.getElementById(target + 'SeasonFilter').value;
+  renderTable(target + 'Table', rows, sortKey, manager, season, target === 'regular', target === 'playoff');
+}
+
+async function init() {
+  const [weekly, notes, managers, regSeasons, playoffSeasons] = await Promise.all([
+    loadData('weekly_scores'), loadData('scoring_era_notes'), getManagers(),
+    loadData('team_seasons_regular'), loadData('team_seasons_playoff')
+  ]);
+
+  // adjustment factor from regular-season league averages per year
+  const regular = weekly.filter(r => r.game_type === 'regular');
+  const bySeason = {};
+  regular.forEach(r => {
+    if (!bySeason[r.season]) bySeason[r.season] = [];
+    bySeason[r.season].push(parseFloat(r.score));
+  });
+  const seasonAvg = {};
+  Object.entries(bySeason).forEach(([s, scores]) => seasonAvg[s] = scores.reduce((a,b)=>a+b,0)/scores.length);
+  const allAvgs = Object.values(seasonAvg);
+  const baseline = allAvgs.reduce((a,b)=>a+b,0) / allAvgs.length;
+  Object.entries(seasonAvg).forEach(([s, avg]) => factor[s] = baseline / avg);
+
+  regularRows = regSeasons.map(t => ({
+    season: t.season, manager: t.manager, managerTag: managerTag(managers, t.manager),
+    rawPpg: parseFloat(t.ppg), adjPpg: parseFloat(t.ppg) * (factor[t.season] || 1), games: t.games,
+    oppPpg: parseFloat(t.opp_ppg), oppAdjPpg: parseFloat(t.opp_ppg) * (factor[t.season] || 1)
+  }));
+  playoffRows = playoffSeasons.filter(t => parseInt(t.games) > 0).map(t => ({
+    season: t.season, manager: t.manager, managerTag: managerTag(managers, t.manager),
+    rawPpg: parseFloat(t.ppg), adjPpg: parseFloat(t.ppg) * (factor[t.season] || 1), games: t.games
+  }));
+
+  // Fixed rank (by adjusted PPG, independent of any filter/sort the user picks) so the
+  // playoff-vs-regular-season comparison column stays meaningful no matter how the table
+  // is currently filtered.
+  const regRankByKey = {};
+  regularRows.slice().sort((a,b) => b.adjPpg - a.adjPpg).forEach((r, i) => {
+    regRankByKey[r.manager + '|' + r.season] = i + 1;
+  });
+  playoffRows.slice().sort((a,b) => b.adjPpg - a.adjPpg).forEach((r, i) => {
+    r.playoffRank = i + 1;
+    r.regRank = regRankByKey[r.manager + '|' + r.season];
+    r.rankDelta = r.regRank - r.playoffRank;
+  });
+
+  renderTable('regularTable', regularRows, 'adj', '', '', true, false);
+  renderTable('playoffTable', playoffRows, 'adj', '', '', false, true);
+
+  const mgrOpts = '<option value="">All managers</option>' + managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+  const seasons = [...new Set(regularRows.map(r => String(r.season)))].sort((a,b) => b-a);
+  const seasonOpts = '<option value="">All seasons</option>' + seasons.map(s => `<option value="${s}">${s}</option>`).join('');
+
+  ['regular','playoff'].forEach(target => {
+    document.getElementById(target+'ManagerFilter').innerHTML = mgrOpts;
+    document.getElementById(target+'SeasonFilter').innerHTML = seasonOpts;
+    document.getElementById(target+'ManagerFilter').addEventListener('change', () => getFilteredRender(target));
+    document.getElementById(target+'SeasonFilter').addEventListener('change', () => getFilteredRender(target));
+  });
+
+  const noteMap = {};
+  notes.forEach(n => noteMap[n.season] = n.scoring_change_note);
+  const sortedSeasons = Object.keys(seasonAvg).sort();
+  document.getElementById('factorTable').innerHTML = `
+    <table>
+      <thead><tr><th>Season</th><th class="num">Avg Score</th><th class="num">Factor</th><th>Scoring change</th></tr></thead>
+      <tbody>
+        ${sortedSeasons.map(s => `
+          <tr>
+            <td>${s}</td>
+            <td class="num">${seasonAvg[s].toFixed(1)}</td>
+            <td class="num">${factor[s].toFixed(3)}</td>
+            <td>${noteMap[s] || '—'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      document.querySelectorAll(`.sort-btn[data-target="${target}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      getFilteredRender(target);
+    });
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('team rankings');
+init();
+</script>
+</body>
+</html>

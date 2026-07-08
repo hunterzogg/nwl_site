@@ -1,0 +1,15 @@
+[
+  {"manager": "Ainsworth", "color": "#D65151"},
+  {"manager": "Conlin",    "color": "#C37222"},
+  {"manager": "Glaser",    "color": "#D6D651"},
+  {"manager": "Goetz",     "color": "#72C322"},
+  {"manager": "Hagan",     "color": "#51D651"},
+  {"manager": "Larson",    "color": "#22C372"},
+  {"manager": "Muenchow",  "color": "#51D6D6"},
+  {"manager": "Palaia",    "color": "#2272C3"},
+  {"manager": "Pfaffinger","color": "#5151D6"},
+  {"manager": "Prodahl",   "color": "#9B4FE8"},
+  {"manager": "Stover",    "color": "#D651D6"},
+  {"manager": "Stowe",     "color": "#9A9A9A"},
+  {"manager": "Zogg",      "color": "#C32272"}
+]

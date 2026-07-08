@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Season — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--live-bright); border-color: var(--live); background: var(--live-bg); }
+.panel { display: none; }
+.panel.active { display: block; }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.controls-row select {
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 140px;
+}
+.empty-state {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-muted);
+}
+.empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.matchup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.matchup-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+.matchup-side { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+.matchup-side.winner .matchup-score { color: var(--live-bright); }
+.matchup-score { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; }
+.matchup-vs { text-align: center; color: var(--text-muted); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.08em; padding: 2px 0; }
+.rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+.rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
+.rank-trend { width: 22px; flex-shrink: 0; text-align: center; font-size: 0.9rem; }
+.rank-trend.up { color: #4FA876; }
+.rank-trend.down { color: #E0524A; }
+.rank-trend.same { color: var(--text-muted); }
+.rank-body { flex: 1; }
+.rank-blurb { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+.commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; white-space: pre-wrap; }
+.commentary-title { margin-bottom: 12px; }
+.updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <div class="season-banner">
+    <div>
+      <div class="season-banner-label"><span class="nav-live-dot"></span>2026 Season</div>
+      <h1>Weekly Hub</h1>
+    </div>
+    <p style="color: var(--text-muted); margin: 0; max-width: 340px; font-size: 0.9rem;">
+      This week's matchups, standings, power rankings, and commentary. Updated by Hunter throughout the season — separate from the historical archive.
+    </p>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="matchups">Matchups</button>
+    <button class="tab-btn" data-tab="standings">Standings</button>
+    <button class="tab-btn" data-tab="power">Power Rankings</button>
+    <button class="tab-btn" data-tab="commentary">Commentary</button>
+  </div>
+
+  <div class="panel active" id="panel-matchups">
+    <div class="controls-row">
+      <select id="matchupsWeek"></select>
+    </div>
+    <div id="matchupsContent"></div>
+  </div>
+
+  <div class="panel" id="panel-standings">
+    <div id="standingsContent"></div>
+  </div>
+
+  <div class="panel" id="panel-power">
+    <div class="controls-row">
+      <select id="powerWeek"></select>
+    </div>
+    <div id="powerContent"></div>
+  </div>
+
+  <div class="panel" id="panel-commentary">
+    <div class="controls-row">
+      <select id="commentaryWeek"></select>
+    </div>
+    <div id="commentaryContent"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+let managers = [];
+let matchups = [], standings = null, powerRankings = [], commentary = [];
+
+function emptyState(headline, sub) {
+  return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
+}
+
+function populateWeekSelect(selectId, weeks, onChange) {
+  const sel = document.getElementById(selectId);
+  if (weeks.length === 0) {
+    sel.innerHTML = '<option value="">No weeks yet</option>';
+    sel.disabled = true;
+    return;
+  }
+  sel.disabled = false;
+  sel.innerHTML = weeks.map(w => `<option value="${w}">Week ${w}</option>`).join('');
+  sel.value = weeks[weeks.length - 1];
+  sel.onchange = onChange;
+}
+
+function renderMatchups() {
+  const week = document.getElementById('matchupsWeek').value;
+  const entry = matchups.find(m => String(m.week) === String(week));
+  if (!entry || !entry.games.length) {
+    document.getElementById('matchupsContent').innerHTML = emptyState(
+      'No matchups yet', 'Check back once the 2026 season kicks off in September.');
+    return;
+  }
+  document.getElementById('matchupsContent').innerHTML = `
+    <p class="updated-note">Last updated ${new Date(entry.updated_at).toLocaleString()}</p>
+    <div class="matchup-grid">
+      ${entry.games.map(g => {
+        const homeWin = g.winner === 'HOME';
+        const awayWin = g.winner === 'AWAY';
+        return `
+        <div class="matchup-card">
+          <div class="matchup-side ${homeWin ? 'winner' : ''}">
+            ${managerTag(managers, g.home_manager)}
+            <span class="matchup-score">${g.home_score.toFixed(1)}</span>
+          </div>
+          <div class="matchup-vs">at</div>
+          <div class="matchup-side ${awayWin ? 'winner' : ''}">
+            ${g.away_manager ? managerTag(managers, g.away_manager) : '<span style="color:var(--text-muted)">BYE</span>'}
+            <span class="matchup-score">${g.away_score !== null ? g.away_score.toFixed(1) : ''}</span>
+          </div>
+        </div>
+      `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderStandings() {
+  if (!standings || !standings.standings || !standings.standings.length) {
+    document.getElementById('standingsContent').innerHTML = emptyState(
+      'No standings yet', 'Standings will appear here once the 2026 season is underway.');
+    return;
+  }
+  document.getElementById('standingsContent').innerHTML = `
+    <p class="updated-note">As of week ${standings.week} &middot; updated ${new Date(standings.updated_at).toLocaleString()}</p>
+    <table>
+      <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
+      <tbody>
+        ${standings.standings.map(s => `
+          <tr>
+            <td>${managerTag(managers, s.manager)}</td>
+            <td class="num">${s.wins}</td>
+            <td class="num">${s.losses}</td>
+            <td class="num">${s.ties}</td>
+            <td class="num">${s.points_for.toFixed(1)}</td>
+            <td class="num">${s.points_against.toFixed(1)}</td>
+            <td class="num">${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderPower() {
+  const week = document.getElementById('powerWeek').value;
+  const entry = powerRankings.find(p => String(p.week) === String(week) && p.published);
+  if (!entry) {
+    document.getElementById('powerContent').innerHTML = emptyState(
+      'No power rankings published yet', 'Hunter reviews and publishes these weekly once the season is live.');
+    return;
+  }
+  const trendArrow = { up: '&#9650;', down: '&#9660;', same: '&#8212;' };
+  document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
+    <div class="rank-card">
+      <div class="rank-num-big">${r.rank}</div>
+      <div class="rank-trend ${r.trend}">${trendArrow[r.trend] || ''}</div>
+      <div class="rank-body">
+        ${managerTag(managers, r.manager)}
+        ${r.blurb ? `<div class="rank-blurb">${r.blurb}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCommentary() {
+  const week = document.getElementById('commentaryWeek').value;
+  const entry = commentary.find(c => String(c.week) === String(week) && c.published);
+  if (!entry) {
+    document.getElementById('commentaryContent').innerHTML = emptyState(
+      'No recap published yet', 'Weekly commentary shows up here once Hunter publishes it.');
+    return;
+  }
+  document.getElementById('commentaryContent').innerHTML = `
+    <div class="commentary-body">
+      ${entry.title ? `<h2 class="commentary-title">${entry.title}</h2>` : ''}
+      ${entry.body}
+    </div>
+  `;
+}
+
+async function init() {
+  managers = await getManagers();
+  [matchups, standings, powerRankings, commentary] = await Promise.all([
+    loadDataSafe('season_2026/matchups', []),
+    loadDataSafe('season_2026/standings', null),
+    loadDataSafe('season_2026/power_rankings', []),
+    loadDataSafe('season_2026/commentary', []),
+  ]);
+
+  const matchupWeeks = matchups.map(m => m.week);
+  populateWeekSelect('matchupsWeek', matchupWeeks, renderMatchups);
+
+  const powerWeeks = powerRankings.filter(p => p.published).map(p => p.week);
+  populateWeekSelect('powerWeek', powerWeeks, renderPower);
+
+  const commentaryWeeks = commentary.filter(c => c.published).map(c => c.week);
+  populateWeekSelect('commentaryWeek', commentaryWeeks, renderCommentary);
+
+  renderMatchups();
+  renderStandings();
+  renderPower();
+  renderCommentary();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('2026 season');
+init();
+</script>
+</body>
+</html>

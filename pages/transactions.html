@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.panel { display: none; }
+.panel.active { display: block; }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.controls-row select, .controls-row input {
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 150px;
+}
+.type-badge {
+  font-family: var(--font-display); font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 3px; display: inline-block;
+}
+.type-waiver { background: rgba(30,63,203,0.18); color: #8FA8F2; }
+.type-free_agent { background: rgba(124,135,152,0.18); color: var(--text-muted); }
+.type-trade { background: rgba(200,16,46,0.18); color: #F08C9C; }
+.precision-note { font-size: 0.7rem; color: var(--text-muted); }
+.records-group-title {
+  font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
+}
+.records-group-title:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Transactions</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Every waiver claim, free agent pickup, and trade since 2013.</p>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="log">Transaction Log</button>
+    <button class="tab-btn" data-tab="trades">Trade Database</button>
+    <button class="tab-btn" data-tab="summary">Summary</button>
+  </div>
+
+  <div class="panel active" id="panel-log">
+    <div class="controls-row">
+      <select id="seasonFilter"></select>
+      <select id="managerFilter"></select>
+      <select id="typeFilter">
+        <option value="">All types</option>
+        <option value="waiver">Waiver</option>
+        <option value="free_agent">Free Agent</option>
+        <option value="trade">Trade</option>
+      </select>
+      <input type="text" id="playerSearch" placeholder="Search player name...">
+    </div>
+    <div id="txTable"></div>
+  </div>
+
+  <div class="panel" id="panel-trades">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      All completed trades that could be reliably extracted from the league records. No trade records
+      exist for 2013-2021 (not tracked that way back then). 2022 trades are accurate but only precise to
+      the year, not an exact date. 2023-2025 trades include exact dates.
+    </p>
+    <div class="controls-row">
+      <select id="tradeSeasonFilter"></select>
+      <select id="tradeManagerFilter"></select>
+      <input type="text" id="tradePlayerSearch" placeholder="Search player name...">
+    </div>
+    <div id="tradesTable"></div>
+  </div>
+
+  <div class="panel" id="panel-summary">
+    <div class="records-group-title">League Totals By Season</div>
+    <div id="summarySeasonTable"></div>
+
+    <div class="records-group-title">Transactions Per Manager (Career)</div>
+    <div id="summaryManagerTable"></div>
+
+    <div class="records-group-title">Acquisition Type Breakdown</div>
+    <div id="summaryTypeTable"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+let transactions = [], managers = [], trades = [];
+
+function capitalize(s) {
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function renderLog() {
+  const season = document.getElementById('seasonFilter').value;
+  const manager = document.getElementById('managerFilter').value;
+  const type = document.getElementById('typeFilter').value;
+  const search = document.getElementById('playerSearch').value.trim().toLowerCase();
+
+  let rows = transactions;
+  if (season) rows = rows.filter(t => t.season === parseInt(season));
+  if (manager) rows = rows.filter(t => t.manager === manager);
+  if (type) rows = rows.filter(t => t.acquisition_type === type);
+  if (search) rows = rows.filter(t => t.player.toLowerCase().includes(search));
+
+  // Nest losing waiver bids under their matching winner when both share an exact
+  // date + player. Year-only rows (date is just "2019", length <= 4) aren't grouped -
+  // not precise enough to know which bids actually competed against each other.
+  const hasExactDate = t => t.date && t.date.length > 4;
+  const winners = rows.filter(t => t.acquisition_type === 'waiver' && t.bid_outcome === 'won');
+  const losers = rows.filter(t => t.acquisition_type === 'waiver' && t.bid_outcome === 'lost');
+  const nonWaiver = rows.filter(t => t.acquisition_type !== 'waiver');
+
+  const usedLoserIdx = new Set();
+  const groupedWinners = winners.map(w => {
+    let nested = [];
+    if (hasExactDate(w)) {
+      losers.forEach((l, i) => {
+        if (!usedLoserIdx.has(i) && hasExactDate(l) && l.season === w.season && l.date === w.date && l.player === w.player) {
+          nested.push(l);
+          usedLoserIdx.add(i);
+        }
+      });
+    }
+    return { ...w, _nested: nested };
+  });
+  const orphanLosers = losers.filter((l, i) => !usedLoserIdx.has(i));
+
+  const displayRows = [...groupedWinners, ...orphanLosers, ...nonWaiver]
+    .sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+
+  function txRow(t, nested) {
+    return `
+      <tr style="${nested ? 'opacity:0.7;' : ''}">
+        <td class="num">${nested ? '&nbsp;&nbsp;&#8627; ' : ''}${t.date}</td>
+        <td>${t.player}</td>
+        <td>${posTag(t.position)}</td>
+        <td>${managerTag(managers, t.manager)}</td>
+        <td><span class="type-badge type-${t.acquisition_type}">${t.acquisition_type.replace('_',' ')}</span></td>
+        <td class="num">${t.bid_amount ? '$' + t.bid_amount : ''}</td>
+        <td>${capitalize(t.bid_outcome)}</td>
+      </tr>
+    `;
+  }
+
+  document.getElementById('txTable').innerHTML = `
+    <table>
+      <thead><tr><th>Date</th><th>Player</th><th>Pos</th><th>Manager</th><th>Type</th><th class="num">Bid</th><th>Outcome</th></tr></thead>
+      <tbody>
+        ${displayRows.slice(0, 500).map(t => {
+          let html = txRow(t, false);
+          if (t._nested && t._nested.length) html += t._nested.map(n => txRow(n, true)).join('');
+          return html;
+        }).join('')}
+      </tbody>
+    </table>
+    ${displayRows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${displayRows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
+    ${displayRows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No transactions match these filters.</p>` : ''}
+  `;
+}
+
+function renderTrades() {
+  const season = document.getElementById('tradeSeasonFilter').value;
+  const manager = document.getElementById('tradeManagerFilter').value;
+  const search = document.getElementById('tradePlayerSearch').value.trim().toLowerCase();
+
+  let rows = trades;
+  if (season) rows = rows.filter(t => t.season === parseInt(season));
+  if (manager) rows = rows.filter(t => t.team1 === manager || t.team2 === manager);
+  if (search) rows = rows.filter(t =>
+    t.team1_received.toLowerCase().includes(search) || t.team2_received.toLowerCase().includes(search));
+
+  rows = rows.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+
+  document.getElementById('tradesTable').innerHTML = `
+    <table>
+      <thead><tr><th>Date</th><th>Team 1</th><th>Received</th><th>Team 2</th><th>Received</th></tr></thead>
+      <tbody>
+        ${rows.map(t => `
+          <tr>
+            <td class="num">${t.date} ${t.precision !== 'exact_date' ? '<span class="precision-note">(year only)</span>' : ''}</td>
+            <td>${managerTag(managers, t.team1)}</td>
+            <td>${t.team1_received}</td>
+            <td>${t.team2 ? managerTag(managers, t.team2) : ''}</td>
+            <td>${t.team2_received}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No trades match these filters.</p>` : ''}
+  `;
+}
+
+function renderSummary() {
+  // Use authoritative historical totals from Mgr Summary where available,
+  // falling back to counting rows in the transaction log for any year not covered.
+  const leagueTotals = window._leagueTx || [];
+  const mgrTotals = window._mgrTx || [];
+
+  // League totals by season (from Mgr Summary A35, covers 2013-2025)
+  const seasonRows = leagueTotals.slice().sort((a,b) => b.season - a.season);
+  document.getElementById('summarySeasonTable').innerHTML = `
+    <table>
+      <thead><tr><th class="num">Season</th><th class="num">Total Transactions</th></tr></thead>
+      <tbody>
+        ${seasonRows.map(s => `
+          <tr>
+            <td class="num">${s.season}</td>
+            <td class="num">${s.total_transactions}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
+      Source: Mgr Summary historical record. Includes all transaction types (waiver, free agent, trade).
+    </p>
+  `;
+
+  // Per-manager career totals from Mgr Summary (more complete than counting tx log rows)
+  const byManager = {};
+  managers.forEach(m => byManager[m.manager] = { manager: m.manager, total: 0, seasons: 0, most: null, fewest: null });
+  mgrTotals.forEach(t => {
+    if (!byManager[t.manager]) return;
+    const count = parseInt(t.count);
+    byManager[t.manager].total += count;
+    byManager[t.manager].seasons++;
+    if (!byManager[t.manager].most || count > byManager[t.manager].most.count) byManager[t.manager].most = { count, season: t.season };
+    if (!byManager[t.manager].fewest || count < byManager[t.manager].fewest.count) byManager[t.manager].fewest = { count, season: t.season };
+  });
+  const mgrRows = Object.values(byManager)
+    .filter(m => m.total > 0)
+    .map(m => ({ ...m, avg: m.seasons ? m.total / m.seasons : 0 }))
+    .sort((a,b) => b.total - a.total);
+
+  document.getElementById('summaryManagerTable').innerHTML = `
+    <table>
+      <thead><tr><th>Manager</th><th class="num">Total Transactions</th><th class="num">Avg / Season</th><th class="num">Most in a Season</th><th class="num">Fewest in a Season</th></tr></thead>
+      <tbody>
+        ${mgrRows.map(m => `
+          <tr>
+            <td>${managerTag(managers, m.manager)}</td>
+            <td class="num">${m.total}</td>
+            <td class="num">${m.avg.toFixed(1)}</td>
+            <td class="num">${m.most.count} <span class="precision-note">(${m.most.season})</span></td>
+            <td class="num">${m.fewest.count} <span class="precision-note">(${m.fewest.season})</span></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  // Acquisition type breakdown (from transaction log, best data we have for this split)
+  const typeCounts = { waiver: 0, free_agent: 0, trade: 0 };
+  transactions.forEach(t => { typeCounts[t.acquisition_type] = (typeCounts[t.acquisition_type] || 0) + 1; });
+  const totalTx = transactions.length;
+
+  document.getElementById('summaryTypeTable').innerHTML = `
+    <table>
+      <thead><tr><th>Type</th><th class="num">Count</th><th class="num">% of Logged Transactions</th></tr></thead>
+      <tbody>
+        ${Object.entries(typeCounts).map(([type, count]) => `
+          <tr>
+            <td><span class="type-badge type-${type}">${type.replace('_',' ')}</span></td>
+            <td class="num">${count}</td>
+            <td class="num">${((count/totalTx)*100).toFixed(1)}%</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
+      Based on logged transaction records (2013-2025). Type breakdown is partial for earlier seasons where only totals are available.
+    </p>
+  `;
+}
+
+async function init() {
+  [transactions, managers, trades] = await Promise.all([
+    loadData('transactions_with_dates'), getManagers(), loadData('trades')
+  ]);
+  const [leagueTx, mgrTx] = await Promise.all([
+    loadData('league_season_tx'), loadData('manager_season_tx')
+  ]);
+  window._leagueTx = leagueTx;
+  window._mgrTx = mgrTx;
+  transactions.forEach(t => t.season = parseInt(t.season));
+  trades.forEach(t => t.season = parseInt(t.season));
+
+  const seasons = [...new Set(transactions.map(t => t.season))].sort((a,b) => b-a);
+  document.getElementById('seasonFilter').innerHTML = '<option value="">All seasons</option>' +
+    seasons.map(s => `<option value="${s}">${s}</option>`).join('');
+  document.getElementById('managerFilter').innerHTML = '<option value="">All managers</option>' +
+    managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+
+  const tradeSeasons = [...new Set(trades.map(t => t.season))].sort((a,b) => b-a);
+  document.getElementById('tradeSeasonFilter').innerHTML = '<option value="">All seasons</option>' +
+    tradeSeasons.map(s => `<option value="${s}">${s}</option>`).join('');
+  document.getElementById('tradeManagerFilter').innerHTML = '<option value="">All managers</option>' +
+    managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+
+  ['seasonFilter','managerFilter','typeFilter'].forEach(id =>
+    document.getElementById(id).addEventListener('change', renderLog));
+  document.getElementById('playerSearch').addEventListener('input', renderLog);
+  ['tradeSeasonFilter','tradeManagerFilter'].forEach(id =>
+    document.getElementById(id).addEventListener('change', renderTrades));
+  document.getElementById('tradePlayerSearch').addEventListener('input', renderTrades);
+
+  renderLog();
+  renderTrades();
+  renderSummary();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('transactions');
+init();
+</script>
+</body>
+</html>

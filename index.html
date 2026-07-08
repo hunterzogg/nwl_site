@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=2">
+</head>
+<body>
+
+<div class="hero">
+  <img src="assets/img/nwl_logo.svg" alt="National Wayzata League logo" style="width: 110px; margin-bottom: 16px;">
+  <h1>National<br>Wayzata League</h1>
+  <p class="sub">Thirteen years of rivalries, dynasties, and legendary collapses — every game, every record, every ounce of glory.</p>
+</div>
+
+<div id="scorebug" class="scorebug" style="margin-top: 32px;"></div>
+
+<div class="container">
+  <a href="pages/season-2026.html" class="season-banner" style="display:flex; text-decoration:none; cursor:pointer;">
+    <div>
+      <div class="season-banner-label"><span class="nav-live-dot"></span>2026 Season</div>
+      <h2>This Week in the NWL</h2>
+    </div>
+    <p style="color: var(--text-muted); margin: 0; max-width: 340px; font-size: 0.9rem;">
+      Matchups, standings, power rankings, and commentary for the current season &rarr;
+    </p>
+  </a>
+
+  <div class="section-title">Explore the archive</div>
+  <div class="card-grid">
+    <a class="card" href="pages/hall-of-fame.html">
+      <h3>Hall of Fame</h3>
+      <p>League records, head-to-head history, and a year-by-year reference.</p>
+    </a>
+    <a class="card" href="pages/managers.html">
+      <h3>Managers</h3>
+      <p>Every manager, past and present — career stats, top picks, and biggest moves.</p>
+    </a>
+    <a class="card" href="pages/scorigami.html">
+      <h3>Scorigami</h3>
+      <p>Every unique final score in league history — and how many times it's happened.</p>
+    </a>
+    <a class="card" href="pages/rankings.html">
+      <h3>Team Rankings</h3>
+      <p>Scoring-adjusted leaderboard. Accounts for the years scoring rules changed, so eras compare fairly.</p>
+    </a>
+    <a class="card" href="pages/draft.html">
+      <h3>Draft History</h3>
+      <p>Every pick since 2013, browsable by year or by manager. Includes round-by-round strategy trends.</p>
+    </a>
+    <a class="card" href="pages/transactions.html">
+      <h3>Transactions</h3>
+      <p>Every waiver win, waiver loss, free agent grab, and trade — filterable by year or manager.</p>
+    </a>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="assets/js/shared.js?v=2"></script>
+<script>
+async function buildScorebug() {
+  const [weekly, matchups] = await Promise.all([
+    loadData('weekly_scores'), loadData('matchup_results')
+  ]);
+
+  const seasons = new Set(weekly.map(r => r.season));
+  const totalPoints = weekly.reduce((sum, r) => sum + parseFloat(r.score), 0);
+
+  const cells = [
+    { value: seasons.size, label: 'Seasons' },
+    { value: Math.round(totalPoints).toLocaleString(), label: 'Points scored, all-time' },
+    { value: matchups.length.toLocaleString(), label: 'Matchups played' },
+  ];
+
+  document.getElementById('scorebug').innerHTML = cells.map(c => `
+    <div class="scorebug-cell">
+      <div class="scorebug-value">${c.value}</div>
+      <div class="scorebug-label">${c.label}</div>
+    </div>
+  `).join('');
+}
+
+renderNav('home');
+buildScorebug();
+</script>
+</body>
+</html>

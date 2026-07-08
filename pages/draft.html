@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft History — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.panel { display: none; }
+.panel.active { display: block; }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.controls-row select, .controls-row input {
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 150px;
+}
+.pos-tag { font-family: var(--font-mono); font-size: 0.78rem; }
+.records-group-title {
+  font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
+}
+.records-group-title:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Draft History</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Every pick since 2013.</p>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="board">Draft Board</button>
+    <button class="tab-btn" data-tab="strategy">Round 1-3 Strategy</button>
+    <button class="tab-btn" data-tab="slots">Draft Slot Analysis</button>
+  </div>
+
+  <div class="panel active" id="panel-board">
+    <div class="controls-row">
+      <select id="seasonFilter"></select>
+      <select id="managerFilter"></select>
+      <select id="positionFilter"></select>
+      <select id="teamFilter"></select>
+      <input type="text" id="playerSearch" placeholder="Search player name...">
+    </div>
+    <div id="boardTable"></div>
+  </div>
+
+  <div class="panel" id="panel-strategy">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      What position each manager has taken in rounds 1-3, by season, compared against that season's final finish.
+    </p>
+    <div class="controls-row">
+      <select id="strategyManager"></select>
+      <select id="strategyYear"></select>
+    </div>
+    <div id="strategyTable"></div>
+
+    <div class="records-group-title">Strategy Effectiveness (League-Wide)</div>
+    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+      Every Round 1-2-3 position combination ever used, how often, and how it tended to turn out.
+    </p>
+    <div id="strategySummaryTable"></div>
+  </div>
+
+  <div class="panel" id="panel-slots">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      How has each draft position (1st overall, 2nd overall, etc., based on Round 1 pick) fared on average?
+    </p>
+    <div id="slotsTable"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=2"></script>
+<script>
+let picks = [], managers = [], teamSeasons = [];
+
+function renderBoard() {
+  const season = document.getElementById('seasonFilter').value;
+  const manager = document.getElementById('managerFilter').value;
+  const position = document.getElementById('positionFilter').value;
+  const team = document.getElementById('teamFilter').value;
+  const search = document.getElementById('playerSearch').value.trim().toLowerCase();
+
+  let rows = picks;
+  if (season) rows = rows.filter(p => p.season === parseInt(season));
+  if (manager) rows = rows.filter(p => p.manager === manager);
+  if (position) rows = rows.filter(p => p.position === position);
+  if (team) rows = rows.filter(p => (p.player_nfl_team || '').toUpperCase() === team);
+  if (search) rows = rows.filter(p => p.player.toLowerCase().includes(search));
+
+  rows = rows.slice().sort((a,b) => a.season - b.season || a.overall_pick - b.overall_pick);
+
+  document.getElementById('boardTable').innerHTML = `
+    <table>
+      <thead><tr><th class="num">Yr</th><th class="num">Rd</th><th class="num">Pick</th><th>Player</th><th>Pos</th><th>NFL Team</th><th>Manager</th></tr></thead>
+      <tbody>
+        ${rows.slice(0, 500).map(p => `
+          <tr>
+            <td class="num">${p.season}</td>
+            <td class="num">${p.round}</td>
+            <td class="num">${p.overall_pick}</td>
+            <td>${p.player}</td>
+            <td>${posTag(p.position)}</td>
+            <td>${(p.player_nfl_team || '').toUpperCase()}</td>
+            <td>${managerTag(managers, p.manager)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    ${rows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${rows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
+    ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No picks match these filters.</p>` : ''}
+  `;
+}
+
+function finishLookup(season, manager) {
+  const ts = teamSeasons.find(t => t.season === season && t.manager === manager);
+  return ts ? ts.final_finish : '';
+}
+
+function renderStrategy() {
+  const manager = document.getElementById('strategyManager').value;
+  const year = document.getElementById('strategyYear').value;
+  let rows = picks.filter(p => p.round <= 3 && p.round >= 1);
+  if (manager) rows = rows.filter(p => p.manager === manager);
+  if (year) rows = rows.filter(p => String(p.season) === year);
+
+  const bySeasonManager = {};
+  rows.forEach(p => {
+    const key = p.season + '|' + p.manager;
+    if (!bySeasonManager[key]) bySeasonManager[key] = { season: p.season, manager: p.manager, r1: '', r2: '', r3: '' };
+    bySeasonManager[key]['r' + p.round] = p.position;
+  });
+
+  const list = Object.values(bySeasonManager).sort((a,b) => a.season - b.season || a.manager.localeCompare(b.manager));
+
+  document.getElementById('strategyTable').innerHTML = `
+    <table>
+      <thead><tr><th class="num">Season</th><th>Manager</th><th class="num">Rd 1</th><th class="num">Rd 2</th><th class="num">Rd 3</th><th>Strategy</th><th class="num">Finish</th></tr></thead>
+      <tbody>
+        ${list.map(r => `
+          <tr>
+            <td class="num">${r.season}</td>
+            <td>${managerTag(managers, r.manager)}</td>
+            <td class="num">${posTag(r.r1)}</td>
+            <td class="num">${posTag(r.r2)}</td>
+            <td class="num">${posTag(r.r3)}</td>
+            <td>${[r.r1,r.r2,r.r3].filter(Boolean).map(posTag).join(' &ndash; ')}</td>
+            <td class="num">${finishLookup(r.season, r.manager)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  // strategy effectiveness summary (always league-wide, regardless of manager filter)
+  const allRows = picks.filter(p => p.round <= 3 && p.round >= 1);
+  const bySM = {};
+  allRows.forEach(p => {
+    const key = p.season + '|' + p.manager;
+    if (!bySM[key]) bySM[key] = { season: p.season, manager: p.manager, r1: '', r2: '', r3: '' };
+    bySM[key]['r' + p.round] = p.position;
+  });
+  const bySMList = Object.values(bySM);
+
+  // figure out last-place finish per season (max final_finish that season)
+  const lastPlaceBySeason = {};
+  teamSeasons.forEach(t => {
+    const f = parseInt(t.final_finish);
+    if (!isNaN(f)) {
+      lastPlaceBySeason[t.season] = Math.max(lastPlaceBySeason[t.season] || 0, f);
+    }
+  });
+
+  const strategyStats = {};
+  bySMList.forEach(r => {
+    const strategy = [r.r1, r.r2, r.r3].filter(Boolean).join('-');
+    if (!strategy) return;
+    const finish = parseInt(finishLookup(r.season, r.manager));
+    if (!strategyStats[strategy]) strategyStats[strategy] = { count: 0, finishSum: 0, finishCount: 0, championships: 0, sackos: 0 };
+    strategyStats[strategy].count++;
+    if (!isNaN(finish)) {
+      strategyStats[strategy].finishSum += finish;
+      strategyStats[strategy].finishCount++;
+      if (finish === 1) strategyStats[strategy].championships++;
+      if (finish === lastPlaceBySeason[r.season]) strategyStats[strategy].sackos++;
+    }
+  });
+
+  const summaryRows = Object.entries(strategyStats)
+    .map(([strategy, s]) => ({ strategy, ...s, avgFinish: s.finishCount ? s.finishSum / s.finishCount : null }))
+    .sort((a,b) => b.count - a.count);
+
+  document.getElementById('strategySummaryTable').innerHTML = `
+    <table>
+      <thead><tr><th>Strategy</th><th class="num">Times Used</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
+      <tbody>
+        ${summaryRows.map(s => `
+          <tr>
+            <td>${s.strategy.split('-').map(posTag).join(' &ndash; ')}</td>
+            <td class="num">${s.count}</td>
+            <td class="num">${s.avgFinish !== null ? s.avgFinish.toFixed(1) : '—'}</td>
+            <td class="num">${s.championships}</td>
+            <td class="num">${s.sackos}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderSlots() {
+  const draftSlots = window._draftSlots;
+
+  // last place varies by season (10 managers in 2013, 12 from 2014 on)
+  const lastPlaceBySeason = {};
+  teamSeasons.forEach(t => {
+    const f = parseInt(t.final_finish);
+    if (!isNaN(f)) lastPlaceBySeason[t.season] = Math.max(lastPlaceBySeason[t.season] || 0, f);
+  });
+
+  const bySlot = {};
+  draftSlots.forEach(d => {
+    const slot = parseInt(d.draft_slot);
+    const ppg = parseFloat(d.ppg);
+    const finish = parseInt(d.final_finish);
+    const season = parseInt(d.season);
+    if (!bySlot[slot]) bySlot[slot] = { slot, ppgSum: 0, ppgCount: 0, finishSum: 0, finishCount: 0, championships: 0, sackos: 0 };
+    if (!isNaN(ppg)) { bySlot[slot].ppgSum += ppg; bySlot[slot].ppgCount++; }
+    if (!isNaN(finish)) {
+      bySlot[slot].finishSum += finish;
+      bySlot[slot].finishCount++;
+      if (finish === 1) bySlot[slot].championships++;
+      if (finish === lastPlaceBySeason[season]) bySlot[slot].sackos++;
+    }
+  });
+
+  const rows = Object.values(bySlot).sort((a,b) => a.slot - b.slot)
+    .map(r => ({ ...r, avgPpg: r.ppgCount ? r.ppgSum / r.ppgCount : null }));
+
+  const ppgValues = rows.map(r => r.avgPpg).filter(v => v !== null);
+  const bestPpg = Math.max(...ppgValues);
+  const worstPpg = Math.min(...ppgValues);
+
+  document.getElementById('slotsTable').innerHTML = `
+    <table>
+      <thead><tr><th class="num">Draft Slot</th><th class="num">Avg PPG</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td class="num">${r.slot}</td>
+            <td class="num" style="${r.avgPpg === bestPpg ? 'color:#4FA876;font-weight:600;' : r.avgPpg === worstPpg ? 'color:#E0524A;font-weight:600;' : ''}">${r.avgPpg !== null ? r.avgPpg.toFixed(1) : '—'}</td>
+            <td class="num">${r.finishCount ? (r.finishSum / r.finishCount).toFixed(1) : '—'}</td>
+            <td class="num">${r.championships}</td>
+            <td class="num">${r.sackos}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+
+    </table>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:10px;">
+      Draft slot = position in the draft order that year. PPG and finish are that manager's regular-season numbers for the year they held that slot.
+    </p>
+  `;
+}
+
+async function init() {
+  const [draftSlots, regSeasons] = await Promise.all([loadData('draft_slots'), loadData('team_seasons_regular')]);
+  window._draftSlots = draftSlots;
+  [picks, managers] = await Promise.all([loadData('draft_picks'), getManagers()]);
+  teamSeasons = regSeasons;
+  teamSeasons.forEach(t => t.season = parseInt(t.season));
+  picks.forEach(p => { p.season = parseInt(p.season); p.round = parseInt(p.round); p.overall_pick = parseInt(p.overall_pick); });
+
+  const seasons = [...new Set(picks.map(p => p.season))].sort((a,b) => b-a);
+  const positions = [...new Set(picks.map(p => p.position))].sort();
+  const teams = [...new Set(picks.map(p => (p.player_nfl_team || '').toUpperCase()).filter(Boolean))].sort();
+  const mgrOpts = managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+
+  document.getElementById('seasonFilter').innerHTML = '<option value="">All seasons</option>' +
+    seasons.map(s => `<option value="${s}">${s}</option>`).join('');
+  document.getElementById('managerFilter').innerHTML = '<option value="">All managers</option>' + mgrOpts;
+  document.getElementById('positionFilter').innerHTML = '<option value="">All positions</option>' +
+    positions.map(p => `<option value="${p}">${p}</option>`).join('');
+  document.getElementById('teamFilter').innerHTML = '<option value="">All NFL teams</option>' +
+    teams.map(t => `<option value="${t}">${t}</option>`).join('');
+  document.getElementById('strategyManager').innerHTML = '<option value="">All managers</option>' + mgrOpts;
+  const mostRecentSeason = Math.max(...seasons);
+  document.getElementById('strategyYear').innerHTML = '<option value="">All seasons</option>' +
+    seasons.map(s => `<option value="${s}"${s === mostRecentSeason ? ' selected' : ''}>${s}</option>`).join('');
+
+  ['seasonFilter','managerFilter','positionFilter','teamFilter'].forEach(id =>
+    document.getElementById(id).addEventListener('change', renderBoard));
+  document.getElementById('playerSearch').addEventListener('input', renderBoard);
+  document.getElementById('strategyManager').addEventListener('change', renderStrategy);
+  document.getElementById('strategyYear').addEventListener('change', renderStrategy);
+
+  renderBoard();
+  renderStrategy();
+  renderSlots();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('draft');
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+scripts/espn_credentials.json
+.DS_Store
+__pycache__/
+.devserver.py

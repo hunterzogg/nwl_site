@@ -1,0 +1,334 @@
+:root {
+  /* Palette */
+  --bg: #0B0F17;
+  --surface: #121826;
+  --surface-raised: #182236;
+  --line: #232E45;
+  --blue: #1E3FCB;
+  --blue-bright: #3D5FE0;
+  --red: #C8102E;
+  --text: #F4F6F9;
+  --text-muted: #7C8798;
+
+  /* Reserved for the 2026 Season section only - keeps it visually distinct from the
+     blue/red historical-archive palette used everywhere else on the site. */
+  --live: #F2B705;
+  --live-bright: #FFD23D;
+  --live-bg: rgba(242, 183, 5, 0.10);
+
+  /* Type */
+  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+  margin: 0;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.mono { font-family: var(--font-mono); }
+
+/* ---------- Top nav ---------- */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--blue);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand .stripe {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--red) 50%, var(--blue) 50%);
+  border-radius: 3px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  padding: 8px 14px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+.nav-links a.nav-live {
+  color: var(--live-bright);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav-links a.nav-live:hover,
+.nav-links a.nav-live.active {
+  background: var(--live-bg);
+}
+
+.nav-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live-bright);
+  box-shadow: 0 0 6px var(--live-bright);
+  flex-shrink: 0;
+}
+
+.nav-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 4px 6px;
+}
+
+/* ---------- 2026 Season banner (used only on the season page + homepage callout) ---------- */
+.season-banner {
+  background: linear-gradient(135deg, var(--live-bg), transparent 60%), var(--surface);
+  border: 1px solid var(--live);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+a.season-banner:hover {
+  border-color: var(--live-bright);
+  transform: translateY(-2px);
+}
+
+.season-banner-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--live-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.season-banner h1, .season-banner h2 {
+  margin: 0;
+}
+
+/* ---------- Scorebug ticker ---------- */
+.scorebug {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-top: 2px solid var(--blue);
+  border-bottom: 2px solid var(--red);
+  background: var(--surface);
+}
+
+.scorebug-cell {
+  flex: 1 1 160px;
+  padding: 16px 20px;
+  border-right: 1px solid var(--line);
+  text-align: center;
+}
+
+.scorebug-cell:last-child { border-right: none; }
+
+.scorebug-value {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.scorebug-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ---------- Layout ---------- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.hero {
+  padding: 56px 24px 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  color: var(--text);
+}
+
+.hero .sub {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-top: 12px;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--red);
+  padding-left: 10px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  border-color: var(--blue-bright);
+  transform: translateY(-2px);
+}
+
+.card h3 {
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.card p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin: 0;
+  font-family: var(--font-body);
+  text-transform: none;
+}
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--line);
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+td.num { font-family: var(--font-mono); text-align: right; }
+
+tr:hover td { background: var(--surface-raised); }
+
+
+/* Position color coding - applied site-wide */
+.pos-tag { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; }
+.pos-QB { color: #E0524A; }
+.pos-RB { color: #4FA876; }
+.pos-WR { color: #4F86D6; }
+.pos-TE { color: #D9B23C; }
+.pos-DST { color: #A9784F; }
+.pos-K { color: #4FC3D9; }
+.pos-HC { color: #7C8798; }
+
+.manager-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.manager-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 24px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .topnav { flex-direction: column; align-items: flex-start; }
+  .scorebug-cell { flex: 1 1 45%; }
+}
