@@ -32,6 +32,11 @@
 }
 .records-group-title:first-child { margin-top: 0; }
 .season-note { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; color: var(--text-muted); font-size: 0.88rem; }
+.weekly-score-table th.playoff-divider, .weekly-score-table td.playoff-divider { border-left: 2px solid var(--blue-bright); }
+.score-top { color: #4FA876; font-weight: 600; }
+.score-bottom { color: #E0524A; font-weight: 600; }
+.score-legend { display: flex; gap: 18px; margin: 8px 0 16px; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap; }
+.score-legend span.score-top, .score-legend span.score-bottom { font-weight: 600; }
 </style>
 </head>
 <body>
@@ -277,7 +282,28 @@ function buildSeason() {
     if (!playoffGrid[r.manager]) playoffGrid[r.manager] = {};
     playoffGrid[r.manager][r.week] = parseFloat(r.score).toFixed(1);
   });
-  const playoffManagers = standingsArr.filter(s => playoffGrid[s.manager]);
+
+  // Top 5 / bottom 5 scores for the season, colored green/red — computed separately for the
+  // regular-season pool and the (much smaller) playoff pool so playoff outliers don't just
+  // always win/lose against the larger regular-season sample.
+  function thresholds(scores, n = 5) {
+    if (!scores.length) return { top: Infinity, bottom: -Infinity };
+    const desc = scores.slice().sort((a,b) => b - a);
+    const asc = scores.slice().sort((a,b) => a - b);
+    return { top: desc[Math.min(n, desc.length) - 1], bottom: asc[Math.min(n, asc.length) - 1] };
+  }
+  const regThresh = thresholds(regular.map(r => parseFloat(r.score)));
+  const poThresh = thresholds(playoff.map(r => parseFloat(r.score)));
+
+  function scoreCell(value, thresh, extraClass) {
+    const classes = ['num'];
+    if (extraClass) classes.push(extraClass);
+    if (value === undefined) return `<td class="${classes.join(' ')}">&mdash;</td>`;
+    const num = parseFloat(value);
+    if (num >= thresh.top) classes.push('score-top');
+    else if (num <= thresh.bottom) classes.push('score-bottom');
+    return `<td class="${classes.join(' ')}">${value}</td>`;
+  }
 
   const finishSorted = seasonFinishes.slice().sort((a,b) => a.final_finish - b.final_finish);
   const top3 = finishSorted.slice(0, 3);
@@ -291,37 +317,36 @@ function buildSeason() {
       ${lastPlace ? ` &nbsp;&middot;&nbsp; &#128169; ${managerTag(managers, lastPlace.manager)} (last)` : ''}
     </div>
 
-    <div class="records-group-title">Weekly Scores &mdash; Regular Season</div>
+    <div class="records-group-title">Weekly Scores</div>
+    <div class="score-legend">
+      <span class="score-top">&#9632;</span> Top 5 scores this season
+      <span class="score-bottom">&#9632;</span> Bottom 5 scores this season
+    </div>
     <div style="overflow-x:auto;">
-    <table>
-      <thead><tr><th>Manager</th>${weeks.map(w => `<th class="num">Wk${w}</th>`).join('')}</tr></thead>
+    <table class="weekly-score-table">
+      <thead>
+        <tr>
+          <th rowspan="2">Manager</th>
+          <th colspan="${weeks.length}">Regular Season</th>
+          ${playoffWeeks.length ? `<th colspan="${playoffWeeks.length}" class="playoff-divider">Playoffs</th>` : ''}
+        </tr>
+        <tr>
+          ${weeks.map(w => `<th class="num">Wk${w}</th>`).join('')}
+          ${playoffWeeks.map((w, i) => `<th class="num${i === 0 ? ' playoff-divider' : ''}">Wk${w}</th>`).join('')}
+        </tr>
+      </thead>
       <tbody>
         ${standingsArr.map(s => `
           <tr>
             <td>${managerTag(managers, s.manager)}</td>
-            ${weeks.map(w => `<td class="num">${grid[s.manager] && grid[s.manager][w] !== undefined ? grid[s.manager][w] : '—'}</td>`).join('')}
+            ${weeks.map(w => scoreCell(grid[s.manager] && grid[s.manager][w], regThresh)).join('')}
+            ${playoffWeeks.map((w, i) => scoreCell(playoffGrid[s.manager] && playoffGrid[s.manager][w], poThresh, i === 0 ? 'playoff-divider' : '')).join('')}
           </tr>
         `).join('')}
       </tbody>
     </table>
     </div>
-
-    ${playoffManagers.length ? `
-    <div class="records-group-title">Weekly Scores &mdash; Playoffs</div>
-    <div style="overflow-x:auto;">
-    <table>
-      <thead><tr><th>Manager</th>${playoffWeeks.map(w => `<th class="num">Wk${w}</th>`).join('')}</tr></thead>
-      <tbody>
-        ${playoffManagers.map(s => `
-          <tr>
-            <td>${managerTag(managers, s.manager)}</td>
-            ${playoffWeeks.map(w => `<td class="num">${playoffGrid[s.manager] && playoffGrid[s.manager][w] !== undefined ? playoffGrid[s.manager][w] : '—'}</td>`).join('')}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    </div>
-    ` : ''}
+    ${playoffWeeks.length === 0 ? `<p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px;">No playoff weeks recorded for this season.</p>` : ''}
 
     <div class="records-group-title">Standings by Division</div>
     ${divisions.map(div => `

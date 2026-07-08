@@ -44,6 +44,11 @@
 .commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; white-space: pre-wrap; }
 .commentary-title { margin-bottom: 12px; }
 .updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
+.comments-section { margin-top: 28px; }
+.comments-title {
+  font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 12px; border-left: 3px solid var(--live); padding-left: 10px;
+}
 </style>
 </head>
 <body>
@@ -196,6 +201,11 @@ function renderPower() {
   `).join('');
 }
 
+const GISCUS_REPO = 'hunterzogg/nwl_site';
+const GISCUS_REPO_ID = 'R_kgDOTSHvaA';
+const GISCUS_CATEGORY = 'Announcements';
+const GISCUS_CATEGORY_ID = 'DIC_kwDOTSHvaM4DAyKl';
+
 function renderCommentary() {
   const week = document.getElementById('commentaryWeek').value;
   const entry = commentary.find(c => String(c.week) === String(week) && c.published);
@@ -209,7 +219,29 @@ function renderCommentary() {
       ${entry.title ? `<h2 class="commentary-title">${entry.title}</h2>` : ''}
       ${entry.body}
     </div>
+    <div class="comments-section">
+      <div class="comments-title">Discussion</div>
+      <div id="giscus-container"></div>
+    </div>
   `;
+
+  const script = document.createElement('script');
+  script.src = 'https://giscus.app/client.js';
+  script.setAttribute('data-repo', GISCUS_REPO);
+  script.setAttribute('data-repo-id', GISCUS_REPO_ID);
+  script.setAttribute('data-category', GISCUS_CATEGORY);
+  script.setAttribute('data-category-id', GISCUS_CATEGORY_ID);
+  script.setAttribute('data-mapping', 'specific');
+  script.setAttribute('data-term', `season-2026-week-${entry.week}`);
+  script.setAttribute('data-strict', '0');
+  script.setAttribute('data-reactions-enabled', '1');
+  script.setAttribute('data-emit-metadata', '0');
+  script.setAttribute('data-input-position', 'top');
+  script.setAttribute('data-theme', 'noborder_dark');
+  script.setAttribute('data-lang', 'en');
+  script.setAttribute('crossorigin', 'anonymous');
+  script.async = true;
+  document.getElementById('giscus-container').appendChild(script);
 }
 
 async function init() {

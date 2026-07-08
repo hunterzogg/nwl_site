@@ -71,8 +71,13 @@
 
 <script src="../assets/js/shared.js?v=2"></script>
 <script>
+const MANAGER_INITIALS = {
+  Ainsworth: 'LA', Conlin: 'JC', Glaser: 'EG', Goetz: 'NG', Hagan: 'MH',
+  Larson: 'JL', Muenchow: 'MM', Palaia: 'CP', Pfaffinger: 'JP', Prodahl: 'BP',
+  Stover: 'MS', Zogg: 'HZ', Stowe: 'BS',
+};
 function initials(name) {
-  return name.slice(0, 2).toUpperCase();
+  return MANAGER_INITIALS[name] || name.slice(0, 2).toUpperCase();
 }
 
 function parseTradePlayers(field) {

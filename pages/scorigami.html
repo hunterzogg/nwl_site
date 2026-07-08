@@ -12,7 +12,13 @@
 .stat-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 20px; min-width: 160px; }
 .stat-box .v { font-family: var(--font-mono); font-size: 1.6rem; color: var(--text); }
 .stat-box .l { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
-#gridWrap { position: relative; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
+#gridWrap { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; touch-action: pan-x pan-y; }
+.combo-cell { cursor: pointer; }
+@media (max-width: 640px) {
+  .stat-row { gap: 10px; }
+  .stat-box { flex: 1 1 44%; min-width: 0; padding: 12px 14px; }
+  .stat-box .v { font-size: 1.25rem; }
+}
 .axis-label {
   font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--text-muted); text-align: center;
@@ -30,14 +36,14 @@
 
 <div class="container" style="padding-top: 24px;">
   <h1 style="margin-bottom: 6px;">Scorigami</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history. Winning score along the bottom, losing score up the side &mdash; hover any square for detail.</p>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history. Winning score along the bottom, losing score up the side &mdash; tap or hover any square for detail.</p>
 
   <div id="statRow" class="stat-row"></div>
 
   <div id="gridWrap">
     <svg id="grid"></svg>
   </div>
-  <p class="note">Every recorded score in league history is shown. Tie games appear on the diagonal.</p>
+  <p class="note">Every recorded score in league history is shown. Tie games appear on the diagonal. Tap or hover a square for detail &mdash; on mobile, scroll to pan and tap elsewhere to dismiss.</p>
 </div>
 
 <div id="tooltip"></div>
@@ -68,8 +74,8 @@ async function init() {
     <div class="stat-box"><div class="v">${highestCombined.w}-${highestCombined.l}</div><div class="l">Highest combined score</div></div>
   `;
 
-  // grid geometry
-  const cellSize = 9;
+  // grid geometry — bigger cells on narrow screens so squares are easier to tap accurately
+  const cellSize = window.innerWidth < 640 ? 13 : 9;
   const cols = maxW - MIN_AXIS + 1;
   const rows = maxL - MIN_AXIS + 1;
   const marginLeft = 40, marginBottom = 30, marginTop = 10, marginRight = 10;
@@ -131,20 +137,35 @@ async function init() {
   svg.appendChild(yLabel);
 
   const tooltip = document.getElementById('tooltip');
+  function fillTooltip(cell) {
+    const { w, l, count, rs, rw, winner, loser } = cell.dataset;
+    tooltip.innerHTML = `
+      <div class="tt-score">${w}-${l}</div>
+      <div class="tt-detail">${count}&times; all-time</div>
+      <div class="tt-detail">Most recent: ${winner} over ${loser}, Wk${rw} ${rs}</div>
+    `;
+  }
+  function placeTooltip(x, y) {
+    const maxLeft = window.innerWidth - 232;
+    tooltip.style.left = Math.max(8, Math.min(x, maxLeft)) + 'px';
+    tooltip.style.top = Math.max(8, y) + 'px';
+    tooltip.style.display = 'block';
+  }
   svg.querySelectorAll('.combo-cell').forEach(cell => {
     cell.addEventListener('mousemove', (e) => {
-      const { w, l, count, rs, rw, winner, loser } = cell.dataset;
-      tooltip.innerHTML = `
-        <div class="tt-score">${w}-${l}</div>
-        <div class="tt-detail">${count}&times; all-time</div>
-        <div class="tt-detail">Most recent: ${winner} over ${loser}, Wk${rw} ${rs}</div>
-      `;
-      tooltip.style.display = 'block';
-      tooltip.style.left = (e.clientX + 14) + 'px';
-      tooltip.style.top = (e.clientY + 10) + 'px';
+      fillTooltip(cell);
+      placeTooltip(e.clientX + 14, e.clientY + 10);
     });
     cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    // Tap-to-pin for touch devices, where there's no hover state.
+    cell.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fillTooltip(cell);
+      const rect = cell.getBoundingClientRect();
+      placeTooltip(rect.left, rect.bottom + 6);
+    });
   });
+  document.addEventListener('click', () => { tooltip.style.display = 'none'; });
 }
 
 renderNav('scorigami');

@@ -3,6 +3,8 @@
 const NWL_HOME = { href: 'index.html', label: 'Home' };
 const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Season' };
 
+const NWL_FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdlRcbl_1SBWOAbBbGUIxTdhPbcd68vc0Dz3ZQoTouUNaoCNQ/viewform';
+
 const NWL_PAGES = [
   { href: 'pages/hall-of-fame.html', label: 'Hall of Fame' },
   { href: 'pages/managers.html', label: 'Managers' },
@@ -36,12 +38,15 @@ function renderNav(activeHref) {
     </a>
     <div class="nav-links">
       ${homeLink}
+      <span class="nav-divider"></span>
       ${liveLink}
       <span class="nav-divider"></span>
       ${NWL_PAGES.map(p => {
         const isActive = activeHref === p.label.toLowerCase();
         return `<a href="${resolveHref(p)}" class="${isActive ? 'active' : ''}">${p.label}</a>`;
       }).join('')}
+      <span class="nav-divider"></span>
+      <a href="${NWL_FEEDBACK_URL}" target="_blank" rel="noopener" class="nav-feedback">Feedback</a>
     </div>
   `;
   document.body.prepend(nav);

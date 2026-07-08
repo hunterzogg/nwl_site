@@ -104,9 +104,9 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
     <table>
       <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">Adj. PPG</th><th class="num">Raw PPG</th>${hasOpp ? '<th class="num">Opp. Adj. PPG</th><th class="num">Opp. Raw PPG</th>' : ''}<th class="num">Games</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
       <tbody>
-        ${sorted.map((r, i) => `
+        ${sorted.map(r => `
           <tr>
-            <td><span class="rank-num">${i+1}</span></td>
+            <td><span class="rank-num">${r.rank[sortKey]}</span></td>
             <td>${r.managerTag}</td>
             <td class="num">${r.season}</td>
             <td class="num">${r.adjPpg.toFixed(2)}</td>
@@ -157,6 +157,21 @@ async function init() {
     season: t.season, manager: t.manager, managerTag: managerTag(managers, t.manager),
     rawPpg: parseFloat(t.ppg), adjPpg: parseFloat(t.ppg) * (factor[t.season] || 1), games: t.games
   }));
+
+  // Overall rank per sort metric, computed against the full unfiltered population so the
+  // Rank column stays meaningful (a manager's #3 raw-PPG season is still #3 even when a
+  // manager/season filter narrows what's on screen) instead of re-ranking within the filter.
+  function assignOverallRanks(rows, keys) {
+    const getters = { adj: r => r.adjPpg, raw: r => r.rawPpg, opp: r => r.oppAdjPpg };
+    rows.forEach(r => r.rank = {});
+    keys.forEach(key => {
+      rows.slice().sort((a,b) => getters[key](b) - getters[key](a)).forEach((r, i) => {
+        r.rank[key] = i + 1;
+      });
+    });
+  }
+  assignOverallRanks(regularRows, ['adj', 'raw', 'opp']);
+  assignOverallRanks(playoffRows, ['adj', 'raw']);
 
   // Fixed rank (by adjusted PPG, independent of any filter/sort the user picks) so the
   // playoff-vs-regular-season comparison column stays meaningful no matter how the table
