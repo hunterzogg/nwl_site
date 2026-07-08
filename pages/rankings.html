@@ -24,7 +24,7 @@ details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem
 .tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
 .panel { display: none; }
 .panel.active { display: block; }
-.sort-row { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+.sort-row { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
 .sort-btn {
   font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
   padding: 6px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
@@ -101,6 +101,7 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
   document.getElementById(targetId).innerHTML = sorted.length === 0
     ? `<p style="color:var(--text-muted)">No seasons match this filter.</p>`
     : `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">Adj. PPG</th><th class="num">Raw PPG</th>${hasOpp ? '<th class="num">Opp. Adj. PPG</th><th class="num">Opp. Raw PPG</th>' : ''}<th class="num">Games</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
       <tbody>
@@ -118,6 +119,7 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 }
 

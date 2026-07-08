@@ -161,6 +161,7 @@ function renderStandings() {
   }
   document.getElementById('standingsContent').innerHTML = `
     <p class="updated-note">As of week ${standings.week} &middot; updated ${new Date(standings.updated_at).toLocaleString()}</p>
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
       <tbody>
@@ -177,6 +178,7 @@ function renderStandings() {
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 }
 

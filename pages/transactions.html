@@ -154,6 +154,7 @@ function renderLog() {
   }
 
   document.getElementById('txTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Date</th><th>Player</th><th>Pos</th><th>Manager</th><th>Type</th><th class="num">Bid</th><th>Outcome</th></tr></thead>
       <tbody>
@@ -164,6 +165,7 @@ function renderLog() {
         }).join('')}
       </tbody>
     </table>
+    </div>
     ${displayRows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${displayRows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
     ${displayRows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No transactions match these filters.</p>` : ''}
   `;
@@ -183,6 +185,7 @@ function renderTrades() {
   rows = rows.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
 
   document.getElementById('tradesTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Date</th><th>Team 1</th><th>Received</th><th>Team 2</th><th>Received</th></tr></thead>
       <tbody>
@@ -197,6 +200,7 @@ function renderTrades() {
         `).join('')}
       </tbody>
     </table>
+    </div>
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No trades match these filters.</p>` : ''}
   `;
 }
@@ -243,6 +247,7 @@ function renderSummary() {
     .sort((a,b) => b.total - a.total);
 
   document.getElementById('summaryManagerTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Manager</th><th class="num">Total Transactions</th><th class="num">Avg / Season</th><th class="num">Most in a Season</th><th class="num">Fewest in a Season</th></tr></thead>
       <tbody>
@@ -257,6 +262,7 @@ function renderSummary() {
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 
   // Acquisition type breakdown (from transaction log, best data we have for this split)

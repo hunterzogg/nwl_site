@@ -101,6 +101,7 @@ function renderBoard() {
   rows = rows.slice().sort((a,b) => a.season - b.season || a.overall_pick - b.overall_pick);
 
   document.getElementById('boardTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Yr</th><th class="num">Rd</th><th class="num">Pick</th><th>Player</th><th>Pos</th><th>NFL Team</th><th>Manager</th></tr></thead>
       <tbody>
@@ -117,6 +118,7 @@ function renderBoard() {
         `).join('')}
       </tbody>
     </table>
+    </div>
     ${rows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${rows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No picks match these filters.</p>` : ''}
   `;
@@ -144,6 +146,7 @@ function renderStrategy() {
   const list = Object.values(bySeasonManager).sort((a,b) => a.season - b.season || a.manager.localeCompare(b.manager));
 
   document.getElementById('strategyTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Season</th><th>Manager</th><th class="num">Rd 1</th><th class="num">Rd 2</th><th class="num">Rd 3</th><th>Strategy</th><th class="num">Finish</th></tr></thead>
       <tbody>
@@ -154,12 +157,13 @@ function renderStrategy() {
             <td class="num">${posTag(r.r1)}</td>
             <td class="num">${posTag(r.r2)}</td>
             <td class="num">${posTag(r.r3)}</td>
-            <td>${[r.r1,r.r2,r.r3].filter(Boolean).map(posTag).join(' &ndash; ')}</td>
+            <td style="white-space:nowrap;">${[r.r1,r.r2,r.r3].filter(Boolean).map(posTag).join('/')}</td>
             <td class="num">${finishLookup(r.season, r.manager)}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 
   // strategy effectiveness summary (always league-wide, regardless of manager filter)
@@ -201,12 +205,13 @@ function renderStrategy() {
     .sort((a,b) => b.count - a.count);
 
   document.getElementById('strategySummaryTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th>Strategy</th><th class="num">Times Used</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
       <tbody>
         ${summaryRows.map(s => `
           <tr>
-            <td>${s.strategy.split('-').map(posTag).join(' &ndash; ')}</td>
+            <td style="white-space:nowrap;">${s.strategy.split('-').map(posTag).join('/')}</td>
             <td class="num">${s.count}</td>
             <td class="num">${s.avgFinish !== null ? s.avgFinish.toFixed(1) : '—'}</td>
             <td class="num">${s.championships}</td>
@@ -215,6 +220,7 @@ function renderStrategy() {
         `).join('')}
       </tbody>
     </table>
+    </div>
   `;
 }
 
@@ -252,6 +258,7 @@ function renderSlots() {
   const worstPpg = Math.min(...ppgValues);
 
   document.getElementById('slotsTable').innerHTML = `
+    <div style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Draft Slot</th><th class="num">Avg PPG</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
       <tbody>
@@ -267,6 +274,7 @@ function renderSlots() {
       </tbody>
 
     </table>
+    </div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:10px;">
       Draft slot = position in the draft order that year. PPG and finish are that manager's regular-season numbers for the year they held that slot.
     </p>

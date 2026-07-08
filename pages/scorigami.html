@@ -12,7 +12,13 @@
 .stat-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 20px; min-width: 160px; }
 .stat-box .v { font-family: var(--font-mono); font-size: 1.6rem; color: var(--text); }
 .stat-box .l { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
-#gridWrap { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; touch-action: pan-x pan-y; }
+#gridWrap { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+#gridScroll { overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; max-height: min(62vh, 600px); border-radius: 6px; }
+.grid-shell { display: grid; grid-template-columns: max-content max-content; grid-template-rows: max-content max-content; width: max-content; }
+.grid-corner { position: sticky; top: 0; left: 0; z-index: 5; background: var(--surface); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+#gridTopAxis { position: sticky; top: 0; z-index: 4; background: var(--surface); border-bottom: 1px solid var(--line); display: block; }
+#gridLeftAxis { position: sticky; left: 0; z-index: 4; background: var(--surface); border-right: 1px solid var(--line); display: block; }
+#grid { display: block; }
 .combo-cell { cursor: pointer; }
 @media (max-width: 640px) {
   .stat-row { gap: 10px; }
@@ -36,12 +42,19 @@
 
 <div class="container" style="padding-top: 24px;">
   <h1 style="margin-bottom: 6px;">Scorigami</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history. Winning score along the bottom, losing score up the side &mdash; tap or hover any square for detail.</p>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history. Winning score across the top, losing score down the side &mdash; both stay in view as you scroll. Tap or hover any square for detail.</p>
 
   <div id="statRow" class="stat-row"></div>
 
   <div id="gridWrap">
-    <svg id="grid"></svg>
+    <div id="gridScroll">
+      <div class="grid-shell">
+        <div id="gridCorner" class="grid-corner"></div>
+        <svg id="gridTopAxis"></svg>
+        <svg id="gridLeftAxis"></svg>
+        <svg id="grid"></svg>
+      </div>
+    </div>
   </div>
   <p class="note">Every recorded score in league history is shown. Tie games appear on the diagonal. Tap or hover a square for detail &mdash; on mobile, scroll to pan and tap elsewhere to dismiss.</p>
 </div>
@@ -78,36 +91,61 @@ async function init() {
   const cellSize = window.innerWidth < 640 ? 13 : 9;
   const cols = maxW - MIN_AXIS + 1;
   const rows = maxL - MIN_AXIS + 1;
-  const marginLeft = 40, marginBottom = 30, marginTop = 10, marginRight = 10;
   const plotWidth = cols * cellSize;
   const plotHeight = rows * cellSize;
-  const svgWidth = plotWidth + marginLeft + marginRight;
-  const svgHeight = plotHeight + marginTop + marginBottom;
+  const topAxisHeight = 22, leftAxisWidth = 32;
 
+  function xPos(w) { return (w - MIN_AXIS) * cellSize; }
+  function yPos(l) { return (maxL - l) * cellSize; }
+
+  // corner box — sized to match the sticky axis strips so the grid lines up
+  const corner = document.getElementById('gridCorner');
+  corner.style.width = leftAxisWidth + 'px';
+  corner.style.height = topAxisHeight + 'px';
+
+  // top axis (winning score) — pinned via CSS sticky while scrolling vertically
+  const topSvg = document.getElementById('gridTopAxis');
+  topSvg.setAttribute('width', plotWidth);
+  topSvg.setAttribute('height', topAxisHeight);
+  topSvg.setAttribute('viewBox', `0 0 ${plotWidth} ${topAxisHeight}`);
+  let topContent = '';
+  for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
+    const x = xPos(w) + (cellSize - 1) / 2;
+    topContent += `<text x="${x}" y="${topAxisHeight - 8}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="middle">${w}</text>`;
+  }
+  topSvg.innerHTML = topContent;
+
+  // left axis (losing score) — pinned via CSS sticky while scrolling horizontally
+  const leftSvg = document.getElementById('gridLeftAxis');
+  leftSvg.setAttribute('width', leftAxisWidth);
+  leftSvg.setAttribute('height', plotHeight);
+  leftSvg.setAttribute('viewBox', `0 0 ${leftAxisWidth} ${plotHeight}`);
+  let leftContent = '';
+  for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
+    const y = yPos(l) + (cellSize - 1) / 2;
+    leftContent += `<text x="${leftAxisWidth - 6}" y="${y + 3}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="end">${l}</text>`;
+  }
+  leftSvg.innerHTML = leftContent;
+
+  // cells + gridlines
   const svg = document.getElementById('grid');
-  svg.setAttribute('width', svgWidth);
-  svg.setAttribute('height', svgHeight);
-  svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
-
-  function xPos(w) { return marginLeft + (w - MIN_AXIS) * cellSize; }
-  function yPos(l) { return marginTop + (maxL - l) * cellSize; }
+  svg.setAttribute('width', plotWidth);
+  svg.setAttribute('height', plotHeight);
+  svg.setAttribute('viewBox', `0 0 ${plotWidth} ${plotHeight}`);
 
   let svgContent = '';
 
-  // axis ticks every 20 points
   for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
-    const x = xPos(w) ;
-    svgContent += `<line x1="${x}" y1="${marginTop}" x2="${x}" y2="${marginTop+plotHeight}" stroke="#232E45" stroke-width="0.5"/>`;
-    svgContent += `<text x="${x}" y="${marginTop+plotHeight+18}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="middle">${w}</text>`;
+    const x = xPos(w);
+    svgContent += `<line x1="${x}" y1="0" x2="${x}" y2="${plotHeight}" stroke="#232E45" stroke-width="0.5"/>`;
   }
   for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
     const y = yPos(l);
-    svgContent += `<line x1="${marginLeft}" y1="${y}" x2="${marginLeft+plotWidth}" y2="${y}" stroke="#232E45" stroke-width="0.5"/>`;
-    svgContent += `<text x="${marginLeft-6}" y="${y+3}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="end">${l}</text>`;
+    svgContent += `<line x1="0" y1="${y}" x2="${plotWidth}" y2="${y}" stroke="#232E45" stroke-width="0.5"/>`;
   }
 
   // diagonal reference line (winning == losing, ties live here, area below is impossible since winner can't score less than loser)
-  svgContent += `<line x1="${xPos(MIN_AXIS)}" y1="${yPos(MIN_AXIS)}" x2="${xPos(maxL > maxW ? maxW : maxW)}" y2="${yPos(MIN_AXIS)}" stroke="#C8102E" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.4"/>`;
+  svgContent += `<line x1="${xPos(MIN_AXIS)}" y1="${yPos(MIN_AXIS)}" x2="${xPos(maxW)}" y2="${yPos(MIN_AXIS)}" stroke="#C8102E" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.4"/>`;
 
   combos.forEach(c => {
     const x = xPos(c.w), y = yPos(c.l);
@@ -119,22 +157,7 @@ async function init() {
       x="${x}" y="${y}" width="${cellSize-1}" height="${cellSize-1}" fill="${color}" opacity="${opacity}" rx="1"/>`;
   });
 
-  svgContent += `<text x="${marginLeft+plotWidth/2}" y="${svgHeight-2}" font-family="Oswald" font-size="10" letter-spacing="1" fill="#7C8798" text-anchor="middle" text-transform="uppercase">WINNING SCORE</text>`;
-
   svg.innerHTML = svgContent;
-
-  // rotated y-axis label
-  const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  yLabel.setAttribute('x', '12');
-  yLabel.setAttribute('y', String(marginTop + plotHeight/2));
-  yLabel.setAttribute('font-family', 'Oswald');
-  yLabel.setAttribute('font-size', '10');
-  yLabel.setAttribute('letter-spacing', '1');
-  yLabel.setAttribute('fill', '#7C8798');
-  yLabel.setAttribute('text-anchor', 'middle');
-  yLabel.setAttribute('transform', `rotate(-90, 12, ${marginTop + plotHeight/2})`);
-  yLabel.textContent = 'LOSING SCORE';
-  svg.appendChild(yLabel);
 
   const tooltip = document.getElementById('tooltip');
   function fillTooltip(cell) {
