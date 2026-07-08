@@ -2,11 +2,26 @@
 
 ## Project Overview
 
-Static website for the National Wayzata League (NWL), a 13-season dynasty-style fantasy football league. Built with vanilla HTML/CSS/JS, hosted via GitHub Pages or Netlify (not yet deployed). All data is stored as JSON files loaded via `fetch()` — requires a local server or real hosting to run (double-clicking HTML files won't work due to browser `file://` security restrictions).
+Static website for the National Wayzata League (NWL), a 13-season dynasty-style fantasy football league. Built with vanilla HTML/CSS/JS. All data is stored as JSON files loaded via `fetch()` — requires a local server or real hosting to run (double-clicking HTML files won't work due to browser `file://` security restrictions).
 
-**To run locally:**
+**Live at https://hunterzogg.github.io/nwl_site/** (GitHub Pages, deployed from
+github.com/hunterzogg/nwl_site, `main` branch, root path). Public repo - GitHub Pages' free tier
+requires it; there's no true "private but shared" middle ground without paying for GitHub Pro.
+
+**Project lives at `~/nwl_site`** (moved out of Downloads - see REVIEW_LOG Round 15) and is a real
+git repo now (see REVIEW_LOG Round 16 for the full hosting setup). To publish a change:
 ```
-cd nwl_site
+cd ~/nwl_site
+git add -A
+git commit -m "describe the change"
+git push
+# GitHub Pages rebuilds automatically, usually live within a minute
+```
+`scripts/espn_credentials.json` is gitignored - never gets committed or pushed, stays local only.
+
+**To run locally (for testing before you push):**
+```
+cd ~/nwl_site
 python3 -m http.server 8000
 # then open http://localhost:8000
 ```

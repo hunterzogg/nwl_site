@@ -696,3 +696,34 @@ shipped site) to point at the new location and verified all 8 pages still load w
 errors. The old `~/Downloads/NWL Handoff/` folder still has the original (now superseded)
 top-level `HANDOFF.md` and a stale `nwl_site.zip` snapshot - left in place rather than deleted,
 since they're Hunter's to clean up if he wants.
+
+## Round 16 - Site is live on GitHub Pages
+
+Talked through hosting options (GitHub Pages vs Netlify vs Vercel/Cloudflare Pages) before doing
+anything. Hunter chose: GitHub Pages, public-but-unlisted repo (no real private option on free
+tiers - Pages requires a public repo unless paying for GitHub Pro), free `github.io` subdomain
+for now.
+
+Setup:
+- Installed the GitHub CLI (`gh`) via Homebrew (compiled Go from source as a dependency - took a
+  few minutes).
+- Set git identity (Hunter Zogg / hunterzogg23@gmail.com), `git init`'d the project (it had never
+  been a repo before this).
+- Added `__pycache__/` and `.devserver.py` to `.gitignore` alongside the existing
+  `espn_credentials.json` exclusion - confirmed via `git status` before every commit that nothing
+  sensitive was ever staged.
+- Hunter didn't have a GitHub account yet - walked him through creating one, then through the
+  `gh auth login --web` device-code flow (two attempts; the first code expired while he was still
+  signing up, second one worked).
+- `gh repo create nwl_site --public --source=. --remote=origin --push` - created
+  github.com/hunterzogg/nwl_site and pushed the initial commit (32 files) in one step.
+- Enabled Pages via `gh api repos/hunterzogg/nwl_site/pages` (branch main, path /).
+- **Live at https://hunterzogg.github.io/nwl_site/** - verified via curl (200s on every page and
+  a data file) and a real browser load (screenshot confirms fonts, logo, and live data all
+  render correctly, zero console errors).
+
+**Ongoing publish workflow, from here on**: edit files locally same as always, then
+`git add -A && git commit -m "..." && git push` from `~/nwl_site`. GitHub Pages rebuilds
+automatically in under a minute. This replaces the zip-file handoff process used everywhere
+earlier in this project - REVIEW_LOG.md and HANDOFF.md should keep being updated the same way,
+just committed instead of zipped.
