@@ -6,7 +6,7 @@
 <title>2026 Season — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<link rel="stylesheet" href="../assets/css/style.css?v=3">
 <style>
 .tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
 .tab-btn {
@@ -161,7 +161,7 @@ function renderStandings() {
   }
   document.getElementById('standingsContent').innerHTML = `
     <p class="updated-note">As of week ${standings.week} &middot; updated ${new Date(standings.updated_at).toLocaleString()}</p>
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
       <tbody>
@@ -178,6 +178,17 @@ function renderStandings() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${standings.standings.map(s => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${managerTag(managers, s.manager)}</span>
+            <span class="mono">${s.wins}-${s.losses}${s.ties ? '-' + s.ties : ''}</span>
+          </div>
+          <div class="table-card-sub">PF ${s.points_for.toFixed(1)} &middot; PA ${s.points_against.toFixed(1)} &middot; Streak ${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</div>
+        </div>
+      `).join('')}
     </div>
   `;
 }

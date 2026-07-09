@@ -6,7 +6,7 @@
 <title>Transactions — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<link rel="stylesheet" href="../assets/css/style.css?v=3">
 <style>
 .tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
 .tab-btn {
@@ -153,8 +153,24 @@ function renderLog() {
     `;
   }
 
+  function txCard(t, nested) {
+    return `
+      <div class="table-card" style="${nested ? 'opacity:0.7; padding-left:16px;' : ''}">
+        <div class="table-card-top">
+          ${posTag(t.position)}
+          <span class="grow">${nested ? '&#8627; ' : ''}${t.player}</span>
+          ${managerTag(managers, t.manager)}
+        </div>
+        <div class="table-card-sub">
+          ${t.date} &middot; <span class="type-badge type-${t.acquisition_type}">${t.acquisition_type.replace('_',' ')}</span>
+          ${t.bid_amount ? ` &middot; $${t.bid_amount}` : ''} &middot; ${capitalize(t.bid_outcome)}
+        </div>
+      </div>
+    `;
+  }
+
   document.getElementById('txTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Date</th><th>Player</th><th>Pos</th><th>Manager</th><th>Type</th><th class="num">Bid</th><th>Outcome</th></tr></thead>
       <tbody>
@@ -165,6 +181,13 @@ function renderLog() {
         }).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${displayRows.slice(0, 500).map(t => {
+        let html = txCard(t, false);
+        if (t._nested && t._nested.length) html += t._nested.map(n => txCard(n, true)).join('');
+        return html;
+      }).join('')}
     </div>
     ${displayRows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${displayRows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
     ${displayRows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No transactions match these filters.</p>` : ''}
@@ -185,7 +208,7 @@ function renderTrades() {
   rows = rows.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
 
   document.getElementById('tradesTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Date</th><th>Team 1</th><th>Received</th><th>Team 2</th><th>Received</th></tr></thead>
       <tbody>
@@ -200,6 +223,18 @@ function renderTrades() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${rows.map(t => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow mono" style="font-weight:400;">${t.date}</span>
+            ${t.precision !== 'exact_date' ? '<span class="precision-note">(year only)</span>' : ''}
+          </div>
+          <div class="table-card-sub">${managerTag(managers, t.team1)} got: ${t.team1_received}</div>
+          ${t.team2 ? `<div class="table-card-sub">${managerTag(managers, t.team2)} got: ${t.team2_received}</div>` : ''}
+        </div>
+      `).join('')}
     </div>
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No trades match these filters.</p>` : ''}
   `;
@@ -247,7 +282,7 @@ function renderSummary() {
     .sort((a,b) => b.total - a.total);
 
   document.getElementById('summaryManagerTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Manager</th><th class="num">Total Transactions</th><th class="num">Avg / Season</th><th class="num">Most in a Season</th><th class="num">Fewest in a Season</th></tr></thead>
       <tbody>
@@ -262,6 +297,17 @@ function renderSummary() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${mgrRows.map(m => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${managerTag(managers, m.manager)}</span>
+            <span class="mono" style="color:var(--text-muted);">${m.total} total</span>
+          </div>
+          <div class="table-card-sub">Avg ${m.avg.toFixed(1)}/season &middot; Most ${m.most.count} (${m.most.season}) &middot; Fewest ${m.fewest.count} (${m.fewest.season})</div>
+        </div>
+      `).join('')}
     </div>
   `;
 

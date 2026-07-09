@@ -6,7 +6,7 @@
 <title>Team Rankings — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<link rel="stylesheet" href="../assets/css/style.css?v=3">
 <style>
 .methodology {
   background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
@@ -98,10 +98,12 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
     if (sortKey === 'raw') return b.rawPpg - a.rawPpg;
     return b.oppAdjPpg - a.oppAdjPpg;
   });
+  const rankDeltaColor = (d) => d < 0 ? '#E0524A' : d > 0 ? '#4FA876' : 'inherit';
+
   document.getElementById(targetId).innerHTML = sorted.length === 0
     ? `<p style="color:var(--text-muted)">No seasons match this filter.</p>`
     : `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">Adj. PPG</th><th class="num">Raw PPG</th>${hasOpp ? '<th class="num">Opp. Adj. PPG</th><th class="num">Opp. Raw PPG</th>' : ''}<th class="num">Games</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
       <tbody>
@@ -114,11 +116,28 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
             <td class="num">${r.rawPpg.toFixed(2)}</td>
             ${hasOpp ? `<td class="num">${r.oppAdjPpg.toFixed(2)}</td><td class="num">${r.oppPpg.toFixed(2)}</td>` : ''}
             <td class="num">${r.games}</td>
-            ${hasRankDelta ? `<td class="num" style="color:${r.rankDelta < 0 ? '#E0524A' : r.rankDelta > 0 ? '#4FA876' : 'inherit'}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</td>` : ''}
+            ${hasRankDelta ? `<td class="num" style="color:${rankDeltaColor(r.rankDelta)}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</td>` : ''}
           </tr>
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${sorted.map(r => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="rank-num">${r.rank[sortKey]}</span>
+            <span class="grow">${r.managerTag}</span>
+            <span class="mono" style="color:var(--text-muted);">${r.season}</span>
+          </div>
+          <div class="table-card-sub">
+            Adj ${r.adjPpg.toFixed(2)} &middot; Raw ${r.rawPpg.toFixed(2)}
+            ${hasOpp ? ` &middot; Opp Adj ${r.oppAdjPpg.toFixed(2)} &middot; Opp Raw ${r.oppPpg.toFixed(2)}` : ''}
+            &middot; ${r.games} gm
+            ${hasRankDelta ? ` &middot; Reg&minus;Playoff <span style="color:${rankDeltaColor(r.rankDelta)}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</span>` : ''}
+          </div>
+        </div>
+      `).join('')}
     </div>
   `;
 }

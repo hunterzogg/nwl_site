@@ -301,6 +301,22 @@ th.num { text-align: right; }
 
 tr:hover td { background: var(--surface-raised); }
 
+/* Responsive table -> card swap for anything with too many columns to fit a phone
+   screen without horizontal scrolling. Markup pattern: wrap the normal <table> in
+   `.table-wide`, and add a sibling `.table-cards` with one `.table-card` per row -
+   CSS toggles which one is visible per breakpoint, no JS involved. Not meant for
+   genuine data grids (e.g. the weekly-scores matrix) where a card would just be the
+   same wide row restated - those are left as an intentionally scrollable table. */
+.table-cards { display: none; }
+.table-card { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.table-card:last-child { border-bottom: none; }
+.table-card-top { display: flex; align-items: center; gap: 8px; }
+.table-card-top .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.table-card-sub { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 4px; line-height: 1.6; }
+@media (max-width: 640px) {
+  .table-wide { display: none; }
+  .table-cards { display: block; }
+}
 
 /* Position color coding - applied site-wide */
 .pos-tag { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; }

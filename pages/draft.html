@@ -6,7 +6,7 @@
 <title>Draft History — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=2">
+<link rel="stylesheet" href="../assets/css/style.css?v=3">
 <style>
 .tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
 .tab-btn {
@@ -191,7 +191,7 @@ function renderBoard() {
   rows = rows.slice().sort((a,b) => a.season - b.season || a.overall_pick - b.overall_pick);
 
   document.getElementById('boardTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Yr</th><th class="num">Rd</th><th class="num">Pick</th><th>Player</th><th>Pos</th><th>NFL Team</th><th>Manager</th></tr></thead>
       <tbody>
@@ -208,6 +208,18 @@ function renderBoard() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${rows.slice(0, 500).map(p => `
+        <div class="table-card">
+          <div class="table-card-top">
+            ${posTag(p.position)}
+            <span class="grow">${p.player}</span>
+            ${managerTag(managers, p.manager)}
+          </div>
+          <div class="table-card-sub">${p.season} &middot; Rd${p.round}, Pick ${p.overall_pick} &middot; ${(p.player_nfl_team || '').toUpperCase()}</div>
+        </div>
+      `).join('')}
     </div>
     ${rows.length > 500 ? `<p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Showing first 500 of ${rows.length} &mdash; narrow your filters to see more precisely.</p>` : ''}
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No picks match these filters.</p>` : ''}
@@ -236,7 +248,7 @@ function renderStrategy() {
   const list = Object.values(bySeasonManager).sort((a,b) => a.season - b.season || a.manager.localeCompare(b.manager));
 
   document.getElementById('strategyTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Season</th><th>Manager</th><th class="num">Rd 1</th><th class="num">Rd 2</th><th class="num">Rd 3</th><th>Strategy</th><th class="num">Finish</th></tr></thead>
       <tbody>
@@ -253,6 +265,17 @@ function renderStrategy() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${list.map(r => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${managerTag(managers, r.manager)}</span>
+            <span class="mono" style="color:var(--text-muted);">${r.season}</span>
+          </div>
+          <div class="table-card-sub">${[r.r1,r.r2,r.r3].filter(Boolean).map(posTag).join('/')} &middot; Finish ${finishLookup(r.season, r.manager)}</div>
+        </div>
+      `).join('')}
     </div>
   `;
 
@@ -295,7 +318,7 @@ function renderStrategy() {
     .sort((a,b) => b.count - a.count);
 
   document.getElementById('strategySummaryTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th>Strategy</th><th class="num">Times Used</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
       <tbody>
@@ -310,6 +333,17 @@ function renderStrategy() {
         `).join('')}
       </tbody>
     </table>
+    </div>
+    <div class="table-cards">
+      ${summaryRows.map(s => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${s.strategy.split('-').map(posTag).join('/')}</span>
+            <span class="mono" style="color:var(--text-muted);">${s.count}&times;</span>
+          </div>
+          <div class="table-card-sub">Avg Finish ${s.avgFinish !== null ? s.avgFinish.toFixed(1) : '—'} &middot; Titles ${s.championships} &middot; Sackos ${s.sackos}</div>
+        </div>
+      `).join('')}
     </div>
   `;
 }
@@ -347,15 +381,17 @@ function renderSlots() {
   const bestPpg = Math.max(...ppgValues);
   const worstPpg = Math.min(...ppgValues);
 
+  const ppgStyle = (v) => v === bestPpg ? 'color:#4FA876;font-weight:600;' : v === worstPpg ? 'color:#E0524A;font-weight:600;' : '';
+
   document.getElementById('slotsTable').innerHTML = `
-    <div style="overflow-x:auto;">
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Draft Slot</th><th class="num">Avg PPG</th><th class="num">Avg Finish</th><th class="num">Championships</th><th class="num">Sackos</th></tr></thead>
       <tbody>
         ${rows.map(r => `
           <tr>
             <td class="num">${r.slot}</td>
-            <td class="num" style="${r.avgPpg === bestPpg ? 'color:#4FA876;font-weight:600;' : r.avgPpg === worstPpg ? 'color:#E0524A;font-weight:600;' : ''}">${r.avgPpg !== null ? r.avgPpg.toFixed(1) : '—'}</td>
+            <td class="num" style="${ppgStyle(r.avgPpg)}">${r.avgPpg !== null ? r.avgPpg.toFixed(1) : '—'}</td>
             <td class="num">${r.finishCount ? (r.finishSum / r.finishCount).toFixed(1) : '—'}</td>
             <td class="num">${r.championships}</td>
             <td class="num">${r.sackos}</td>
@@ -364,6 +400,17 @@ function renderSlots() {
       </tbody>
 
     </table>
+    </div>
+    <div class="table-cards">
+      ${rows.map(r => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">Slot #${r.slot}</span>
+            <span class="mono" style="${ppgStyle(r.avgPpg)}">${r.avgPpg !== null ? r.avgPpg.toFixed(1) : '—'} PPG</span>
+          </div>
+          <div class="table-card-sub">Avg Finish ${r.finishCount ? (r.finishSum / r.finishCount).toFixed(1) : '—'} &middot; Titles ${r.championships} &middot; Sackos ${r.sackos}</div>
+        </div>
+      `).join('')}
     </div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:10px;">
       Draft slot = position in the draft order that year. PPG and finish are that manager's regular-season numbers for the year they held that slot.
@@ -576,8 +623,13 @@ function renderGradesSeasonTable() {
 
 function pickTableHTML(picks) {
   const rows = picks.slice().sort((a, b) => a.overall_pick - b.overall_pick);
-  return `
-    <div style="overflow-x:auto;">
+  const diffColor = (d) => d > 0 ? '#4FA876' : d < 0 ? '#E0524A' : 'inherit';
+  const noStats = (p) => !p.matched ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(no stats)</span>' : '';
+
+  // Wide table for desktop/tablet — hidden below 640px in favor of stacked cards,
+  // since a 9-column table never comfortably fits a phone screen (see .table-cards).
+  const table = `
+    <div class="table-wide" style="overflow-x:auto;">
     <table>
       <thead><tr><th class="num">Rd</th><th class="num">Pick</th><th>Player</th><th>Pos</th><th class="num">Draft Rank</th><th class="num">Finish Rank</th><th class="num">Half-PPR Pts</th><th class="num">Diff</th><th>Grade</th></tr></thead>
       <tbody>
@@ -585,12 +637,12 @@ function pickTableHTML(picks) {
           <tr>
             <td class="num">${p.round}</td>
             <td class="num">${p.overall_pick}</td>
-            <td>${p.player}${!p.matched ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(no stats)</span>' : ''}</td>
+            <td>${p.player}${noStats(p)}</td>
             <td>${posTag(p.position)}</td>
             <td class="num">${p.position}${p.position_draft_rank}</td>
             <td class="num">${p.position}${p.position_finish_rank}</td>
             <td class="num">${p.half_ppr_points.toFixed(1)}</td>
-            <td class="num" style="color:${p.diff > 0 ? '#4FA876' : p.diff < 0 ? '#E0524A' : 'inherit'};">${p.diff > 0 ? '+' : ''}${p.diff}</td>
+            <td class="num" style="color:${diffColor(p.diff)};">${p.diff > 0 ? '+' : ''}${p.diff}</td>
             <td>${gradeBadge(p.grade, true)}</td>
           </tr>
         `).join('')}
@@ -598,6 +650,27 @@ function pickTableHTML(picks) {
     </table>
     </div>
   `;
+
+  const cards = `
+    <div class="table-cards">
+      ${rows.map(p => `
+        <div class="table-card">
+          <div class="table-card-top">
+            ${gradeBadge(p.grade, true)}
+            <span class="grow">${p.player}</span>
+            ${posTag(p.position)}
+          </div>
+          <div class="table-card-sub">
+            Rd${p.round}, Pick ${p.overall_pick} &middot; ${p.position}${p.position_draft_rank} &rarr; ${p.position}${p.position_finish_rank}
+            &middot; ${p.half_ppr_points.toFixed(1)} pts &middot;
+            <span style="color:${diffColor(p.diff)};">${p.diff > 0 ? '+' : ''}${p.diff}</span>${noStats(p)}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  return table + cards;
 }
 
 // The plain-English "how you got this grade" line: N picks, their grade mix,
