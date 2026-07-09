@@ -28,6 +28,55 @@
   color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
 }
 .records-group-title:first-child { margin-top: 0; }
+.methodology {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
+}
+.methodology strong { color: var(--text); }
+.methodology .caveat { margin-top: 8px; font-size: 0.82rem; }
+.methodology details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem; margin-top: 8px; }
+.grade-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  min-width: 42px; padding: 4px 8px; border-radius: 5px; letter-spacing: 0.02em;
+}
+.grade-badge.sm { font-size: 0.8rem; min-width: 34px; padding: 2px 6px; }
+.grade-lead {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+  cursor: pointer;
+}
+.grade-lead .rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 26px; flex-shrink: 0; }
+.grade-lead .mgr-body { flex: 1; min-width: 0; }
+.grade-lead .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.grade-lead .chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.15s; flex-shrink: 0; }
+.grade-lead.expanded .chevron { transform: rotate(180deg); }
+.grade-detail { display: none; padding: 4px 18px 16px; margin-top: -10px; margin-bottom: 10px; border: 1px solid var(--line); border-top: none; border-radius: 0 0 8px 8px; background: var(--surface); }
+.grade-detail.expanded { display: block; }
+.grade-season-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 0.88rem; cursor: pointer; }
+.grade-season-row:last-child { border-bottom: none; }
+.grade-season-row:hover .yr { color: var(--text); }
+.grade-season-row .yr { font-family: var(--font-mono); color: var(--text-muted); width: 46px; }
+.grade-season-row .season-chevron { color: var(--text-muted); font-size: 0.65rem; transition: transform 0.15s; flex-shrink: 0; }
+.grade-season-row.expanded .season-chevron { transform: rotate(180deg); }
+.composite { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem; flex-shrink: 0; }
+.grade-season-row .composite { margin-left: auto; }
+.dist-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dist-chip { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; }
+.dist-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 2px; }
+.mgr-body .dist-row { margin-top: 3px; }
+.season-picks-wrap { display: none; padding: 6px 0 14px 58px; }
+.season-picks-wrap.expanded { display: block; }
+.how-arrived {
+  font-size: 0.8rem; color: var(--text-muted); background: var(--surface-raised);
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.grades-row { cursor: pointer; }
+.row-chevron { display: inline-block; color: var(--text-muted); font-size: 0.65rem; transition: transform 0.15s; }
+.grades-row.expanded .row-chevron { transform: rotate(180deg); }
+.grades-detail-tr { display: none; }
+.grades-detail-tr.expanded { display: table-row; }
+.grades-detail-td { background: var(--surface-raised); padding: 16px 18px !important; border-bottom: 1px solid var(--line); }
 </style>
 </head>
 <body>
@@ -40,6 +89,7 @@
     <button class="tab-btn active" data-tab="board">Draft Board</button>
     <button class="tab-btn" data-tab="strategy">Round 1-3 Strategy</button>
     <button class="tab-btn" data-tab="slots">Draft Slot Analysis</button>
+    <button class="tab-btn" data-tab="grades">Draft Grades</button>
   </div>
 
   <div class="panel active" id="panel-board">
@@ -75,6 +125,46 @@
       How has each draft position (1st overall, 2nd overall, etc., based on Round 1 pick) fared on average?
     </p>
     <div id="slotsTable"></div>
+  </div>
+
+  <div class="panel" id="panel-grades">
+    <div class="methodology">
+      <strong>Methodology:</strong> Every QB/RB/WR/TE pick is graded on <strong>value</strong> (did
+      they outperform where we drafted them) and <strong>production</strong> (was the season just
+      good, full stop), weighted equally and curved into a percentile-based grade.
+      <details>
+        <summary>Show full methodology</summary>
+        <p style="margin-top:10px;">
+        <strong>Position draft rank</strong> is where a player went in <em>our</em> draft (the 3rd WR
+        taken is WR3, the 12th WR taken is WR12, regardless of round or overall pick), compared against
+        <strong>position finish rank</strong>, where they actually finished among all NFL players at
+        that position that season by half-PPR points &mdash; that gap is the value signal.
+        <strong>Production</strong> is simply how good the season was, full stop, regardless of draft
+        slot &mdash; a top-3 finish at the position counts as strong production even if it came a
+        couple of spots below where they were drafted. Blending both matters: WR3 finishing as WR18 is
+        a bad miss on value alone, WR25 finishing as WR15 is a great value pick, and an RB1 finishing
+        as RB3 grades well even though it's technically a -2 slip in rank, because a top-3 running back
+        season is exactly what an RB1 pick is for. Grades are curved on a percentile basis across all
+        154 manager-seasons (for a single draft) or all 13 managers (for the overall ranking) &mdash;
+        so grades are always relative to how everyone else in the league drafted, not an absolute bar.
+        <strong>Value Score</strong> (0&ndash;100) is that percentile, so a Value Score of 80 means
+        that draft (or manager) out-valued about 80% of the league.
+        </p>
+        <div class="caveat">Half-PPR stats sourced from nflverse's public play-by-play data. About 1.4%
+        of graded picks (mostly season-ending injuries, suspensions, or holdouts with zero recorded
+        stats that season) are scored as a full bust &mdash; that's the correct outcome for a pick that
+        produced nothing, not a data gap.</div>
+      </details>
+    </div>
+
+    <div class="records-group-title">Manager Draft Rankings</div>
+    <div id="managerGradesLeaderboard"></div>
+
+    <div class="records-group-title">Every Draft, Graded</div>
+    <div class="controls-row">
+      <select id="gradesSeasonFilter"></select>
+    </div>
+    <div id="gradesSeasonTable"></div>
   </div>
 </div>
 
@@ -281,6 +371,246 @@ function renderSlots() {
   `;
 }
 
+// ---------- Draft Grades ----------
+let draftGrades = [], seasonGrades = [], managerGrades = [];
+
+const GRADE_BANDS = [
+  { min: 0.95, label: 'A+' }, { min: 0.87, label: 'A' }, { min: 0.79, label: 'A-' },
+  { min: 0.70, label: 'B+' }, { min: 0.61, label: 'B' }, { min: 0.52, label: 'B-' },
+  { min: 0.43, label: 'C+' }, { min: 0.34, label: 'C' }, { min: 0.25, label: 'C-' },
+  { min: 0.16, label: 'D+' }, { min: 0.08, label: 'D' }, { min: 0.03, label: 'D-' },
+  { min: 0, label: 'F' },
+];
+function letterGrade(percentile) {
+  for (const b of GRADE_BANDS) if (percentile >= b.min) return b.label;
+  return 'F';
+}
+function gradeColor(label) {
+  if (label.startsWith('A')) return '#4FA876';
+  if (label.startsWith('B')) return '#4F86D6';
+  if (label.startsWith('C')) return '#9AA5B8';
+  if (label.startsWith('D')) return '#D9B23C';
+  return '#E0524A';
+}
+function gradeBadge(label, sm) {
+  return `<span class="grade-badge${sm ? ' sm' : ''}" style="background:${gradeColor(label)}22;color:${gradeColor(label)};border:1px solid ${gradeColor(label)}55;">${label}</span>`;
+}
+function percentileRank(value, allValues) {
+  let below = 0, equal = 0;
+  allValues.forEach(v => { if (v < value) below++; else if (v === value) equal++; });
+  return (below + 0.5 * equal) / allValues.length;
+}
+
+// How a set of items' individual grades rolled up into one aggregate grade —
+// e.g. a season's picks, or a manager's seasons.
+function gradeDistribution(items) {
+  const counts = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+  items.forEach(item => { counts[item.grade[0]]++; });
+  return counts;
+}
+function distributionChips(counts, label) {
+  const chips = ['A','B','C','D','F'].filter(k => counts[k] > 0)
+    .map(k => `<span class="dist-chip" style="color:${gradeColor(k)};">${counts[k]}${k}</span>`).join(' ');
+  return `<span class="dist-row">${label ? `<span class="dist-label">${label}</span>` : ''}${chips}</span>`;
+}
+
+function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function stdev(arr, m) {
+  const mu = m === undefined ? mean(arr) : m;
+  return Math.sqrt(arr.reduce((a, v) => a + (v - mu) ** 2, 0) / arr.length);
+}
+function zscore(v, m, sd) { return sd ? (v - m) / sd : 0; }
+
+// A pick's grade blends two signals, equally weighted:
+//  - value: did the player outperform where we drafted them (normalized_diff, from the pipeline)
+//  - production: was the player just good, period — their finish percentile at the position that
+//    season, regardless of where they were drafted. Without this, a pick like RB1-drafted-finishes-RB3
+//    grades as mediocre because of the -2 rank wobble, even though a top-3 RB season is a clear win.
+// Both are z-scored against the whole picks population first so they contribute comparable weight
+// (normalized_diff and finish-percentile aren't naturally on the same scale).
+const VALUE_WEIGHT = 0.5, PRODUCTION_WEIGHT = 0.5;
+
+function buildDraftGrades(rows) {
+  rows.forEach(r => { r.production_signal = (r.position_pool_size - r.position_finish_rank + 1) / r.position_pool_size; });
+
+  const diffVals = rows.map(r => r.normalized_diff);
+  const prodVals = rows.map(r => r.production_signal);
+  const diffMean = mean(diffVals), diffSd = stdev(diffVals, diffMean);
+  const prodMean = mean(prodVals), prodSd = stdev(prodVals, prodMean);
+  rows.forEach(r => {
+    r.value_z = zscore(r.normalized_diff, diffMean, diffSd);
+    r.production_z = zscore(r.production_signal, prodMean, prodSd);
+    r.composite_signal = VALUE_WEIGHT * r.value_z + PRODUCTION_WEIGHT * r.production_z;
+  });
+
+  // per-pick percentile grade, for coloring individual picks in the detail table
+  const allComposite = rows.map(r => r.composite_signal);
+  rows.forEach(r => { r.percentile = percentileRank(r.composite_signal, allComposite); r.grade = letterGrade(r.percentile); });
+
+  // per manager-season composite (average blended signal across that draft's graded picks)
+  const bySeasonManager = {};
+  rows.forEach(p => {
+    const key = p.season + '|' + p.manager;
+    if (!bySeasonManager[key]) bySeasonManager[key] = { season: p.season, manager: p.manager, picks: [] };
+    bySeasonManager[key].picks.push(p);
+  });
+  const seasons = Object.values(bySeasonManager).map(s => ({
+    ...s, composite: s.picks.reduce((a, p) => a + p.composite_signal, 0) / s.picks.length,
+  }));
+  const allSeasonComposites = seasons.map(s => s.composite);
+  seasons.forEach(s => { s.percentile = percentileRank(s.composite, allSeasonComposites); s.grade = letterGrade(s.percentile); });
+
+  // per-manager overall rollup (average of that manager's season composites, equal-weighted per season)
+  const byManager = {};
+  seasons.forEach(s => { (byManager[s.manager] = byManager[s.manager] || []).push(s); });
+  const managersRolled = Object.entries(byManager).map(([manager, mSeasons]) => {
+    mSeasons.sort((a, b) => b.season - a.season);
+    const composite = mSeasons.reduce((a, s) => a + s.composite, 0) / mSeasons.length;
+    return { manager, seasons: mSeasons, composite };
+  });
+  const allMgrComposites = managersRolled.map(m => m.composite);
+  managersRolled.forEach(m => {
+    m.percentile = percentileRank(m.composite, allMgrComposites);
+    m.grade = letterGrade(m.percentile);
+    m.best = m.seasons.slice().sort((a, b) => b.composite - a.composite)[0];
+    m.worst = m.seasons.slice().sort((a, b) => a.composite - b.composite)[0];
+  });
+  managersRolled.sort((a, b) => b.composite - a.composite);
+  managersRolled.forEach((m, i) => { m.rank = i + 1; });
+
+  return { seasons, managersRolled };
+}
+
+function renderManagerGradesLeaderboard() {
+  document.getElementById('managerGradesLeaderboard').innerHTML = managerGrades.map(m => `
+    <div class="grade-lead" data-manager="${m.manager}">
+      <span class="rank-num">${m.rank}</span>
+      ${gradeBadge(m.grade)}
+      <div class="mgr-body">
+        ${managerTag(managers, m.manager)}
+        <div class="mgr-sub">${m.seasons.length} draft${m.seasons.length === 1 ? '' : 's'} graded &middot; best ${m.best.season} (${m.best.grade}) &middot; worst ${m.worst.season} (${m.worst.grade})</div>
+        <div class="dist-row">${distributionChips(gradeDistribution(m.seasons), 'Season grades')}</div>
+      </div>
+      <span class="composite">Value ${Math.round(m.percentile * 100)}</span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="grade-detail">
+      ${m.seasons.map(s => `
+        <div class="grade-season-row" data-season="${s.season}" data-manager="${m.manager}">
+          <span class="yr">${s.season}</span>
+          ${gradeBadge(s.grade, true)}
+          ${distributionChips(gradeDistribution(s.picks))}
+          <span class="composite">Value ${Math.round(s.percentile * 100)}</span>
+          <span class="season-chevron">&#9660;</span>
+        </div>
+        <div class="season-picks-wrap"></div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.grade-lead').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('expanded');
+      el.nextElementSibling.classList.toggle('expanded');
+    });
+  });
+
+  // manager -> season -> pick-by-pick, all inline, no need to leave the leaderboard
+  document.querySelectorAll('.grade-season-row').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wrap = row.nextElementSibling;
+      const nowExpanded = row.classList.toggle('expanded');
+      wrap.classList.toggle('expanded', nowExpanded);
+      if (nowExpanded && !wrap.dataset.built) {
+        const entry = seasonGrades.find(s => String(s.season) === row.dataset.season && s.manager === row.dataset.manager);
+        wrap.innerHTML = howArrivedHTML(entry) + pickTableHTML(entry.picks);
+        wrap.dataset.built = '1';
+      }
+    });
+  });
+}
+
+function renderGradesSeasonTable() {
+  const season = document.getElementById('gradesSeasonFilter').value;
+  let rows = seasonGrades.slice();
+  if (season) rows = rows.filter(r => String(r.season) === season);
+  rows.sort((a, b) => b.percentile - a.percentile);
+
+  document.getElementById('gradesSeasonTable').innerHTML = rows.length === 0
+    ? `<p style="color:var(--text-muted)">No drafts match this filter.</p>`
+    : `
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th class="num">Season</th><th>Manager</th><th>Grade</th><th class="num">Value Score</th><th></th></tr></thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr class="grades-row" data-season="${r.season}" data-manager="${r.manager}">
+            <td class="num">${r.season}</td>
+            <td>${managerTag(managers, r.manager)}</td>
+            <td>${gradeBadge(r.grade, true)}</td>
+            <td class="num">${Math.round(r.percentile * 100)}</td>
+            <td class="num"><span class="row-chevron">&#9660;</span></td>
+          </tr>
+          <tr class="grades-detail-tr"><td colspan="5" class="grades-detail-td"></td></tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+  `;
+
+  document.querySelectorAll('.grades-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const detailTr = row.nextElementSibling;
+      const td = detailTr.querySelector('.grades-detail-td');
+      const nowExpanded = row.classList.toggle('expanded');
+      detailTr.classList.toggle('expanded', nowExpanded);
+      if (nowExpanded && !td.dataset.built) {
+        const entry = seasonGrades.find(s => String(s.season) === row.dataset.season && s.manager === row.dataset.manager);
+        td.innerHTML = howArrivedHTML(entry) + pickTableHTML(entry.picks);
+        td.dataset.built = '1';
+      }
+    });
+  });
+}
+
+function pickTableHTML(picks) {
+  const rows = picks.slice().sort((a, b) => a.overall_pick - b.overall_pick);
+  return `
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr><th class="num">Rd</th><th class="num">Pick</th><th>Player</th><th>Pos</th><th class="num">Draft Rank</th><th class="num">Finish Rank</th><th class="num">Half-PPR Pts</th><th class="num">Diff</th><th>Grade</th></tr></thead>
+      <tbody>
+        ${rows.map(p => `
+          <tr>
+            <td class="num">${p.round}</td>
+            <td class="num">${p.overall_pick}</td>
+            <td>${p.player}${!p.matched ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(no stats)</span>' : ''}</td>
+            <td>${posTag(p.position)}</td>
+            <td class="num">${p.position}${p.position_draft_rank}</td>
+            <td class="num">${p.position}${p.position_finish_rank}</td>
+            <td class="num">${p.half_ppr_points.toFixed(1)}</td>
+            <td class="num" style="color:${p.diff > 0 ? '#4FA876' : p.diff < 0 ? '#E0524A' : 'inherit'};">${p.diff > 0 ? '+' : ''}${p.diff}</td>
+            <td>${gradeBadge(p.grade, true)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+  `;
+}
+
+// The plain-English "how you got this grade" line: N picks, their grade mix,
+// the resulting average value, and where that landed on the curve.
+function howArrivedHTML(entry) {
+  const dist = gradeDistribution(entry.picks);
+  return `
+    <div class="how-arrived">
+      <span>${entry.picks.length} picks graded &rarr; ${distributionChips(dist)} &rarr; averaged to a Value Score of <strong style="color:var(--text);">${Math.round(entry.percentile * 100)}</strong> &rarr; ${gradeBadge(entry.grade, true)} on the league curve</span>
+    </div>
+  `;
+}
+
 async function init() {
   const [draftSlots, regSeasons] = await Promise.all([loadData('draft_slots'), loadData('team_seasons_regular')]);
   window._draftSlots = draftSlots;
@@ -306,15 +636,26 @@ async function init() {
   document.getElementById('strategyYear').innerHTML = '<option value="">All seasons</option>' +
     seasons.map(s => `<option value="${s}"${s === mostRecentSeason ? ' selected' : ''}>${s}</option>`).join('');
 
+  document.getElementById('gradesSeasonFilter').innerHTML = '<option value="">All seasons</option>' +
+    seasons.map(s => `<option value="${s}"${s === mostRecentSeason ? ' selected' : ''}>${s}</option>`).join('');
+
   ['seasonFilter','managerFilter','positionFilter','teamFilter'].forEach(id =>
     document.getElementById(id).addEventListener('change', renderBoard));
   document.getElementById('playerSearch').addEventListener('input', renderBoard);
   document.getElementById('strategyManager').addEventListener('change', renderStrategy);
   document.getElementById('strategyYear').addEventListener('change', renderStrategy);
+  document.getElementById('gradesSeasonFilter').addEventListener('change', renderGradesSeasonTable);
 
   renderBoard();
   renderStrategy();
   renderSlots();
+
+  draftGrades = await loadData('draft_grades');
+  const built = buildDraftGrades(draftGrades);
+  seasonGrades = built.seasons;
+  managerGrades = built.managersRolled;
+  renderManagerGradesLeaderboard();
+  renderGradesSeasonTable();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {

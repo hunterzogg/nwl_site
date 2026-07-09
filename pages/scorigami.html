@@ -12,6 +12,21 @@
 .stat-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 20px; min-width: 160px; }
 .stat-box .v { font-family: var(--font-mono); font-size: 1.6rem; color: var(--text); }
 .stat-box .l { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+.zoom-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.zoom-btn {
+  width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1rem; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 4px; color: var(--text); cursor: pointer;
+}
+.zoom-btn:hover { border-color: var(--blue-bright); }
+.zoom-btn:disabled { opacity: 0.4; cursor: default; }
+.zoom-btn:disabled:hover { border-color: var(--line); }
+#zoomSlider { flex: 1 1 auto; max-width: 220px; accent-color: var(--blue-bright); }
+.zoom-reset {
+  width: auto; padding: 0 12px; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.zoom-reset.at-fit { color: var(--blue-bright); border-color: var(--blue-bright); }
 #gridWrap { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
 #gridScroll { overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; max-height: min(62vh, 600px); border-radius: 6px; }
 .grid-shell { display: grid; grid-template-columns: max-content max-content; grid-template-rows: max-content max-content; width: max-content; }
@@ -42,9 +57,16 @@
 
 <div class="container" style="padding-top: 24px;">
   <h1 style="margin-bottom: 6px;">Scorigami</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history. Winning score across the top, losing score down the side &mdash; both stay in view as you scroll. Tap or hover any square for detail.</p>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history, zoomed out to fit on one screen. Winning score across the top, losing score down the side &mdash; both stay in view as you scroll. Zoom in to find a specific score and tap or hover a square for detail.</p>
 
   <div id="statRow" class="stat-row"></div>
+
+  <div class="zoom-row">
+    <button id="zoomOut" class="zoom-btn" aria-label="Zoom out">&minus;</button>
+    <input type="range" id="zoomSlider" min="0" max="0" value="0" step="1" aria-label="Zoom level">
+    <button id="zoomIn" class="zoom-btn" aria-label="Zoom in">+</button>
+    <button id="zoomReset" class="zoom-btn zoom-reset">Fit to screen</button>
+  </div>
 
   <div id="gridWrap">
     <div id="gridScroll">
@@ -87,79 +109,40 @@ async function init() {
     <div class="stat-box"><div class="v">${highestCombined.w}-${highestCombined.l}</div><div class="l">Highest combined score</div></div>
   `;
 
-  // grid geometry — bigger cells on narrow screens so squares are easier to tap accurately
-  const cellSize = window.innerWidth < 640 ? 13 : 9;
+  // grid geometry (cellSize-independent)
   const cols = maxW - MIN_AXIS + 1;
   const rows = maxL - MIN_AXIS + 1;
-  const plotWidth = cols * cellSize;
-  const plotHeight = rows * cellSize;
   const topAxisHeight = 22, leftAxisWidth = 32;
+  const MIN_CELL = 1, MAX_CELL = 20;
 
-  function xPos(w) { return (w - MIN_AXIS) * cellSize; }
-  function yPos(l) { return (maxL - l) * cellSize; }
-
-  // corner box — sized to match the sticky axis strips so the grid lines up
+  const gridScroll = document.getElementById('gridScroll');
   const corner = document.getElementById('gridCorner');
-  corner.style.width = leftAxisWidth + 'px';
-  corner.style.height = topAxisHeight + 'px';
-
-  // top axis (winning score) — pinned via CSS sticky while scrolling vertically
   const topSvg = document.getElementById('gridTopAxis');
-  topSvg.setAttribute('width', plotWidth);
-  topSvg.setAttribute('height', topAxisHeight);
-  topSvg.setAttribute('viewBox', `0 0 ${plotWidth} ${topAxisHeight}`);
-  let topContent = '';
-  for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
-    const x = xPos(w) + (cellSize - 1) / 2;
-    topContent += `<text x="${x}" y="${topAxisHeight - 8}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="middle">${w}</text>`;
-  }
-  topSvg.innerHTML = topContent;
-
-  // left axis (losing score) — pinned via CSS sticky while scrolling horizontally
   const leftSvg = document.getElementById('gridLeftAxis');
-  leftSvg.setAttribute('width', leftAxisWidth);
-  leftSvg.setAttribute('height', plotHeight);
-  leftSvg.setAttribute('viewBox', `0 0 ${leftAxisWidth} ${plotHeight}`);
-  let leftContent = '';
-  for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
-    const y = yPos(l) + (cellSize - 1) / 2;
-    leftContent += `<text x="${leftAxisWidth - 6}" y="${y + 3}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="end">${l}</text>`;
-  }
-  leftSvg.innerHTML = leftContent;
-
-  // cells + gridlines
   const svg = document.getElementById('grid');
-  svg.setAttribute('width', plotWidth);
-  svg.setAttribute('height', plotHeight);
-  svg.setAttribute('viewBox', `0 0 ${plotWidth} ${plotHeight}`);
-
-  let svgContent = '';
-
-  for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
-    const x = xPos(w);
-    svgContent += `<line x1="${x}" y1="0" x2="${x}" y2="${plotHeight}" stroke="#232E45" stroke-width="0.5"/>`;
-  }
-  for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
-    const y = yPos(l);
-    svgContent += `<line x1="0" y1="${y}" x2="${plotWidth}" y2="${y}" stroke="#232E45" stroke-width="0.5"/>`;
-  }
-
-  // diagonal reference line (winning == losing, ties live here, area below is impossible since winner can't score less than loser)
-  svgContent += `<line x1="${xPos(MIN_AXIS)}" y1="${yPos(MIN_AXIS)}" x2="${xPos(maxW)}" y2="${yPos(MIN_AXIS)}" stroke="#C8102E" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.4"/>`;
-
-  combos.forEach(c => {
-    const x = xPos(c.w), y = yPos(c.l);
-    const isTie = c.w === c.l;
-    const opacity = Math.min(0.4 + c.count * 0.25, 1);
-    const color = isTie ? '#C8102E' : '#1E3FCB';
-    svgContent += `<rect class="combo-cell" data-w="${c.w}" data-l="${c.l}" data-count="${c.count}"
-      data-rs="${c.recent_season}" data-rw="${c.recent_week}" data-winner="${c.recent_winner}" data-loser="${c.recent_loser}"
-      x="${x}" y="${y}" width="${cellSize-1}" height="${cellSize-1}" fill="${color}" opacity="${opacity}" rx="1"/>`;
-  });
-
-  svg.innerHTML = svgContent;
-
   const tooltip = document.getElementById('tooltip');
+
+  // Cell size that fits the ENTIRE grid on screen with no scrolling needed —
+  // this is the default zoom level so the whole visualization is visible on open.
+  function computeFitCellSize() {
+    const availableWidth = document.getElementById('gridWrap').clientWidth - leftAxisWidth - 4;
+    const availableHeight = Math.min(window.innerHeight * 0.62, 600) - topAxisHeight - 4;
+    const byWidth = Math.floor(availableWidth / cols);
+    const byHeight = Math.floor(availableHeight / rows);
+    return Math.max(MIN_CELL, Math.min(byWidth, byHeight, 14));
+  }
+
+  const fitCellSize = computeFitCellSize();
+  // Open one zoom step in from a pure fit — the true fit size is often so small the
+  // squares are barely visible; "Fit to Screen" still resets all the way out to it.
+  const initialCellSize = Math.min(fitCellSize + 2, MAX_CELL);
+  let cellSize = initialCellSize;
+
+  const slider = document.getElementById('zoomSlider');
+  slider.min = fitCellSize;
+  slider.max = Math.max(MAX_CELL, fitCellSize);
+  slider.value = initialCellSize;
+
   function fillTooltip(cell) {
     const { w, l, count, rs, rw, winner, loser } = cell.dataset;
     tooltip.innerHTML = `
@@ -174,20 +157,107 @@ async function init() {
     tooltip.style.top = Math.max(8, y) + 'px';
     tooltip.style.display = 'block';
   }
-  svg.querySelectorAll('.combo-cell').forEach(cell => {
-    cell.addEventListener('mousemove', (e) => {
-      fillTooltip(cell);
-      placeTooltip(e.clientX + 14, e.clientY + 10);
+
+  function renderGrid(size, centerOn) {
+    cellSize = size;
+    const plotWidth = cols * cellSize;
+    const plotHeight = rows * cellSize;
+
+    function xPos(w) { return (w - MIN_AXIS) * cellSize; }
+    function yPos(l) { return (maxL - l) * cellSize; }
+
+    corner.style.width = leftAxisWidth + 'px';
+    corner.style.height = topAxisHeight + 'px';
+
+    topSvg.setAttribute('width', plotWidth);
+    topSvg.setAttribute('height', topAxisHeight);
+    topSvg.setAttribute('viewBox', `0 0 ${plotWidth} ${topAxisHeight}`);
+    let topContent = '';
+    for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
+      const x = xPos(w) + (cellSize - 1) / 2;
+      topContent += `<text x="${x}" y="${topAxisHeight - 8}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="middle">${w}</text>`;
+    }
+    topSvg.innerHTML = topContent;
+
+    leftSvg.setAttribute('width', leftAxisWidth);
+    leftSvg.setAttribute('height', plotHeight);
+    leftSvg.setAttribute('viewBox', `0 0 ${leftAxisWidth} ${plotHeight}`);
+    let leftContent = '';
+    for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
+      const y = yPos(l) + (cellSize - 1) / 2;
+      leftContent += `<text x="${leftAxisWidth - 6}" y="${y + 3}" font-family="IBM Plex Mono" font-size="9" fill="#7C8798" text-anchor="end">${l}</text>`;
+    }
+    leftSvg.innerHTML = leftContent;
+
+    svg.setAttribute('width', plotWidth);
+    svg.setAttribute('height', plotHeight);
+    svg.setAttribute('viewBox', `0 0 ${plotWidth} ${plotHeight}`);
+
+    let svgContent = '';
+    for (let w = Math.ceil(MIN_AXIS/20)*20; w <= maxW; w += 20) {
+      const x = xPos(w);
+      svgContent += `<line x1="${x}" y1="0" x2="${x}" y2="${plotHeight}" stroke="#232E45" stroke-width="0.5"/>`;
+    }
+    for (let l = Math.ceil(MIN_AXIS/20)*20; l <= maxL; l += 20) {
+      const y = yPos(l);
+      svgContent += `<line x1="0" y1="${y}" x2="${plotWidth}" y2="${y}" stroke="#232E45" stroke-width="0.5"/>`;
+    }
+
+    // diagonal reference line (winning == losing, ties live here, area below is impossible since winner can't score less than loser)
+    svgContent += `<line x1="${xPos(MIN_AXIS)}" y1="${yPos(MIN_AXIS)}" x2="${xPos(maxW)}" y2="${yPos(MIN_AXIS)}" stroke="#C8102E" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.4"/>`;
+
+    combos.forEach(c => {
+      const x = xPos(c.w), y = yPos(c.l);
+      const isTie = c.w === c.l;
+      const opacity = Math.min(0.4 + c.count * 0.25, 1);
+      const color = isTie ? '#C8102E' : '#1E3FCB';
+      svgContent += `<rect class="combo-cell" data-w="${c.w}" data-l="${c.l}" data-count="${c.count}"
+        data-rs="${c.recent_season}" data-rw="${c.recent_week}" data-winner="${c.recent_winner}" data-loser="${c.recent_loser}"
+        x="${x}" y="${y}" width="${cellSize-1}" height="${cellSize-1}" fill="${color}" opacity="${opacity}" rx="1"/>`;
     });
-    cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
-    // Tap-to-pin for touch devices, where there's no hover state.
-    cell.addEventListener('click', (e) => {
-      e.stopPropagation();
-      fillTooltip(cell);
-      const rect = cell.getBoundingClientRect();
-      placeTooltip(rect.left, rect.bottom + 6);
+
+    svg.innerHTML = svgContent;
+
+    svg.querySelectorAll('.combo-cell').forEach(cell => {
+      cell.addEventListener('mousemove', (e) => {
+        fillTooltip(cell);
+        placeTooltip(e.clientX + 14, e.clientY + 10);
+      });
+      cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+      // Tap-to-pin for touch devices, where there's no hover state.
+      cell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fillTooltip(cell);
+        const rect = cell.getBoundingClientRect();
+        placeTooltip(rect.left, rect.bottom + 6);
+      });
     });
-  });
+
+    // keep whatever score was centered in view before a zoom change centered after it
+    if (centerOn) {
+      gridScroll.scrollLeft = xPos(centerOn.w) - gridScroll.clientWidth / 2 + leftAxisWidth;
+      gridScroll.scrollTop = yPos(centerOn.l) - gridScroll.clientHeight / 2 + topAxisHeight;
+    }
+
+    document.getElementById('zoomOut').disabled = cellSize <= fitCellSize;
+    document.getElementById('zoomIn').disabled = cellSize >= MAX_CELL;
+    const resetBtn = document.getElementById('zoomReset');
+    resetBtn.classList.toggle('at-fit', cellSize === fitCellSize);
+    slider.value = cellSize;
+  }
+
+  function currentCenter() {
+    const w = MIN_AXIS + (gridScroll.scrollLeft - leftAxisWidth + gridScroll.clientWidth / 2) / cellSize;
+    const l = maxL - (gridScroll.scrollTop - topAxisHeight + gridScroll.clientHeight / 2) / cellSize;
+    return { w, l };
+  }
+
+  document.getElementById('zoomIn').addEventListener('click', () => renderGrid(Math.min(MAX_CELL, cellSize + 2), currentCenter()));
+  document.getElementById('zoomOut').addEventListener('click', () => renderGrid(Math.max(fitCellSize, cellSize - 2), currentCenter()));
+  document.getElementById('zoomReset').addEventListener('click', () => renderGrid(fitCellSize));
+  slider.addEventListener('input', () => renderGrid(parseInt(slider.value, 10), currentCenter()));
+
+  renderGrid(initialCellSize);
   document.addEventListener('click', () => { tooltip.style.display = 'none'; });
 }
 
