@@ -12,6 +12,7 @@ const NWL_PAGES = [
   { href: 'pages/rankings.html', label: 'Team Rankings' },
   { href: 'pages/draft.html', label: 'Draft' },
   { href: 'pages/transactions.html', label: 'Transactions' },
+  { href: 'pages/mock-draft.html', label: 'Mock Draft' },
 ];
 
 function renderNav(activeHref) {

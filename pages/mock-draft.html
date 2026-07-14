@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock Draft Simulator — National Wayzata League</title>
+<style>
+
+:root{
+  --bg:#F1F3EE;
+  --surface:#FFFFFF;
+  --surface-2:#E7EBE2;
+  --ink:#1B221D;
+  --ink-soft:#4B564C;
+  --line:#D3D9CB;
+  --accent:#B8802A;
+  --accent-soft:#EADBBE;
+  --turf:#3E7A57;
+  --slate:#5B7FA6;
+  --plum:#A2578A;
+  --danger:#B5432E;
+  --danger-soft:#F3DDD5;
+  --good:#3E7A57;
+  --gold:#8A6D1E;
+  --pos-qb:#C0392B; --pos-rb:#3E7A57; --pos-wr:#2F6FA8; --pos-te:#C9722A; --pos-hc:#6B7280;
+  --font-display: "Helvetica Neue", Arial, sans-serif;
+  --font-body: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  --font-mono: "SF Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#141917; --surface:#1B2119; --surface-2:#212820; --ink:#E7E9E1; --ink-soft:#A7B0A0;
+    --line:#333B31; --accent:#D9A64E; --accent-soft:#3A3120; --turf:#5FA57C; --slate:#7FA3CC;
+    --plum:#C084AC; --danger:#E08268; --danger-soft:#3A2521; --good:#5FA57C; --gold:#D9A64E;
+    --pos-qb:#E0635A; --pos-rb:#5FA57C; --pos-wr:#6FA3D6; --pos-te:#E2985C; --pos-hc:#9CA3AF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1B2119; --surface-2:#212820; --ink:#E7E9E1; --ink-soft:#A7B0A0;
+  --line:#333B31; --accent:#D9A64E; --accent-soft:#3A3120; --turf:#5FA57C; --slate:#7FA3CC;
+  --plum:#C084AC; --danger:#E08268; --danger-soft:#3A2521; --good:#5FA57C; --gold:#D9A64E;
+  --pos-qb:#E0635A; --pos-rb:#5FA57C; --pos-wr:#6FA3D6; --pos-te:#E2985C; --pos-hc:#9CA3AF;
+}
+:root[data-theme="light"]{
+  --bg:#F1F3EE; --surface:#FFFFFF; --surface-2:#E7EBE2; --ink:#1B221D; --ink-soft:#4B564C;
+  --line:#D3D9CB; --accent:#B8802A; --accent-soft:#EADBBE; --turf:#3E7A57; --slate:#5B7FA6;
+  --plum:#A2578A; --danger:#B5432E; --danger-soft:#F3DDD5; --good:#3E7A57; --gold:#8A6D1E;
+  --pos-qb:#C0392B; --pos-rb:#3E7A57; --pos-wr:#2F6FA8; --pos-te:#C9722A; --pos-hc:#6B7280;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font-body);
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);}
+h1,h2,h3{font-family:var(--font-display);}
+button{font-family:var(--font-display); cursor:pointer;}
+.wrap{max-width:1280px; margin:0 auto; padding:0 20px 80px;}
+
+/* ---- header ---- */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:12px 20px;
+}
+.topbar-inner{max-width:1280px; margin:0 auto; display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+.brand{font-family:var(--font-display); font-weight:800; font-size:15px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink);}
+.brand b{color:var(--accent);}
+.status-pill{
+  font-family:var(--font-display); font-size:12.5px; font-weight:700; letter-spacing:.03em;
+  padding:6px 12px; border-radius:20px; background:var(--surface-2); border:1px solid var(--line);
+  color:var(--ink-soft);
+}
+.status-pill.live{color:var(--turf); border-color:var(--turf);}
+.status-pill.you{color:var(--accent); border-color:var(--accent); background:var(--accent-soft);}
+.spacer{flex:1;}
+.btn{
+  font-size:12.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+  padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--surface);
+  color:var(--ink); transition:.15s;
+}
+.btn:hover{border-color:var(--accent); color:var(--accent);}
+.btn.primary{background:var(--turf); border-color:var(--turf); color:#fff;}
+.btn.primary:hover{filter:brightness(1.08); color:#fff;}
+.btn:disabled{opacity:.4; cursor:not-allowed;}
+.btn.small{padding:5px 10px; font-size:11px;}
+
+/* ---- hero / setup ---- */
+.hero{padding:48px 0 20px;}
+.hero h1{font-size:clamp(28px,4vw,42px); margin:0 0 8px; letter-spacing:-.01em;}
+.hero p{color:var(--ink-soft); max-width:640px; font-size:16px;}
+
+.setup-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:28px; max-width:640px; margin:24px 0; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.setup-row{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:18px;}
+.field{flex:1; min-width:200px;}
+.field label{
+  display:block; font-family:var(--font-display); font-size:11.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:6px;
+}
+.field select{
+  width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--line);
+  background:var(--surface-2); color:var(--ink); font-family:var(--font-body); font-size:15px;
+}
+.setup-note{font-size:13px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:16px; margin-top:4px;}
+.mgr-blurb{font-size:13px; color:var(--ink-soft); background:var(--surface-2); border-radius:8px; padding:10px 12px; margin-top:8px; display:none;}
+.mgr-blurb.show{display:block;}
+
+.tend-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:24px; max-width:640px; margin:0 0 24px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.tend-card h2{font-size:15px; margin:0 0 4px; text-transform:uppercase; letter-spacing:.04em; font-family:var(--font-display); color:var(--ink-soft);}
+.tend-card > p{font-size:13px; color:var(--ink-soft); margin:0 0 16px;}
+.tend-select-row{display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+.tend-select-row select{flex:1; min-width:180px; padding:8px 10px; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:var(--font-body); font-size:14px;}
+.tend-tag{font-size:12.5px; color:var(--ink-soft); background:var(--surface-2); border-radius:8px; padding:8px 10px; margin-bottom:14px; line-height:1.45;}
+.tend-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 16px;}
+@media (max-width:520px){ .tend-grid{grid-template-columns:1fr;} }
+.tend-field label{display:block; font-family:var(--font-display); font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:4px;}
+.tend-field input[type=number]{width:100%; padding:7px 9px; border-radius:7px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:var(--font-mono); font-size:13.5px;}
+.tend-field select{width:100%; padding:7px 9px; border-radius:7px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font-family:var(--font-body); font-size:13.5px;}
+.tend-hist{font-size:11px; color:var(--ink-soft); margin-top:3px; display:block;}
+.tend-check{display:flex; align-items:center; gap:7px; padding-top:6px;}
+.tend-check label{font-size:12.5px; color:var(--ink); text-transform:none; letter-spacing:0; font-weight:400; margin:0;}
+
+/* ---- draft layout ---- */
+#draftUI{display:none;}
+.draft-grid{display:grid; grid-template-columns:1.55fr 1fr; gap:20px; margin-top:20px; align-items:start;}
+@media (max-width:900px){ .draft-grid{grid-template-columns:1fr;} }
+
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+.panel-head{
+  padding:14px 16px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px;
+  flex-wrap:wrap;
+}
+.panel-head h3{margin:0; font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); flex:none;}
+
+.tabs{display:flex; gap:4px; flex-wrap:wrap;}
+.tab{
+  font-family:var(--font-display); font-size:11.5px; font-weight:700; text-transform:uppercase;
+  padding:6px 11px; border-radius:7px; border:1px solid transparent; color:var(--ink-soft); background:transparent;
+}
+.tab.active{background:var(--accent-soft); color:var(--accent); border-color:var(--accent);}
+.tab:hover{color:var(--accent);}
+
+.pos-badge{
+  display:inline-block; font-family:var(--font-display); font-size:10.5px; font-weight:800;
+  padding:2px 6px; border-radius:5px; color:#fff; letter-spacing:.02em; min-width:26px; text-align:center;
+}
+.pos-QB{background:var(--pos-qb);}
+.pos-RB{background:var(--pos-rb);}
+.pos-WR{background:var(--pos-wr);}
+.pos-TE{background:var(--pos-te);}
+.pos-HC{background:var(--pos-hc);}
+
+.search-box{
+  margin-left:auto; padding:6px 10px; border-radius:7px; border:1px solid var(--line);
+  background:var(--surface-2); color:var(--ink); font-family:var(--font-body); font-size:13px; width:160px;
+}
+
+.table-scroll{max-height:640px; overflow-y:auto;}
+table{width:100%; border-collapse:collapse; font-size:13.5px;}
+thead th{
+  position:sticky; top:0; background:var(--surface-2); text-align:left; padding:8px 10px;
+  font-family:var(--font-display); font-size:10.5px; text-transform:uppercase; letter-spacing:.04em;
+  color:var(--ink-soft); border-bottom:1px solid var(--line); z-index:2;
+}
+tbody td{padding:7px 10px; border-bottom:1px solid var(--line);}
+tbody tr:hover{background:var(--surface-2);}
+.rname{font-weight:700;}
+.rteam{color:var(--ink-soft); font-size:12px;}
+.rookie-chip{
+  font-size:9.5px; font-weight:800; color:var(--turf); border:1px solid var(--turf);
+  border-radius:4px; padding:1px 4px; margin-left:5px; vertical-align:middle;
+}
+.draft-btn{
+  font-family:var(--font-display); font-size:11px; font-weight:700; text-transform:uppercase;
+  padding:5px 10px; border-radius:6px; border:1px solid var(--turf); background:transparent; color:var(--turf);
+}
+.draft-btn:hover{background:var(--turf); color:#fff;}
+.draft-btn:disabled{border-color:var(--line); color:var(--ink-soft); opacity:.5; cursor:not-allowed;}
+.pts{font-family:var(--font-mono); font-weight:700;}
+
+/* roster grid */
+.roster-list{padding:10px 14px 16px;}
+.roster-slot{
+  display:flex; align-items:center; gap:8px; padding:8px 6px; border-bottom:1px solid var(--line);
+}
+.roster-slot:last-child{border-bottom:none;}
+.slot-tag{
+  font-family:var(--font-display); font-size:10.5px; font-weight:800; text-transform:uppercase;
+  color:var(--ink-soft); width:44px; flex:none;
+}
+.slot-player{flex:1; font-size:13.5px;}
+.slot-empty{color:var(--ink-soft); font-style:italic; font-size:13px;}
+.slot-pts{font-family:var(--font-mono); font-size:12px; color:var(--ink-soft);}
+
+/* all rosters grid */
+.allrosters-wrap{overflow-x:auto; padding:12px;}
+.ar-table{border-collapse:collapse; font-size:12px; min-width:1000px;}
+.ar-table th{
+  font-family:var(--font-display); font-size:10.5px; text-transform:uppercase; letter-spacing:.03em;
+  padding:6px 8px; text-align:left; background:var(--surface-2); border-bottom:1px solid var(--line);
+  position:sticky; top:0;
+}
+.ar-table td{padding:5px 8px; border-bottom:1px solid var(--line); white-space:nowrap;}
+.ar-table .you-col{background:var(--accent-soft);}
+.ar-slotlabel{color:var(--ink-soft); font-family:var(--font-display); font-size:10px; font-weight:700;}
+
+/* log */
+.log-list{padding:6px 14px 16px; max-height:640px; overflow-y:auto;}
+.log-row{
+  display:flex; gap:8px; align-items:baseline; padding:6px 0; border-bottom:1px solid var(--line); font-size:13px;
+}
+.log-pk{font-family:var(--font-mono); color:var(--ink-soft); font-size:11.5px; width:56px; flex:none;}
+.log-team{font-weight:700; width:96px; flex:none;}
+.log-team.you{color:var(--accent);}
+
+.grades-list{padding:6px 14px 16px; max-height:640px; overflow-y:auto;}
+.grade-row{
+  display:flex; align-items:center; gap:12px; padding:10px 4px; border-bottom:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.grade-row.you{background:var(--accent-soft); border-radius:8px; padding-left:8px; padding-right:8px;}
+.grade-rank{font-family:var(--font-mono); color:var(--ink-soft); font-size:12px; width:28px; flex:none;}
+.grade-letter{
+  font-family:var(--font-display); font-weight:800; font-size:16px; width:38px; flex:none; text-align:center;
+  border-radius:6px; padding:3px 0;
+}
+.grade-A{background:var(--turf); color:#fff;}
+.grade-B{background:var(--slate); color:#fff;}
+.grade-C{background:var(--accent); color:#fff;}
+.grade-D{background:var(--danger-soft); color:var(--danger);}
+.grade-F{background:var(--danger); color:#fff;}
+.grade-team{font-weight:700; width:110px; flex:none;}
+.grade-pts{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-soft); width:150px; flex:none;}
+.grade-detail{color:var(--ink-soft); font-size:12px; flex:1; min-width:220px;}
+
+.onclock-banner{
+  background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent);
+  border-radius:10px; padding:10px 16px; font-family:var(--font-display); font-weight:700;
+  font-size:13.5px; text-transform:uppercase; letter-spacing:.03em; margin-bottom:16px;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.onclock-banner.cpu{background:var(--surface-2); border-color:var(--line); color:var(--ink-soft);}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--turf); animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.rec-card{
+  background:var(--surface); border:1px solid var(--turf); border-left-width:4px; border-radius:10px;
+  padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.rec-label{
+  font-family:var(--font-display); font-size:11px; font-weight:800; text-transform:uppercase;
+  letter-spacing:.05em; color:var(--turf); flex:none;
+}
+.rec-player{font-weight:700; font-size:15px;}
+.rec-reason{color:var(--ink-soft); font-size:13px; flex:1; min-width:200px;}
+.rec-alts{color:var(--ink-soft); font-size:12px; width:100%;}
+
+.empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft);}
+.footer-note{color:var(--ink-soft); font-size:12.5px; margin-top:28px; border-top:1px solid var(--line); padding-top:16px;}
+
+.nwl-backbar{
+  background:var(--surface-2); border-bottom:1px solid var(--line);
+  padding:8px 20px; font-family:var(--font-display); font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.nwl-backbar a{color:var(--ink-soft); text-decoration:none;}
+.nwl-backbar a:hover{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<div class="nwl-backbar"><a href="../index.html">&larr; National Wayzata League</a></div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">NWL 2026 &middot; <b>Mock Draft Simulator</b></div>
+    <span class="status-pill" id="pickStatus">Not started</span>
+    <div class="spacer"></div>
+    <button class="btn" id="btnSimEnd" style="display:none;">Sim to End</button>
+    <button class="btn" id="btnPause" style="display:none;">Pause</button>
+    <button class="btn" id="btnRestart" style="display:none;">Restart</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div id="setupUI">
+    <div class="hero">
+      <h1>Run a mock draft against the room.</h1>
+      <p>Pick your team and draft slot, then run a full 15-round mock draft. The other 11 managers draft using tendencies pulled from NWL's real 2022&ndash;2025 draft history &mdash; position mix, QB/TE timing, rookie appetite &mdash; with enough randomness baked in that no two runs play out the same way.</p>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-row">
+        <div class="field">
+          <label for="selIdentity">Your team</label>
+          <select id="selIdentity"></select>
+        </div>
+        <div class="field">
+          <label for="selSlot">Your draft slot</label>
+          <select id="selSlot"></select>
+        </div>
+      </div>
+      <div class="mgr-blurb" id="mgrBlurb"></div>
+      <div class="setup-note">
+        <b>Roster:</b> 1 QB &middot; 2 RB &middot; 2 WR &middot; 1 TE &middot; 1 TE/WR flex &middot; 1 FLEX (RB/WR/TE) &middot; 1 Head Coach &middot; 6 bench &mdash; 15 rounds, 12 teams, snake order.
+        Player pool is ranked by real 2026 ADP (ESPN-derived, position-scarcity already priced in — see the companion Value Board), with half-PPR point projections shown alongside; plus depth fill for late rounds.
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn primary" id="btnStart">Start Draft</button>
+      </div>
+    </div>
+
+    <div class="tend-card" id="tendCard">
+      <h2>Customize CPU manager tendencies</h2>
+      <p>Every other manager drafts using tendencies pulled from real NWL draft history. Pick one below to see &mdash; and optionally override &mdash; how they'll behave in this mock only. Unedited managers keep their historical tendencies.</p>
+      <div class="tend-select-row">
+        <select id="selEditMgr"></select>
+        <button class="btn small" id="btnResetMgr">Reset to historical</button>
+      </div>
+      <div id="mgrEditForm"></div>
+    </div>
+  </div>
+
+  <div id="draftUI">
+    <div class="onclock-banner" id="onClockBanner"></div>
+    <div class="rec-card" id="recCard" style="display:none;"></div>
+
+    <div class="draft-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Available Players</h3>
+          <div class="tabs" id="posTabs">
+            <button class="tab active" data-pos="ALL">All</button>
+            <button class="tab" data-pos="QB">QB</button>
+            <button class="tab" data-pos="RB">RB</button>
+            <button class="tab" data-pos="WR">WR</button>
+            <button class="tab" data-pos="TE">TE</button>
+            <button class="tab" data-pos="HC">HC</button>
+          </div>
+          <div class="tabs" id="sortTabs" style="margin-left:8px;">
+            <button class="tab active" data-sort="adp">Sort: ADP</button>
+            <button class="tab" data-sort="pts">Sort: Pts</button>
+          </div>
+          <input type="text" class="search-box" id="searchBox" placeholder="Search player&hellip;">
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>ADP</th><th>Player</th><th>Pos</th><th>Team</th><th>Proj Pts</th><th></th></tr></thead>
+            <tbody id="poolBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3 style="flex:1;">Roster</h3>
+          <div class="tabs" id="rightTabs">
+            <button class="tab active" data-tab="mine">My Team</button>
+            <button class="tab" data-tab="all">All Teams</button>
+            <button class="tab" data-tab="log">Draft Log</button>
+            <button class="tab" data-tab="grades">Grades</button>
+          </div>
+        </div>
+        <div id="tabMine"></div>
+        <div id="tabAll" style="display:none;"></div>
+        <div id="tabLog" style="display:none;"></div>
+        <div id="tabGrades" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="footer-note">Projections and manager tendencies are illustrative simulations built for mock-draft practice &mdash; not live ESPN data. Re-run for a fresh board and a different draft every time.</div>
+  </div>
+
+</div>
+
+<script id="draftData" type="application/json">
+{"players":[{"n":"Bijan Robinson","p":"RB","t":"ATL","adp":1,"pts":318.0,"rk":false,"nt":""},{"n":"Jahmyr Gibbs","p":"RB","t":"DET","adp":2,"pts":313.6,"rk":false,"nt":""},{"n":"Puka Nacua","p":"WR","t":"LAR","adp":3,"pts":298.0,"rk":false,"nt":""},{"n":"Ja'Marr Chase","p":"WR","t":"CIN","adp":4,"pts":294.4,"rk":false,"nt":""},{"n":"Christian McCaffrey","p":"RB","t":"SF","adp":5,"pts":309.3,"rk":false,"nt":""},{"n":"Jaxon Smith-Njigba","p":"WR","t":"SEA","adp":6,"pts":290.9,"rk":false,"nt":""},{"n":"Amon-Ra St. Brown","p":"WR","t":"DET","adp":7,"pts":287.4,"rk":false,"nt":""},{"n":"Jonathan Taylor","p":"RB","t":"IND","adp":8,"pts":304.9,"rk":false,"nt":""},{"n":"De'Von Achane","p":"RB","t":"MIA","adp":9,"pts":300.6,"rk":false,"nt":""},{"n":"CeeDee Lamb","p":"WR","t":"DAL","adp":10,"pts":283.8,"rk":false,"nt":""},{"n":"Ashton Jeanty","p":"RB","t":"LV","adp":11,"pts":296.2,"rk":false,"nt":""},{"n":"Justin Jefferson","p":"WR","t":"MIN","adp":12,"pts":280.2,"rk":false,"nt":""},{"n":"James Cook III","p":"RB","t":"BUF","adp":13,"pts":291.9,"rk":false,"nt":""},{"n":"Jeremiyah Love","p":"RB","t":"ARI","adp":14,"pts":287.6,"rk":true,"nt":"2026 rookie — Cardinals' clear early-down RB1"},{"n":"Drake London","p":"WR","t":"ATL","adp":15,"pts":276.7,"rk":false,"nt":""},{"n":"Saquon Barkley","p":"RB","t":"PHI","adp":16,"pts":283.2,"rk":false,"nt":""},{"n":"Rashee Rice","p":"WR","t":"KC","adp":17,"pts":273.1,"rk":false,"nt":"Knee cleanup surgery, Reid says camp-ready"},{"n":"Derrick Henry","p":"RB","t":"BAL","adp":18,"pts":278.9,"rk":false,"nt":""},{"n":"Nico Collins","p":"WR","t":"HOU","adp":19,"pts":269.6,"rk":false,"nt":""},{"n":"Omarion Hampton","p":"RB","t":"LAC","adp":20,"pts":274.5,"rk":false,"nt":""},{"n":"Malik Nabers","p":"WR","t":"NYG","adp":21,"pts":266.1,"rk":false,"nt":"Secondary knee procedure this offseason"},{"n":"Trey McBride","p":"TE","t":"ARI","adp":22,"pts":232.0,"rk":false,"nt":""},{"n":"Josh Jacobs","p":"RB","t":"GB","adp":23,"pts":270.1,"rk":false,"nt":""},{"n":"Brock Bowers","p":"TE","t":"LV","adp":24,"pts":223.4,"rk":false,"nt":""},{"n":"Chase Brown","p":"RB","t":"CIN","adp":25,"pts":265.8,"rk":false,"nt":""},{"n":"Chris Olave","p":"WR","t":"NO","adp":26,"pts":262.5,"rk":false,"nt":""},{"n":"Breece Hall","p":"RB","t":"NYJ","adp":27,"pts":261.4,"rk":false,"nt":""},{"n":"George Pickens","p":"WR","t":"DAL","adp":28,"pts":258.9,"rk":false,"nt":""},{"n":"A.J. Brown","p":"WR","t":"NE","adp":29,"pts":255.4,"rk":false,"nt":"Traded to NE this offseason"},{"n":"Kenneth Walker III","p":"RB","t":"KC","adp":30,"pts":257.1,"rk":false,"nt":""},{"n":"Garrett Wilson","p":"WR","t":"NYJ","adp":31,"pts":251.8,"rk":false,"nt":""},{"n":"Tetairoa McMillan","p":"WR","t":"CAR","adp":32,"pts":248.3,"rk":false,"nt":""},{"n":"DeVonta Smith","p":"WR","t":"PHI","adp":33,"pts":244.8,"rk":false,"nt":"New WR1 in PHI after A.J. Brown trade"},{"n":"Javonte Williams","p":"RB","t":"DAL","adp":34,"pts":252.8,"rk":false,"nt":""},{"n":"Kyren Williams","p":"RB","t":"LAR","adp":35,"pts":248.4,"rk":false,"nt":""},{"n":"Travis Etienne Jr.","p":"RB","t":"NO","adp":36,"pts":244.1,"rk":false,"nt":""},{"n":"Zay Flowers","p":"WR","t":"BAL","adp":37,"pts":241.2,"rk":false,"nt":""},{"n":"Terry McLaurin","p":"WR","t":"WSH","adp":38,"pts":237.7,"rk":false,"nt":""},{"n":"Cam Skattebo","p":"RB","t":"NYG","adp":39,"pts":239.7,"rk":false,"nt":""},{"n":"Tee Higgins","p":"WR","t":"CIN","adp":40,"pts":234.1,"rk":false,"nt":""},{"n":"Josh Allen","p":"QB","t":"BUF","adp":41,"pts":392.0,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Davante Adams","p":"WR","t":"LAR","adp":42,"pts":230.6,"rk":false,"nt":""},{"n":"Bucky Irving","p":"RB","t":"TB","adp":43,"pts":235.4,"rk":false,"nt":""},{"n":"Carnell Tate","p":"WR","t":"TEN","adp":44,"pts":227.0,"rk":false,"nt":""},{"n":"Colston Loveland","p":"TE","t":"CHI","adp":45,"pts":214.8,"rk":false,"nt":""},{"n":"Quinshon Judkins","p":"RB","t":"CLE","adp":46,"pts":231.0,"rk":false,"nt":""},{"n":"Lamar Jackson","p":"QB","t":"BAL","adp":47,"pts":383.4,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Ladd McConkey","p":"WR","t":"LAC","adp":48,"pts":223.4,"rk":false,"nt":""},{"n":"Emeka Egbuka","p":"WR","t":"TB","adp":49,"pts":219.9,"rk":false,"nt":""},{"n":"Jaylen Waddle","p":"WR","t":"DEN","adp":50,"pts":216.4,"rk":false,"nt":""},{"n":"Tyler Warren","p":"TE","t":"IND","adp":51,"pts":206.2,"rk":false,"nt":""},{"n":"TreVeyon Henderson","p":"RB","t":"NE","adp":52,"pts":226.7,"rk":false,"nt":""},{"n":"Jameson Williams","p":"WR","t":"DET","adp":53,"pts":212.8,"rk":false,"nt":""},{"n":"Jadarian Price","p":"RB","t":"SEA","adp":54,"pts":222.3,"rk":false,"nt":""},{"n":"DJ Moore","p":"WR","t":"BUF","adp":55,"pts":209.2,"rk":false,"nt":""},{"n":"Luther Burden III","p":"WR","t":"CHI","adp":56,"pts":205.7,"rk":false,"nt":"DJ Moore traded away, target share jump"},{"n":"Jayden Daniels","p":"QB","t":"WSH","adp":57,"pts":374.8,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Rome Odunze","p":"WR","t":"CHI","adp":58,"pts":202.2,"rk":false,"nt":""},{"n":"Marvin Harrison Jr.","p":"WR","t":"ARI","adp":59,"pts":198.6,"rk":false,"nt":""},{"n":"Bhayshul Tuten","p":"RB","t":"JAX","adp":60,"pts":217.9,"rk":false,"nt":""},{"n":"D'Andre Swift","p":"RB","t":"CHI","adp":61,"pts":213.6,"rk":false,"nt":""},{"n":"Harold Fannin Jr.","p":"TE","t":"CLE","adp":62,"pts":197.6,"rk":false,"nt":""},{"n":"David Montgomery","p":"RB","t":"HOU","adp":63,"pts":209.2,"rk":false,"nt":""},{"n":"Chuba Hubbard","p":"RB","t":"CAR","adp":64,"pts":204.9,"rk":false,"nt":""},{"n":"Michael Pittman Jr.","p":"WR","t":"PIT","adp":65,"pts":195.1,"rk":false,"nt":""},{"n":"Jordyn Tyson","p":"WR","t":"NO","adp":66,"pts":191.5,"rk":false,"nt":""},{"n":"Drake Maye","p":"QB","t":"NE","adp":67,"pts":366.2,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Joe Burrow","p":"QB","t":"CIN","adp":68,"pts":357.6,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Jalen Hurts","p":"QB","t":"PHI","adp":69,"pts":349.0,"rk":false,"nt":"QB tax — crowd pays a premium the model doesn't"},{"n":"Alec Pierce","p":"WR","t":"IND","adp":70,"pts":187.9,"rk":false,"nt":""},{"n":"Kyle Pitts Sr.","p":"TE","t":"ATL","adp":71,"pts":189.0,"rk":false,"nt":""},{"n":"DK Metcalf","p":"WR","t":"PIT","adp":72,"pts":184.4,"rk":false,"nt":""},{"n":"Mike Evans","p":"WR","t":"SF","adp":73,"pts":180.9,"rk":false,"nt":""},{"n":"Courtland Sutton","p":"WR","t":"DEN","adp":74,"pts":177.3,"rk":false,"nt":""},{"n":"Tony Pollard","p":"RB","t":"TEN","adp":75,"pts":200.6,"rk":false,"nt":""},{"n":"Aaron Jones Sr.","p":"RB","t":"MIN","adp":76,"pts":196.2,"rk":false,"nt":""},{"n":"Sam LaPorta","p":"TE","t":"DET","adp":77,"pts":180.4,"rk":false,"nt":""},{"n":"Jaxson Dart","p":"QB","t":"NYG","adp":78,"pts":340.4,"rk":false,"nt":"ESPN's biggest QB hype case"},{"n":"Christian Watson","p":"WR","t":"GB","adp":79,"pts":173.8,"rk":false,"nt":""},{"n":"Jaylen Warren","p":"RB","t":"PIT","adp":80,"pts":191.9,"rk":false,"nt":""},{"n":"Chris Godwin Jr.","p":"WR","t":"TB","adp":81,"pts":170.2,"rk":false,"nt":""},{"n":"Jakobi Meyers","p":"WR","t":"JAX","adp":82,"pts":166.7,"rk":false,"nt":""},{"n":"Parker Washington","p":"WR","t":"JAX","adp":83,"pts":163.1,"rk":false,"nt":""},{"n":"Brian Thomas Jr.","p":"WR","t":"JAX","adp":84,"pts":159.6,"rk":false,"nt":""},{"n":"Kenny Gainwell","p":"RB","t":"TB","adp":85,"pts":187.5,"rk":false,"nt":""},{"n":"Wan'Dale Robinson","p":"WR","t":"TEN","adp":86,"pts":156.0,"rk":false,"nt":""},{"n":"Rachaad White","p":"RB","t":"WSH","adp":87,"pts":183.2,"rk":false,"nt":""},{"n":"Rico Dowdle","p":"RB","t":"PIT","adp":88,"pts":178.8,"rk":false,"nt":""},{"n":"J.K. Dobbins","p":"RB","t":"DEN","adp":89,"pts":174.5,"rk":false,"nt":""},{"n":"Travis Hunter","p":"WR","t":"JAX","adp":90,"pts":152.5,"rk":false,"nt":"Two-way role clouds snap/target ceiling"},{"n":"Makai Lemon","p":"WR","t":"PHI","adp":91,"pts":148.9,"rk":false,"nt":""},{"n":"Rhamondre Stevenson","p":"RB","t":"NE","adp":92,"pts":170.1,"rk":false,"nt":""},{"n":"Ricky Pearsall","p":"WR","t":"SF","adp":93,"pts":145.3,"rk":false,"nt":""},{"n":"Matthew Golden","p":"WR","t":"GB","adp":94,"pts":141.8,"rk":false,"nt":""},{"n":"Travis Kelce","p":"TE","t":"KC","adp":95,"pts":171.8,"rk":false,"nt":"TE tax — still going on name recognition"},{"n":"Michael Wilson","p":"WR","t":"ARI","adp":96,"pts":138.2,"rk":false,"nt":""},{"n":"RJ Harvey","p":"RB","t":"DEN","adp":97,"pts":165.8,"rk":false,"nt":""},{"n":"KC Concepcion","p":"WR","t":"CLE","adp":98,"pts":134.7,"rk":false,"nt":""},{"n":"Kyle Monangai","p":"RB","t":"CHI","adp":99,"pts":161.4,"rk":false,"nt":"D'Andre Swift's injury history opens work"},{"n":"Josh Downs","p":"WR","t":"IND","adp":100,"pts":131.2,"rk":false,"nt":"Pittman Jr. traded away, target tree opens"},{"n":"Blake Corum","p":"RB","t":"LAR","adp":101,"pts":157.1,"rk":false,"nt":""},{"n":"Jordan Addison","p":"WR","t":"MIN","adp":102,"pts":127.6,"rk":false,"nt":""},{"n":"Brock Purdy","p":"QB","t":"SF","adp":103,"pts":331.8,"rk":false,"nt":""},{"n":"Xavier Worthy","p":"WR","t":"KC","adp":104,"pts":124.1,"rk":false,"nt":""},{"n":"Dak Prescott","p":"QB","t":"DAL","adp":105,"pts":323.2,"rk":false,"nt":""},{"n":"Jonathon Brooks","p":"RB","t":"CAR","adp":106,"pts":152.7,"rk":false,"nt":"Camp battle back, CAR backfield"},{"n":"George Kittle","p":"TE","t":"SF","adp":107,"pts":163.2,"rk":false,"nt":"TE tax — biggest TE reach on the board (-36)"},{"n":"Dallas Goedert","p":"TE","t":"PHI","adp":108,"pts":154.6,"rk":false,"nt":"TE tax"},{"n":"Jake Ferguson","p":"TE","t":"DAL","adp":109,"pts":146.0,"rk":false,"nt":""},{"n":"Khalil Shakir","p":"WR","t":"BUF","adp":110,"pts":120.5,"rk":false,"nt":""},{"n":"Jacory Croskey-Merritt","p":"RB","t":"WSH","adp":111,"pts":148.4,"rk":false,"nt":""},{"n":"Woody Marks","p":"RB","t":"HOU","adp":112,"pts":144.0,"rk":false,"nt":"Early-down work in HOU backfield"},{"n":"Tyjae Spears","p":"RB","t":"TEN","adp":113,"pts":139.7,"rk":false,"nt":""},{"n":"Jayden Reed","p":"WR","t":"GB","adp":114,"pts":117.0,"rk":false,"nt":""},{"n":"Zach Charbonnet","p":"RB","t":"SEA","adp":115,"pts":135.3,"rk":false,"nt":""},{"n":"Isiah Pacheco","p":"RB","t":"DET","adp":116,"pts":131.0,"rk":false,"nt":""},{"n":"Trevor Lawrence","p":"QB","t":"JAX","adp":117,"pts":314.6,"rk":false,"nt":""},{"n":"Quentin Johnston","p":"WR","t":"LAC","adp":118,"pts":113.4,"rk":false,"nt":""},{"n":"Romeo Doubs","p":"WR","t":"NE","adp":119,"pts":109.9,"rk":false,"nt":""},{"n":"Tucker Kraft","p":"TE","t":"GB","adp":120,"pts":137.4,"rk":false,"nt":"TE tax"},{"n":"Alvin Kamara","p":"RB","t":"NO","adp":121,"pts":126.6,"rk":false,"nt":""},{"n":"Jalen Coker","p":"WR","t":"CAR","adp":122,"pts":106.3,"rk":false,"nt":""},{"n":"Jordan Mason","p":"RB","t":"MIN","adp":123,"pts":122.3,"rk":false,"nt":""},{"n":"Omar Cooper Jr.","p":"WR","t":"NYJ","adp":124,"pts":102.8,"rk":false,"nt":""},{"n":"Caleb Williams","p":"QB","t":"CHI","adp":125,"pts":306.0,"rk":true,"nt":"Name-brand rookie-QB hype outrunning the model"},{"n":"Jayden Higgins","p":"WR","t":"HOU","adp":126,"pts":99.2,"rk":false,"nt":""},{"n":"Jalen McMillan","p":"WR","t":"TB","adp":127,"pts":95.7,"rk":false,"nt":""},{"n":"Bo Nix","p":"QB","t":"DEN","adp":128,"pts":297.4,"rk":false,"nt":""},{"n":"Isaiah Likely","p":"TE","t":"NYG","adp":129,"pts":128.8,"rk":false,"nt":""},{"n":"Chris Rodriguez Jr.","p":"RB","t":"JAX","adp":130,"pts":117.9,"rk":false,"nt":""},{"n":"Calvin Ridley","p":"WR","t":"TEN","adp":131,"pts":92.1,"rk":false,"nt":""},{"n":"Tyler Allgeier","p":"RB","t":"ARI","adp":132,"pts":113.6,"rk":false,"nt":""},{"n":"Patrick Mahomes","p":"QB","t":"KC","adp":133,"pts":288.8,"rk":false,"nt":"Rehabbing torn ACL"},{"n":"Jerry Jeudy","p":"WR","t":"CLE","adp":134,"pts":88.6,"rk":false,"nt":""},{"n":"Justin Herbert","p":"QB","t":"LAC","adp":135,"pts":280.2,"rk":false,"nt":""},{"n":"Tank Bigsby","p":"RB","t":"PHI","adp":136,"pts":109.2,"rk":false,"nt":""},{"n":"Matthew Stafford","p":"QB","t":"LAR","adp":137,"pts":271.6,"rk":false,"nt":"Biggest QB reach on the board (-54)"},{"n":"T.J. Hockenson","p":"TE","t":"MIN","adp":138,"pts":120.2,"rk":false,"nt":""},{"n":"Rashid Shaheed","p":"WR","t":"SEA","adp":139,"pts":85.0,"rk":false,"nt":""},{"n":"Brian Robinson Jr.","p":"RB","t":"ATL","adp":140,"pts":104.9,"rk":false,"nt":""},{"n":"Germie Bernard","p":"WR","t":"PIT","adp":141,"pts":81.5,"rk":false,"nt":""},{"n":"Chris Bell","p":"WR","t":"MIA","adp":142,"pts":77.9,"rk":false,"nt":""},{"n":"Kenyon Sadiq","p":"TE","t":"NYJ","adp":143,"pts":111.6,"rk":true,"nt":"2026 rookie TE stash, hybrid role"},{"n":"Braelon Allen","p":"RB","t":"NYJ","adp":144,"pts":100.5,"rk":false,"nt":""},{"n":"Jauan Jennings","p":"WR","t":"MIN","adp":145,"pts":74.4,"rk":false,"nt":""},{"n":"Tyler Shough","p":"QB","t":"NO","adp":146,"pts":263.0,"rk":false,"nt":""},{"n":"Mark Andrews","p":"TE","t":"BAL","adp":147,"pts":103.0,"rk":false,"nt":"TE tax — name brand outrunning target share"},{"n":"Dalton Kincaid","p":"TE","t":"BUF","adp":148,"pts":94.4,"rk":false,"nt":""},{"n":"Kyler Murray","p":"QB","t":"MIN","adp":149,"pts":254.4,"rk":false,"nt":""},{"n":"Daniel Jones","p":"QB","t":"IND","adp":150,"pts":245.8,"rk":false,"nt":""},{"n":"Denzel Boston","p":"WR","t":"CLE","adp":151,"pts":70.8,"rk":false,"nt":""},{"n":"Darnell Mooney","p":"WR","t":"NYG","adp":152,"pts":67.2,"rk":false,"nt":""},{"n":"James Conner","p":"RB","t":"ARI","adp":153,"pts":96.2,"rk":false,"nt":""},{"n":"Stefon Diggs","p":"WR","t":"FA","adp":154,"pts":63.7,"rk":false,"nt":"Unsigned free agent"},{"n":"Antonio Williams","p":"WR","t":"WSH","adp":155,"pts":60.2,"rk":false,"nt":""},{"n":"Jalen Nailor","p":"WR","t":"LV","adp":156,"pts":56.6,"rk":false,"nt":""},{"n":"Tre Tucker","p":"WR","t":"LV","adp":157,"pts":53.1,"rk":false,"nt":""},{"n":"Tyrone Tracy Jr.","p":"RB","t":"NYG","adp":158,"pts":91.8,"rk":false,"nt":""},{"n":"Mike Washington Jr.","p":"RB","t":"LV","adp":159,"pts":87.5,"rk":false,"nt":""},{"n":"Hunter Henry","p":"TE","t":"NE","adp":160,"pts":85.8,"rk":false,"nt":""},{"n":"Jared Goff","p":"QB","t":"DET","adp":161,"pts":237.2,"rk":false,"nt":""},{"n":"Baker Mayfield","p":"QB","t":"TB","adp":162,"pts":228.6,"rk":false,"nt":""},{"n":"Malik Willis","p":"QB","t":"MIA","adp":163,"pts":220.0,"rk":false,"nt":""},{"n":"Adonai Mitchell","p":"WR","t":"NYJ","adp":164,"pts":49.5,"rk":false,"nt":""},{"n":"Ray Davis","p":"RB","t":"BUF","adp":165,"pts":83.1,"rk":false,"nt":""},{"n":"Terrance Ferguson","p":"TE","t":"LAR","adp":166,"pts":77.2,"rk":false,"nt":""},{"n":"Juwan Johnson","p":"TE","t":"NO","adp":167,"pts":68.6,"rk":false,"nt":""},{"n":"Rashod Bateman","p":"WR","t":"BAL","adp":168,"pts":46.0,"rk":false,"nt":""},{"n":"Keaton Mitchell","p":"RB","t":"LAC","adp":169,"pts":78.8,"rk":false,"nt":""},{"n":"Justice Hill","p":"RB","t":"BAL","adp":170,"pts":74.4,"rk":false,"nt":""},{"n":"Brenton Strange","p":"TE","t":"JAX","adp":171,"pts":60.0,"rk":false,"nt":""},{"n":"Jordan James","p":"RB","t":"SF","adp":172,"pts":70.1,"rk":false,"nt":""},{"n":"Kaelon Black","p":"RB","t":"SF","adp":173,"pts":65.7,"rk":false,"nt":""},{"n":"Jordan Love","p":"QB","t":"GB","adp":174,"pts":211.4,"rk":false,"nt":""},{"n":"Cam Ward","p":"QB","t":"TEN","adp":175,"pts":202.8,"rk":false,"nt":""},{"n":"C.J. Stroud","p":"QB","t":"HOU","adp":176,"pts":194.2,"rk":false,"nt":""},{"n":"Jack Bech","p":"WR","t":"LV","adp":177,"pts":42.4,"rk":false,"nt":""},{"n":"Deebo Samuel","p":"WR","t":"FA","adp":178,"pts":38.9,"rk":false,"nt":"Unsigned free agent"},{"n":"Tre' Harris","p":"WR","t":"LAC","adp":179,"pts":35.3,"rk":false,"nt":""},{"n":"Isaac TeSlaa","p":"WR","t":"DET","adp":180,"pts":35,"rk":false,"nt":""},{"n":"Jerome Ford","p":"RB","t":"CLE","adp":181,"pts":61.4,"rk":false,"nt":""},{"n":"Ty Chandler","p":"RB","t":"MIN","adp":182,"pts":57.0,"rk":false,"nt":""},{"n":"Tyler Goodson","p":"RB","t":"IND","adp":183,"pts":52.7,"rk":false,"nt":""},{"n":"Zamir White","p":"RB","t":"LV","adp":184,"pts":48.3,"rk":false,"nt":""},{"n":"Sean Tucker","p":"RB","t":"TB","adp":185,"pts":44.0,"rk":false,"nt":""},{"n":"Miles Sanders","p":"RB","t":"DAL","adp":186,"pts":39.6,"rk":false,"nt":""},{"n":"Cam Akers","p":"RB","t":"HOU","adp":187,"pts":35.2,"rk":false,"nt":""},{"n":"Elijah Mitchell","p":"RB","t":"SF","adp":188,"pts":35,"rk":false,"nt":""},{"n":"Kimani Vidal","p":"RB","t":"LAC","adp":189,"pts":35,"rk":false,"nt":""},{"n":"MarShawn Lloyd","p":"RB","t":"GB","adp":190,"pts":35,"rk":false,"nt":""},{"n":"Emari Demercado","p":"RB","t":"ARI","adp":191,"pts":35,"rk":false,"nt":""},{"n":"Jaylen Wright","p":"RB","t":"MIA","adp":192,"pts":35,"rk":false,"nt":""},{"n":"Dameon Pierce","p":"RB","t":"HOU","adp":193,"pts":35,"rk":false,"nt":""},{"n":"AJ Dillon","p":"RB","t":"GB","adp":194,"pts":35,"rk":false,"nt":""},{"n":"Khalil Herbert","p":"RB","t":"CIN","adp":195,"pts":35,"rk":false,"nt":""},{"n":"Antonio Gibson","p":"RB","t":"NE","adp":196,"pts":35,"rk":false,"nt":""},{"n":"Roschon Johnson","p":"RB","t":"CHI","adp":197,"pts":35,"rk":false,"nt":""},{"n":"Devin Singletary","p":"RB","t":"NYG","adp":198,"pts":35,"rk":false,"nt":""},{"n":"Andrei Iosivas","p":"WR","t":"CIN","adp":199,"pts":35,"rk":false,"nt":""},{"n":"Jalen Tolbert","p":"WR","t":"DAL","adp":200,"pts":35,"rk":false,"nt":""},{"n":"Marquise Brown","p":"WR","t":"KC","adp":201,"pts":35,"rk":false,"nt":""},{"n":"Curtis Samuel","p":"WR","t":"BUF","adp":202,"pts":35,"rk":false,"nt":""},{"n":"Xavier Legette","p":"WR","t":"CAR","adp":203,"pts":35,"rk":false,"nt":""},{"n":"Marvin Mims Jr.","p":"WR","t":"DEN","adp":204,"pts":35,"rk":false,"nt":""},{"n":"Dontayvion Wicks","p":"WR","t":"GB","adp":205,"pts":35,"rk":false,"nt":""},{"n":"Trey Palmer","p":"WR","t":"TB","adp":206,"pts":35,"rk":false,"nt":""},{"n":"Cedric Tillman","p":"WR","t":"CLE","adp":207,"pts":35,"rk":false,"nt":""},{"n":"Tank Dell","p":"WR","t":"HOU","adp":208,"pts":35,"rk":false,"nt":""},{"n":"Nelson Agholor","p":"WR","t":"BAL","adp":209,"pts":35,"rk":false,"nt":""},{"n":"Demario Douglas","p":"WR","t":"NE","adp":210,"pts":35,"rk":false,"nt":""},{"n":"Skyy Moore","p":"WR","t":"KC","adp":211,"pts":35,"rk":false,"nt":""},{"n":"Adam Thielen","p":"WR","t":"CAR","adp":212,"pts":35,"rk":false,"nt":""},{"n":"Josh Palmer","p":"WR","t":"LAC","adp":213,"pts":35,"rk":false,"nt":""},{"n":"KaVontae Turpin","p":"WR","t":"DAL","adp":214,"pts":35,"rk":false,"nt":""},{"n":"Elijah Moore","p":"WR","t":"BUF","adp":215,"pts":35,"rk":false,"nt":""},{"n":"Kendrick Bourne","p":"WR","t":"NE","adp":216,"pts":35,"rk":false,"nt":""},{"n":"Cade Otton","p":"TE","t":"TB","adp":217,"pts":51.4,"rk":false,"nt":""},{"n":"Michael Mayer","p":"TE","t":"LV","adp":218,"pts":45,"rk":false,"nt":""},{"n":"Dalton Schultz","p":"TE","t":"HOU","adp":219,"pts":45,"rk":false,"nt":""},{"n":"Chig Okonkwo","p":"TE","t":"TEN","adp":220,"pts":45,"rk":false,"nt":""},{"n":"Pat Freiermuth","p":"TE","t":"PIT","adp":221,"pts":45,"rk":false,"nt":""},{"n":"Cole Kmet","p":"TE","t":"CHI","adp":222,"pts":45,"rk":false,"nt":""},{"n":"Luke Musgrave","p":"TE","t":"GB","adp":223,"pts":45,"rk":false,"nt":""},{"n":"Ja'Tavion Sanders","p":"TE","t":"CAR","adp":224,"pts":45,"rk":false,"nt":""},{"n":"Noah Fant","p":"TE","t":"CIN","adp":225,"pts":45,"rk":false,"nt":""},{"n":"Durham Smythe","p":"TE","t":"MIA","adp":226,"pts":45,"rk":false,"nt":""},{"n":"Gunnar Helm","p":"TE","t":"TEN","adp":227,"pts":45,"rk":false,"nt":""},{"n":"Theo Johnson","p":"TE","t":"NYG","adp":228,"pts":45,"rk":false,"nt":""},{"n":"Tyler Conklin","p":"TE","t":"LAC","adp":229,"pts":45,"rk":false,"nt":""},{"n":"Foster Moreau","p":"TE","t":"NO","adp":230,"pts":45,"rk":false,"nt":""},{"n":"Elijah Arroyo","p":"TE","t":"SEA","adp":231,"pts":45,"rk":false,"nt":""},{"n":"Ben Sinnott","p":"TE","t":"WSH","adp":232,"pts":45,"rk":false,"nt":""},{"n":"Brevin Jordan","p":"TE","t":"HOU","adp":233,"pts":45,"rk":false,"nt":""},{"n":"Grant Calcaterra","p":"TE","t":"PHI","adp":234,"pts":45,"rk":false,"nt":""},{"n":"Daniel Bellinger","p":"TE","t":"NYG","adp":235,"pts":45,"rk":false,"nt":""},{"n":"Charlie Kolar","p":"TE","t":"BAL","adp":236,"pts":45,"rk":false,"nt":""},{"n":"Payne Durham","p":"TE","t":"TB","adp":237,"pts":45,"rk":false,"nt":""},{"n":"Josh Whyle","p":"TE","t":"TEN","adp":238,"pts":45,"rk":false,"nt":""},{"n":"Tanner Hudson","p":"TE","t":"CIN","adp":239,"pts":45,"rk":false,"nt":""},{"n":"Adam Trautman","p":"TE","t":"DEN","adp":240,"pts":45,"rk":false,"nt":""},{"n":"Will Dissly","p":"TE","t":"LAC","adp":241,"pts":45,"rk":false,"nt":""},{"n":"Sam Darnold","p":"QB","t":"SEA","adp":242,"pts":185.6,"rk":false,"nt":""},{"n":"Geno Smith","p":"QB","t":"LV","adp":243,"pts":180,"rk":false,"nt":""},{"n":"Anthony Richardson","p":"QB","t":"IND","adp":244,"pts":180,"rk":false,"nt":""},{"n":"Michael Penix Jr.","p":"QB","t":"ATL","adp":245,"pts":180,"rk":false,"nt":""},{"n":"J.J. McCarthy","p":"QB","t":"MIN","adp":246,"pts":180,"rk":false,"nt":""},{"n":"Bryce Young","p":"QB","t":"CAR","adp":247,"pts":180,"rk":false,"nt":""},{"n":"Will Levis","p":"QB","t":"TEN","adp":248,"pts":180,"rk":false,"nt":""},{"n":"Justin Fields","p":"QB","t":"NYJ","adp":249,"pts":180,"rk":false,"nt":""},{"n":"Tua Tagovailoa","p":"QB","t":"MIA","adp":250,"pts":180,"rk":false,"nt":""},{"n":"Kirk Cousins","p":"QB","t":"ATL","adp":251,"pts":180,"rk":false,"nt":""}],"coaches":[{"n":"Kansas City Chiefs","p":"HC","t":"KC","adp":157.0,"pts":35,"wins":12,"rk":false,"nt":""},{"n":"Buffalo Bills","p":"HC","t":"BUF","adp":158.5,"pts":30.0,"wins":11.5,"rk":false,"nt":""},{"n":"Philadelphia Eagles","p":"HC","t":"PHI","adp":160.0,"pts":25,"wins":11,"rk":false,"nt":""},{"n":"Detroit Lions","p":"HC","t":"DET","adp":161.5,"pts":20.0,"wins":10.5,"rk":false,"nt":""},{"n":"Baltimore Ravens","p":"HC","t":"BAL","adp":163.0,"pts":20.0,"wins":10.5,"rk":false,"nt":""},{"n":"San Francisco 49ers","p":"HC","t":"SF","adp":164.5,"pts":15,"wins":10,"rk":false,"nt":""},{"n":"Green Bay Packers","p":"HC","t":"GB","adp":166.0,"pts":15,"wins":10,"rk":false,"nt":""},{"n":"Los Angeles Rams","p":"HC","t":"LAR","adp":167.5,"pts":10.0,"wins":9.5,"rk":false,"nt":""},{"n":"Pittsburgh Steelers","p":"HC","t":"PIT","adp":169.0,"pts":10.0,"wins":9.5,"rk":false,"nt":""},{"n":"Houston Texans","p":"HC","t":"HOU","adp":170.5,"pts":5,"wins":9,"rk":false,"nt":""},{"n":"Minnesota Vikings","p":"HC","t":"MIN","adp":172.0,"pts":5,"wins":9,"rk":false,"nt":""},{"n":"Cincinnati Bengals","p":"HC","t":"CIN","adp":173.5,"pts":0.0,"wins":8.5,"rk":false,"nt":""},{"n":"Los Angeles Chargers","p":"HC","t":"LAC","adp":175.0,"pts":0.0,"wins":8.5,"rk":false,"nt":""},{"n":"Denver Broncos","p":"HC","t":"DEN","adp":176.5,"pts":-5,"wins":8,"rk":false,"nt":""},{"n":"Tampa Bay Buccaneers","p":"HC","t":"TB","adp":178.0,"pts":-5,"wins":8,"rk":false,"nt":""},{"n":"Washington Commanders","p":"HC","t":"WSH","adp":179.5,"pts":-10.0,"wins":7.5,"rk":false,"nt":""},{"n":"Seattle Seahawks","p":"HC","t":"SEA","adp":181.0,"pts":-10.0,"wins":7.5,"rk":false,"nt":""},{"n":"Indianapolis Colts","p":"HC","t":"IND","adp":182.5,"pts":-15,"wins":7,"rk":false,"nt":""},{"n":"Chicago Bears","p":"HC","t":"CHI","adp":184.0,"pts":-15,"wins":7,"rk":false,"nt":""},{"n":"Arizona Cardinals","p":"HC","t":"ARI","adp":185.5,"pts":-20.0,"wins":6.5,"rk":false,"nt":""},{"n":"New York Giants","p":"HC","t":"NYG","adp":187.0,"pts":-20.0,"wins":6.5,"rk":false,"nt":""},{"n":"Atlanta Falcons","p":"HC","t":"ATL","adp":188.5,"pts":-25,"wins":6,"rk":false,"nt":""},{"n":"Jacksonville Jaguars","p":"HC","t":"JAX","adp":190.0,"pts":-25,"wins":6,"rk":false,"nt":""},{"n":"Dallas Cowboys","p":"HC","t":"DAL","adp":191.5,"pts":-30.0,"wins":5.5,"rk":false,"nt":""},{"n":"Carolina Panthers","p":"HC","t":"CAR","adp":193.0,"pts":-30.0,"wins":5.5,"rk":false,"nt":""},{"n":"New Orleans Saints","p":"HC","t":"NO","adp":194.5,"pts":-35,"wins":5,"rk":false,"nt":""},{"n":"New England Patriots","p":"HC","t":"NE","adp":196.0,"pts":-35,"wins":5,"rk":false,"nt":""},{"n":"Miami Dolphins","p":"HC","t":"MIA","adp":197.5,"pts":-40.0,"wins":4.5,"rk":false,"nt":""},{"n":"New York Jets","p":"HC","t":"NYJ","adp":199.0,"pts":-40.0,"wins":4.5,"rk":false,"nt":""},{"n":"Cleveland Browns","p":"HC","t":"CLE","adp":200.5,"pts":-45,"wins":4,"rk":false,"nt":""},{"n":"Las Vegas Raiders","p":"HC","t":"LV","adp":202.0,"pts":-45,"wins":4,"rk":false,"nt":""},{"n":"Tennessee Titans","p":"HC","t":"TEN","adp":203.5,"pts":-50.0,"wins":3.5,"rk":false,"nt":""}],"managers":{"Goetz":{"slot":1,"pod":"long","mix":{"RB":36.1,"WR":37.7,"QB":9.8,"TE":9.8,"OTH":6.6},"qbRound":8,"teRound":6,"rookie":18.0,"rb1":true,"tag":"RB-first, rookie-hungry","note":"RB-heaviest total share alongside Prodahl/Larson. Ties for highest rookie usage in the league."},"Palaia":{"slot":2,"pod":"long","mix":{"RB":34.4,"WR":39.3,"QB":13.1,"TE":6.6,"OTH":6.6},"qbRound":3,"teRound":7,"rookie":8.0,"rb1":false,"tag":"Contender, QB-curious","note":"Seven top-2 finishes since 2018. One of the few managers who'll grab a QB1 as early as round 3-4."},"Stover":{"slot":3,"pod":"long","mix":{"RB":26.2,"WR":39.3,"QB":8.2,"TE":19.7,"OTH":6.6},"qbRound":9,"teRound":1,"rookie":9.0,"rb1":false,"wr1":true,"tag":"Zero-RB / WR hoarder","note":"WR in round 1, all four years, no exceptions. Lowest RB share in the league; drafts more TEs than anyone (streaming, not hunting a stud)."},"Prodahl":{"slot":4,"pod":"long","mix":{"RB":37.7,"WR":42.6,"QB":6.6,"TE":6.6,"OTH":6.5},"qbRound":10,"teRound":8,"rookie":18.0,"rb1":false,"tag":"Sharp drafter, QB-averse","note":"Second-best historical value grade. Extremely QB-averse and rookie-hungry — jumps 2026 rookies ahead of ADP."},"Larson":{"slot":5,"pod":"long","mix":{"RB":36.1,"WR":37.7,"QB":8.2,"TE":11.5,"OTH":6.5},"qbRound":7,"teRound":1,"rookie":6.0,"rb1":false,"tag":"TE premium","note":"The only manager who's ever spent a true round-1 pick on a TE, and gone TE again in round 3 twice."},"Glaser":{"slot":6,"pod":"long","mix":{"RB":27.9,"WR":45.9,"QB":11.5,"TE":8.2,"OTH":6.5},"qbRound":11,"teRound":9,"rookie":7.0,"rb1":true,"tag":"RB, RB, RB","note":"RB in round 1 all four years, RB again rounds 2-3 most years. Punts QB to round 11+, TE to round 9+."},"Ainsworth":{"slot":7,"pod":"long","mix":{"RB":34.4,"WR":41.0,"QB":11.5,"TE":6.6,"OTH":6.5},"qbRound":6,"teRound":9,"rookie":8.0,"rb1":false,"tag":"Balanced, TE-averse","note":"Closest to a textbook drafter — even RB/WR split, lowest TE investment in the league, streams TE late."},"Hagan":{"slot":9,"pod":"short","mix":{"RB":29.5,"WR":39.3,"QB":13.1,"TE":11.5,"OTH":6.6},"qbRound":9,"teRound":6,"rookie":4.9,"rb1":false,"tag":"QB hoarder, late","note":"Takes more QBs than almost anyone by volume, but never before round 9 — stacking streamers, not a QB1. Lowest rookie usage in the league."},"Muenchow":{"slot":10,"pod":"short","mix":{"RB":32.8,"WR":44.3,"QB":6.6,"TE":9.8,"OTH":6.5},"qbRound":9,"teRound":2,"rookie":9.0,"rb1":false,"tag":"Sharp drafter","note":"Best historical value grade in the league. Will take an elite TE early (an inefficiency that's paid off — two titles since 2022)."},"Pfaffinger":{"slot":11,"pod":"short","mix":{"RB":32.8,"WR":41.0,"QB":8.2,"TE":11.5,"OTH":6.5},"qbRound":8,"teRound":8,"rookie":8.0,"rb1":false,"rb2":true,"tag":"Robust RB, round 2","note":"RB in round 2, all four years, no exceptions. TE almost always lands in round 8, right in the dead zone others avoid."},"Conlin":{"slot":12,"pod":"short","mix":{"RB":32.8,"WR":42.6,"QB":8.2,"TE":9.8,"OTH":6.6},"qbRound":8,"teRound":4,"rookie":9.0,"rb1":true,"tag":"RB-first, mid-round TE","note":"RB in round 1 three of four years. Notably grabs a TE in round 4 more than most — a 'TE2 dead zone' raider."},"Zogg":{"slot":8,"pod":"none","mix":{"RB":32.0,"WR":41.0,"QB":9.5,"TE":9.5,"OTH":6.5},"qbRound":8,"teRound":5,"rookie":9.0,"rb1":false,"tag":"Balanced (league-average)","note":"No individual history to lean on — profiled as a league-average drafter when CPU-controlled."}}}
+</script>
+
+<script>
+(function(){
+"use strict";
+
+var DATA = JSON.parse(document.getElementById('draftData').textContent);
+var CANON = ["Goetz","Palaia","Stover","Prodahl","Larson","Glaser","Ainsworth","Zogg","Hagan","Muenchow","Pfaffinger","Conlin"];
+var ROUNDS = 15, TEAMS = 12, TOTAL_PICKS = ROUNDS*TEAMS;
+var SLOT_ORDER = ["QB","RB1","RB2","WR1","WR2","TE","WT","FLEX","HC","BEN1","BEN2","BEN3","BEN4","BEN5","BEN6"];
+
+var state = null;
+
+// ---------------- setup UI ----------------
+var selIdentity = document.getElementById('selIdentity');
+var selSlot = document.getElementById('selSlot');
+var mgrBlurb = document.getElementById('mgrBlurb');
+var selEditMgr = document.getElementById('selEditMgr');
+var mgrEditForm = document.getElementById('mgrEditForm');
+
+// Per-mock overrides of CPU manager tendencies, keyed by manager name. Sparse — only
+// fields the user actually changed from historical are stored. Lives for the session
+// (survives Restart) since it's a setup-time customization, not draft state.
+var mgrOverrides = {};
+var AGGRESSION_OPTIONS = [['0.6','Conservative'],['1','Normal'],['1.4','Aggressive'],['1.8','Very aggressive']];
+
+CANON.forEach(function(name){
+  var o = document.createElement('option'); o.value = name; o.textContent = name;
+  if(name==='Zogg') o.selected = true;
+  selIdentity.appendChild(o);
+});
+
+// The draft slot default follows the manager's real documented NWL draft-order slot
+// (DATA.managers[name].slot), so picking e.g. Goetz defaults to Slot 1, Zogg to Slot 8, etc.
+function defaultSlotFor(name){
+  var mgr = DATA.managers[name];
+  return mgr && mgr.slot ? mgr.slot : 8;
+}
+function populateSlotOptions(){
+  var def = defaultSlotFor(selIdentity.value);
+  selSlot.innerHTML = '';
+  for(var i=1;i<=12;i++){
+    var o2 = document.createElement('option'); o2.value = i; o2.textContent = 'Slot ' + i + (i===def?' (default)':'');
+    if(i===def) o2.selected = true;
+    selSlot.appendChild(o2);
+  }
+}
+
+function updateBlurb(){
+  var name = selIdentity.value;
+  var mgr = DATA.managers[name];
+  if(!mgr){ mgrBlurb.classList.remove('show'); return; }
+  mgrBlurb.innerHTML = '<b>' + name + '</b> &middot; ' + mgr.tag + ' &mdash; ' + mgr.note +
+    '<br><span style="opacity:.75;">You are drafting as this team, so its historical tendencies won’t drive its picks &mdash; you will.</span>';
+  mgrBlurb.classList.add('show');
+}
+
+selIdentity.addEventListener('change', function(){
+  updateBlurb();
+  populateSlotOptions();
+  populateEditMgrOptions();
+});
+updateBlurb();
+populateSlotOptions();
+
+document.getElementById('btnStart').addEventListener('click', function(){
+  startDraft(selIdentity.value, parseInt(selSlot.value,10));
+});
+
+// ---- CPU manager tendency editor ----
+function populateEditMgrOptions(){
+  var prev = selEditMgr.value;
+  selEditMgr.innerHTML = '';
+  CANON.filter(function(n){ return n !== selIdentity.value; }).forEach(function(name){
+    var o = document.createElement('option');
+    o.value = name;
+    o.textContent = name + (mgrOverrides[name] ? ' ★ edited' : '');
+    selEditMgr.appendChild(o);
+  });
+  if(prev && selEditMgr.querySelector('option[value="'+prev+'"]')) selEditMgr.value = prev;
+  renderMgrEditForm();
+}
+
+function tendField(id, label, value, histText){
+  return '<div class="tend-field"><label for="'+id+'">'+label+'</label>' +
+    '<input type="number" id="'+id+'" value="'+value+'">' +
+    '<span class="tend-hist">historical: '+histText+'</span></div>';
+}
+function tendAggField(current){
+  var val = current!==undefined ? String(current) : '1';
+  var opts = AGGRESSION_OPTIONS.map(function(o){
+    return '<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>';
+  }).join('');
+  return '<div class="tend-field"><label for="ovAggression">Aggression</label>' +
+    '<select id="ovAggression">'+opts+'</select>' +
+    '<span class="tend-hist">willingness to reach ahead of ADP; higher = more volatile board</span></div>';
+}
+function tendCheck(id, label, checked){
+  return '<div class="tend-check"><input type="checkbox" id="'+id+'" '+(checked?'checked':'')+'>' +
+    '<label for="'+id+'">'+label+'</label></div>';
+}
+
+function renderMgrEditForm(){
+  var name = selEditMgr.value;
+  var mgr = DATA.managers[name];
+  if(!mgr){ mgrEditForm.innerHTML = ''; return; }
+  var ov = mgrOverrides[name] || {};
+  var ovMix = ov.mix || {};
+  mgrEditForm.innerHTML =
+    '<div class="tend-tag"><b>'+name+'</b> &middot; '+mgr.tag+' &mdash; '+mgr.note+'</div>' +
+    '<div class="tend-grid">' +
+      tendField('ovRookie','Rookie usage %', ov.rookie!==undefined?ov.rookie:mgr.rookie, mgr.rookie+'%') +
+      tendAggField(ov.aggression) +
+      tendField('ovQbRound','Won’t draft QB before round', ov.qbRound!==undefined?ov.qbRound:mgr.qbRound, 'round '+mgr.qbRound) +
+      tendField('ovTeRound','Won’t draft TE before round', ov.teRound!==undefined?ov.teRound:mgr.teRound, 'round '+mgr.teRound) +
+      tendField('ovMixRB','RB share %', ovMix.RB!==undefined?ovMix.RB:mgr.mix.RB, mgr.mix.RB+'%') +
+      tendField('ovMixWR','WR share %', ovMix.WR!==undefined?ovMix.WR:mgr.mix.WR, mgr.mix.WR+'%') +
+      tendField('ovMixQB','QB share %', ovMix.QB!==undefined?ovMix.QB:mgr.mix.QB, mgr.mix.QB+'%') +
+      tendField('ovMixTE','TE share %', ovMix.TE!==undefined?ovMix.TE:mgr.mix.TE, mgr.mix.TE+'%') +
+    '</div>' +
+    '<div class="tend-grid" style="margin-top:12px;">' +
+      tendCheck('ovRb1','Always RB in round 1', ov.rb1!==undefined?ov.rb1:!!mgr.rb1) +
+      tendCheck('ovWr1','Always WR in round 1', ov.wr1!==undefined?ov.wr1:!!mgr.wr1) +
+      tendCheck('ovRb2','Always RB in round 2', ov.rb2!==undefined?ov.rb2:!!mgr.rb2) +
+    '</div>';
+
+  ['ovRookie','ovQbRound','ovTeRound','ovMixRB','ovMixWR','ovMixQB','ovMixTE'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', onMgrFieldChange);
+  });
+  document.getElementById('ovAggression').addEventListener('change', onMgrFieldChange);
+  ['ovRb1','ovWr1','ovRb2'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', onMgrFieldChange);
+  });
+}
+
+function clampNum(v, min, max, fallback){
+  var n = parseFloat(v);
+  if(isNaN(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
+function isDefaultOverride(name, ov){
+  var mgr = DATA.managers[name];
+  return ov.rookie===mgr.rookie && ov.aggression===1 && ov.qbRound===mgr.qbRound &&
+    ov.teRound===mgr.teRound && ov.rb1===!!mgr.rb1 && ov.wr1===!!mgr.wr1 && ov.rb2===!!mgr.rb2 &&
+    ov.mix.RB===mgr.mix.RB && ov.mix.WR===mgr.mix.WR && ov.mix.QB===mgr.mix.QB && ov.mix.TE===mgr.mix.TE;
+}
+
+function onMgrFieldChange(){
+  var name = selEditMgr.value;
+  var mgr = DATA.managers[name];
+  var ov = {};
+  ov.rookie = clampNum(document.getElementById('ovRookie').value, 0, 40, mgr.rookie);
+  ov.aggression = parseFloat(document.getElementById('ovAggression').value);
+  ov.qbRound = clampNum(document.getElementById('ovQbRound').value, 1, 15, mgr.qbRound);
+  ov.teRound = clampNum(document.getElementById('ovTeRound').value, 1, 15, mgr.teRound);
+  ov.mix = {
+    RB: clampNum(document.getElementById('ovMixRB').value, 0, 80, mgr.mix.RB),
+    WR: clampNum(document.getElementById('ovMixWR').value, 0, 80, mgr.mix.WR),
+    QB: clampNum(document.getElementById('ovMixQB').value, 0, 80, mgr.mix.QB),
+    TE: clampNum(document.getElementById('ovMixTE').value, 0, 80, mgr.mix.TE)
+  };
+  ov.rb1 = document.getElementById('ovRb1').checked;
+  ov.wr1 = document.getElementById('ovWr1').checked;
+  ov.rb2 = document.getElementById('ovRb2').checked;
+
+  if(isDefaultOverride(name, ov)) delete mgrOverrides[name];
+  else mgrOverrides[name] = ov;
+
+  refreshEditedBadges();
+}
+
+function refreshEditedBadges(){
+  Array.prototype.forEach.call(selEditMgr.options, function(o){
+    o.textContent = o.value + (mgrOverrides[o.value] ? ' ★ edited' : '');
+  });
+}
+
+selEditMgr.addEventListener('change', renderMgrEditForm);
+document.getElementById('btnResetMgr').addEventListener('click', function(){
+  delete mgrOverrides[selEditMgr.value];
+  renderMgrEditForm();
+  refreshEditedBadges();
+});
+populateEditMgrOptions();
+
+// Merges any per-mock override onto a manager's historical tendencies for use by the
+// CPU decision engine. Historical DATA.managers is never mutated, so "Reset to
+// historical" and re-running the mock with a different identity always starts clean.
+function effectiveMgr(name){
+  var base = DATA.managers[name];
+  var mgr = Object.assign({}, base);
+  mgr.mix = Object.assign({}, base.mix);
+  var ov = mgrOverrides[name];
+  if(ov){
+    if(ov.mix) mgr.mix = Object.assign({}, mgr.mix, ov.mix);
+    ['qbRound','teRound','rookie','rb1','wr1','rb2','aggression'].forEach(function(k){
+      if(ov[k]!==undefined) mgr[k] = ov[k];
+    });
+  }
+  if(mgr.aggression===undefined) mgr.aggression = 1;
+  return mgr;
+}
+document.getElementById('btnRestart').addEventListener('click', function(){
+  document.getElementById('setupUI').style.display = 'block';
+  document.getElementById('draftUI').style.display = 'none';
+  document.getElementById('btnSimEnd').style.display = 'none';
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnRestart').style.display = 'none';
+  document.getElementById('pickStatus').textContent = 'Not started';
+  document.getElementById('pickStatus').className = 'status-pill';
+});
+
+// ---------------- draft engine ----------------
+function buildSlotNames(identity, slotNum){
+  var idx = CANON.indexOf(identity);
+  var s = slotNum - 1;
+  var shift = ((idx - s) % 12 + 12) % 12;
+  var arr = new Array(12);
+  for(var i=0;i<12;i++){ arr[i] = CANON[(i+shift)%12]; }
+  return arr;
+}
+
+function emptyRoster(){
+  return {QB:null, RB:[null,null], WR:[null,null], TE:null, WT:null, FLEX:null, HC:null, BEN:[null,null,null,null,null,null], OVERFLOW:[]};
+}
+
+function makeId(pl, i){ return pl.p + '_' + i + '_' + pl.n.replace(/\s+/g,''); }
+
+function startDraft(identity, slotNum){
+  var slotNames = buildSlotNames(identity, slotNum);
+  var rng = Math.random;
+
+  var teams = slotNames.map(function(name, i){
+    return {
+      name: name,
+      isUser: (i === slotNum-1),
+      mgr: effectiveMgr(name),
+      roster: emptyRoster(),
+      hcTargetRound: rng() < 0.12 ? 13 : (14 + Math.floor(rng()*2)) // Head Coaches generally go in the final 2 rounds
+    };
+  });
+
+  var pool = DATA.players.concat(DATA.coaches).map(function(pl, i){
+    var c = Object.assign({}, pl); c.id = makeId(pl, i); return c;
+  });
+
+  state = {
+    teams: teams,
+    userSlotIdx: slotNum - 1,
+    pool: pool,
+    log: [],
+    pick: 1,
+    ended: false,
+    paused: false,
+    posFilter: 'ALL',
+    sortBy: 'adp',
+    search: '',
+    rightTab: 'mine'
+  };
+
+  document.getElementById('setupUI').style.display = 'none';
+  document.getElementById('draftUI').style.display = 'block';
+  document.getElementById('btnSimEnd').style.display = 'inline-block';
+  document.getElementById('btnPause').style.display = 'inline-block';
+  document.getElementById('btnRestart').style.display = 'inline-block';
+  document.getElementById('btnPause').textContent = 'Pause';
+
+  render();
+  scheduleTick(50);
+}
+
+function roundOf(pickNo){ return Math.ceil(pickNo/12); }
+function slotIndexForPick(pickNo){
+  var round = roundOf(pickNo);
+  var posInRound = pickNo - (round-1)*12;
+  return (round % 2 === 1) ? (posInRound-1) : (12-posInRound);
+}
+
+function openNeeds(team){
+  var r = team.roster;
+  var qbNeed = r.QB ? 0 : 1;
+  var rbNeed = (r.RB[0]?0:1) + (r.RB[1]?0:1);
+  var wrNeed = (r.WR[0]?0:1) + (r.WR[1]?0:1);
+  var teNeed = r.TE ? 0 : 1;
+  var wtNeed = r.WT ? 0 : 1;
+  var flexNeed = r.FLEX ? 0 : 1;
+  var hcNeed = r.HC ? 0 : 1;
+  var benOpen = r.BEN.filter(function(x){return x===null;}).length;
+  var mandatoryRemaining = qbNeed+rbNeed+wrNeed+teNeed+wtNeed+flexNeed+hcNeed;
+  return {qbNeed:qbNeed, rbNeed:rbNeed, wrNeed:wrNeed, teNeed:teNeed, wtNeed:wtNeed, flexNeed:flexNeed, hcNeed:hcNeed, benOpen:benOpen, mandatoryRemaining:mandatoryRemaining};
+}
+
+function assignSlot(team, player){
+  var r = team.roster, pos = player.p;
+  if(pos==='QB'){ if(!r.QB){ r.QB = player; return 'QB'; } }
+  else if(pos==='RB'){
+    if(!r.RB[0]){ r.RB[0]=player; return 'RB1'; }
+    if(!r.RB[1]){ r.RB[1]=player; return 'RB2'; }
+    if(!r.FLEX){ r.FLEX=player; return 'FLEX'; }
+  } else if(pos==='WR'){
+    if(!r.WR[0]){ r.WR[0]=player; return 'WR1'; }
+    if(!r.WR[1]){ r.WR[1]=player; return 'WR2'; }
+    if(!r.WT){ r.WT=player; return 'W/T'; }
+    if(!r.FLEX){ r.FLEX=player; return 'FLEX'; }
+  } else if(pos==='TE'){
+    if(!r.TE){ r.TE=player; return 'TE'; }
+    if(!r.WT){ r.WT=player; return 'W/T'; }
+    if(!r.FLEX){ r.FLEX=player; return 'FLEX'; }
+  } else if(pos==='HC'){
+    if(!r.HC){ r.HC=player; return 'HC'; }
+  }
+  for(var i=0;i<6;i++){ if(!r.BEN[i]){ r.BEN[i]=player; return 'BEN'+(i+1); } }
+  r.OVERFLOW.push(player);
+  return 'BEN+';
+}
+
+function computeScarcity(){
+  // If a mandatory single-slot position (QB/TE) has fewer players left in the pool than
+  // teams still needing one, every team still short must treat it as an emergency right now —
+  // otherwise a team that deprioritizes that position (e.g. a TE-averse manager) can get shut
+  // out entirely once the league-wide run on it finishes.
+  var need = {QB:0, TE:0};
+  state.teams.forEach(function(t){
+    if(!t.roster.QB) need.QB++;
+    if(!t.roster.TE) need.TE++;
+  });
+  var supply = {QB:0, TE:0};
+  state.pool.forEach(function(p){ if(supply[p.p]!==undefined) supply[p.p]++; });
+  return { QB: supply.QB <= need.QB, TE: supply.TE <= need.TE };
+}
+
+function positionHelps(pos, needs){
+  return pos==='QB' ? needs.qbNeed>0 :
+    pos==='RB' ? (needs.rbNeed>0 || needs.flexNeed>0) :
+    pos==='WR' ? (needs.wrNeed>0 || needs.wtNeed>0 || needs.flexNeed>0) :
+    pos==='TE' ? (needs.teNeed>0 || needs.wtNeed>0 || needs.flexNeed>0) :
+    pos==='HC' ? needs.hcNeed>0 : false;
+}
+
+function scorePlayer(player, team, pickNo, round, needs, rng){
+  var pos = player.p;
+  var mgr = team.mgr;
+  // Aggression (1.0 = historical-normal, editable per manager in setup): how willing this
+  // manager is to reach ahead of ADP for a player they want, and how volatile/upset-prone
+  // their board is. Conservative managers stick close to ADP with tight variance; aggressive
+  // ones tolerate a much bigger reach and swing wider on the jitter roll.
+  var aggMult = mgr.aggression || 1.0;
+
+  // ADP is the primary signal: how does this player's real documented ADP compare
+  // to the pick we're actually on right now? This is what makes best-player-available
+  // and positional scarcity fall out naturally, instead of a synthetic points curve.
+  var reach = pickNo - player.adp; // >0: player has fallen past their ADP (value). <0: reaching ahead of ADP.
+  var adpValue;
+  if(reach >= 0){ adpValue = 1 + Math.min(reach, 40)/40 * 0.5; }       // up to +50% for falling 40+ picks past ADP
+  else { adpValue = 1 / (1 + (-reach)/(9*aggMult)); }                  // reach penalty: -9 picks early ≈ half value (softened by aggression)
+
+  var posPct = pos==='HC' ? 8 : (mgr.mix[pos]||8);
+  var baseWeight = posPct/25;
+
+  var gate = 1;
+  // QB/TE timing is a historical *lean*, not a hard rule: the further before a manager's
+  // usual round, the more it's discounted, but it tapers smoothly (instead of a flat cliff)
+  // and a real value bargain (adpValue well above 1) can still cut through the hesitance —
+  // so a QB/TE run can start earlier than history alone would suggest when the value is there.
+  if(pos==='QB'){
+    var qbRoundsEarly = Math.max(0, mgr.qbRound - round);
+    var qbGate = 0.22 + 0.78*Math.exp(-0.32*qbRoundsEarly);
+    var qbValueBoost = Math.max(0, adpValue - 1.1) * 0.8;
+    gate *= Math.min(1, qbGate + qbValueBoost);
+  }
+  if(pos==='TE'){
+    var teRoundsEarly = Math.max(0, mgr.teRound - round);
+    var teGate = 0.28 + 0.72*Math.exp(-0.30*teRoundsEarly);
+    var teValueBoost = Math.max(0, adpValue - 1.1) * 0.8;
+    gate *= Math.min(1, teGate + teValueBoost);
+  }
+  if(pos==='RB' && round===1 && mgr.rb1) gate *= 2.0;
+  if(pos==='WR' && round===1 && mgr.wr1) gate *= 2.0;
+  if(pos==='RB' && round===2 && mgr.rb2) gate *= 1.8;
+
+  var rookieMult = 1;
+  if(player.rk){ rookieMult = mgr.rookie>=14 ? 1.25 : (mgr.rookie<=6 ? 0.7 : 1.0); }
+
+  var helps = positionHelps(pos, needs);
+  var roundsLeft = ROUNDS - round + 1;
+  var urgent = needs.mandatoryRemaining >= roundsLeft;
+  var needMult;
+  if(urgent){ needMult = helps ? 2.4 : 0.2; }
+  else { needMult = helps ? 1.15 : (needs.benOpen>0 ? 1.0 : 0.25); }
+
+  // QB and TE only ever have one mandatory slot each, so their historical mix% share (which
+  // reflects a whole roster's worth of bench depth too) structurally understates how much a
+  // team should want to lock theirs in. Ramp a standalone "still don't have one" pressure that
+  // grows across the draft, well before the last-chance "urgent" cliff kicks in — this is what
+  // lets a QB/TE run start in the middle rounds instead of everyone waiting to the very end.
+  if((pos==='QB' && needs.qbNeed>0) || (pos==='TE' && needs.teNeed>0)){
+    needMult *= (1 + (round/ROUNDS) * 3.5);
+  }
+
+  if(pos==='HC' && needs.hcNeed>0 && !urgent){
+    var dist = round - team.hcTargetRound;
+    if(dist < -2) needMult *= 0.05;
+    else if(dist < 0) needMult *= 0.35;
+    else needMult *= 1.6;
+  }
+
+  // Jitter spread scales with aggression too — at aggression 1.0 this is exactly the
+  // original ±6% band ([0.94, 1.06]); conservative managers get a tighter band (more
+  // predictable, closer to consensus), aggressive ones a wider one (more boom/bust).
+  var jitterSpread = 0.06 * aggMult;
+  var jitter = (1 - jitterSpread) + rng()*jitterSpread*2;
+  return adpValue*baseWeight*gate*rookieMult*needMult*jitter;
+}
+
+function pickForTeam(team, round, pickNo){
+  var needs = openNeeds(team);
+  var rng = Math.random;
+  var scarcity = computeScarcity();
+  var roundsLeft = ROUNDS - round + 1;
+  var urgent = needs.mandatoryRemaining >= roundsLeft;
+
+  // A team never needs a second Head Coach — excluding it once filled keeps the 32-coach
+  // pool from being depleted by bench-stash luxury picks before every team has secured one.
+  var candidates = needs.hcNeed>0 ? state.pool : state.pool.filter(function(p){ return p.p !== 'HC'; });
+
+  // Once supply of a mandatory single-slot position (QB/TE) is critically tight league-wide,
+  // a team that still needs one MUST take it now — a soft score bonus isn't reliable enough
+  // to beat a great-value pick elsewhere, and losing the race means an impossible-to-fill roster.
+  if(needs.qbNeed>0 && scarcity.QB){ candidates = candidates.filter(function(p){ return p.p==='QB'; }); }
+  else if(needs.teNeed>0 && scarcity.TE){ candidates = candidates.filter(function(p){ return p.p==='TE'; }); }
+  else {
+    candidates = candidates.filter(function(p){
+      return !((p.p==='QB' && scarcity.QB && needs.qbNeed===0) || (p.p==='TE' && scarcity.TE && needs.teNeed===0));
+    });
+  }
+
+  // Once this team's own remaining picks equal its remaining mandatory needs, there's no more
+  // slack to spend on a luxury/bench pick — every remaining pick has to fill an open need, or
+  // the roster can't complete. A soft scoring bonus isn't reliable enough to guarantee that on
+  // its own (a great-value non-need player can still outscore a weak-value needed one), so once
+  // urgent, hard-restrict the pool to players that actually help.
+  if(urgent){
+    var mustHelp = candidates.filter(function(p){ return positionHelps(p.p, needs); });
+    if(mustHelp.length) candidates = mustHelp;
+  }
+
+  var scored = candidates.map(function(p){ return {p:p, s:scorePlayer(p, team, pickNo, round, needs, rng)}; });
+  scored.sort(function(a,b){ return b.s - a.s; });
+  var topK = scored.slice(0, Math.min(4, scored.length));
+  topK.forEach(function(x){ x.s = Math.pow(x.s, 2); }); // sharpen preference toward the top of the shortlist
+  var minS = Math.min.apply(null, topK.map(function(x){return x.s;}));
+  var shift = minS < 0 ? -minS + 0.01 : 0;
+  var total = 0;
+  topK.forEach(function(x){ total += (x.s+shift); });
+  var r = rng()*total, acc = 0, chosen = topK[0].p;
+  for(var i=0;i<topK.length;i++){ acc += (topK[i].s+shift); if(r<=acc){ chosen = topK[i].p; break; } }
+  return chosen;
+}
+
+// Neutral "what would a sharp drafter do" advice for the human's own turn — best-player-available
+// blended with roster need, deliberately without any single manager's personality bias baked in.
+function recommendPlayer(team, round, pickNo){
+  var needs = openNeeds(team);
+  var candidates = state.pool.filter(function(p){ return !(p.p==='HC' && needs.hcNeed===0); });
+  var roundsLeft = ROUNDS - round + 1;
+  var urgent = needs.mandatoryRemaining >= roundsLeft;
+  var list = candidates.map(function(p){
+    var reach = pickNo - p.adp;
+    var adpValue = reach>=0 ? 1 + Math.min(reach,40)/40*0.5 : 1/(1+(-reach)/9);
+    var helps = positionHelps(p.p, needs);
+    var needMult = urgent ? (helps?2.2:0.3) : (helps?1.3:0.85);
+    return {p:p, s:adpValue*needMult, helps:helps, adpValue:adpValue};
+  });
+  list.sort(function(a,b){ return b.s - a.s; });
+  return {recs: list.slice(0,3), needs: needs};
+}
+
+function reasonFor(entry, needs){
+  var p = entry.p;
+  var bits = [];
+  if(p.p==='QB' && needs.qbNeed>0) bits.push('you have no QB yet');
+  else if(p.p==='RB' && needs.rbNeed>0) bits.push('fills an open RB starting spot');
+  else if(p.p==='WR' && needs.wrNeed>0) bits.push('fills an open WR starting spot');
+  else if(p.p==='TE' && needs.teNeed>0) bits.push('you have no TE yet');
+  else if(p.p==='HC' && needs.hcNeed>0) bits.push('you have no Head Coach yet');
+  else if(entry.helps) bits.push('fills your flex slot');
+  else bits.push('best player left for your bench');
+  var valueNote = '';
+  if(entry.adpValue >= 1.2) valueNote = ' — great value, ADP had him gone by now';
+  else if(entry.adpValue <= 0.6) valueNote = ' — a bit ahead of his ADP, but the need matters more';
+  return bits.join(', ') + valueNote;
+}
+
+function doPick(team, player){
+  state.pool = state.pool.filter(function(p){ return p.id !== player.id; });
+  player.draftedAt = state.pick;
+  var slotLabel = assignSlot(team, player);
+  state.log.push({pick: state.pick, round: roundOf(state.pick), team: team.name, isUser: team.isUser, player: player, slot: slotLabel});
+  state.pick++;
+  if(state.pick > TOTAL_PICKS) state.ended = true;
+}
+
+var tickTimer = null;
+function scheduleTick(ms){
+  clearTimeout(tickTimer);
+  tickTimer = setTimeout(tick, ms);
+}
+
+function tick(){
+  if(!state || state.ended || state.paused) return;
+  try {
+    var slotIdx = slotIndexForPick(state.pick);
+    var team = state.teams[slotIdx];
+    if(team.isUser){ render(); return; }
+    var round = roundOf(state.pick);
+    var player = pickForTeam(team, round, state.pick);
+    if(!player) throw new Error('pickForTeam returned no player at pick '+state.pick+' for '+team.name);
+    doPick(team, player);
+    render();
+  } catch(err){
+    window.__mockDraftError = (window.__mockDraftError||[]).concat(String(err && err.stack || err));
+    console.error('Mock draft tick failed, retrying:', err);
+  }
+  if(!state.ended) scheduleTick(420 + Math.random()*380);
+}
+
+// Instantly resolves every remaining pick (including the user's own) using the same
+// value+need engine as the CPU teams, so the board doesn't just freeze mid-draft.
+function simToEnd(){
+  if(!state || state.ended) return;
+  clearTimeout(tickTimer);
+  state.paused = false;
+  while(!state.ended){
+    var slotIdx = slotIndexForPick(state.pick);
+    var team = state.teams[slotIdx];
+    var round = roundOf(state.pick);
+    var player = pickForTeam(team, round, state.pick);
+    if(!player) break; // safety valve — should never happen, but never loop forever
+    doPick(team, player);
+  }
+  render();
+}
+
+// ---------------- rendering ----------------
+function posBadge(pos){ return '<span class="pos-badge pos-'+pos+'">'+pos+'</span>'; }
+
+function renderStatus(){
+  var pill = document.getElementById('pickStatus');
+  document.getElementById('btnSimEnd').style.display = state.ended ? 'none' : 'inline-block';
+  document.getElementById('btnPause').style.display = state.ended ? 'none' : 'inline-block';
+  if(state.ended){ pill.textContent = 'Draft complete'; pill.className = 'status-pill live'; return; }
+  var slotIdx = slotIndexForPick(state.pick);
+  var team = state.teams[slotIdx];
+  var round = roundOf(state.pick);
+  pill.textContent = 'Round '+round+' · Pick '+state.pick+' overall';
+  pill.className = 'status-pill' + (team.isUser ? ' you' : ' live');
+}
+
+function renderBanner(){
+  var el = document.getElementById('onClockBanner');
+  if(state.ended){
+    el.className = 'onclock-banner';
+    el.innerHTML = 'Draft complete &mdash; 180 picks made. Browse "All Teams" to see how the room drafted.';
+    return;
+  }
+  var slotIdx = slotIndexForPick(state.pick);
+  var team = state.teams[slotIdx];
+  var round = roundOf(state.pick);
+  if(team.isUser){
+    el.className = 'onclock-banner';
+    el.innerHTML = '<span class="dot"></span> You’re on the clock &mdash; Round '+round+', Pick '+state.pick+'. Draft a player from the list.';
+  } else {
+    el.className = 'onclock-banner cpu';
+    el.innerHTML = '<span class="dot"></span> '+team.name+' is picking&hellip; (Round '+round+', Pick '+state.pick+')';
+  }
+}
+
+function renderPool(){
+  var body = document.getElementById('poolBody');
+  var slotIdx = state.ended ? -1 : slotIndexForPick(state.pick);
+  var userTeam = state.teams[state.userSlotIdx];
+  var userOnClock = !state.ended && slotIdx === state.userSlotIdx;
+  var userHasHC = !!userTeam.roster.HC;
+  var rows = state.pool.filter(function(p){
+    if(state.posFilter !== 'ALL' && p.p !== state.posFilter) return false;
+    if(state.search && p.n.toLowerCase().indexOf(state.search) === -1) return false;
+    return true;
+  }).sort(function(a,b){
+    return state.sortBy === 'pts' ? (b.pts - a.pts) : (a.adp - b.adp);
+  });
+
+  var html = '';
+  rows.forEach(function(p){
+    var disabled = !userOnClock || (p.p === 'HC' && userHasHC);
+    html += '<tr>' +
+      '<td class="pts">'+p.adp.toFixed(0)+'</td>' +
+      '<td><span class="rname">'+p.n+'</span>'+(p.rk?'<span class="rookie-chip">R</span>':'')+'</td>' +
+      '<td>'+posBadge(p.p)+'</td>' +
+      '<td class="rteam">'+p.t+'</td>' +
+      '<td class="pts">'+p.pts.toFixed(1)+'</td>' +
+      '<td><button class="draft-btn" data-id="'+p.id+'" '+(disabled?'disabled':'')+'>Draft</button></td>' +
+      '</tr>';
+  });
+  if(!rows.length){ html = '<tr><td colspan="6" class="empty-state">No players match.</td></tr>'; }
+  body.innerHTML = html;
+
+  Array.prototype.forEach.call(body.querySelectorAll('.draft-btn'), function(btn){
+    btn.addEventListener('click', function(){
+      if(state.ended) return;
+      var idx = slotIndexForPick(state.pick);
+      var team = state.teams[idx];
+      if(!team.isUser) return;
+      var player = state.pool.filter(function(p){return p.id===btn.getAttribute('data-id');})[0];
+      if(!player) return;
+      if(player.p === 'HC' && team.roster.HC) return; // only one Head Coach per team, ever
+      doPick(team, player);
+      render();
+      if(!state.ended) scheduleTick(300);
+    });
+  });
+}
+
+function slotRowHtml(label, player){
+  if(!player){
+    return '<div class="roster-slot"><span class="slot-tag">'+label+'</span><span class="slot-player slot-empty">&mdash; empty &mdash;</span></div>';
+  }
+  return '<div class="roster-slot"><span class="slot-tag">'+label+'</span>'+posBadge(player.p)+
+    '<span class="slot-player">'+player.n+' <span class="rteam">'+player.t+'</span></span>' +
+    '<span class="slot-pts">'+player.pts.toFixed(1)+'</span></div>';
+}
+
+function renderMine(){
+  var idx = state.teams.map(function(t){return t.isUser;}).indexOf(true);
+  var team = state.teams[idx];
+  var r = team.roster;
+  var html = '<div class="roster-list">' +
+    '<div style="font-family:var(--font-display); font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.03em; padding:4px 6px 10px; color:var(--accent);">'+team.name+' (you)</div>' +
+    slotRowHtml('QB', r.QB) +
+    slotRowHtml('RB1', r.RB[0]) + slotRowHtml('RB2', r.RB[1]) +
+    slotRowHtml('WR1', r.WR[0]) + slotRowHtml('WR2', r.WR[1]) +
+    slotRowHtml('TE', r.TE) +
+    slotRowHtml('W/T', r.WT) +
+    slotRowHtml('FLEX', r.FLEX) +
+    slotRowHtml('HC', r.HC);
+  for(var i=0;i<6;i++){ html += slotRowHtml('BEN'+(i+1), r.BEN[i]); }
+  html += '</div>';
+  document.getElementById('tabMine').innerHTML = html;
+}
+
+function renderAll(){
+  var html = '<div class="allrosters-wrap"><table class="ar-table"><thead><tr><th>Slot</th>';
+  state.teams.forEach(function(t){ html += '<th class="'+(t.isUser?'you-col':'')+'">'+t.name+(t.isUser?' (you)':'')+'</th>'; });
+  html += '</tr></thead><tbody>';
+  var rowsDef = [
+    ['QB', function(r){return r.QB;}],
+    ['RB1', function(r){return r.RB[0];}],
+    ['RB2', function(r){return r.RB[1];}],
+    ['WR1', function(r){return r.WR[0];}],
+    ['WR2', function(r){return r.WR[1];}],
+    ['TE', function(r){return r.TE;}],
+    ['W/T', function(r){return r.WT;}],
+    ['FLEX', function(r){return r.FLEX;}],
+    ['HC', function(r){return r.HC;}],
+    ['BEN1', function(r){return r.BEN[0];}],
+    ['BEN2', function(r){return r.BEN[1];}],
+    ['BEN3', function(r){return r.BEN[2];}],
+    ['BEN4', function(r){return r.BEN[3];}],
+    ['BEN5', function(r){return r.BEN[4];}],
+    ['BEN6', function(r){return r.BEN[5];}]
+  ];
+  rowsDef.forEach(function(rd){
+    html += '<tr><td class="ar-slotlabel">'+rd[0]+'</td>';
+    state.teams.forEach(function(t){
+      var p = rd[1](t.roster);
+      html += '<td class="'+(t.isUser?'you-col':'')+'">'+(p ? (p.n+' <span class="rteam">('+p.p+' '+p.t+')</span>') : '<span class="slot-empty">&mdash;</span>')+'</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('tabAll').innerHTML = html;
+}
+
+function renderLog(){
+  var html = '<div class="log-list">';
+  var entries = state.log.slice().reverse();
+  if(!entries.length){ html += '<div class="empty-state">No picks yet.</div>'; }
+  entries.forEach(function(e){
+    html += '<div class="log-row">' +
+      '<span class="log-pk">'+e.round+'.'+((e.pick-1)%12+1)+'</span>' +
+      '<span class="log-team'+(e.isUser?' you':'')+'">'+e.team+'</span>' +
+      posBadge(e.player.p) +
+      '<span>'+e.player.n+' <span class="rteam">'+e.player.t+' &middot; '+e.slot+'</span></span>' +
+      '</div>';
+  });
+  html += '</div>';
+  document.getElementById('tabLog').innerHTML = html;
+}
+
+// Grade = mostly "how many projected points did your starting lineup end up with" (rank among
+// the 12 drafted teams), blended with a smaller "did you get good value relative to ADP across
+// your whole roster" component, so a savvy value-drafter at a bad slot isn't just graded on
+// star power alone.
+function computeGrades(){
+  var stats = state.teams.map(function(t){
+    var r = t.roster;
+    var starters = [r.QB, r.RB[0], r.RB[1], r.WR[0], r.WR[1], r.TE, r.WT, r.FLEX, r.HC];
+    var totalPts = 0;
+    starters.forEach(function(p){ if(p) totalPts += p.pts; });
+    var allPicks = starters.concat(r.BEN).filter(function(p){ return p; });
+    var totalReach = 0;
+    allPicks.forEach(function(p){ totalReach += (p.draftedAt - p.adp); });
+    var avgValue = allPicks.length ? totalReach/allPicks.length : 0;
+    return {team:t, totalPts:totalPts, avgValue:avgValue};
+  });
+  var n = stats.length;
+  var byPts = stats.slice().sort(function(a,b){ return b.totalPts - a.totalPts; });
+  var byValue = stats.slice().sort(function(a,b){ return b.avgValue - a.avgValue; });
+  stats.forEach(function(s){
+    var ptsRank = byPts.indexOf(s), valueRank = byValue.indexOf(s);
+    var ptsPct = n>1 ? 1 - ptsRank/(n-1) : 1;
+    var valuePct = n>1 ? 1 - valueRank/(n-1) : 1;
+    s.percentile = 0.8*ptsPct + 0.2*valuePct;
+    s.ptsRank = ptsRank+1;
+    s.valueRank = valueRank+1;
+    s.grade = gradeLetter(s.percentile);
+  });
+  stats.sort(function(a,b){ return b.percentile - a.percentile; });
+  return stats;
+}
+
+function gradeLetter(pct){
+  if(pct>=0.94) return 'A+';
+  if(pct>=0.86) return 'A';
+  if(pct>=0.78) return 'A-';
+  if(pct>=0.70) return 'B+';
+  if(pct>=0.62) return 'B';
+  if(pct>=0.54) return 'B-';
+  if(pct>=0.46) return 'C+';
+  if(pct>=0.38) return 'C';
+  if(pct>=0.30) return 'C-';
+  if(pct>=0.22) return 'D+';
+  if(pct>=0.14) return 'D';
+  if(pct>=0.06) return 'D-';
+  return 'F';
+}
+
+function renderGrades(){
+  var el = document.getElementById('tabGrades');
+  if(!state.ended){
+    el.innerHTML = '<div class="empty-state">Grades are calculated once all 15 rounds are complete.</div>';
+    return;
+  }
+  var stats = computeGrades();
+  var html = '<div class="grades-list">';
+  stats.forEach(function(s, i){
+    var sign = s.avgValue >= 0 ? '+' : '';
+    html += '<div class="grade-row'+(s.team.isUser?' you':'')+'">' +
+      '<span class="grade-rank">#'+(i+1)+'</span>' +
+      '<span class="grade-letter grade-'+s.grade.charAt(0)+'">'+s.grade+'</span>' +
+      '<span class="grade-team">'+s.team.name+(s.team.isUser?' (you)':'')+'</span>' +
+      '<span class="grade-pts">'+s.totalPts.toFixed(1)+' proj pts (starters)</span>' +
+      '<span class="grade-detail">Points rank #'+s.ptsRank+' &middot; ADP value rank #'+s.valueRank+' ('+sign+s.avgValue.toFixed(1)+' picks vs ADP, avg)</span>' +
+      '</div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderRecommendation(){
+  var el = document.getElementById('recCard');
+  if(state.ended){ el.style.display = 'none'; return; }
+  var slotIdx = slotIndexForPick(state.pick);
+  var team = state.teams[slotIdx];
+  if(!team.isUser){ el.style.display = 'none'; return; }
+  var round = roundOf(state.pick);
+  var result = recommendPlayer(team, round, state.pick);
+  var recs = result.recs;
+  if(!recs.length){ el.style.display = 'none'; return; }
+  var top = recs[0], alts = recs.slice(1);
+  el.style.display = 'flex';
+  el.innerHTML = '<span class="rec-label">Recommended</span>' +
+    posBadge(top.p.p) +
+    '<span class="rec-player">'+top.p.n+'</span>' +
+    '<span class="rec-reason">'+reasonFor(top, result.needs)+'</span>' +
+    (alts.length ? '<span class="rec-alts">Also consider: '+alts.map(function(a){ return a.p.n+' ('+a.p.p+')'; }).join(', ')+'</span>' : '');
+}
+
+function render(){
+  renderStatus();
+  renderBanner();
+  renderRecommendation();
+  renderPool();
+  renderMine();
+  renderAll();
+  renderLog();
+  renderGrades();
+}
+
+// ---------------- controls ----------------
+document.getElementById('posTabs').addEventListener('click', function(e){
+  var btn = e.target.closest('.tab');
+  if(!btn) return;
+  Array.prototype.forEach.call(document.querySelectorAll('#posTabs .tab'), function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  state.posFilter = btn.getAttribute('data-pos');
+  renderPool();
+});
+
+document.getElementById('sortTabs').addEventListener('click', function(e){
+  var btn = e.target.closest('.tab');
+  if(!btn) return;
+  Array.prototype.forEach.call(document.querySelectorAll('#sortTabs .tab'), function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  state.sortBy = btn.getAttribute('data-sort');
+  renderPool();
+});
+
+document.getElementById('searchBox').addEventListener('input', function(e){
+  state.search = e.target.value.toLowerCase();
+  renderPool();
+});
+
+document.getElementById('rightTabs').addEventListener('click', function(e){
+  var btn = e.target.closest('.tab');
+  if(!btn) return;
+  Array.prototype.forEach.call(document.querySelectorAll('#rightTabs .tab'), function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  var which = btn.getAttribute('data-tab');
+  document.getElementById('tabMine').style.display = which==='mine' ? 'block' : 'none';
+  document.getElementById('tabAll').style.display = which==='all' ? 'block' : 'none';
+  document.getElementById('tabLog').style.display = which==='log' ? 'block' : 'none';
+  document.getElementById('tabGrades').style.display = which==='grades' ? 'block' : 'none';
+});
+
+document.getElementById('btnPause').addEventListener('click', function(){
+  if(!state) return;
+  state.paused = !state.paused;
+  document.getElementById('btnPause').textContent = state.paused ? 'Resume' : 'Pause';
+  if(!state.paused) scheduleTick(50);
+});
+
+document.getElementById('btnSimEnd').addEventListener('click', function(){
+  simToEnd();
+});
+
+})();
+</script>
+
+</body>
+</html>
