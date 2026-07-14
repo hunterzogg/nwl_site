@@ -2,6 +2,7 @@
 
 const NWL_HOME = { href: 'index.html', label: 'Home' };
 const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Season' };
+const NWL_MOCK_DRAFT_PAGE = { href: 'pages/mock-draft.html', label: 'Mock Draft' };
 
 const NWL_FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdlRcbl_1SBWOAbBbGUIxTdhPbcd68vc0Dz3ZQoTouUNaoCNQ/viewform';
 
@@ -12,7 +13,6 @@ const NWL_PAGES = [
   { href: 'pages/rankings.html', label: 'Team Rankings' },
   { href: 'pages/draft.html', label: 'Draft' },
   { href: 'pages/transactions.html', label: 'Transactions' },
-  { href: 'pages/mock-draft.html', label: 'Mock Draft' },
 ];
 
 function renderNav(activeHref) {
@@ -33,14 +33,18 @@ function renderNav(activeHref) {
   const liveActive = activeHref === NWL_LIVE_PAGE.label.toLowerCase();
   const liveLink = `<a href="${resolveHref(NWL_LIVE_PAGE)}" class="nav-live ${liveActive ? 'active' : ''}"><span class="nav-live-dot"></span>${NWL_LIVE_PAGE.label}</a>`;
 
+  const mockDraftActive = activeHref === NWL_MOCK_DRAFT_PAGE.label.toLowerCase();
+  const mockDraftLink = `<a href="${resolveHref(NWL_MOCK_DRAFT_PAGE)}" class="${mockDraftActive ? 'active' : ''}">${NWL_MOCK_DRAFT_PAGE.label}</a>`;
+
   nav.innerHTML = `
     <a href="${homeHref}" class="brand">
-      <img src="${inPages ? '../assets/img/nwl_logo.svg' : 'assets/img/nwl_logo.svg'}" alt="NWL" style="height:24px;"> NWL
+      <img src="${inPages ? '../assets/img/nwl_logo.svg?v=2' : 'assets/img/nwl_logo.svg?v=2'}" alt="NWL" style="height:24px;"> NWL
     </a>
     <div class="nav-links">
       ${homeLink}
       <span class="nav-divider"></span>
       ${liveLink}
+      ${mockDraftLink}
       <span class="nav-divider"></span>
       ${NWL_PAGES.map(p => {
         const isActive = activeHref === p.label.toLowerCase();

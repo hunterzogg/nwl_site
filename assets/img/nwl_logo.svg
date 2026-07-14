@@ -1,39 +1,46 @@
-<svg viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nwl-logo-title">
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="nwl-logo-title">
   <title id="nwl-logo-title">National Wayzata League shield logo</title>
   <defs>
     <clipPath id="shieldClip">
-      <path d="M20 18 L180 18 L180 165 C180 195 150 212 100 215 C50 212 20 195 20 165 Z"/>
+      <path d="M16 16 L184 16 L184 150 C184 191 148 215 100 222 C52 215 16 191 16 150 Z"/>
     </clipPath>
+    <path id="nwlStar" d="M0,-7 L1.59,-2.18 L6.66,-2.16 L2.57,0.83 L4.12,5.66 L0,2.7 L-4.12,5.66 L-2.57,0.83 L-6.66,-2.16 L-1.59,-2.18 Z"/>
   </defs>
 
-  <path d="M20 18 L180 18 L180 165 C180 195 150 212 100 215 C50 212 20 195 20 165 Z"
-        fill="#121826" stroke="#F4F6F9" stroke-width="3"/>
+  <path d="M16 16 L184 16 L184 150 C184 191 148 215 100 222 C52 215 16 191 16 150 Z" fill="#0F2249"/>
 
   <g clip-path="url(#shieldClip)">
-    <rect x="20" y="18" width="160" height="40" fill="#1E3FCB"/>
-    <rect x="20" y="163" width="160" height="55" fill="#C8102E"/>
+    <rect x="16" y="118" width="168" height="50" fill="#FFFFFF"/>
+    <rect x="16" y="120" width="168" height="2.5" fill="#C8102E"/>
+    <rect x="16" y="124.5" width="168" height="1" fill="#C8102E" opacity="0.55"/>
+    <rect x="16" y="161.5" width="168" height="2.5" fill="#C8102E"/>
+    <rect x="16" y="165.5" width="168" height="1" fill="#C8102E" opacity="0.55"/>
+
+    <g transform="translate(100,46) rotate(-22)">
+      <path d="M-19,0 C-11,-12 11,-12 19,0 C11,12 -11,12 -19,0 Z" fill="#FFFFFF"/>
+      <path d="M-10,0 L10,0 M-6,-2.4 L-6,2.4 M-2,-3 L-2,3 M2,-3 L2,3 M6,-2.4 L6,2.4"
+            stroke="#0F2249" stroke-width="1.4" stroke-linecap="round"/>
+    </g>
+
+    <use href="#nwlStar" x="50" y="66" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="70" y="66" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="130" y="66" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="150" y="66" fill="#FFFFFF"/>
+
+    <use href="#nwlStar" x="50" y="86" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="70" y="86" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="130" y="86" fill="#FFFFFF"/>
+    <use href="#nwlStar" x="150" y="86" fill="#FFFFFF"/>
   </g>
 
-  <path d="M20 18 L180 18 L180 165 C180 195 150 212 100 215 C50 212 20 195 20 165 Z"
-        fill="none" stroke="#F4F6F9" stroke-width="3"/>
+  <path d="M16 16 L184 16 L184 150 C184 191 148 215 100 222 C52 215 16 191 16 150 Z"
+        fill="none" stroke="#0F2249" stroke-width="2"/>
 
-  <text x="100" y="46" text-anchor="middle"
-        font-family="Oswald, Arial Narrow, sans-serif" font-weight="600"
-        font-size="15" letter-spacing="2.5" fill="#F4F6F9">NATIONAL</text>
-
-  <line x1="32" y1="60" x2="168" y2="60" stroke="#F4F6F9" stroke-width="1.5" opacity="0.5"/>
-
-  <text x="100" y="120" text-anchor="middle"
+  <text x="100" y="158" text-anchor="middle"
         font-family="Oswald, Arial Narrow, sans-serif" font-weight="700"
-        font-size="56" letter-spacing="2" fill="#F4F6F9">NWL</text>
+        font-size="52" letter-spacing="1" fill="#C8102E">NWL</text>
 
-  <line x1="32" y1="134" x2="168" y2="134" stroke="#F4F6F9" stroke-width="1.5" opacity="0.5"/>
-
-  <text x="100" y="153" text-anchor="middle"
-        font-family="Oswald, Arial Narrow, sans-serif" font-weight="600"
-        font-size="14" letter-spacing="1" fill="#F4F6F9">WAYZATA LEAGUE</text>
-
-  <text x="100" y="186" text-anchor="middle"
-        font-family="IBM Plex Mono, monospace" font-weight="500"
-        font-size="10" letter-spacing="1" fill="#F4F6F9" opacity="0.9">EST. 2013</text>
+  <text x="100" y="200" text-anchor="middle"
+        font-family="IBM Plex Mono, monospace" font-weight="600"
+        font-size="12" letter-spacing="1.5" fill="#C8102E">EST. 2013</text>
 </svg>
