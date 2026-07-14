@@ -38,7 +38,7 @@ function renderNav(activeHref) {
 
   nav.innerHTML = `
     <a href="${homeHref}" class="brand">
-      <img src="${inPages ? '../assets/img/nwl_logo.svg?v=2' : 'assets/img/nwl_logo.svg?v=2'}" alt="NWL" style="height:24px;"> NWL
+      <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:24px;"> NWL
     </a>
     <div class="nav-links">
       ${homeLink}

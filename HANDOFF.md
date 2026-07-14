@@ -38,7 +38,8 @@ nwl_site/
 ├── assets/
 │   ├── css/style.css             # All global styles + design tokens (incl. --live amber accent)
 │   ├── js/shared.js              # Nav renderer, data loader, managerTag(), posTag(), loadDataSafe()
-│   ├── img/nwl_logo.svg          # Shield logo (rebuilt, text fits within border)
+│   ├── img/nwl_logo.png          # Shield logo, background-removed PNG (see img/nwl_logo_source.jpeg)
+│   ├── img/nwl_logo_source.jpeg  # Original flat (white-bg) logo Hunter supplied - reprocess from this if the logo changes
 │   └── img/managers/             # Drop {name-lowercase}.jpg here for manager photos (empty)
 ├── data/
 │   ├── managers.json             # 13 managers with colorblind-safe hex colors
