@@ -142,6 +142,18 @@ tbody tr:hover{background:var(--surface-2);}
 .draft-btn:disabled{border-color:var(--line); color:var(--ink-soft); opacity:.5; cursor:not-allowed;}
 .pts{font-family:var(--font-mono); font-weight:700;}
 
+/* Available Players table on narrow screens: drop the least-essential column (ADP -
+   the list is already ADP-sorted by default, so rank is implied by row order) and
+   tighten padding/type so the remaining ADP/Player/Pos/Pts/Draft columns fit within
+   the viewport without the table needing its own horizontal scroll. */
+@media (max-width:640px){
+  table{font-size:12px;}
+  thead th, tbody td{padding:6px 5px;}
+  .col-adp{display:none;}
+  .rteam{font-size:11px;}
+  .draft-btn{padding:4px 7px; font-size:10px;}
+}
+
 /* roster grid */
 .roster-list{padding:10px 14px 16px;}
 .roster-slot{
@@ -303,7 +315,7 @@ tbody tr:hover{background:var(--surface-2);}
         </div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>ADP</th><th>Player</th><th>Pos</th><th>Team</th><th>Proj Pts</th><th></th></tr></thead>
+            <thead><tr><th class="col-adp">ADP</th><th>Player</th><th>Pos</th><th class="col-pts">Proj Pts</th><th></th></tr></thead>
             <tbody id="poolBody"></tbody>
           </table>
         </div>
@@ -921,15 +933,14 @@ function renderPool(){
   rows.forEach(function(p){
     var disabled = !userOnClock || (p.p === 'HC' && userHasHC);
     html += '<tr>' +
-      '<td class="pts">'+p.adp.toFixed(0)+'</td>' +
-      '<td><span class="rname">'+p.n+'</span>'+(p.rk?'<span class="rookie-chip">R</span>':'')+'</td>' +
+      '<td class="pts col-adp">'+p.adp.toFixed(0)+'</td>' +
+      '<td><span class="rname">'+p.n+'</span> <span class="rteam">'+p.t+'</span>'+(p.rk?'<span class="rookie-chip">R</span>':'')+'</td>' +
       '<td>'+posTag(p.p)+'</td>' +
-      '<td class="rteam">'+p.t+'</td>' +
-      '<td class="pts">'+p.pts.toFixed(1)+'</td>' +
+      '<td class="pts col-pts">'+p.pts.toFixed(1)+'</td>' +
       '<td><button class="draft-btn" data-id="'+p.id+'" '+(disabled?'disabled':'')+'>Draft</button></td>' +
       '</tr>';
   });
-  if(!rows.length){ html = '<tr><td colspan="6" class="empty-state">No players match.</td></tr>'; }
+  if(!rows.length){ html = '<tr><td colspan="5" class="empty-state">No players match.</td></tr>'; }
   body.innerHTML = html;
 
   Array.prototype.forEach.call(body.querySelectorAll('.draft-btn'), function(btn){
