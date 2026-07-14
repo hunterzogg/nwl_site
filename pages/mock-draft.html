@@ -152,6 +152,14 @@ tbody tr:hover{background:var(--surface-2);}
   .col-adp{display:none;}
   .rteam{font-size:11px;}
   .draft-btn{padding:4px 7px; font-size:10px;}
+
+  /* These panels (player pool, all-rosters grid, draft log, grades) each cap their
+     own height and scroll independently on desktop, which traps a touch scroll on
+     mobile - once your finger lands inside one, you can only scroll within it and
+     have to reach its very top/bottom before the page underneath will scroll again.
+     On narrow screens let them flow as part of the normal page scroll instead. */
+  .table-scroll, .allrosters-wrap, .log-list, .grades-list{max-height:none; overflow-y:visible;}
+  thead th, .ar-table th{position:static;}
 }
 
 /* roster grid */
