@@ -95,6 +95,8 @@ button{font-family:var(--font-display); cursor:pointer;}
 .tend-hist{font-size:11px; color:var(--ink-soft); margin-top:3px; display:block;}
 .tend-check{display:flex; align-items:center; gap:7px; padding-top:6px;}
 .tend-check label{font-size:12.5px; color:var(--ink); text-transform:none; letter-spacing:0; font-weight:400; margin:0;}
+.tend-section-label{font-family:var(--font-display); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:16px 0 8px; padding-top:12px; border-top:1px solid var(--line);}
+.tend-section-label:first-of-type{margin-top:0; padding-top:0; border-top:none;}
 
 /* ---- draft layout ---- */
 #draftUI{display:none;}
@@ -438,9 +440,34 @@ function populateEditMgrOptions(){
   renderMgrEditForm();
 }
 
-function tendField(id, label, value, histText){
+// Low/Medium/High presets each field can resolve to, tuned per-field so a "High" means
+// something realistic for that field's actual historical range (e.g. QB share tops out
+// far lower than WR share) — see HANDOFF.md for why this replaced raw percent inputs.
+var ROOKIE_BUCKETS = {low:5, medium:10, high:20};
+var MIX_BUCKETS = {
+  RB: {low:24, medium:32, high:40},
+  WR: {low:34, medium:40, high:48},
+  QB: {low:6,  medium:10, high:14},
+  TE: {low:6,  medium:10, high:18}
+};
+function nearestBucket(value, buckets){
+  var best = 'medium', bestDiff = Infinity;
+  Object.keys(buckets).forEach(function(k){
+    var d = Math.abs(value - buckets[k]);
+    if(d < bestDiff){ best = k; bestDiff = d; }
+  });
+  return best;
+}
+function histRookieBucket(mgr){ return nearestBucket(mgr.rookie, ROOKIE_BUCKETS); }
+function histMixBucket(mgr, pos){ return nearestBucket(mgr.mix[pos], MIX_BUCKETS[pos]); }
+
+function tendLMH(id, label, selectedKey, histText){
+  var keys = [['low','Low'],['medium','Medium'],['high','High']];
+  var opts = keys.map(function(k){
+    return '<option value="'+k[0]+'"'+(k[0]===selectedKey?' selected':'')+'>'+k[1]+'</option>';
+  }).join('');
   return '<div class="tend-field"><label for="'+id+'">'+label+'</label>' +
-    '<input type="number" id="'+id+'" value="'+value+'">' +
+    '<select id="'+id+'">'+opts+'</select>' +
     '<span class="tend-hist">historical: '+histText+'</span></div>';
 }
 function tendAggField(current){
@@ -448,7 +475,7 @@ function tendAggField(current){
   var opts = AGGRESSION_OPTIONS.map(function(o){
     return '<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>';
   }).join('');
-  return '<div class="tend-field"><label for="ovAggression">Aggression</label>' +
+  return '<div class="tend-field"><label for="ovAggression">Draft style</label>' +
     '<select id="ovAggression">'+opts+'</select>' +
     '<span class="tend-hist">willingness to reach ahead of ADP; higher = more volatile board</span></div>';
 }
@@ -465,15 +492,20 @@ function renderMgrEditForm(){
   var ovMix = ov.mix || {};
   mgrEditForm.innerHTML =
     '<div class="tend-tag"><b>'+name+'</b> &middot; '+mgr.tag+' &mdash; '+mgr.note+'</div>' +
+    '<div class="tend-section-label">Draft style</div>' +
     '<div class="tend-grid">' +
-      tendField('ovRookie','Rookie usage %', ov.rookie!==undefined?ov.rookie:mgr.rookie, mgr.rookie+'%') +
       tendAggField(ov.aggression) +
-      tendField('ovQbRound','Won’t draft QB before round', ov.qbRound!==undefined?ov.qbRound:mgr.qbRound, 'round '+mgr.qbRound) +
-      tendField('ovTeRound','Won’t draft TE before round', ov.teRound!==undefined?ov.teRound:mgr.teRound, 'round '+mgr.teRound) +
-      tendField('ovMixRB','RB share %', ovMix.RB!==undefined?ovMix.RB:mgr.mix.RB, mgr.mix.RB+'%') +
-      tendField('ovMixWR','WR share %', ovMix.WR!==undefined?ovMix.WR:mgr.mix.WR, mgr.mix.WR+'%') +
-      tendField('ovMixQB','QB share %', ovMix.QB!==undefined?ovMix.QB:mgr.mix.QB, mgr.mix.QB+'%') +
-      tendField('ovMixTE','TE share %', ovMix.TE!==undefined?ovMix.TE:mgr.mix.TE, mgr.mix.TE+'%') +
+    '</div>' +
+    '<div class="tend-section-label">Rookie preference</div>' +
+    '<div class="tend-grid">' +
+      tendLMH('ovRookie','Rookie usage', ov.rookie!==undefined?ov.rookie:histRookieBucket(mgr), mgr.rookie+'%') +
+    '</div>' +
+    '<div class="tend-section-label">Positional favorability</div>' +
+    '<div class="tend-grid">' +
+      tendLMH('ovMixRB','RB favorability', ovMix.RB!==undefined?ovMix.RB:histMixBucket(mgr,'RB'), mgr.mix.RB+'%') +
+      tendLMH('ovMixWR','WR favorability', ovMix.WR!==undefined?ovMix.WR:histMixBucket(mgr,'WR'), mgr.mix.WR+'%') +
+      tendLMH('ovMixQB','QB favorability', ovMix.QB!==undefined?ovMix.QB:histMixBucket(mgr,'QB'), mgr.mix.QB+'%') +
+      tendLMH('ovMixTE','TE favorability', ovMix.TE!==undefined?ovMix.TE:histMixBucket(mgr,'TE'), mgr.mix.TE+'%') +
     '</div>' +
     '<div class="tend-grid" style="margin-top:12px;">' +
       tendCheck('ovRb1','Always RB in round 1', ov.rb1!==undefined?ov.rb1:!!mgr.rb1) +
@@ -481,41 +513,32 @@ function renderMgrEditForm(){
       tendCheck('ovRb2','Always RB in round 2', ov.rb2!==undefined?ov.rb2:!!mgr.rb2) +
     '</div>';
 
-  ['ovRookie','ovQbRound','ovTeRound','ovMixRB','ovMixWR','ovMixQB','ovMixTE'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', onMgrFieldChange);
+  ['ovRookie','ovMixRB','ovMixWR','ovMixQB','ovMixTE','ovAggression'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', onMgrFieldChange);
   });
-  document.getElementById('ovAggression').addEventListener('change', onMgrFieldChange);
   ['ovRb1','ovWr1','ovRb2'].forEach(function(id){
     document.getElementById(id).addEventListener('change', onMgrFieldChange);
   });
 }
 
-function clampNum(v, min, max, fallback){
-  var n = parseFloat(v);
-  if(isNaN(n)) return fallback;
-  return Math.max(min, Math.min(max, n));
-}
-
 function isDefaultOverride(name, ov){
   var mgr = DATA.managers[name];
-  return ov.rookie===mgr.rookie && ov.aggression===1 && ov.qbRound===mgr.qbRound &&
-    ov.teRound===mgr.teRound && ov.rb1===!!mgr.rb1 && ov.wr1===!!mgr.wr1 && ov.rb2===!!mgr.rb2 &&
-    ov.mix.RB===mgr.mix.RB && ov.mix.WR===mgr.mix.WR && ov.mix.QB===mgr.mix.QB && ov.mix.TE===mgr.mix.TE;
+  return ov.rookie===histRookieBucket(mgr) && ov.aggression===1 &&
+    ov.rb1===!!mgr.rb1 && ov.wr1===!!mgr.wr1 && ov.rb2===!!mgr.rb2 &&
+    ov.mix.RB===histMixBucket(mgr,'RB') && ov.mix.WR===histMixBucket(mgr,'WR') &&
+    ov.mix.QB===histMixBucket(mgr,'QB') && ov.mix.TE===histMixBucket(mgr,'TE');
 }
 
 function onMgrFieldChange(){
   var name = selEditMgr.value;
-  var mgr = DATA.managers[name];
   var ov = {};
-  ov.rookie = clampNum(document.getElementById('ovRookie').value, 0, 40, mgr.rookie);
+  ov.rookie = document.getElementById('ovRookie').value;
   ov.aggression = parseFloat(document.getElementById('ovAggression').value);
-  ov.qbRound = clampNum(document.getElementById('ovQbRound').value, 1, 15, mgr.qbRound);
-  ov.teRound = clampNum(document.getElementById('ovTeRound').value, 1, 15, mgr.teRound);
   ov.mix = {
-    RB: clampNum(document.getElementById('ovMixRB').value, 0, 80, mgr.mix.RB),
-    WR: clampNum(document.getElementById('ovMixWR').value, 0, 80, mgr.mix.WR),
-    QB: clampNum(document.getElementById('ovMixQB').value, 0, 80, mgr.mix.QB),
-    TE: clampNum(document.getElementById('ovMixTE').value, 0, 80, mgr.mix.TE)
+    RB: document.getElementById('ovMixRB').value,
+    WR: document.getElementById('ovMixWR').value,
+    QB: document.getElementById('ovMixQB').value,
+    TE: document.getElementById('ovMixTE').value
   };
   ov.rb1 = document.getElementById('ovRb1').checked;
   ov.wr1 = document.getElementById('ovWr1').checked;
@@ -550,8 +573,13 @@ function effectiveMgr(name){
   mgr.mix = Object.assign({}, base.mix);
   var ov = mgrOverrides[name];
   if(ov){
-    if(ov.mix) mgr.mix = Object.assign({}, mgr.mix, ov.mix);
-    ['qbRound','teRound','rookie','rb1','wr1','rb2','aggression'].forEach(function(k){
+    if(ov.rookie!==undefined) mgr.rookie = ROOKIE_BUCKETS[ov.rookie];
+    if(ov.mix){
+      ['RB','WR','QB','TE'].forEach(function(pos){
+        if(ov.mix[pos]!==undefined) mgr.mix[pos] = MIX_BUCKETS[pos][ov.mix[pos]];
+      });
+    }
+    ['rb1','wr1','rb2','aggression'].forEach(function(k){
       if(ov[k]!==undefined) mgr[k] = ov[k];
     });
   }
@@ -644,7 +672,6 @@ function openNeeds(team){
   var flexNeed = r.FLEX ? 0 : 1;
   var hcNeed = r.HC ? 0 : 1;
   var benOpen = r.BEN.filter(function(x){return x===null;}).length;
-  var mandatoryRemaining = qbNeed+rbNeed+wrNeed+teNeed+wtNeed+flexNeed+hcNeed;
   // Total RB/WR rostered anywhere (starters + flex spots + bench), not just the 2
   // mandatory starting slots - used to keep bench-filling leaning toward real
   // fantasy roster construction (RB/WR depth as bye-week/injury insurance) instead
@@ -652,7 +679,14 @@ function openNeeds(team){
   // starting slots are spoken for. See scorePlayer's depth-floor nudge below.
   var totalRB = (r.RB[0]?1:0) + (r.RB[1]?1:0) + (r.FLEX && r.FLEX.p==='RB' ? 1 : 0) + r.BEN.filter(function(p){return p && p.p==='RB';}).length;
   var totalWR = (r.WR[0]?1:0) + (r.WR[1]?1:0) + (r.WT && r.WT.p==='WR' ? 1 : 0) + (r.FLEX && r.FLEX.p==='WR' ? 1 : 0) + r.BEN.filter(function(p){return p && p.p==='WR';}).length;
-  return {qbNeed:qbNeed, rbNeed:rbNeed, wrNeed:wrNeed, teNeed:teNeed, wtNeed:wtNeed, flexNeed:flexNeed, hcNeed:hcNeed, benOpen:benOpen, mandatoryRemaining:mandatoryRemaining, totalRB:totalRB, totalWR:totalWR};
+  // Every real fantasy roster keeps at least 1 RB beyond the 2 starters - RBs get hurt
+  // more than any other position, and a low-RB-mix% manager (e.g. a WR-hoarder) could
+  // otherwise go an entire draft never adding a 3rd, since the soft depth-floor nudge
+  // below isn't reliable on its own. Counted into mandatoryRemaining (and therefore
+  // hard-filtered once urgent, same as QB/TE/HC) so it's a real guarantee, not a lean.
+  var rbFloorNeed = totalRB < 3 ? 1 : 0;
+  var mandatoryRemaining = qbNeed+rbNeed+wrNeed+teNeed+wtNeed+flexNeed+hcNeed+rbFloorNeed;
+  return {qbNeed:qbNeed, rbNeed:rbNeed, wrNeed:wrNeed, teNeed:teNeed, wtNeed:wtNeed, flexNeed:flexNeed, hcNeed:hcNeed, benOpen:benOpen, mandatoryRemaining:mandatoryRemaining, totalRB:totalRB, totalWR:totalWR, rbFloorNeed:rbFloorNeed};
 }
 
 function assignSlot(team, player){
@@ -696,7 +730,7 @@ function computeScarcity(){
 
 function positionHelps(pos, needs){
   return pos==='QB' ? needs.qbNeed>0 :
-    pos==='RB' ? (needs.rbNeed>0 || needs.flexNeed>0) :
+    pos==='RB' ? (needs.rbNeed>0 || needs.flexNeed>0 || needs.rbFloorNeed>0) :
     pos==='WR' ? (needs.wrNeed>0 || needs.wtNeed>0 || needs.flexNeed>0) :
     pos==='TE' ? (needs.teNeed>0 || needs.wtNeed>0 || needs.flexNeed>0) :
     pos==='HC' ? needs.hcNeed>0 : false;
@@ -717,28 +751,27 @@ function scorePlayer(player, team, pickNo, round, needs, rng){
   var reach = pickNo - player.adp; // >0: player has fallen past their ADP (value). <0: reaching ahead of ADP.
   var adpValue;
   if(reach >= 0){ adpValue = 1 + Math.min(reach, 40)/40 * 0.5; }       // up to +50% for falling 40+ picks past ADP
-  else { adpValue = 1 / (1 + (-reach)/(9*aggMult)); }                  // reach penalty: -9 picks early ≈ half value (softened by aggression)
+  else {
+    // Round 1 gets a steeper reach penalty than the rest of the draft: real round-1 boards
+    // track consensus ADP tightly (a 1-3 spot reach is normal team-preference noise, but a
+    // late-round-1-caliber player going 1.01 isn't), while later rounds legitimately have more
+    // spread since bench-caliber players cluster much closer in true value.
+    var reachDivisor = (round===1 ? 2 : 9) * aggMult;
+    adpValue = 1 / (1 + (-reach)/reachDivisor);                        // reach penalty: divisor picks early ≈ half value (softened by aggression)
+  }
 
   var posPct = pos==='HC' ? 8 : (mgr.mix[pos]||8);
   var baseWeight = posPct/25;
 
+  // No round-floor gate here by design: a manager's historical QB/TE timing is already
+  // captured by baseWeight (their mix% share) and the need-ramp below, not by a hard or
+  // smoothed "won't draft before round X" cutoff. That old gate could suppress a QB/TE
+  // even when he was sitting right at his real ADP (adpValue only rewards falling PAST
+  // ADP, not just being a legitimately good value at the current pick), which is what
+  // pushed elite-but-not-QB1-off-the-board players unrealistically far down the board.
+  // Removing it lets real ADP value decide when a great player goes, while mix% still
+  // tilts *which* manager is more likely to be the one who takes him.
   var gate = 1;
-  // QB/TE timing is a historical *lean*, not a hard rule: the further before a manager's
-  // usual round, the more it's discounted, but it tapers smoothly (instead of a flat cliff)
-  // and a real value bargain (adpValue well above 1) can still cut through the hesitance —
-  // so a QB/TE run can start earlier than history alone would suggest when the value is there.
-  if(pos==='QB'){
-    var qbRoundsEarly = Math.max(0, mgr.qbRound - round);
-    var qbGate = 0.22 + 0.78*Math.exp(-0.32*qbRoundsEarly);
-    var qbValueBoost = Math.max(0, adpValue - 1.1) * 0.8;
-    gate *= Math.min(1, qbGate + qbValueBoost);
-  }
-  if(pos==='TE'){
-    var teRoundsEarly = Math.max(0, mgr.teRound - round);
-    var teGate = 0.28 + 0.72*Math.exp(-0.30*teRoundsEarly);
-    var teValueBoost = Math.max(0, adpValue - 1.1) * 0.8;
-    gate *= Math.min(1, teGate + teValueBoost);
-  }
   if(pos==='RB' && round===1 && mgr.rb1) gate *= 2.0;
   if(pos==='WR' && round===1 && mgr.wr1) gate *= 2.0;
   if(pos==='RB' && round===2 && mgr.rb2) gate *= 1.8;
@@ -755,11 +788,14 @@ function scorePlayer(player, team, pickNo, round, needs, rng){
 
   // QB and TE only ever have one mandatory slot each, so their historical mix% share (which
   // reflects a whole roster's worth of bench depth too) structurally understates how much a
-  // team should want to lock theirs in. Ramp a standalone "still don't have one" pressure that
-  // grows across the draft, well before the last-chance "urgent" cliff kicks in — this is what
-  // lets a QB/TE run start in the middle rounds instead of everyone waiting to the very end.
+  // team should want to lock theirs in — baseWeight alone leaves them ~3x behind RB/WR at the
+  // same value, which was still letting a real ADP bargain (e.g. a TE1 sitting at his real ADP)
+  // get passed over for rounds by every team. Ramp a standalone "still don't have one" pressure,
+  // strong from round 1 (not just growing from a low start), well before the last-chance
+  // "urgent" cliff kicks in — this is what lets a QB/TE run start as early as real value
+  // justifies, instead of consensus rank getting diluted by the mix% disadvantage.
   if((pos==='QB' && needs.qbNeed>0) || (pos==='TE' && needs.teNeed>0)){
-    needMult *= (1 + (round/ROUNDS) * 3.5);
+    needMult *= (2 + (round/ROUNDS) * 5);
   }
 
   if(pos==='HC' && needs.hcNeed>0 && !urgent){
