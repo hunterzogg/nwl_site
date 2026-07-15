@@ -944,7 +944,21 @@ function renderBanner(){
   var round = roundOf(state.pick);
   if(team.isUser){
     el.className = 'onclock-banner';
-    el.innerHTML = '<span class="dot"></span> You’re on the clock &mdash; Round '+round+', Pick '+state.pick+'. Draft a player from the list.';
+    var msg = 'You’re on the clock &mdash; Round '+round+', Pick '+state.pick+'. Draft a player from the list.';
+    var needs = openNeeds(team);
+    var roundsLeft = ROUNDS - round + 1;
+    if(needs.mandatoryRemaining >= roundsLeft){
+      var missing = [];
+      if(needs.hcNeed>0) missing.push('a Head Coach');
+      if(needs.qbNeed>0) missing.push('a QB');
+      if(needs.teNeed>0) missing.push('a TE');
+      if(needs.rbNeed>0) missing.push('a starting RB');
+      if(needs.wrNeed>0) missing.push('a starting WR');
+      if(needs.wtNeed>0) missing.push('your TE/WR flex');
+      if(needs.flexNeed>0) missing.push('your FLEX');
+      if(missing.length) msg = 'You’re on the clock &mdash; Round '+round+', Pick '+state.pick+'. No slack left on your roster: you still need '+missing.join(', ')+', so only picks that fill it are available.';
+    }
+    el.innerHTML = '<span class="dot"></span> '+msg;
   } else {
     el.className = 'onclock-banner cpu';
     el.innerHTML = '<span class="dot"></span> '+team.name+' is picking&hellip; (Round '+round+', Pick '+state.pick+')';
@@ -957,6 +971,18 @@ function renderPool(){
   var userTeam = state.teams[state.userSlotIdx];
   var userOnClock = !state.ended && slotIdx === state.userSlotIdx;
   var userHasHC = !!userTeam.roster.HC;
+
+  // Same "no slack left" rule CPU teams already draft under (see pickForTeam's urgent
+  // hard-filter) - once the user's own remaining picks exactly equal their remaining
+  // mandatory needs (HC included), every future pick has to fill one of those needs or
+  // the roster can't complete. Applied here as disabled Draft buttons instead of a
+  // silently-filtered candidate pool, since this is the user's own manual turn.
+  var userNeeds = userOnClock ? openNeeds(userTeam) : null;
+  var userRound = userOnClock ? roundOf(state.pick) : 0;
+  var userRoundsLeft = ROUNDS - userRound + 1;
+  var userUrgent = !!(userNeeds && userNeeds.mandatoryRemaining >= userRoundsLeft);
+  var anyHelpsUrgent = userUrgent && state.pool.some(function(p){ return positionHelps(p.p, userNeeds); });
+
   var rows = state.pool.filter(function(p){
     if(state.posFilter !== 'ALL' && p.p !== state.posFilter) return false;
     if(state.search && p.n.toLowerCase().indexOf(state.search) === -1) return false;
@@ -967,7 +993,8 @@ function renderPool(){
 
   var html = '';
   rows.forEach(function(p){
-    var disabled = !userOnClock || (p.p === 'HC' && userHasHC);
+    var disabled = !userOnClock || (p.p === 'HC' && userHasHC) ||
+      (anyHelpsUrgent && !positionHelps(p.p, userNeeds));
     html += '<tr>' +
       '<td class="pts col-adp">'+p.adp.toFixed(0)+'</td>' +
       '<td><span class="rname">'+p.n+'</span> <span class="rteam">'+p.t+'</span>'+(p.rk?'<span class="rookie-chip">R</span>':'')+'</td>' +
