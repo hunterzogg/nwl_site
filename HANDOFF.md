@@ -71,7 +71,8 @@ nwl_site/
     ├── rankings.html             # Per-team-season rankings (regular + playoffs)
     ├── draft.html                # Draft board / Round 1-3 Strategy / Slot Analysis / Draft Grades
     ├── transactions.html         # Transaction Log / Trade Database / Summary tabs
-    └── season-2026.html          # Current-season hub - Matchups / Standings / Power Rankings / Commentary
+    ├── season-2026.html          # Current-season hub - Matchups / Standings / Power Rankings / Commentary
+    └── mock-draft.html           # 15-round mock draft vs 11 CPU managers - own detailed handoff, see below
 ```
 
 ---
@@ -137,6 +138,13 @@ Three tabs:
 - **Transaction Log**: filterable by season, manager, type, player search. Losing waiver bids nest under winning bid when exact dates match. **2023-2025 are 100% exact-dated** (Rounds 9-10), year-only for 2013-2022 (no date source exists for those years in the workbook).
 - **Trade Database**: filterable by season, manager, and now player name search. 2022 is year-only precision, 2023-2025 have exact dates. Player format: "POS - Player Name".
 - **Summary**: historical league totals by season (from Mgr Summary A35, covers all 2013-2025), per-manager career counts (now includes Most/Fewest transactions in a season, with the year), acquisition type breakdown.
+
+### mock-draft.html ✅
+Standalone 15-round, 12-team snake mock draft simulator against 11 CPU-controlled managers modeled on real NWL draft history (position mix, QB/TE timing, rookie appetite), plus a novelty Head Coach category (draft an NFL team, scored on projected wins/losses — a made-up category, not part of the real NWL format). Reachable via its own top-level nav link next to "2026 Season" — deliberately not nested under it and not part of the historical "Explore the archive" grid, since it's 2026 draft prep, not an archive page. Fully folded into the site's shared nav/CSS/fonts (`../assets/css/style.css`, `shared.js`'s `renderNav()`) rather than carrying its own separate theme, which it originally did — its CSS variable names collided with the shared palette, so its `:root` tokens are now aliased onto the site's real tokens instead of redefining them.
+
+Player pool: 444 skill-position players (QB/RB/WR/TE), imported from ESPN's public 2026 season projections guide — up from an original ~251-player board. Existing players' real ADP was left untouched as the primary draft-order signal (the CPU engine's pick logic never actually reads projected points, only ADP, so refreshing points broadly carried no behavior risk); new additions get an ADP slot interpolated against same-position neighbors already anchored to real ADP. Every skill-position 2026 rookie is cross-checked against the actual NFL draft class and flagged with a rookie chip. Setup screen lets you customize any CPU manager's tendencies (rookie appetite, aggression, QB/TE timing, position mix, round-1/2 RB/WR locks) for that mock only. Roster requirement — exactly one Head Coach — is structurally enforced for CPU teams and, as of this pass, hard-enforced for the user's own manual picks too (Draft button disables on anything that wouldn't fill a still-open mandatory slot once your remaining picks run out of slack to spare).
+
+This tool has its own, much more detailed handoff document (every design decision, known-issues-fixed history, verification methodology) at `~/Documents/Fantasy Football/NWL/2026/Mock Draft/HANDOFF.md` — read that before making further changes to the draft engine itself; this entry is just the site-integration summary.
 
 ---
 
