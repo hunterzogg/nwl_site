@@ -630,6 +630,13 @@ function startDraft(identity, slotNum){
     var c = Object.assign({}, pl); c.id = makeId(pl, i); return c;
   });
 
+  // Rank each QB/TE by real ADP within their own position - used by scorePlayer's
+  // elite-tier premium (posRank 1-3 get pulled closer to their real ADP).
+  ['QB','TE'].forEach(function(pos){
+    var byPos = pool.filter(function(p){ return p.p === pos; }).sort(function(a,b){ return a.adp - b.adp; });
+    byPos.forEach(function(p, i){ p.posRank = i + 1; });
+  });
+
   state = {
     teams: teams,
     userSlotIdx: slotNum - 1,
@@ -763,6 +770,21 @@ function scorePlayer(player, team, pickNo, round, needs, rng){
   var posPct = pos==='HC' ? 8 : (mgr.mix[pos]||8);
   var baseWeight = posPct/25;
 
+  // Elite-tier premium for the true top of a scarce position (posRank, set once at draft
+  // start in startDraft from real ADP order among QB/TE only). Real drafts pay up hard for
+  // lockdown QB1/TE1 certainty - not just "good enough" positional depth - so the very best
+  // player at the position gets pulled noticeably closer to his real ADP, tapering off fast
+  // (rank 2 gets a smaller bump, rank 3 a token one, rank 4+ nothing). This is deliberately
+  // separate from baseWeight/needMult: those reflect a manager's *habits*, this reflects
+  // that some players are simply a tier above the rest of their position, regardless of
+  // any one manager's history.
+  var eliteMult = 1;
+  if((pos==='QB' || pos==='TE') && player.posRank){
+    if(player.posRank===1) eliteMult = 2.0;
+    else if(player.posRank===2) eliteMult = 1.5;
+    else if(player.posRank===3) eliteMult = 1.15;
+  }
+
   // No round-floor gate here by design: a manager's historical QB/TE timing is already
   // captured by baseWeight (their mix% share) and the need-ramp below, not by a hard or
   // smoothed "won't draft before round X" cutoff. That old gate could suppress a QB/TE
@@ -823,7 +845,7 @@ function scorePlayer(player, team, pickNo, round, needs, rng){
   // predictable, closer to consensus), aggressive ones a wider one (more boom/bust).
   var jitterSpread = 0.06 * aggMult;
   var jitter = (1 - jitterSpread) + rng()*jitterSpread*2;
-  return adpValue*baseWeight*gate*rookieMult*needMult*jitter;
+  return adpValue*baseWeight*gate*rookieMult*needMult*eliteMult*jitter;
 }
 
 function pickForTeam(team, round, pickNo){
