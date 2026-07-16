@@ -8,10 +8,11 @@ Static website for the National Wayzata League (NWL), a 13-season dynasty-style 
 github.com/hunterzogg/nwl_site, `main` branch, root path). Public repo - GitHub Pages' free tier
 requires it; there's no true "private but shared" middle ground without paying for GitHub Pro.
 
-**Project lives at `~/nwl_site`** (moved out of Downloads - see REVIEW_LOG Round 15) and is a real
-git repo now (see REVIEW_LOG Round 16 for the full hosting setup). To publish a change:
+**Project lives at `~/Sites/nwl_site`** (moved out of Downloads - see REVIEW_LOG Round 15; later
+relocated from `~/nwl_site` into `~/Sites/` - macOS's conventional per-user local web root) and is
+a real git repo now (see REVIEW_LOG Round 16 for the full hosting setup). To publish a change:
 ```
-cd ~/nwl_site
+cd ~/Sites/nwl_site
 git add -A
 git commit -m "describe the change"
 git push
@@ -21,7 +22,7 @@ git push
 
 **To run locally (for testing before you push):**
 ```
-cd ~/nwl_site
+cd ~/Sites/nwl_site
 python3 -m http.server 8000
 # then open http://localhost:8000
 ```
@@ -282,15 +283,15 @@ manager-profile data entry (above) and Phase 2 (live 2026 season data, below).
 
 ## Resuming This Project
 
-The project is no longer a zip handoff - it's a live git repo at `~/nwl_site`
+The project is no longer a zip handoff - it's a live git repo at `~/Sites/nwl_site`
 (github.com/hunterzogg/nwl_site), deployed to https://hunterzogg.github.io/nwl_site/. To pick up
 where things left off, tell Claude:
 
-> "We're continuing the NWL fantasy football website project at ~/nwl_site. Read HANDOFF.md and REVIEW_LOG.md there for full context. Both Phase 1 (historical archive) and Phase 2 (2026 season hub) are built and live - what's left is [whatever you actually want done next, e.g. filling in favorite_nfl_team, or running the weekly fetch script together once the season starts]."
+> "We're continuing the NWL fantasy football website project at ~/Sites/nwl_site. Read HANDOFF.md and REVIEW_LOG.md there for full context. Both Phase 1 (historical archive) and Phase 2 (2026 season hub) are built and live - what's left is [whatever you actually want done next, e.g. filling in favorite_nfl_team, or running the weekly fetch script together once the season starts]."
 
 Key context to re-establish:
 - Stack: vanilla HTML/CSS/JS, static site, no build tools, no backend
-- Publishing: `git add -A && git commit -m "..." && git push` from `~/nwl_site` - GitHub Pages
+- Publishing: `git add -A && git commit -m "..." && git push` from `~/Sites/nwl_site` - GitHub Pages
   rebuilds automatically within about a minute. There is no more zip-file workflow.
 - Data source for anything not yet extracted: `NWL_Master.xlsx` at
   `~/Documents/Fantasy Football/NWL/NWL_Master.xlsx` (re-upload/re-point to it if a fresh session
