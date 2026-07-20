@@ -147,6 +147,8 @@ Player pool: 444 skill-position players (QB/RB/WR/TE), imported from ESPN's publ
 
 This tool has its own, much more detailed handoff document (every design decision, known-issues-fixed history, verification methodology) at `~/Documents/Fantasy Football/NWL/2026/Mock Draft/HANDOFF.md` — read that before making further changes to the draft engine itself; this entry is just the site-integration summary.
 
+**Added this session**: (1) expandable per-pick grades on the Grades tab — click any team's row to see a pick-by-pick breakdown (value grade vs. ADP, points contribution to the team's starter total); (2) a pre-draft "Draft strategy" selector (Robust RB / Zero RB / Anchor RB / Value-Based Drafting / Streaming QB-TE) that biases the Recommended-pick card and the user's own Sim-to-End picks toward that philosophy — scoped so it never touches any CPU manager's scoring. See the tool's own HANDOFF.md for the full engine-level writeup.
+
 ---
 
 ## NOT YET BUILT

@@ -210,7 +210,7 @@ tbody tr:hover{background:var(--surface-2);}
 
 .grade-row{
   display:flex; align-items:center; gap:12px; padding:10px 4px; border-bottom:1px solid var(--line);
-  flex-wrap:wrap;
+  flex-wrap:wrap; cursor:pointer;
 }
 .grade-row.you{background:var(--accent-soft); border-radius:8px; padding-left:8px; padding-right:8px;}
 .grade-rank{font-family:var(--font-mono); color:var(--ink-soft); font-size:12px; width:28px; flex:none;}
@@ -226,6 +226,24 @@ tbody tr:hover{background:var(--surface-2);}
 .grade-team{font-weight:700; width:110px; flex:none;}
 .grade-pts{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-soft); width:150px; flex:none;}
 .grade-detail{color:var(--ink-soft); font-size:12px; flex:1; min-width:220px;}
+.grade-chevron{
+  color:var(--ink-soft); font-size:11px; flex:none; margin-left:auto; transition:transform .15s;
+}
+.grade-row.expanded .grade-chevron{transform:rotate(180deg);}
+
+.grade-pickwrap{display:none; padding:4px 4px 12px; border-bottom:1px solid var(--line);}
+.grade-pickwrap.expanded{display:block;}
+.pick-row{
+  display:flex; align-items:center; gap:10px; padding:6px 4px; flex-wrap:wrap;
+  font-size:12.5px; border-bottom:1px dashed var(--line);
+}
+.pick-row:last-child{border-bottom:none;}
+.pick-rd{font-family:var(--font-mono); color:var(--ink-soft); width:44px; flex:none;}
+.pick-name{font-weight:600; min-width:120px;}
+.pick-slot{font-family:var(--font-mono); color:var(--ink-soft); width:44px; flex:none;}
+.pick-reach{font-family:var(--font-mono); width:90px; flex:none;}
+.pick-grade{font-size:12px; width:30px; padding:2px 0;}
+.pick-contrib{color:var(--ink-soft); flex:1; min-width:160px;}
 
 .onclock-banner{
   background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent);
@@ -279,8 +297,13 @@ tbody tr:hover{background:var(--surface-2);}
           <label for="selSlot">Your draft slot</label>
           <select id="selSlot"></select>
         </div>
+        <div class="field">
+          <label for="selStrategy">Draft strategy</label>
+          <select id="selStrategy"></select>
+        </div>
       </div>
       <div class="mgr-blurb" id="mgrBlurb"></div>
+      <div class="mgr-blurb show" id="strategyBlurb"></div>
       <div class="setup-note">
         <b>Roster:</b> QB &middot; 2 RB &middot; 2 WR &middot; TE &middot; TE/WR &middot; FLEX &middot; HC &middot; 6 bench &mdash; 15 rounds, 12 teams, snake.
       </div>
@@ -366,6 +389,56 @@ var CANON = ["Goetz","Palaia","Stover","Prodahl","Larson","Glaser","Ainsworth","
 var ROUNDS = 15, TEAMS = 12, TOTAL_PICKS = ROUNDS*TEAMS;
 var SLOT_ORDER = ["QB","RB1","RB2","WR1","WR2","TE","WT","FLEX","HC","BEN1","BEN2","BEN3","BEN4","BEN5","BEN6"];
 
+// Value-Based Drafting baseline: projected points of the "replacement level" player at
+// each position (the last player who'd realistically still be a starter league-wide),
+// computed once from the real player pool. Replacement ranks approximate 1 starter/team
+// at QB, ~2.5/team at RB and 3/team at WR (accounting for the shared FLEX/W-T slots),
+// ~1.25/team at TE - not exact roster-slot math, just a standard VBD rule-of-thumb depth.
+var VBD_REPLACEMENT_RANK = {QB:12, RB:30, WR:36, TE:15};
+function computeVbdBaselines(){
+  var baseline = {};
+  ['QB','RB','WR','TE'].forEach(function(pos){
+    var byPts = DATA.players.filter(function(p){ return p.p===pos; })
+      .map(function(p){ return p.pts; }).sort(function(a,b){ return b-a; });
+    var rank = VBD_REPLACEMENT_RANK[pos];
+    baseline[pos] = byPts[Math.min(rank, byPts.length-1)] || 0;
+  });
+  return baseline;
+}
+var VBD_BASELINE = computeVbdBaselines();
+// Soft, bounded nudge (not a hard override) toward players who clear their position's
+// replacement baseline by a wide margin - only applied when the user opts into the VBD strategy.
+function vbdMultiplier(player){
+  var vbd = player.pts - (VBD_BASELINE[player.p]||0);
+  var mult = 1 + Math.max(-0.5, Math.min(1.5, vbd/40));
+  return mult;
+}
+
+// Pre-draft strategy bias, applied only to the user's own team (see call sites in
+// recommendPlayer and pickForTeam) - never affects any CPU manager's scorePlayer result.
+function strategyMultiplier(strategy, pos, round, needs){
+  if(strategy==='robust_rb'){
+    if(round<=4){ return pos==='RB' ? 1.8 : 0.85; }
+  } else if(strategy==='zero_rb'){
+    if(round<=6){
+      if(pos==='RB') return 0.15;
+      if(pos==='WR') return 1.3;
+    }
+  } else if(strategy==='anchor_rb'){
+    if(round===1){ if(pos==='RB') return 2.0; }
+    else if(round<=6 && needs.totalRB>=1){
+      if(pos==='RB') return 0.3;
+      if(pos==='WR') return 1.3;
+    }
+  } else if(strategy==='streaming_qbte'){
+    if(round<=7){
+      if(pos==='QB' || pos==='TE') return 0.1;
+      if(pos==='RB' || pos==='WR') return 1.15;
+    }
+  }
+  return 1;
+}
+
 var state = null;
 
 // ---------------- setup UI ----------------
@@ -374,6 +447,32 @@ var selSlot = document.getElementById('selSlot');
 var mgrBlurb = document.getElementById('mgrBlurb');
 var selEditMgr = document.getElementById('selEditMgr');
 var mgrEditForm = document.getElementById('mgrEditForm');
+var selStrategy = document.getElementById('selStrategy');
+var strategyBlurb = document.getElementById('strategyBlurb');
+
+// Pre-draft strategy the user can opt into - biases the Recommended-pick engine (and,
+// if the user leaves remaining picks to "Sim to End", their own auto-played picks too)
+// toward one of five common fantasy draft philosophies. Deliberately scoped to the
+// user's own team only (see strategyMultiplier/vbdMultiplier call sites) - CPU opponents
+// keep their own historical-tendency-driven scorePlayer behavior completely unchanged.
+var STRATEGIES = [
+  ['balanced', 'Balanced (no bias)', 'No extra bias — picks follow pure best-value-and-need, same as the Recommended card always has.'],
+  ['robust_rb', 'Robust RB', 'Prioritize running backs in the first three or four rounds.'],
+  ['zero_rb', 'Zero RB', 'Ignore running backs in the first five or six rounds — stockpile elite receivers (and a premium TE/QB) instead.'],
+  ['anchor_rb', 'Anchor RB / Hero RB', 'Take exactly one elite, locked-in RB in round 1, then pivot to WR and other positions for several rounds.'],
+  ['vbd', 'Value-Based Drafting', 'Favor whichever player offers the most points over the replacement-level baseline at their position, not just raw projected points.'],
+  ['streaming_qbte', 'Streaming QB/TE', 'Ignore quarterbacks and tight ends for the first seven or eight rounds — stockpile RB/WR instead.']
+];
+STRATEGIES.forEach(function(s){
+  var o = document.createElement('option'); o.value = s[0]; o.textContent = s[1];
+  selStrategy.appendChild(o);
+});
+function updateStrategyBlurb(){
+  var s = STRATEGIES.filter(function(x){ return x[0]===selStrategy.value; })[0];
+  strategyBlurb.innerHTML = s ? '<b>'+s[1]+'</b> &mdash; '+s[2] : '';
+}
+selStrategy.addEventListener('change', updateStrategyBlurb);
+updateStrategyBlurb();
 
 // Per-mock overrides of CPU manager tendencies, keyed by manager name. Sparse — only
 // fields the user actually changed from historical are stored. Lives for the session
@@ -639,7 +738,8 @@ function startDraft(identity, slotNum){
     posFilter: 'ALL',
     sortBy: 'adp',
     search: '',
-    rightTab: 'mine'
+    rightTab: 'mine',
+    strategy: selStrategy.value
   };
 
   document.getElementById('setupUI').style.display = 'none';
@@ -863,7 +963,16 @@ function pickForTeam(team, round, pickNo){
     if(mustHelp.length) candidates = mustHelp;
   }
 
-  var scored = candidates.map(function(p){ return {p:p, s:scorePlayer(p, team, pickNo, round, needs, rng)}; });
+  var scored = candidates.map(function(p){
+    var s = scorePlayer(p, team, pickNo, round, needs, rng);
+    // Strategy bias only ever applies to the user's own team - every CPU manager's score
+    // is untouched, so the tuned 11-opponent simulation can't regress from this feature.
+    if(team.isUser && state.strategy && state.strategy!=='balanced'){
+      s *= strategyMultiplier(state.strategy, p.p, round, needs);
+      if(state.strategy==='vbd') s *= vbdMultiplier(p);
+    }
+    return {p:p, s:s};
+  });
   scored.sort(function(a,b){ return b.s - a.s; });
   var topK = scored.slice(0, Math.min(4, scored.length));
   topK.forEach(function(x){ x.s = Math.pow(x.s, 2); }); // sharpen preference toward the top of the shortlist
@@ -883,18 +992,24 @@ function recommendPlayer(team, round, pickNo){
   var candidates = state.pool.filter(function(p){ return !(p.p==='HC' && needs.hcNeed===0); });
   var roundsLeft = ROUNDS - round + 1;
   var urgent = needs.mandatoryRemaining >= roundsLeft;
+  var strategy = state.strategy;
   var list = candidates.map(function(p){
     var reach = pickNo - p.adp;
     var adpValue = reach>=0 ? 1 + Math.min(reach,40)/40*0.5 : 1/(1+(-reach)/9);
     var helps = positionHelps(p.p, needs);
     var needMult = urgent ? (helps?2.2:0.3) : (helps?1.3:0.85);
-    return {p:p, s:adpValue*needMult, helps:helps, adpValue:adpValue};
+    var s = adpValue*needMult;
+    if(strategy && strategy!=='balanced'){
+      s *= strategyMultiplier(strategy, p.p, round, needs);
+      if(strategy==='vbd') s *= vbdMultiplier(p);
+    }
+    return {p:p, s:s, helps:helps, adpValue:adpValue};
   });
   list.sort(function(a,b){ return b.s - a.s; });
   return {recs: list.slice(0,3), needs: needs};
 }
 
-function reasonFor(entry, needs){
+function reasonFor(entry, needs, round){
   var p = entry.p;
   var bits = [];
   if(p.p==='QB' && needs.qbNeed>0) bits.push('you have no QB yet');
@@ -907,7 +1022,22 @@ function reasonFor(entry, needs){
   var valueNote = '';
   if(entry.adpValue >= 1.2) valueNote = ' — great value, ADP had him gone by now';
   else if(entry.adpValue <= 0.6) valueNote = ' — a bit ahead of his ADP, but the need matters more';
-  return bits.join(', ') + valueNote;
+  var strategyNote = strategyReasonNote(state.strategy, p.p, round, needs);
+  return bits.join(', ') + valueNote + strategyNote;
+}
+
+// One short, optional clause explaining when the chosen pre-draft strategy is actively
+// shaping this specific recommendation - stays empty for 'balanced' and for positions/rounds
+// the strategy doesn't touch, so ordinary reasoning text isn't cluttered for most picks.
+function strategyReasonNote(strategy, pos, round, needs){
+  if(!strategy || strategy==='balanced') return '';
+  if(strategy==='robust_rb' && pos==='RB' && round<=4) return ' — fits your Robust RB plan';
+  if(strategy==='zero_rb' && pos==='WR' && round<=6) return ' — fits your Zero RB plan to wait on backs';
+  if(strategy==='anchor_rb' && pos==='RB' && round===1) return ' — your one true first-round anchor';
+  if(strategy==='anchor_rb' && pos==='WR' && round<=6 && needs.totalRB>=1) return ' — pivoting to WR after your anchor RB';
+  if(strategy==='streaming_qbte' && (pos==='RB'||pos==='WR') && round<=7) return ' — fits your Streaming QB/TE plan';
+  if(strategy==='vbd') return ' — best value over replacement at his position';
+  return '';
 }
 
 function doPick(team, player){
@@ -1187,6 +1317,62 @@ function gradeLetter(pct){
   return 'F';
 }
 
+// Percentile rank of `value` within `all` (0..1, 1 = best) - same simple rank-based
+// approach pages/draft.html uses for its own pick-level grading, written locally rather
+// than shared since this file already duplicates gradeLetter instead of factoring it out.
+function percentileRank(value, all){
+  if(all.length<=1) return 1;
+  var better = all.filter(function(v){ return v < value; }).length;
+  return better/(all.length-1);
+}
+
+// Per-pick breakdown for the Grades tab's expandable detail: for every pick in the draft,
+// how good was it relative to real ADP (independent of which team made it), and how much
+// did it actually feed into that team's overall grade (points share for starters, or just
+// "counted toward your bench-value average" for bench).
+function computePickGrades(stats){
+  var allReaches = state.log.map(function(l){ return l.player.draftedAt - l.player.adp; });
+  var byTeam = {};
+  stats.forEach(function(s){ byTeam[s.team.name] = s; });
+  var out = {};
+  state.log.forEach(function(entry){
+    var team = entry.team, p = entry.player;
+    var reach = p.draftedAt - p.adp;
+    var pct = percentileRank(reach, allReaches);
+    var isStarter = entry.slot.indexOf('BEN') !== 0;
+    var teamStat = byTeam[team];
+    var ptsShare = (isStarter && teamStat && teamStat.totalPts>0) ? p.pts/teamStat.totalPts : 0;
+    if(!out[team]) out[team] = [];
+    out[team].push({
+      pick: entry.pick, round: entry.round, player: p, slot: entry.slot,
+      reach: reach, valuePercentile: pct, valueGrade: gradeLetter(pct),
+      isStarter: isStarter, ptsShare: ptsShare
+    });
+  });
+  Object.keys(out).forEach(function(name){ out[name].sort(function(a,b){ return a.pick-b.pick; }); });
+  return out;
+}
+
+function pickGradeRowsHTML(picks){
+  return picks.map(function(pk){
+    var p = pk.player;
+    var sign = pk.reach >= 0 ? '+' : '';
+    var reachColor = pk.reach > 0 ? 'var(--turf)' : (pk.reach < 0 ? 'var(--danger)' : 'var(--ink-soft)');
+    var contribution = pk.isStarter
+      ? 'contributed '+(pk.ptsShare*100).toFixed(0)+'% of starter pts'
+      : 'bench &mdash; counts only toward value average';
+    return '<div class="pick-row">' +
+      '<span class="pick-rd">R'+pk.round+'.'+(((pk.pick-1)%12)+1)+'</span>' +
+      posTag(p.p) +
+      '<span class="pick-name">'+p.n+'</span>' +
+      '<span class="pick-slot">'+pk.slot+'</span>' +
+      '<span class="pick-reach" style="color:'+reachColor+';">'+sign+pk.reach+' vs ADP</span>' +
+      '<span class="grade-letter pick-grade grade-'+pk.valueGrade.charAt(0)+'">'+pk.valueGrade+'</span>' +
+      '<span class="pick-contrib">'+contribution+'</span>' +
+      '</div>';
+  }).join('');
+}
+
 function renderGrades(){
   var el = document.getElementById('tabGrades');
   if(!state.ended){
@@ -1194,19 +1380,35 @@ function renderGrades(){
     return;
   }
   var stats = computeGrades();
+  var pickGrades = computePickGrades(stats);
   var html = '<div class="grades-list">';
   stats.forEach(function(s, i){
     var sign = s.avgValue >= 0 ? '+' : '';
-    html += '<div class="grade-row'+(s.team.isUser?' you':'')+'">' +
+    html += '<div class="grade-row'+(s.team.isUser?' you':'')+'" data-team="'+s.team.name+'">' +
       '<span class="grade-rank">#'+(i+1)+'</span>' +
       '<span class="grade-letter grade-'+s.grade.charAt(0)+'">'+s.grade+'</span>' +
       '<span class="grade-team">'+s.team.name+(s.team.isUser?' (you)':'')+'</span>' +
       '<span class="grade-pts">'+s.totalPts.toFixed(1)+' proj pts (starters)</span>' +
       '<span class="grade-detail">Points rank #'+s.ptsRank+' &middot; ADP value rank #'+s.valueRank+' ('+sign+s.avgValue.toFixed(1)+' picks vs ADP, avg)</span>' +
-      '</div>';
+      '<span class="grade-chevron">&#9660;</span>' +
+      '</div>' +
+      '<div class="grade-pickwrap"></div>';
   });
   html += '</div>';
   el.innerHTML = html;
+
+  var rows = el.querySelectorAll('.grade-row');
+  rows.forEach(function(row){
+    row.addEventListener('click', function(){
+      var wrap = row.nextElementSibling;
+      var nowExpanded = row.classList.toggle('expanded');
+      wrap.classList.toggle('expanded', nowExpanded);
+      if(nowExpanded && !wrap.dataset.built){
+        wrap.innerHTML = pickGradeRowsHTML(pickGrades[row.dataset.team] || []);
+        wrap.dataset.built = '1';
+      }
+    });
+  });
 }
 
 function renderRecommendation(){
@@ -1224,7 +1426,7 @@ function renderRecommendation(){
   el.innerHTML = '<span class="rec-label">Recommended</span>' +
     posTag(top.p.p) +
     '<span class="rec-player">'+top.p.n+'</span>' +
-    '<span class="rec-reason">'+reasonFor(top, result.needs)+'</span>' +
+    '<span class="rec-reason">'+reasonFor(top, result.needs, round)+'</span>' +
     (alts.length ? '<span class="rec-alts">Also consider: '+alts.map(function(a){ return a.p.n+' ('+a.p.p+')'; }).join(', ')+'</span>' : '');
 }
 
