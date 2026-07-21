@@ -6,7 +6,7 @@
 <title>Team Rankings — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=3">
+<link rel="stylesheet" href="../assets/css/style.css?v=4">
 <style>
 .methodology {
   background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
@@ -84,12 +84,12 @@ details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=2"></script>
+<script src="../assets/js/shared.js?v=3"></script>
 <script>
 let factor = {};
 let regularRows = [], playoffRows = [];
 
-function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOpp, hasRankDelta) {
+function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasRankDelta) {
   let filtered = rows.slice();
   if (managerFilter) filtered = filtered.filter(r => r.manager === managerFilter);
   if (seasonFilter) filtered = filtered.filter(r => String(r.season) === seasonFilter);
@@ -100,22 +100,24 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
   });
   const rankDeltaColor = (d) => d < 0 ? '#E0524A' : d > 0 ? '#4FA876' : 'inherit';
 
+  // Only the PPG metric currently being sorted by is shown per row - the other metrics are
+  // still there (switch the sort to see them), just not all crammed into every row at once.
+  const metricLabel = sortKey === 'adj' ? 'Adj. PPG' : sortKey === 'raw' ? 'Raw PPG' : 'Opp. PPG';
+  const metricValue = (r) => sortKey === 'adj' ? r.adjPpg : sortKey === 'raw' ? r.rawPpg : r.oppAdjPpg;
+
   document.getElementById(targetId).innerHTML = sorted.length === 0
     ? `<p style="color:var(--text-muted)">No seasons match this filter.</p>`
     : `
     <div class="table-wide" style="overflow-x:auto;">
     <table>
-      <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">Adj. PPG</th><th class="num">Raw PPG</th>${hasOpp ? '<th class="num">Opp. Adj. PPG</th><th class="num">Opp. Raw PPG</th>' : ''}<th class="num">Games</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
+      <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season</th><th class="num">${metricLabel}</th>${hasRankDelta ? '<th class="num">Reg. Rank &minus; Playoff Rank</th>' : ''}</tr></thead>
       <tbody>
         ${sorted.map(r => `
           <tr>
             <td><span class="rank-num">${r.rank[sortKey]}</span></td>
             <td>${r.managerTag}</td>
             <td class="num">${r.season}</td>
-            <td class="num">${r.adjPpg.toFixed(2)}</td>
-            <td class="num">${r.rawPpg.toFixed(2)}</td>
-            ${hasOpp ? `<td class="num">${r.oppAdjPpg.toFixed(2)}</td><td class="num">${r.oppPpg.toFixed(2)}</td>` : ''}
-            <td class="num">${r.games}</td>
+            <td class="num">${metricValue(r).toFixed(2)}</td>
             ${hasRankDelta ? `<td class="num" style="color:${rankDeltaColor(r.rankDelta)}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</td>` : ''}
           </tr>
         `).join('')}
@@ -131,9 +133,7 @@ function renderTable(targetId, rows, sortKey, managerFilter, seasonFilter, hasOp
             <span class="mono" style="color:var(--text-muted);">${r.season}</span>
           </div>
           <div class="table-card-sub">
-            Adj ${r.adjPpg.toFixed(2)} &middot; Raw ${r.rawPpg.toFixed(2)}
-            ${hasOpp ? ` &middot; Opp Adj ${r.oppAdjPpg.toFixed(2)} &middot; Opp Raw ${r.oppPpg.toFixed(2)}` : ''}
-            &middot; ${r.games} gm
+            ${metricLabel} ${metricValue(r).toFixed(2)}
             ${hasRankDelta ? ` &middot; Reg&minus;Playoff <span style="color:${rankDeltaColor(r.rankDelta)}">${r.rankDelta > 0 ? '+' : ''}${r.rankDelta}</span>` : ''}
           </div>
         </div>
@@ -147,7 +147,7 @@ function getFilteredRender(target) {
   const sortKey = document.querySelector(`.sort-btn.active[data-target="${target}"]`)?.dataset.sort || 'adj';
   const manager = document.getElementById(target + 'ManagerFilter').value;
   const season = document.getElementById(target + 'SeasonFilter').value;
-  renderTable(target + 'Table', rows, sortKey, manager, season, target === 'regular', target === 'playoff');
+  renderTable(target + 'Table', rows, sortKey, manager, season, target === 'playoff');
 }
 
 async function init() {
@@ -207,8 +207,8 @@ async function init() {
     r.rankDelta = r.regRank - r.playoffRank;
   });
 
-  renderTable('regularTable', regularRows, 'adj', '', '', true, false);
-  renderTable('playoffTable', playoffRows, 'adj', '', '', false, true);
+  renderTable('regularTable', regularRows, 'adj', '', '', false);
+  renderTable('playoffTable', playoffRows, 'adj', '', '', true);
 
   const mgrOpts = '<option value="">All managers</option>' + managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
   const seasons = [...new Set(regularRows.map(r => String(r.season)))].sort((a,b) => b-a);

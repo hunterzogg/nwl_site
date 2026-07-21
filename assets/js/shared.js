@@ -37,9 +37,14 @@ function renderNav(activeHref) {
   const mockDraftLink = `<a href="${resolveHref(NWL_MOCK_DRAFT_PAGE)}" class="${mockDraftActive ? 'active' : ''}">${NWL_MOCK_DRAFT_PAGE.label}</a>`;
 
   nav.innerHTML = `
-    <a href="${homeHref}" class="brand">
-      <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:24px;"> NWL
-    </a>
+    <div class="nav-top-row">
+      <a href="${homeHref}" class="brand">
+        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:24px;"> NWL
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+    </div>
     <div class="nav-links">
       ${homeLink}
       <span class="nav-divider"></span>
@@ -55,6 +60,21 @@ function renderNav(activeHref) {
     </div>
   `;
   document.body.prepend(nav);
+
+  // Mobile-only hamburger toggle - on desktop the toggle button is hidden via CSS and
+  // .nav-links is always visible, so this listener is harmless dead weight there.
+  const toggleBtn = nav.querySelector('.nav-toggle');
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = nav.classList.toggle('nav-open');
+    toggleBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+  document.addEventListener('click', (e) => {
+    if (nav.classList.contains('nav-open') && !nav.contains(e.target)) {
+      nav.classList.remove('nav-open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 }
 
 function isInPagesDir() {
