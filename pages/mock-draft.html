@@ -254,13 +254,8 @@ tbody tr:hover{background:var(--surface-2);}
 .pick-row:last-child{border-bottom:none;}
 .pick-rd{font-family:var(--font-mono); color:var(--ink-soft); width:44px; flex:none;}
 .pick-name{font-weight:600; min-width:120px;}
-.pick-slot{font-family:var(--font-mono); color:var(--ink-soft); width:44px; flex:none;}
 .pick-reach{font-family:var(--font-mono); width:90px; flex:none;}
 .pick-grade{font-size:12px; width:30px; padding:2px 0;}
-.pick-contrib .pick-grade{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:auto; min-width:24px; padding:2px 6px; vertical-align:middle;
-}
 .pick-contrib{color:var(--ink-soft); flex:1; min-width:160px;}
 
 .onclock-banner{
@@ -1296,8 +1291,9 @@ function renderLog(){
 
 // Grade = mostly "how many projected points did your starting lineup end up with" (rank among
 // the 12 drafted teams), blended with a smaller "did you get good value relative to ADP across
-// your whole roster" component, so a savvy value-drafter at a bad slot isn't just graded on
-// star power alone.
+// your whole roster" component and a "hypothetical upside across your whole roster" component
+// (see upsideScore below) - so a savvy value-drafter or a team that stacked real breakout/rookie
+// upside isn't just graded on raw star power alone.
 function computeGrades(){
   var stats = state.teams.map(function(t){
     var r = t.roster;
@@ -1305,21 +1301,28 @@ function computeGrades(){
     var totalPts = 0;
     starters.forEach(function(p){ if(p) totalPts += p.pts; });
     var allPicks = starters.concat(r.BEN).filter(function(p){ return p; });
-    var totalReach = 0;
-    allPicks.forEach(function(p){ totalReach += (p.draftedAt - p.adp); });
+    var totalReach = 0, totalUpside = 0;
+    allPicks.forEach(function(p){
+      totalReach += (p.draftedAt - p.adp);
+      totalUpside += upsideScore(p).score;
+    });
     var avgValue = allPicks.length ? totalReach/allPicks.length : 0;
-    return {team:t, totalPts:totalPts, avgValue:avgValue};
+    var avgUpside = allPicks.length ? totalUpside/allPicks.length : 0;
+    return {team:t, totalPts:totalPts, avgValue:avgValue, avgUpside:avgUpside};
   });
   var n = stats.length;
   var byPts = stats.slice().sort(function(a,b){ return b.totalPts - a.totalPts; });
   var byValue = stats.slice().sort(function(a,b){ return b.avgValue - a.avgValue; });
+  var byUpside = stats.slice().sort(function(a,b){ return b.avgUpside - a.avgUpside; });
   stats.forEach(function(s){
-    var ptsRank = byPts.indexOf(s), valueRank = byValue.indexOf(s);
+    var ptsRank = byPts.indexOf(s), valueRank = byValue.indexOf(s), upsideRank = byUpside.indexOf(s);
     var ptsPct = n>1 ? 1 - ptsRank/(n-1) : 1;
     var valuePct = n>1 ? 1 - valueRank/(n-1) : 1;
-    s.percentile = 0.8*ptsPct + 0.2*valuePct;
+    var upsidePct = n>1 ? 1 - upsideRank/(n-1) : 1;
+    s.percentile = 0.65*ptsPct + 0.15*valuePct + 0.20*upsidePct;
     s.ptsRank = ptsRank+1;
     s.valueRank = valueRank+1;
+    s.upsideRank = upsideRank+1;
     s.grade = gradeLetter(s.percentile);
   });
   stats.sort(function(a,b){ return b.percentile - a.percentile; });
@@ -1351,17 +1354,19 @@ function percentileRank(value, all){
   return better/(all.length-1);
 }
 
-// Hypothetical/upside value for a bench pick: how many points it projects above its
-// position's replacement-level baseline (the same VBD_BASELINE used by the VBD draft
-// strategy), plus a flat bonus for signals the raw points projection can't price in on its
-// own - being a rookie (real historical variance is much wider than a projection admits)
-// and being tagged `bo` (a real 2026 breakout/sleeper name, see draftData - either because
-// its own scouting note already describes a genuine opportunity swing, or hand-curated from
-// outside buzz; see the mock draft's own HANDOFF.md). Bonuses sized against this pool's own
-// bench-tier VBD spread (roughly -270 to +30 for adp>60) so either signal meaningfully moves
-// a player's rank without swamping the underlying points math.
+// Hypothetical/upside value for ANY drafted player (starter or bench): how many points it
+// projects above its position's replacement-level baseline (the same VBD_BASELINE used by
+// the VBD draft strategy), plus a flat bonus for signals the raw points projection can't
+// price in on its own - being a rookie (real historical variance is much wider than a
+// projection admits) and being tagged `bo` (a real 2026 breakout/sleeper name, see draftData -
+// either because its own scouting note already describes a genuine opportunity swing, or
+// hand-curated from outside buzz; see the mock draft's own HANDOFF.md). Bonuses sized against
+// this pool's own bench-tier VBD spread (roughly -270 to +30 for adp>60) so either signal
+// meaningfully moves a player's rank without swamping the underlying points math. Feeds into
+// computeGrades' overall team percentile for every player; no letter grade is shown for it
+// per-pick (see pickGradeRowsHTML) - it's a scoring input, not another badge to parse.
 var ROOKIE_UPSIDE_BONUS = 35, BREAKOUT_UPSIDE_BONUS = 45;
-function benchUpsideScore(p){
+function upsideScore(p){
   var vbd = p.pts - (VBD_BASELINE[p.p]||0);
   var bonus = (p.rk?ROOKIE_UPSIDE_BONUS:0) + (p.bo?BREAKOUT_UPSIDE_BONUS:0);
   return {vbd: vbd, score: vbd+bonus};
@@ -1370,13 +1375,10 @@ function benchUpsideScore(p){
 // Per-pick breakdown for the Grades tab's expandable detail: for every pick in the draft,
 // how good was it relative to real ADP (independent of which team made it), and how much
 // did it actually feed into that team's overall grade - points share for starters, or for
-// bench picks, a separate "hypothetical upside" grade (points-over-replacement plus
-// rookie/breakout bonus) since a bench stash's real contribution is what it *might* become,
-// not points it actually scored for the starting lineup.
+// bench picks, the points-over-replacement number (no letter grade - that dimension is folded
+// into the team's overall percentile in computeGrades, not re-graded per pick).
 function computePickGrades(stats){
   var allReaches = state.log.map(function(l){ return l.player.draftedAt - l.player.adp; });
-  var benchScores = state.log.filter(function(l){ return l.slot.indexOf('BEN')===0; })
-    .map(function(l){ return benchUpsideScore(l.player).score; });
   var byTeam = {};
   stats.forEach(function(s){ byTeam[s.team.name] = s; });
   var out = {};
@@ -1387,22 +1389,33 @@ function computePickGrades(stats){
     var isStarter = entry.slot.indexOf('BEN') !== 0;
     var teamStat = byTeam[team];
     var ptsShare = (isStarter && teamStat && teamStat.totalPts>0) ? p.pts/teamStat.totalPts : 0;
-    var upside = null;
-    if(!isStarter){
-      var us = benchUpsideScore(p);
-      var upct = percentileRank(us.score, benchScores);
-      upside = {vbd: us.vbd, percentile: upct, grade: gradeLetter(upct)};
-    }
+    var vbd = isStarter ? null : upsideScore(p).vbd;
     if(!out[team]) out[team] = [];
     out[team].push({
       pick: entry.pick, round: entry.round, player: p, slot: entry.slot,
       reach: reach, valuePercentile: pct, valueGrade: gradeLetter(pct),
-      isStarter: isStarter, ptsShare: ptsShare, upside: upside
+      isStarter: isStarter, ptsShare: ptsShare, vbd: vbd
     });
   });
   Object.keys(out).forEach(function(name){ out[name].sort(function(a,b){ return a.pick-b.pick; }); });
   return out;
 }
+
+// Varied phrasing for starter-row commentary (see pickGradeRowsHTML) - several options per
+// condition so the same two ideas ("this is a tagged breakout name" / "this graded out as
+// great value") don't read as a single fixed, repeated label on every qualifying pick.
+var BREAKOUT_NOTES = [
+  'a name breakout buzz keeps circling back to this year',
+  'one of the more talked-about sleeper picks in this pool',
+  'a popular breakout call heading into the season',
+  'a name a lot of 2026 rankings keep flagging as a riser'
+];
+var SHARP_NOTES = [
+  'sharp value at this spot',
+  'the board let a real bargain slide to here',
+  'nice value pick relative to his draft slot',
+  'a smart grab for where he went'
+];
 
 function pickGradeRowsHTML(picks){
   return picks.map(function(pk){
@@ -1411,23 +1424,30 @@ function pickGradeRowsHTML(picks){
     var reachColor = pk.reach > 0 ? 'var(--turf)' : (pk.reach < 0 ? 'var(--danger)' : 'var(--ink-soft)');
     var contribution;
     if(pk.isStarter){
-      contribution = 'contributed '+(pk.ptsShare*100).toFixed(0)+'% of starter pts';
+      // Starter commentary: call out a real breakout/sleeper name and/or a sharp
+      // value pick (A-grade or better) - bench rows already carry their own
+      // rookie/breakout tags in their own contribution line below. Picks a varied
+      // phrasing per pick (deterministic on pick number, not random-on-every-render)
+      // rather than always printing the exact same fixed phrase for every match.
+      var notes = [];
+      if(p.bo) notes.push(BREAKOUT_NOTES[pk.pick % BREAKOUT_NOTES.length]);
+      if(pk.valueGrade.charAt(0)==='A') notes.push(SHARP_NOTES[(pk.pick+2) % SHARP_NOTES.length]);
+      var noteStr = notes.length ? ' &mdash; '+notes.join('; ') : '';
+      contribution = 'contributed '+(pk.ptsShare*100).toFixed(0)+'% of starter pts'+noteStr;
     } else {
       var tags = [];
       if(p.rk) tags.push('rookie');
       if(p.bo) tags.push('breakout buzz');
       var tagStr = tags.length ? ' ('+tags.join(', ')+')' : '';
-      var vbdSign = pk.upside.vbd >= 0 ? '+' : '';
-      contribution = 'bench'+tagStr+' &mdash; '+vbdSign+pk.upside.vbd.toFixed(0)+' pts vs replacement &nbsp;' +
-        '<span class="grade-letter pick-grade grade-'+pk.upside.grade.charAt(0)+'">'+pk.upside.grade+'</span> upside';
+      var vbdSign = pk.vbd >= 0 ? '+' : '';
+      contribution = 'bench'+tagStr+' &mdash; '+vbdSign+pk.vbd.toFixed(0)+' pts vs replacement (counts toward overall upside score)';
     }
     return '<div class="pick-row">' +
       '<span class="pick-rd">R'+pk.round+'.'+(((pk.pick-1)%12)+1)+'</span>' +
       posTag(p.p) +
       '<span class="pick-name">'+p.n+'</span>' +
-      '<span class="pick-slot">'+pk.slot+'</span>' +
-      '<span class="pick-reach" style="color:'+reachColor+';">'+sign+pk.reach+' vs ADP</span>' +
       '<span class="grade-letter pick-grade grade-'+pk.valueGrade.charAt(0)+'">'+pk.valueGrade+'</span>' +
+      '<span class="pick-reach" style="color:'+reachColor+';">'+sign+pk.reach+' vs ADP</span>' +
       '<span class="pick-contrib">'+contribution+'</span>' +
       '</div>';
   }).join('');
@@ -1449,7 +1469,7 @@ function renderGrades(){
       '<span class="grade-letter grade-'+s.grade.charAt(0)+'">'+s.grade+'</span>' +
       '<span class="grade-team">'+s.team.name+(s.team.isUser?' (you)':'')+'</span>' +
       '<span class="grade-pts">'+s.totalPts.toFixed(1)+'<span class="grade-pts-label"> proj pts (starters)</span></span>' +
-      '<span class="grade-detail">Points rank #'+s.ptsRank+' &middot; ADP value rank #'+s.valueRank+' ('+sign+s.avgValue.toFixed(1)+' picks vs ADP, avg)</span>' +
+      '<span class="grade-detail">Points rank #'+s.ptsRank+' &middot; ADP value rank #'+s.valueRank+' ('+sign+s.avgValue.toFixed(1)+' picks vs ADP, avg) &middot; Upside rank #'+s.upsideRank+'</span>' +
       '<span class="grade-chevron">&#9660;</span>' +
       '</div>' +
       '<div class="grade-pickwrap"></div>';
