@@ -39,7 +39,7 @@ function renderNav(activeHref) {
   nav.innerHTML = `
     <div class="nav-top-row">
       <a href="${homeHref}" class="brand">
-        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:24px;"> NWL
+        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:120px;"> NWL
       </a>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
         <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
