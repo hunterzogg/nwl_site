@@ -149,9 +149,9 @@ tbody tr:hover{background:var(--surface-2);}
 .draft-btn:disabled{border-color:var(--line); color:var(--ink-soft); opacity:.5; cursor:not-allowed;}
 .pts{font-family:var(--font-mono); font-weight:700;}
 
-/* Available Players table on narrow screens: drop the least-essential column (ADP -
-   the list is already ADP-sorted by default, so rank is implied by row order) and
-   tighten padding/type so the remaining ADP/Player/Pos/Pts/Draft columns fit within
+/* Available Players table on narrow screens: drop the least-essential column (Rank -
+   the list is already rank-sorted by default, so rank is implied by row order) and
+   tighten padding/type so the remaining Rank/Player/Pos/Pts/Draft columns fit within
    the viewport without the table needing its own horizontal scroll. */
 @media (max-width:640px){
   table{font-size:12px;}
@@ -366,17 +366,18 @@ tbody tr:hover{background:var(--surface-2);}
             <button class="tab" data-pos="RB">RB</button>
             <button class="tab" data-pos="WR">WR</button>
             <button class="tab" data-pos="TE">TE</button>
+            <button class="tab" data-pos="FLEX">Flex</button>
             <button class="tab" data-pos="HC">HC</button>
           </div>
           <div class="tabs" id="sortTabs" style="margin-left:8px;">
-            <button class="tab active" data-sort="adp">Sort: ADP</button>
+            <button class="tab active" data-sort="adp">Sort: Rank</button>
             <button class="tab" data-sort="pts">Sort: Pts</button>
           </div>
           <input type="text" class="search-box" id="searchBox" placeholder="Search player&hellip;">
         </div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th class="col-adp">ADP</th><th>Player</th><th>Pos</th><th class="col-pts">Proj Pts</th><th></th></tr></thead>
+            <thead><tr><th class="col-adp">Rank</th><th>Player</th><th>Pos</th><th class="col-pts">Proj Pts</th><th></th></tr></thead>
             <tbody id="poolBody"></tbody>
           </table>
         </div>
@@ -1199,7 +1200,8 @@ function renderPool(){
   var anyHelpsUrgent = userUrgent && state.pool.some(function(p){ return positionHelps(p.p, userNeeds); });
 
   var rows = state.pool.filter(function(p){
-    if(state.posFilter !== 'ALL' && p.p !== state.posFilter) return false;
+    if(state.posFilter === 'FLEX'){ if(['RB','WR','TE'].indexOf(p.p) === -1) return false; }
+    else if(state.posFilter !== 'ALL' && p.p !== state.posFilter) return false;
     if(state.search && p.n.toLowerCase().indexOf(state.search) === -1) return false;
     return true;
   }).sort(function(a,b){
@@ -1211,7 +1213,7 @@ function renderPool(){
     var disabled = !userOnClock || (p.p === 'HC' && userHasHC) ||
       (anyHelpsUrgent && !positionHelps(p.p, userNeeds));
     html += '<tr>' +
-      '<td class="pts col-adp">'+p.adp.toFixed(0)+'</td>' +
+      '<td class="pts col-adp">'+(p.dr!=null?p.dr:Math.round(p.adp))+'</td>' +
       '<td><span class="rname">'+p.n+'</span> <span class="rteam">'+p.t+'</span>'+(p.rk?'<span class="rookie-chip">R</span>':'')+'</td>' +
       '<td>'+posTag(p.p)+'</td>' +
       '<td class="pts col-pts">'+p.pts.toFixed(1)+'</td>' +
@@ -1404,19 +1406,26 @@ function upsideScore(p){
 }
 
 // Per-pick breakdown for the Grades tab's expandable detail: for every pick in the draft,
-// how good was it relative to real ADP (independent of which team made it), and how much
-// did it actually feed into that team's overall grade - points share for starters, or for
-// bench picks, the points-over-replacement number (no letter grade - that dimension is folded
-// into the team's overall percentile in computeGrades, not re-graded per pick).
+// how good a pick it was (independent of which team made it), and how much it actually fed
+// into that team's overall grade - points share for starters, or for bench picks, the
+// points-over-replacement number (no letter grade - that dimension is folded into the
+// team's overall percentile in computeGrades, not re-graded per pick).
+// The letter grade is mostly "how good is this player" (position-adjusted points over
+// replacement, same signal as upsideScore's vbd) with real ADP value folded in as a smaller
+// cherry-on-top adjustment - a mediocre player who fell isn't graded a hero, and a stud who
+// went a few picks early still grades well for being a stud.
 function computePickGrades(stats){
   var allReaches = state.log.map(function(l){ return l.player.draftedAt - l.player.adp; });
+  var allQuality = state.log.map(function(l){ return upsideScore(l.player).vbd; });
   var byTeam = {};
   stats.forEach(function(s){ byTeam[s.team.name] = s; });
   var out = {};
   state.log.forEach(function(entry){
     var team = entry.team, p = entry.player;
     var reach = p.draftedAt - p.adp;
-    var pct = percentileRank(reach, allReaches);
+    var valuePct = percentileRank(reach, allReaches);
+    var qualityPct = percentileRank(upsideScore(p).vbd, allQuality);
+    var pct = 0.75*qualityPct + 0.25*valuePct;
     var isStarter = entry.slot.indexOf('BEN') !== 0;
     var teamStat = byTeam[team];
     var ptsShare = (isStarter && teamStat && teamStat.totalPts>0) ? p.pts/teamStat.totalPts : 0;
@@ -1478,7 +1487,7 @@ function pickGradeRowsHTML(picks){
       posTag(p.p) +
       '<span class="pick-name">'+p.n+'</span>' +
       '<span class="grade-letter pick-grade grade-'+pk.valueGrade.charAt(0)+'">'+pk.valueGrade+'</span>' +
-      '<span class="pick-reach" style="color:'+reachColor+';">'+sign+pk.reach+' vs ADP</span>' +
+      '<span class="pick-reach" style="color:'+reachColor+';">'+sign+pk.reach.toFixed(1)+' vs ADP</span>' +
       '<span class="pick-contrib">'+contribution+'</span>' +
       '</div>';
   }).join('');
