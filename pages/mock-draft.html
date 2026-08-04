@@ -1571,11 +1571,6 @@ function renderRecommendation(){
     (alts.length ? '<span class="rec-alts">Also consider: '+alts.map(function(a){ return a.p.n+' ('+a.p.p+')'; }).join(', ')+'</span>' : '');
 }
 
-// Every completed mock draft (any visitor, not just the site owner) gets emailed out via
-// Formspree - the site is static with no backend, so this is a client-side POST straight to
-// Formspree's form endpoint, which forwards it on to the configured inbox. Guarded by
-// state.emailSent since render() (and therefore this) can run many more times after the draft
-// ends (tab switches, etc.) - the POST must fire exactly once per completed draft.
 var RESULTS_EMAIL_ENDPOINT = 'https://formspree.io/f/mjybbked';
 
 function buildResultsSummary(stats){
