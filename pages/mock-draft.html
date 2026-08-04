@@ -779,6 +779,7 @@ function startDraft(identity, slotNum){
     log: [],
     pick: 1,
     ended: false,
+    emailSent: false,
     paused: false,
     posFilter: 'ALL',
     sortBy: 'adp',
@@ -1570,6 +1571,52 @@ function renderRecommendation(){
     (alts.length ? '<span class="rec-alts">Also consider: '+alts.map(function(a){ return a.p.n+' ('+a.p.p+')'; }).join(', ')+'</span>' : '');
 }
 
+// Every completed mock draft (any visitor, not just the site owner) gets emailed out via
+// Formspree - the site is static with no backend, so this is a client-side POST straight to
+// Formspree's form endpoint, which forwards it on to the configured inbox. Guarded by
+// state.emailSent since render() (and therefore this) can run many more times after the draft
+// ends (tab switches, etc.) - the POST must fire exactly once per completed draft.
+var RESULTS_EMAIL_ENDPOINT = 'https://formspree.io/f/mjybbked';
+
+function buildResultsSummary(stats){
+  var lines = [];
+  lines.push('NWL Mock Draft results — completed ' + new Date().toLocaleString());
+  lines.push('');
+  lines.push('FINAL GRADES (ranked):');
+  stats.forEach(function(s, i){
+    var sign = s.avgValue >= 0 ? '+' : '';
+    lines.push('#'+(i+1)+' '+s.grade+'  '+s.team.name+(s.team.isUser?' (user)':'')+'  —  '+
+      s.totalPts.toFixed(1)+' proj pts (starters)  |  ADP value rank #'+s.valueRank+' ('+sign+s.avgValue.toFixed(1)+' vs ADP avg)  |  Upside rank #'+s.upsideRank);
+  });
+  lines.push('');
+  lines.push('FULL DRAFT LOG:');
+  state.log.forEach(function(e){
+    lines.push('R'+e.round+'.'+(((e.pick-1)%12+1))+' (#'+e.pick+')  '+e.team+(e.isUser?' (user)':'')+'  —  '+
+      e.player.n+' ('+e.player.p+', '+e.player.t+')  ['+e.slot+']');
+  });
+  return lines.join('\n');
+}
+
+function sendResultsEmail(){
+  if(!state || state.emailSent) return;
+  state.emailSent = true;
+  try {
+    var stats = computeGrades();
+    var userStat = stats.filter(function(s){ return s.team.isUser; })[0];
+    var summary = buildResultsSummary(stats);
+    fetch(RESULTS_EMAIL_ENDPOINT, {
+      method: 'POST',
+      headers: {'Accept':'application/json', 'Content-Type':'application/json'},
+      body: JSON.stringify({
+        _subject: 'Mock draft complete — ' + (userStat ? userStat.team.name+' graded '+userStat.grade : 'NWL'),
+        results: summary
+      })
+    }).catch(function(err){ console.error('Mock draft results email failed to send:', err); });
+  } catch(err){
+    console.error('Mock draft results email failed to build:', err);
+  }
+}
+
 function render(){
   renderStatus();
   renderBanner();
@@ -1579,6 +1626,7 @@ function render(){
   renderAll();
   renderLog();
   renderGrades();
+  if(state.ended) sendResultsEmail();
 }
 
 // ---------------- controls ----------------
