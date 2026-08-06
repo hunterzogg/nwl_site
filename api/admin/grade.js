@@ -8,8 +8,19 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { question_id, correct_option } = req.body || {};
-  if (!question_id || !['a', 'b'].includes(correct_option)) {
-    return res.status(400).json({ error: 'question_id and correct_option (a|b) are required' });
+  if (!question_id || !correct_option) {
+    return res.status(400).json({ error: 'question_id and correct_option are required' });
+  }
+
+  const { rows } = await sql`SELECT type FROM questions WHERE id = ${question_id}`;
+  const question = rows[0];
+  if (!question) return res.status(404).json({ error: 'Question not found' });
+
+  if (question.type === 'pick_manager') {
+    const { rows: mgrRows } = await sql`SELECT 1 FROM managers WHERE name = ${correct_option}`;
+    if (!mgrRows.length) return res.status(400).json({ error: 'correct_option must be a valid manager name' });
+  } else if (!['a', 'b'].includes(correct_option)) {
+    return res.status(400).json({ error: 'correct_option must be a or b' });
   }
 
   await sql`UPDATE questions SET correct_option = ${correct_option} WHERE id = ${question_id}`;

@@ -16,15 +16,22 @@ module.exports = async (req, res) => {
 
   if (req.method === 'POST') {
     const { question_id, choice } = req.body || {};
-    if (!question_id || !['a', 'b'].includes(choice)) {
-      return res.status(400).json({ error: 'question_id and choice (a|b) are required' });
+    if (!question_id || !choice) {
+      return res.status(400).json({ error: 'question_id and choice are required' });
     }
 
-    const { rows } = await sql`SELECT lock_at, published FROM questions WHERE id = ${question_id}`;
+    const { rows } = await sql`SELECT lock_at, published, type FROM questions WHERE id = ${question_id}`;
     const question = rows[0];
     if (!question || !question.published) return res.status(404).json({ error: 'Question not found' });
     if (new Date(question.lock_at) <= new Date()) {
       return res.status(403).json({ error: 'This question has locked - picks are closed' });
+    }
+
+    if (question.type === 'pick_manager') {
+      const { rows: mgrRows } = await sql`SELECT 1 FROM managers WHERE name = ${choice}`;
+      if (!mgrRows.length) return res.status(400).json({ error: 'choice must be a valid manager name' });
+    } else if (!['a', 'b'].includes(choice)) {
+      return res.status(400).json({ error: 'choice must be a or b' });
     }
 
     await sql`

@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS questions (
   id SERIAL PRIMARY KEY,
   week INT NOT NULL,
   season INT NOT NULL DEFAULT 2026,
-  type TEXT NOT NULL,              -- 'this_or_that' | 'over_under'
+  type TEXT NOT NULL,              -- 'this_or_that' | 'over_under' | 'pick_manager'
   prompt TEXT NOT NULL,
-  option_a TEXT NOT NULL,
-  option_b TEXT NOT NULL,
+  option_a TEXT,                   -- null for 'pick_manager' - choices are every manager instead
+  option_b TEXT,
   points INT NOT NULL DEFAULT 1,
   lock_at TIMESTAMPTZ NOT NULL,
   correct_option TEXT,             -- null until graded; 'a' | 'b'

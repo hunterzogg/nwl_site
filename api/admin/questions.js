@@ -14,12 +14,17 @@ module.exports = async (req, res) => {
 
   if (req.method === 'POST') {
     const { week, season, type, prompt, option_a, option_b, points, lock_at } = req.body || {};
-    if (!week || !type || !prompt || !option_a || !option_b || !lock_at) {
+    if (!week || !type || !prompt || !lock_at) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    // pick_manager questions have no fixed option_a/option_b - the choices are every manager,
+    // rendered dynamically on the frontend from data/managers.json.
+    if (type !== 'pick_manager' && (!option_a || !option_b)) {
+      return res.status(400).json({ error: 'option_a and option_b are required for this question type' });
     }
     const { rows } = await sql`
       INSERT INTO questions (week, season, type, prompt, option_a, option_b, points, lock_at, published)
-      VALUES (${week}, ${season || 2026}, ${type}, ${prompt}, ${option_a}, ${option_b}, ${points || 1}, ${lock_at}, false)
+      VALUES (${week}, ${season || 2026}, ${type}, ${prompt}, ${option_a || null}, ${option_b || null}, ${points || 1}, ${lock_at}, false)
       RETURNING id
     `;
     return res.status(201).json({ id: rows[0].id });

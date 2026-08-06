@@ -98,13 +98,16 @@ function renderPicks() {
       return cls;
     };
     const disabled = !currentManager || locked;
+    const options = q.type === 'pick_manager'
+      ? managers.map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
+      : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
+         <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
     return `
       <div class="question-card">
         <div class="question-prompt">${q.prompt}</div>
         <div class="question-meta">Week ${q.week} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
-        <div class="option-row">
-          <button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
-          <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>
+        <div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">
+          ${options}
         </div>
         ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}
         ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}

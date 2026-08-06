@@ -52,6 +52,7 @@ body { background: var(--bg); }
       <select id="newType">
         <option value="this_or_that">This or That</option>
         <option value="over_under">Over/Under</option>
+        <option value="pick_manager">Pick a Manager</option>
       </select>
       <input type="number" id="newPoints" placeholder="Points" value="1" style="width:80px;">
       <input type="datetime-local" id="newLockAt">
@@ -59,10 +60,13 @@ body { background: var(--bg); }
     <div class="field-row">
       <textarea id="newPrompt" placeholder="Prompt, e.g. Who scores more this week?" rows="2"></textarea>
     </div>
-    <div class="field-row">
+    <div class="field-row" id="newOptionsRow">
       <input type="text" id="newOptionA" placeholder="Option A, e.g. Conlin">
       <input type="text" id="newOptionB" placeholder="Option B, e.g. Palaia">
     </div>
+    <p id="pickManagerNote" style="display:none; color:var(--text-muted); font-size:0.82rem; margin:0 0 10px;">
+      No options needed &mdash; every manager will be shown as a choice on the Pick'em page.
+    </p>
     <button class="btn" id="createBtn">Add Question (unpublished)</button>
     <span class="error" id="createError"></span>
   </div>
@@ -78,6 +82,8 @@ body { background: var(--bg); }
 </div>
 
 <script>
+let admMgrs = [];
+
 async function api(path, opts) {
   const res = await fetch('/api/' + path, {
     credentials: 'include',
@@ -87,6 +93,19 @@ async function api(path, opts) {
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error || 'Request failed');
   return body;
+}
+
+async function loadManagers() {
+  if (admMgrs.length) return admMgrs;
+  const res = await fetch('../data/managers.json');
+  admMgrs = await res.json();
+  return admMgrs;
+}
+
+function toggleOptionFields() {
+  const isPickManager = document.getElementById('newType').value === 'pick_manager';
+  document.getElementById('newOptionsRow').style.display = isPickManager ? 'none' : 'flex';
+  document.getElementById('pickManagerNote').style.display = isPickManager ? 'block' : 'none';
 }
 
 function renderGate() {
@@ -120,17 +139,18 @@ async function createQuestion() {
   const errEl = document.getElementById('createError');
   errEl.textContent = '';
   const lockAtLocal = document.getElementById('newLockAt').value;
+  const type = document.getElementById('newType').value;
   try {
     await api('admin/questions', {
       method: 'POST',
       body: JSON.stringify({
         week: Number(document.getElementById('newWeek').value),
-        type: document.getElementById('newType').value,
+        type,
         points: Number(document.getElementById('newPoints').value) || 1,
         lock_at: lockAtLocal ? new Date(lockAtLocal).toISOString() : null,
         prompt: document.getElementById('newPrompt').value,
-        option_a: document.getElementById('newOptionA').value,
-        option_b: document.getElementById('newOptionB').value,
+        option_a: type === 'pick_manager' ? null : document.getElementById('newOptionA').value,
+        option_b: type === 'pick_manager' ? null : document.getElementById('newOptionB').value,
       }),
     });
     document.getElementById('newPrompt').value = '';
@@ -143,6 +163,7 @@ async function createQuestion() {
 }
 
 async function loadQuestions() {
+  await loadManagers();
   const week = document.getElementById('filterWeek').value;
   const qs = await api('admin/questions' + (week ? `?week=${week}` : ''));
   const el = document.getElementById('questionList');
@@ -150,22 +171,31 @@ async function loadQuestions() {
     el.innerHTML = '<p style="color:var(--text-muted);">No questions yet.</p>';
     return;
   }
-  el.innerHTML = qs.map(q => `
+  const managerOptions = admMgrs.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+  el.innerHTML = qs.map(q => {
+    const optionsLabel = q.type === 'pick_manager' ? 'Pick a Manager' : `${q.option_a} / ${q.option_b}`;
+    const gradedLabel = q.correct_option
+      ? 'Graded: ' + (q.type === 'pick_manager' ? q.correct_option : (q.correct_option === 'a' ? q.option_a : q.option_b))
+      : 'Ungraded';
+    const gradeControl = q.correct_option ? '' : (q.type === 'pick_manager'
+      ? `<select data-grade-select="${q.id}"><option value="">Grade: pick manager...</option>${managerOptions}</select>
+         <button class="btn btn-ghost" data-grade-manager="${q.id}">Save</button>`
+      : `<button class="btn btn-ghost" data-grade="${q.id}" data-choice="a">${q.option_a} won</button>
+         <button class="btn btn-ghost" data-grade="${q.id}" data-choice="b">${q.option_b} won</button>`);
+    return `
     <div class="q-row">
       <div class="q-prompt">
         ${q.prompt}
-        <div class="q-meta">Wk ${q.week} &middot; ${q.option_a} / ${q.option_b} &middot; ${q.points}pt
+        <div class="q-meta">Wk ${q.week} &middot; ${optionsLabel} &middot; ${q.points}pt
           <span class="tag ${q.published ? 'published' : ''}">${q.published ? 'Published' : 'Draft'}</span>
-          <span class="tag ${q.correct_option ? 'graded' : ''}">${q.correct_option ? 'Graded: ' + (q.correct_option === 'a' ? q.option_a : q.option_b) : 'Ungraded'}</span>
+          <span class="tag ${q.correct_option ? 'graded' : ''}">${gradedLabel}</span>
         </div>
       </div>
       ${!q.published ? `<button class="btn btn-ghost" data-publish="${q.id}">Publish</button>` : ''}
-      ${!q.correct_option ? `
-        <button class="btn btn-ghost" data-grade="${q.id}" data-choice="a">${q.option_a} won</button>
-        <button class="btn btn-ghost" data-grade="${q.id}" data-choice="b">${q.option_b} won</button>
-      ` : ''}
+      ${gradeControl}
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   el.querySelectorAll('[data-publish]').forEach(btn => {
     btn.onclick = async () => {
@@ -179,10 +209,21 @@ async function loadQuestions() {
       loadQuestions();
     };
   });
+  el.querySelectorAll('[data-grade-manager]').forEach(btn => {
+    btn.onclick = async () => {
+      const qid = btn.dataset.gradeManager;
+      const select = el.querySelector(`[data-grade-select="${qid}"]`);
+      if (!select.value) return;
+      await api('admin/grade', { method: 'POST', body: JSON.stringify({ question_id: Number(qid), correct_option: select.value }) });
+      loadQuestions();
+    };
+  });
 }
 
 document.getElementById('adminArea').style.display = 'none';
 renderGate();
+toggleOptionFields();
+document.getElementById('newType').addEventListener('change', toggleOptionFields);
 document.addEventListener('click', (e) => {
   if (e.target.id === 'createBtn') createQuestion();
   if (e.target.id === 'filterBtn') loadQuestions();
