@@ -1,0 +1,10 @@
+{
+  "name": "nwl-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "National Wayzata League site - static pages + Vercel serverless API for the Pick'em competition",
+  "dependencies": {
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^2.4.3"
+  }
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick'em — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=6">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--live-bright); border-color: var(--live); background: var(--live-bg); }
+.panel { display: none; }
+.panel.active { display: block; }
+.empty-state {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-muted);
+}
+.empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.login-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 20px 24px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
+}
+.login-card.logged-in { display: flex; justify-content: space-between; align-items: center; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+.field select, .field input {
+  background: var(--surface-raised); border: 1px solid var(--line); color: var(--text);
+  padding: 9px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 160px;
+}
+.btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 20px; border-radius: 4px; border: 1px solid var(--blue); background: var(--blue);
+  color: #fff; cursor: pointer;
+}
+.btn:hover { background: var(--blue-bright); border-color: var(--blue-bright); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--text-muted); }
+.login-error { color: var(--red); font-size: 0.85rem; }
+
+.question-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; margin-bottom: 14px; }
+.question-prompt { font-weight: 600; margin-bottom: 4px; }
+.question-meta { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 12px; }
+.option-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.option-btn {
+  flex: 1; min-width: 140px; text-align: center; padding: 12px 14px; border-radius: 6px;
+  border: 1px solid var(--line); background: var(--surface-raised); color: var(--text);
+  cursor: pointer; font-family: var(--font-body); font-size: 0.9rem;
+}
+.option-btn.selected { border-color: var(--live); background: var(--live-bg); color: var(--live-bright); font-weight: 600; }
+.option-btn.correct { border-color: #4FA876; background: rgba(79,168,118,0.12); }
+.option-btn.incorrect { border-color: #E0524A; background: rgba(224,82,74,0.10); }
+.option-btn:disabled { cursor: not-allowed; }
+.locked-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+
+.rank-num { font-family: var(--font-mono); color: var(--live-bright); }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <div class="season-banner">
+    <div>
+      <div class="season-banner-label"><span class="nav-live-dot"></span>2026 Season</div>
+      <h1>Pick'em</h1>
+    </div>
+    <p style="color: var(--text-muted); margin: 0; max-width: 380px; font-size: 0.9rem;">
+      Weekly NWL prop picks — managers, matchups, and player props. Get graded after the week wraps, chase the season leaderboard.
+    </p>
+  </div>
+
+  <div id="loginArea"></div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="picks">This Week's Picks</button>
+    <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+  </div>
+
+  <div class="panel active" id="panel-picks">
+    <div id="picksContent"></div>
+  </div>
+
+  <div class="panel" id="panel-leaderboard">
+    <div id="leaderboardContent"></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=9"></script>
+<script src="../assets/js/pickem.js?v=1"></script>
+</body>
+</html>

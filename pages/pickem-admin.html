@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick'em Admin — National Wayzata League</title>
+<!-- Deliberately not linked from nav (shared.js) - bookmark-only, gated by ADMIN_PASSCODE below. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=6">
+<style>
+body { background: var(--bg); }
+.admin-gate { max-width: 360px; margin: 80px auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; text-align: center; }
+.admin-gate input { width: 100%; box-sizing: border-box; background: var(--surface-raised); border: 1px solid var(--line); color: var(--text); padding: 10px 12px; border-radius: 4px; margin: 12px 0; font-family: var(--font-mono); }
+.btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 20px; border-radius: 4px; border: 1px solid var(--blue); background: var(--blue);
+  color: #fff; cursor: pointer;
+}
+.btn:hover { background: var(--blue-bright); border-color: var(--blue-bright); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--text-muted); }
+.error { color: var(--red); font-size: 0.85rem; min-height: 1.2em; }
+
+.section { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; }
+.section h2 { margin-top: 0; }
+.field-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.field-row input, .field-row select, .field-row textarea {
+  background: var(--surface-raised); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 10px; border-radius: 4px; font-family: var(--font-body); font-size: 0.88rem;
+}
+.field-row input[type=text], .field-row textarea { flex: 1; min-width: 200px; }
+.q-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.q-row:last-child { border-bottom: none; }
+.q-prompt { flex: 1; min-width: 200px; }
+.q-meta { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); }
+.tag { font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--line); color: var(--text-muted); }
+.tag.published { color: #4FA876; border-color: #4FA876; }
+.tag.graded { color: var(--live-bright); border-color: var(--live); }
+</style>
+</head>
+<body>
+
+<div id="gateArea"></div>
+<div class="container" id="adminArea" style="display:none; padding-top: 24px;">
+  <h1>Pick'em Admin</h1>
+  <p style="color: var(--text-muted);">Author weekly prop questions, publish them, and grade past weeks. Not linked in site nav.</p>
+
+  <div class="section">
+    <h2>New Question</h2>
+    <div class="field-row">
+      <input type="number" id="newWeek" placeholder="Week #" style="width:90px;">
+      <select id="newType">
+        <option value="this_or_that">This or That</option>
+        <option value="over_under">Over/Under</option>
+      </select>
+      <input type="number" id="newPoints" placeholder="Points" value="1" style="width:80px;">
+      <input type="datetime-local" id="newLockAt">
+    </div>
+    <div class="field-row">
+      <textarea id="newPrompt" placeholder="Prompt, e.g. Who scores more this week?" rows="2"></textarea>
+    </div>
+    <div class="field-row">
+      <input type="text" id="newOptionA" placeholder="Option A, e.g. Conlin">
+      <input type="text" id="newOptionB" placeholder="Option B, e.g. Palaia">
+    </div>
+    <button class="btn" id="createBtn">Add Question (unpublished)</button>
+    <span class="error" id="createError"></span>
+  </div>
+
+  <div class="section">
+    <h2>Manage Questions</h2>
+    <div class="field-row">
+      <input type="number" id="filterWeek" placeholder="Week # (blank = all)" style="width:150px;">
+      <button class="btn btn-ghost" id="filterBtn">Load</button>
+    </div>
+    <div id="questionList"></div>
+  </div>
+</div>
+
+<script>
+async function api(path, opts) {
+  const res = await fetch('/api/' + path, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'Request failed');
+  return body;
+}
+
+function renderGate() {
+  document.getElementById('gateArea').innerHTML = `
+    <div class="admin-gate">
+      <h2 style="margin-top:0;">Admin Passcode</h2>
+      <input type="password" id="adminPasscode" placeholder="Passcode">
+      <div class="error" id="gateError"></div>
+      <button class="btn" id="gateBtn">Enter</button>
+    </div>
+  `;
+  document.getElementById('gateBtn').onclick = async () => {
+    const passcode = document.getElementById('adminPasscode').value;
+    const errEl = document.getElementById('gateError');
+    try {
+      await api('admin/login', { method: 'POST', body: JSON.stringify({ passcode }) });
+      showAdmin();
+    } catch (e) {
+      errEl.textContent = e.message;
+    }
+  };
+}
+
+function showAdmin() {
+  document.getElementById('gateArea').innerHTML = '';
+  document.getElementById('adminArea').style.display = 'block';
+  loadQuestions();
+}
+
+async function createQuestion() {
+  const errEl = document.getElementById('createError');
+  errEl.textContent = '';
+  const lockAtLocal = document.getElementById('newLockAt').value;
+  try {
+    await api('admin/questions', {
+      method: 'POST',
+      body: JSON.stringify({
+        week: Number(document.getElementById('newWeek').value),
+        type: document.getElementById('newType').value,
+        points: Number(document.getElementById('newPoints').value) || 1,
+        lock_at: lockAtLocal ? new Date(lockAtLocal).toISOString() : null,
+        prompt: document.getElementById('newPrompt').value,
+        option_a: document.getElementById('newOptionA').value,
+        option_b: document.getElementById('newOptionB').value,
+      }),
+    });
+    document.getElementById('newPrompt').value = '';
+    document.getElementById('newOptionA').value = '';
+    document.getElementById('newOptionB').value = '';
+    loadQuestions();
+  } catch (e) {
+    errEl.textContent = e.message;
+  }
+}
+
+async function loadQuestions() {
+  const week = document.getElementById('filterWeek').value;
+  const qs = await api('admin/questions' + (week ? `?week=${week}` : ''));
+  const el = document.getElementById('questionList');
+  if (!qs.length) {
+    el.innerHTML = '<p style="color:var(--text-muted);">No questions yet.</p>';
+    return;
+  }
+  el.innerHTML = qs.map(q => `
+    <div class="q-row">
+      <div class="q-prompt">
+        ${q.prompt}
+        <div class="q-meta">Wk ${q.week} &middot; ${q.option_a} / ${q.option_b} &middot; ${q.points}pt
+          <span class="tag ${q.published ? 'published' : ''}">${q.published ? 'Published' : 'Draft'}</span>
+          <span class="tag ${q.correct_option ? 'graded' : ''}">${q.correct_option ? 'Graded: ' + (q.correct_option === 'a' ? q.option_a : q.option_b) : 'Ungraded'}</span>
+        </div>
+      </div>
+      ${!q.published ? `<button class="btn btn-ghost" data-publish="${q.id}">Publish</button>` : ''}
+      ${!q.correct_option ? `
+        <button class="btn btn-ghost" data-grade="${q.id}" data-choice="a">${q.option_a} won</button>
+        <button class="btn btn-ghost" data-grade="${q.id}" data-choice="b">${q.option_b} won</button>
+      ` : ''}
+    </div>
+  `).join('');
+
+  el.querySelectorAll('[data-publish]').forEach(btn => {
+    btn.onclick = async () => {
+      await api('admin/questions', { method: 'PUT', body: JSON.stringify({ id: Number(btn.dataset.publish), published: true }) });
+      loadQuestions();
+    };
+  });
+  el.querySelectorAll('[data-grade]').forEach(btn => {
+    btn.onclick = async () => {
+      await api('admin/grade', { method: 'POST', body: JSON.stringify({ question_id: Number(btn.dataset.grade), correct_option: btn.dataset.choice }) });
+      loadQuestions();
+    };
+  });
+}
+
+document.getElementById('adminArea').style.display = 'none';
+renderGate();
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'createBtn') createQuestion();
+  if (e.target.id === 'filterBtn') loadQuestions();
+});
+</script>
+</body>
+</html>

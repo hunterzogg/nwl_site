@@ -3,3 +3,6 @@ scripts/espn_credentials.json
 __pycache__/
 .devserver.py
 scripts/.cache/
+node_modules/
+.vercel
+.env.local
