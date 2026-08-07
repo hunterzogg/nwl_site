@@ -35,9 +35,14 @@ module.exports = async (req, res) => {
   }
 
   if (req.method === 'PUT') {
-    const { id, published } = req.body || {};
+    const { id, published, lock_at } = req.body || {};
     if (!id) return res.status(400).json({ error: 'id is required' });
-    await sql`UPDATE questions SET published = ${!!published} WHERE id = ${id}`;
+    if (lock_at) {
+      await sql`UPDATE questions SET lock_at = ${lock_at} WHERE id = ${id}`;
+    }
+    if (published !== undefined) {
+      await sql`UPDATE questions SET published = ${!!published} WHERE id = ${id}`;
+    }
     return res.status(200).json({ ok: true });
   }
 
