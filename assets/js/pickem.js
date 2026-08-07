@@ -1,7 +1,9 @@
 let managers = [];
 let currentManager = null; // logged-in manager name, or null
 let questions = [];
-let myPicks = {}; // question_id -> 'a'|'b'
+let myPicks = {};    // question_id -> choice, last saved to the server
+let draftPicks = {};  // question_id -> choice, local working copy (may include unsaved edits)
+let pageMode = 'editing'; // 'editing' (buttons live, Submit shown) | 'saved' (read-only, Edit shown)
 
 // Stowe is a former manager (2013-2016), still kept in data/managers.json for the historical
 // archive, but he doesn't draft/play in the live season - exclude him from every pick'em
@@ -38,6 +40,9 @@ function renderLogin() {
     document.getElementById('logoutBtn').onclick = async () => {
       await api('logout', { method: 'POST' });
       currentManager = null;
+      myPicks = {};
+      draftPicks = {};
+      pageMode = 'editing';
       renderLogin();
       renderPicks();
     };
@@ -79,23 +84,47 @@ function renderLogin() {
 
 async function loadPicks() {
   myPicks = {};
-  if (!currentManager) return;
+  if (!currentManager) { draftPicks = {}; pageMode = 'editing'; return; }
   const rows = await api('picks').catch(() => []);
   rows.forEach(r => { myPicks[r.question_id] = r.choice; });
+  draftPicks = { ...myPicks };
+  // Managers who already have saved picks land in a read-only "saved" view by default -
+  // Edit Picks is what puts the buttons back into a clickable state.
+  pageMode = Object.keys(myPicks).length ? 'saved' : 'editing';
 }
 
-async function submitPick(questionId, choice) {
-  await api('picks', { method: 'POST', body: JSON.stringify({ question_id: questionId, choice }) });
-  myPicks[questionId] = choice;
+function selectDraft(questionId, choice) {
+  draftPicks[questionId] = choice;
   renderPicks();
+}
+
+function editPicks() {
+  pageMode = 'editing';
+  renderPicks();
+}
+
+async function submitAllPicks() {
+  const errEl = document.getElementById('submitError');
+  if (errEl) errEl.textContent = '';
+  const now = new Date();
+  const toSubmit = questions.filter(q => new Date(q.lock_at) > now && draftPicks[q.id] !== undefined && draftPicks[q.id] !== '');
+  try {
+    for (const q of toSubmit) {
+      await api('picks', { method: 'POST', body: JSON.stringify({ question_id: q.id, choice: draftPicks[q.id] }) });
+      myPicks[q.id] = draftPicks[q.id];
+    }
+    pageMode = 'saved';
+    renderPicks();
+  } catch (e) {
+    if (errEl) errEl.textContent = e.message;
+  }
 }
 
 function renderGuessBody(q, mine, graded, disabled) {
   const withinRange = graded && mine !== undefined && Math.abs(Number(mine) - Number(q.correct_option)) <= 2;
   return `
     <div class="guess-row">
-      <input type="number" class="guess-input" id="guess-${q.id}" value="${mine !== undefined ? mine : ''}" placeholder="Your guess" ${disabled ? 'disabled' : ''}>
-      ${!disabled ? `<button class="btn" data-guess-submit="${q.id}">Submit Guess</button>` : ''}
+      <input type="number" class="guess-input" id="guess-${q.id}" data-qid="${q.id}" value="${mine !== undefined ? mine : ''}" placeholder="Your guess" ${disabled ? 'disabled' : ''}>
     </div>
     ${graded ? `<div class="guess-result ${mine !== undefined ? (withinRange ? 'correct' : 'incorrect') : ''}">
         Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${withinRange ? 'within ±2 — point!' : 'no point'})` : ''}
@@ -109,11 +138,12 @@ function renderPicks() {
     el.innerHTML = emptyState('No picks open yet', 'Check back once this week\'s prop questions are published.');
     return;
   }
-  el.innerHTML = questions.map(q => {
-    const locked = new Date(q.lock_at) <= new Date();
+  const now = new Date();
+  const cardsHtml = questions.map(q => {
+    const locked = new Date(q.lock_at) <= now;
     const graded = q.correct_option !== null;
-    const mine = myPicks[q.id];
-    const disabled = !currentManager || locked;
+    const mine = draftPicks[q.id];
+    const disabled = !currentManager || locked || pageMode === 'saved';
 
     let body;
     if (q.type === 'number_guess') {
@@ -143,17 +173,49 @@ function renderPicks() {
     `;
   }).join('');
 
+  const anyUnlocked = questions.some(q => new Date(q.lock_at) > now);
+  let actionBar = '';
+  if (currentManager && anyUnlocked) {
+    if (pageMode === 'saved') {
+      actionBar = `
+        <div class="picks-actionbar saved">
+          <span class="picks-confirm">&#10003; Your picks are saved.</span>
+          <button class="btn btn-ghost" id="editPicksBtn">Edit Picks</button>
+        </div>`;
+    } else {
+      const unlockedQs = questions.filter(q => new Date(q.lock_at) > now);
+      const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
+      actionBar = `
+        <div class="picks-actionbar">
+          <span class="picks-progress">${answered} of ${unlockedQs.length} answered</span>
+          <button class="btn" id="submitPicksBtn" ${answered === 0 ? 'disabled' : ''}>Submit Picks</button>
+          <span class="login-error" id="submitError"></span>
+        </div>`;
+    }
+  }
+
+  el.innerHTML = cardsHtml + actionBar;
+
   el.querySelectorAll('.option-btn:not(:disabled)').forEach(btn => {
-    btn.addEventListener('click', () => submitPick(Number(btn.dataset.qid), btn.dataset.choice));
+    btn.addEventListener('click', () => selectDraft(Number(btn.dataset.qid), btn.dataset.choice));
   });
-  el.querySelectorAll('[data-guess-submit]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const qid = Number(btn.dataset.guessSubmit);
-      const input = document.getElementById(`guess-${qid}`);
-      if (input.value === '') return;
-      submitPick(qid, input.value);
+  el.querySelectorAll('.guess-input:not(:disabled)').forEach(input => {
+    input.addEventListener('input', () => {
+      draftPicks[Number(input.dataset.qid)] = input.value;
+      const btn = document.getElementById('submitPicksBtn');
+      if (btn) btn.disabled = false;
+      const progress = el.querySelector('.picks-progress');
+      if (progress) {
+        const unlockedQs = questions.filter(q => new Date(q.lock_at) > new Date());
+        const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
+        progress.textContent = `${answered} of ${unlockedQs.length} answered`;
+      }
     });
   });
+  const submitBtn = document.getElementById('submitPicksBtn');
+  if (submitBtn) submitBtn.addEventListener('click', submitAllPicks);
+  const editBtn = document.getElementById('editPicksBtn');
+  if (editBtn) editBtn.addEventListener('click', editPicks);
 }
 
 async function renderLeaderboard() {
