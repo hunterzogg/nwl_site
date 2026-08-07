@@ -162,8 +162,9 @@ function renderPicks() {
       body = `<div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">${options}</div>`;
     }
 
+    const submittedClass = currentManager && pageMode === 'saved' && !graded ? ' submitted' : '';
     return `
-      <div class="question-card">
+      <div class="question-card${submittedClass}">
         <div class="question-prompt">${q.prompt}</div>
         <div class="question-meta">Week ${q.week} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
         ${body}
