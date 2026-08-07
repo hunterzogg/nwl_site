@@ -14,7 +14,9 @@ module.exports = async (req, res) => {
 
   if (req.method === 'POST') {
     const { week, season, type, prompt, option_a, option_b, points, lock_at } = req.body || {};
-    if (!week || !type || !prompt || !lock_at) {
+    // week can legitimately be 0 (e.g. a "Draft Day" bucket before Week 1) - `!week` would
+    // wrongly reject that since 0 is falsy, so check for missing/invalid explicitly instead.
+    if (week === undefined || week === null || Number.isNaN(Number(week)) || !type || !prompt || !lock_at) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     // pick_manager questions have no fixed option_a/option_b - the choices are every manager,
