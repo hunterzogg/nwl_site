@@ -1,10 +1,13 @@
 // Shared across all pages: nav bar + manager color lookups.
 
 const NWL_HOME = { href: 'index.html', label: 'Home' };
-const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Season' };
+const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Hub' };
 const NWL_MOCK_DRAFT_PAGE = { href: 'pages/mock-draft.html', label: 'Mock Draft' };
+const NWL_PICKEM_PAGE = { href: 'pages/pickem.html', label: "Pick'em" };
 
-const NWL_FEEDBACK_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdlRcbl_1SBWOAbBbGUIxTdhPbcd68vc0Dz3ZQoTouUNaoCNQ/viewform';
+// In-season pages (amber, grouped together) vs. league history / archive pages (grouped
+// separately) - kept as two distinct arrays so renderNav can label and style each group.
+const NWL_IN_SEASON_PAGES = [NWL_LIVE_PAGE, NWL_MOCK_DRAFT_PAGE, NWL_PICKEM_PAGE];
 
 const NWL_PAGES = [
   { href: 'pages/hall-of-fame.html', label: 'Hall of Fame' },
@@ -13,7 +16,6 @@ const NWL_PAGES = [
   { href: 'pages/rankings.html', label: 'Team Rankings' },
   { href: 'pages/draft.html', label: 'Draft' },
   { href: 'pages/transactions.html', label: 'Transactions' },
-  { href: 'pages/pickem.html', label: "Pick'em" },
 ];
 
 function renderNav(activeHref) {
@@ -31,16 +33,16 @@ function renderNav(activeHref) {
   const homeActive = activeHref === NWL_HOME.label.toLowerCase();
   const homeLink = `<a href="${homeHref}" class="${homeActive ? 'active' : ''}">${NWL_HOME.label}</a>`;
 
-  const liveActive = activeHref === NWL_LIVE_PAGE.label.toLowerCase();
-  const liveLink = `<a href="${resolveHref(NWL_LIVE_PAGE)}" class="nav-live ${liveActive ? 'active' : ''}"><span class="nav-live-dot"></span>${NWL_LIVE_PAGE.label}</a>`;
-
-  const mockDraftActive = activeHref === NWL_MOCK_DRAFT_PAGE.label.toLowerCase();
-  const mockDraftLink = `<a href="${resolveHref(NWL_MOCK_DRAFT_PAGE)}" class="${mockDraftActive ? 'active' : ''}">${NWL_MOCK_DRAFT_PAGE.label}</a>`;
+  const inSeasonLinks = NWL_IN_SEASON_PAGES.map(p => {
+    const isActive = activeHref === p.label.toLowerCase();
+    const isHub = p === NWL_LIVE_PAGE;
+    return `<a href="${resolveHref(p)}" class="nav-live ${isActive ? 'active' : ''}">${isHub ? '<span class="nav-live-dot"></span>' : ''}${p.label}</a>`;
+  }).join('');
 
   nav.innerHTML = `
     <div class="nav-top-row">
       <a href="${homeHref}" class="brand">
-        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:120px;"> NWL
+        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:88px;"> NWL
       </a>
       <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
         <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
@@ -49,15 +51,14 @@ function renderNav(activeHref) {
     <div class="nav-links">
       ${homeLink}
       <span class="nav-divider"></span>
-      ${liveLink}
-      ${mockDraftLink}
+      <span class="nav-group-label">In Season</span>
+      ${inSeasonLinks}
       <span class="nav-divider"></span>
+      <span class="nav-group-label">League History</span>
       ${NWL_PAGES.map(p => {
         const isActive = activeHref === p.label.toLowerCase();
         return `<a href="${resolveHref(p)}" class="${isActive ? 'active' : ''}">${p.label}</a>`;
       }).join('')}
-      <span class="nav-divider"></span>
-      <a href="${NWL_FEEDBACK_URL}" target="_blank" rel="noopener" class="nav-feedback">Feedback</a>
     </div>
   `;
   document.body.prepend(nav);
