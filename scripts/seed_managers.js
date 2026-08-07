@@ -15,6 +15,10 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { sql } = require('../api/lib/db');
 
+// Stowe is a former manager (2013-2016) kept in data/managers.json for the historical archive,
+// but doesn't play in the live season - skip him so he never gets a login.
+const INACTIVE_MANAGERS = ['Stowe'];
+
 function randomPasscode() {
   // 6-digit numeric, easy to text/read aloud - this is a friends-league gate, not a bank login.
   return String(crypto.randomInt(100000, 999999));
@@ -26,6 +30,7 @@ async function main() {
 
   console.log('Manager passcodes (copy these now, they will not be shown again):\n');
   for (const { manager } of managers) {
+    if (INACTIVE_MANAGERS.includes(manager)) continue;
     const passcode = randomPasscode();
     const hash = await bcrypt.hash(passcode, 10);
     await sql`

@@ -83,6 +83,9 @@ body { background: var(--bg); }
 
 <script>
 let admMgrs = [];
+// Stowe is a former manager kept in data/managers.json for the historical archive but doesn't
+// play in the live season - excluded from grading choices, matching pickem.js's own filter.
+const PICKEM_INACTIVE_MANAGERS = ['Stowe'];
 
 async function api(path, opts) {
   const res = await fetch('/api/' + path, {
@@ -171,7 +174,8 @@ async function loadQuestions() {
     el.innerHTML = '<p style="color:var(--text-muted);">No questions yet.</p>';
     return;
   }
-  const managerOptions = admMgrs.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+  const managerOptions = admMgrs.filter(m => !PICKEM_INACTIVE_MANAGERS.includes(m.manager))
+    .map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
   el.innerHTML = qs.map(q => {
     const optionsLabel = q.type === 'pick_manager' ? 'Pick a Manager' : `${q.option_a} / ${q.option_b}`;
     const gradedLabel = q.correct_option

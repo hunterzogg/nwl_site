@@ -3,6 +3,14 @@ let currentManager = null; // logged-in manager name, or null
 let questions = [];
 let myPicks = {}; // question_id -> 'a'|'b'
 
+// Stowe is a former manager (2013-2016), still kept in data/managers.json for the historical
+// archive, but he doesn't draft/play in the live season - exclude him from every pick'em
+// manager-choice surface (login, pick-a-manager options) without touching the shared data file.
+const PICKEM_INACTIVE_MANAGERS = ['Stowe'];
+function activeManagers() {
+  return managers.filter(m => !PICKEM_INACTIVE_MANAGERS.includes(m.manager));
+}
+
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
 }
@@ -36,7 +44,7 @@ function renderLogin() {
     return;
   }
 
-  const options = managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
+  const options = activeManagers().map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
   el.innerHTML = `
     <div class="login-card">
       <div class="field">
@@ -99,7 +107,7 @@ function renderPicks() {
     };
     const disabled = !currentManager || locked;
     const options = q.type === 'pick_manager'
-      ? managers.map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
+      ? activeManagers().map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
       : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
          <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
     return `
