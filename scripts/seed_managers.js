@@ -1,7 +1,10 @@
-// One-time setup: creates a random passcode for each of the 13 managers and inserts them
-// (bcrypt-hashed) into the managers table. Prints the plaintext passcodes to your own
-// terminal ONLY, once - copy them somewhere safe (a note, a password manager) and share with
-// each manager however you like. Nothing plaintext is ever written to a file or the database.
+// One-time (or per-new-manager) setup: inserts a row per manager into the managers table with
+// no password set yet (passcode_hash NULL) - each manager claims their own account by simply
+// logging in for the first time and choosing a password themselves (see api/login.js). Nothing
+// to generate or distribute here anymore.
+//
+// Safe to re-run: existing managers (already claimed or not) are left untouched via
+// ON CONFLICT DO NOTHING - this only ever adds rows for managers who don't have one yet.
 //
 // Usage:
 //   cd ~/Sites/nwl_site
@@ -11,35 +14,25 @@
 
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
 const { sql } = require('../api/lib/db');
 
 // Stowe is a former manager (2013-2016) kept in data/managers.json for the historical archive,
 // but doesn't play in the live season - skip him so he never gets a login.
 const INACTIVE_MANAGERS = ['Stowe'];
 
-function randomPasscode() {
-  // 6-digit numeric, easy to text/read aloud - this is a friends-league gate, not a bank login.
-  return String(crypto.randomInt(100000, 999999));
-}
-
 async function main() {
   const managersPath = path.join(__dirname, '..', 'data', 'managers.json');
   const managers = JSON.parse(fs.readFileSync(managersPath, 'utf8'));
 
-  console.log('Manager passcodes (copy these now, they will not be shown again):\n');
   for (const { manager } of managers) {
     if (INACTIVE_MANAGERS.includes(manager)) continue;
-    const passcode = randomPasscode();
-    const hash = await bcrypt.hash(passcode, 10);
     await sql`
-      INSERT INTO managers (name, passcode_hash) VALUES (${manager}, ${hash})
-      ON CONFLICT (name) DO UPDATE SET passcode_hash = ${hash}
+      INSERT INTO managers (name, passcode_hash) VALUES (${manager}, NULL)
+      ON CONFLICT (name) DO NOTHING
     `;
-    console.log(`  ${manager.padEnd(12)} ${passcode}`);
+    console.log(`  ${manager}`);
   }
-  console.log('\nDone. Share each passcode with its manager, then delete this output from your terminal scrollback.');
+  console.log('\nDone. Each manager sets their own password the first time they log in at /pages/pickem.html.');
 }
 
 main().then(() => process.exit(0)).catch((e) => { console.error(e); process.exit(1); });

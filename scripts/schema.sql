@@ -1,9 +1,11 @@
 -- NWL Pick'em schema. Run once against the Vercel Postgres database
 -- (Vercel dashboard -> project -> Storage -> your database -> Query console -> paste + run).
 
+-- passcode_hash doubles as password_hash: NULL means the manager hasn't claimed their
+-- account yet - their first successful login sets it (self-service, no admin distribution).
 CREATE TABLE IF NOT EXISTS managers (
   name TEXT PRIMARY KEY,
-  passcode_hash TEXT NOT NULL
+  passcode_hash TEXT
 );
 
 CREATE TABLE IF NOT EXISTS questions (

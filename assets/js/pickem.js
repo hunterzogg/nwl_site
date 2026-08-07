@@ -52,20 +52,21 @@ function renderLogin() {
         <select id="loginManager">${options}</select>
       </div>
       <div class="field">
-        <label>Passcode</label>
-        <input type="password" id="loginPasscode" placeholder="6-digit passcode">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Password">
       </div>
       <button class="btn" id="loginBtn">Log In</button>
       <span class="login-error" id="loginError"></span>
     </div>
+    <p class="login-hint">First time? Just pick your name and enter any password &mdash; that becomes your password going forward.</p>
   `;
   document.getElementById('loginBtn').onclick = async () => {
     const manager = document.getElementById('loginManager').value;
-    const passcode = document.getElementById('loginPasscode').value;
+    const password = document.getElementById('loginPassword').value;
     const errEl = document.getElementById('loginError');
     errEl.textContent = '';
     try {
-      const body = await api('login', { method: 'POST', body: JSON.stringify({ manager, passcode }) });
+      const body = await api('login', { method: 'POST', body: JSON.stringify({ manager, password }) });
       currentManager = body.manager;
       renderLogin();
       await loadPicks();
