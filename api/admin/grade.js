@@ -19,6 +19,8 @@ module.exports = async (req, res) => {
   if (question.type === 'pick_manager') {
     const { rows: mgrRows } = await sql`SELECT 1 FROM managers WHERE name = ${correct_option}`;
     if (!mgrRows.length) return res.status(400).json({ error: 'correct_option must be a valid manager name' });
+  } else if (question.type === 'number_guess') {
+    if (!Number.isFinite(Number(correct_option))) return res.status(400).json({ error: 'correct_option must be a number' });
   } else if (!['a', 'b'].includes(correct_option)) {
     return res.status(400).json({ error: 'correct_option must be a or b' });
   }

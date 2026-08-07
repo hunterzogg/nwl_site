@@ -90,6 +90,19 @@ async function submitPick(questionId, choice) {
   renderPicks();
 }
 
+function renderGuessBody(q, mine, graded, disabled) {
+  const withinRange = graded && mine !== undefined && Math.abs(Number(mine) - Number(q.correct_option)) <= 2;
+  return `
+    <div class="guess-row">
+      <input type="number" class="guess-input" id="guess-${q.id}" value="${mine !== undefined ? mine : ''}" placeholder="Your guess" ${disabled ? 'disabled' : ''}>
+      ${!disabled ? `<button class="btn" data-guess-submit="${q.id}">Submit Guess</button>` : ''}
+    </div>
+    ${graded ? `<div class="guess-result ${mine !== undefined ? (withinRange ? 'correct' : 'incorrect') : ''}">
+        Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${withinRange ? 'within ±2 — point!' : 'no point'})` : ''}
+      </div>` : ''}
+  `;
+}
+
 function renderPicks() {
   const el = document.getElementById('picksContent');
   if (!questions.length) {
@@ -100,24 +113,30 @@ function renderPicks() {
     const locked = new Date(q.lock_at) <= new Date();
     const graded = q.correct_option !== null;
     const mine = myPicks[q.id];
-    const optClass = (opt) => {
-      let cls = 'option-btn';
-      if (mine === opt) cls += ' selected';
-      if (graded) cls += (q.correct_option === opt) ? ' correct' : (mine === opt ? ' incorrect' : '');
-      return cls;
-    };
     const disabled = !currentManager || locked;
-    const options = q.type === 'pick_manager'
-      ? activeManagers().map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
-      : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
-         <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
+
+    let body;
+    if (q.type === 'number_guess') {
+      body = renderGuessBody(q, mine, graded, disabled);
+    } else {
+      const optClass = (opt) => {
+        let cls = 'option-btn';
+        if (mine === opt) cls += ' selected';
+        if (graded) cls += (q.correct_option === opt) ? ' correct' : (mine === opt ? ' incorrect' : '');
+        return cls;
+      };
+      const options = q.type === 'pick_manager'
+        ? activeManagers().map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
+        : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
+           <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
+      body = `<div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">${options}</div>`;
+    }
+
     return `
       <div class="question-card">
         <div class="question-prompt">${q.prompt}</div>
         <div class="question-meta">Week ${q.week} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
-        <div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">
-          ${options}
-        </div>
+        ${body}
         ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}
         ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}
       </div>
@@ -126,6 +145,14 @@ function renderPicks() {
 
   el.querySelectorAll('.option-btn:not(:disabled)').forEach(btn => {
     btn.addEventListener('click', () => submitPick(Number(btn.dataset.qid), btn.dataset.choice));
+  });
+  el.querySelectorAll('[data-guess-submit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qid = Number(btn.dataset.guessSubmit);
+      const input = document.getElementById(`guess-${qid}`);
+      if (input.value === '') return;
+      submitPick(qid, input.value);
+    });
   });
 }
 

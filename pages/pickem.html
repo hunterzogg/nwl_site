@@ -60,6 +60,14 @@
 .option-btn:disabled { cursor: not-allowed; }
 .manager-grid .option-btn { flex: 0 1 120px; min-width: 100px; }
 .locked-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+.guess-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.guess-input {
+  background: var(--surface-raised); border: 1px solid var(--line); color: var(--text);
+  padding: 12px 14px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.95rem; width: 140px;
+}
+.guess-result { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
+.guess-result.correct { color: #4FA876; }
+.guess-result.incorrect { color: #E0524A; }
 
 .rank-num { font-family: var(--font-mono); color: var(--live-bright); }
 </style>
@@ -96,6 +104,6 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=10"></script>
-<script src="../assets/js/pickem.js?v=2"></script>
+<script src="../assets/js/pickem.js?v=3"></script>
 </body>
 </html>

@@ -53,6 +53,7 @@ body { background: var(--bg); }
         <option value="this_or_that">This or That</option>
         <option value="over_under">Over/Under</option>
         <option value="pick_manager">Pick a Manager</option>
+        <option value="number_guess">Number Guess (&plusmn;2)</option>
       </select>
       <input type="number" id="newPoints" placeholder="Points" value="1" style="width:80px;">
       <input type="datetime-local" id="newLockAt">
@@ -66,6 +67,9 @@ body { background: var(--bg); }
     </div>
     <p id="pickManagerNote" style="display:none; color:var(--text-muted); font-size:0.82rem; margin:0 0 10px;">
       No options needed &mdash; every manager will be shown as a choice on the Pick'em page.
+    </p>
+    <p id="numberGuessNote" style="display:none; color:var(--text-muted); font-size:0.82rem; margin:0 0 10px;">
+      No options needed &mdash; managers enter a number, and a guess within &plusmn;2 of what you grade it as scores the point.
     </p>
     <button class="btn" id="createBtn">Add Question (unpublished)</button>
     <span class="error" id="createError"></span>
@@ -116,10 +120,12 @@ async function loadManagers() {
   return admMgrs;
 }
 
+const NO_OPTIONS_TYPES = ['pick_manager', 'number_guess'];
 function toggleOptionFields() {
-  const isPickManager = document.getElementById('newType').value === 'pick_manager';
-  document.getElementById('newOptionsRow').style.display = isPickManager ? 'none' : 'flex';
-  document.getElementById('pickManagerNote').style.display = isPickManager ? 'block' : 'none';
+  const type = document.getElementById('newType').value;
+  document.getElementById('newOptionsRow').style.display = NO_OPTIONS_TYPES.includes(type) ? 'none' : 'flex';
+  document.getElementById('pickManagerNote').style.display = type === 'pick_manager' ? 'block' : 'none';
+  document.getElementById('numberGuessNote').style.display = type === 'number_guess' ? 'block' : 'none';
 }
 
 function renderGate() {
@@ -179,8 +185,8 @@ async function createQuestion() {
         points: Number(document.getElementById('newPoints').value) || 1,
         lock_at: lockAtLocal ? new Date(lockAtLocal).toISOString() : null,
         prompt: document.getElementById('newPrompt').value,
-        option_a: type === 'pick_manager' ? null : document.getElementById('newOptionA').value,
-        option_b: type === 'pick_manager' ? null : document.getElementById('newOptionB').value,
+        option_a: NO_OPTIONS_TYPES.includes(type) ? null : document.getElementById('newOptionA').value,
+        option_b: NO_OPTIONS_TYPES.includes(type) ? null : document.getElementById('newOptionB').value,
       }),
     });
     document.getElementById('newPrompt').value = '';
@@ -204,13 +210,18 @@ async function loadQuestions() {
   const managerOptions = admMgrs.filter(m => !PICKEM_INACTIVE_MANAGERS.includes(m.manager))
     .map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
   el.innerHTML = qs.map(q => {
-    const optionsLabel = q.type === 'pick_manager' ? 'Pick a Manager' : `${q.option_a} / ${q.option_b}`;
+    const optionsLabel = q.type === 'pick_manager' ? 'Pick a Manager'
+      : q.type === 'number_guess' ? 'Number Guess (±2)'
+      : `${q.option_a} / ${q.option_b}`;
     const gradedLabel = q.correct_option
-      ? 'Graded: ' + (q.type === 'pick_manager' ? q.correct_option : (q.correct_option === 'a' ? q.option_a : q.option_b))
+      ? 'Graded: ' + (q.type === 'pick_manager' || q.type === 'number_guess' ? q.correct_option : (q.correct_option === 'a' ? q.option_a : q.option_b))
       : 'Ungraded';
     const gradeControl = q.correct_option ? '' : (q.type === 'pick_manager'
       ? `<select data-grade-select="${q.id}"><option value="">Grade: pick manager...</option>${managerOptions}</select>
          <button class="btn btn-ghost" data-grade-manager="${q.id}">Save</button>`
+      : q.type === 'number_guess'
+      ? `<input type="number" data-grade-number="${q.id}" placeholder="Actual number" style="width:120px;">
+         <button class="btn btn-ghost" data-grade-number-btn="${q.id}">Save</button>`
       : `<button class="btn btn-ghost" data-grade="${q.id}" data-choice="a">${q.option_a} won</button>
          <button class="btn btn-ghost" data-grade="${q.id}" data-choice="b">${q.option_b} won</button>`);
     return `
@@ -246,6 +257,15 @@ async function loadQuestions() {
       const select = el.querySelector(`[data-grade-select="${qid}"]`);
       if (!select.value) return;
       await api('admin/grade', { method: 'POST', body: JSON.stringify({ question_id: Number(qid), correct_option: select.value }) });
+      loadQuestions();
+    };
+  });
+  el.querySelectorAll('[data-grade-number-btn]').forEach(btn => {
+    btn.onclick = async () => {
+      const qid = btn.dataset.gradeNumberBtn;
+      const input = el.querySelector(`[data-grade-number="${qid}"]`);
+      if (input.value === '') return;
+      await api('admin/grade', { method: 'POST', body: JSON.stringify({ question_id: Number(qid), correct_option: input.value }) });
       loadQuestions();
     };
   });

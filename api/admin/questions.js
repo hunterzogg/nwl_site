@@ -20,8 +20,10 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     // pick_manager questions have no fixed option_a/option_b - the choices are every manager,
-    // rendered dynamically on the frontend from data/managers.json.
-    if (type !== 'pick_manager' && (!option_a || !option_b)) {
+    // rendered dynamically on the frontend from data/managers.json. number_guess questions take
+    // a free-form numeric answer instead of two fixed options too.
+    const NO_OPTIONS_TYPES = ['pick_manager', 'number_guess'];
+    if (!NO_OPTIONS_TYPES.includes(type) && (!option_a || !option_b)) {
       return res.status(400).json({ error: 'option_a and option_b are required for this question type' });
     }
     const { rows } = await sql`
