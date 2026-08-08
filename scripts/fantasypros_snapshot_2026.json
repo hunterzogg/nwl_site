@@ -1,0 +1,2480 @@
+{
+  "_meta": {
+    "description": "One-off snapshot of FantasyPros ECR/ADP data for 2026 drafted players, fetched via the FantasyPros v2 API (scripts/fantasypros_credentials.json) on 2026-08-08. NOT auto-refreshed by fetch_espn_draft.py - that script just loads this file. See fetch_espn_draft.py's fetch_fantasypros_data() docstring for the full story: FantasyPros' free API tier caps bulk requests (consensus-rankings, players-list) at 10 results regardless of filters, and rate-limits individual single-player lookups hard after ~20 calls in a session. RB/WR entries (132/132, 100% coverage) use position_ecr_rank/position_ecr_pool_size (POSITIONAL ECR rank, from a brief window before the key's access degraded to the free-tier cap). QB/TE entries (22/36, partial) use overall_ecr_rank/overall_adp_rank (OVERALL rank, from single-player lookups via /nfl/players?player=ID, which isn't subject to the bulk cap - player IDs resolved by scraping each player's public FantasyPros page for their embedded player-id, no API key needed for that step). 14 of 168 drafted skill players have no entry at all and fall back to a neutral value in grading.",
+    "coverage": "154/168 drafted skill players (100% RB/WR, 22/36 QB/TE)"
+  },
+  "players": {
+    "jahmyr gibbs": {
+      "name": "Jahmyr Gibbs",
+      "position": "RB",
+      "position_ecr_rank": 1,
+      "position_ecr_pool_size": 165
+    },
+    "bijan robinson": {
+      "name": "Bijan Robinson",
+      "position": "RB",
+      "position_ecr_rank": 2,
+      "position_ecr_pool_size": 165
+    },
+    "christian mccaffrey": {
+      "name": "Christian McCaffrey",
+      "position": "RB",
+      "position_ecr_rank": 3,
+      "position_ecr_pool_size": 165
+    },
+    "jonathan taylor": {
+      "name": "Jonathan Taylor",
+      "position": "RB",
+      "position_ecr_rank": 4,
+      "position_ecr_pool_size": 165
+    },
+    "ashton jeanty": {
+      "name": "Ashton Jeanty",
+      "position": "RB",
+      "position_ecr_rank": 5,
+      "position_ecr_pool_size": 165
+    },
+    "chase brown": {
+      "name": "Chase Brown",
+      "position": "RB",
+      "position_ecr_rank": 6,
+      "position_ecr_pool_size": 165
+    },
+    "james cook": {
+      "name": "James Cook III",
+      "position": "RB",
+      "position_ecr_rank": 7,
+      "position_ecr_pool_size": 165
+    },
+    "devon achane": {
+      "name": "De'Von Achane",
+      "position": "RB",
+      "position_ecr_rank": 8,
+      "position_ecr_pool_size": 165
+    },
+    "omarion hampton": {
+      "name": "Omarion Hampton",
+      "position": "RB",
+      "position_ecr_rank": 9,
+      "position_ecr_pool_size": 165
+    },
+    "saquon barkley": {
+      "name": "Saquon Barkley",
+      "position": "RB",
+      "position_ecr_rank": 10,
+      "position_ecr_pool_size": 165
+    },
+    "kenneth walker": {
+      "name": "Kenneth Walker III",
+      "position": "RB",
+      "position_ecr_rank": 11,
+      "position_ecr_pool_size": 165
+    },
+    "derrick henry": {
+      "name": "Derrick Henry",
+      "position": "RB",
+      "position_ecr_rank": 12,
+      "position_ecr_pool_size": 165
+    },
+    "jeremiyah love": {
+      "name": "Jeremiyah Love",
+      "position": "RB",
+      "position_ecr_rank": 13,
+      "position_ecr_pool_size": 165
+    },
+    "breece hall": {
+      "name": "Breece Hall",
+      "position": "RB",
+      "position_ecr_rank": 14,
+      "position_ecr_pool_size": 165
+    },
+    "kyren williams": {
+      "name": "Kyren Williams",
+      "position": "RB",
+      "position_ecr_rank": 15,
+      "position_ecr_pool_size": 165
+    },
+    "josh jacobs": {
+      "name": "Josh Jacobs",
+      "position": "RB",
+      "position_ecr_rank": 16,
+      "position_ecr_pool_size": 165
+    },
+    "javonte williams": {
+      "name": "Javonte Williams",
+      "position": "RB",
+      "position_ecr_rank": 17,
+      "position_ecr_pool_size": 165
+    },
+    "travis etienne": {
+      "name": "Travis Etienne Jr.",
+      "position": "RB",
+      "position_ecr_rank": 18,
+      "position_ecr_pool_size": 165
+    },
+    "cam skattebo": {
+      "name": "Cam Skattebo",
+      "position": "RB",
+      "position_ecr_rank": 19,
+      "position_ecr_pool_size": 165
+    },
+    "dandre swift": {
+      "name": "D'Andre Swift",
+      "position": "RB",
+      "position_ecr_rank": 20,
+      "position_ecr_pool_size": 165
+    },
+    "quinshon judkins": {
+      "name": "Quinshon Judkins",
+      "position": "RB",
+      "position_ecr_rank": 21,
+      "position_ecr_pool_size": 165
+    },
+    "bucky irving": {
+      "name": "Bucky Irving",
+      "position": "RB",
+      "position_ecr_rank": 22,
+      "position_ecr_pool_size": 165
+    },
+    "david montgomery": {
+      "name": "David Montgomery",
+      "position": "RB",
+      "position_ecr_rank": 23,
+      "position_ecr_pool_size": 165
+    },
+    "treveyon henderson": {
+      "name": "TreVeyon Henderson",
+      "position": "RB",
+      "position_ecr_rank": 24,
+      "position_ecr_pool_size": 165
+    },
+    "bhayshul tuten": {
+      "name": "Bhayshul Tuten",
+      "position": "RB",
+      "position_ecr_rank": 25,
+      "position_ecr_pool_size": 165
+    },
+    "jaylen warren": {
+      "name": "Jaylen Warren",
+      "position": "RB",
+      "position_ecr_rank": 26,
+      "position_ecr_pool_size": 165
+    },
+    "jadarian price": {
+      "name": "Jadarian Price",
+      "position": "RB",
+      "position_ecr_rank": 27,
+      "position_ecr_pool_size": 165
+    },
+    "rhamondre stevenson": {
+      "name": "Rhamondre Stevenson",
+      "position": "RB",
+      "position_ecr_rank": 28,
+      "position_ecr_pool_size": 165
+    },
+    "tony pollard": {
+      "name": "Tony Pollard",
+      "position": "RB",
+      "position_ecr_rank": 29,
+      "position_ecr_pool_size": 165
+    },
+    "chuba hubbard": {
+      "name": "Chuba Hubbard",
+      "position": "RB",
+      "position_ecr_rank": 30,
+      "position_ecr_pool_size": 165
+    },
+    "rico dowdle": {
+      "name": "Rico Dowdle",
+      "position": "RB",
+      "position_ecr_rank": 31,
+      "position_ecr_pool_size": 165
+    },
+    "rj harvey": {
+      "name": "RJ Harvey",
+      "position": "RB",
+      "position_ecr_rank": 32,
+      "position_ecr_pool_size": 165
+    },
+    "kenny gainwell": {
+      "name": "Kenny Gainwell",
+      "position": "RB",
+      "position_ecr_rank": 33,
+      "position_ecr_pool_size": 165
+    },
+    "jk dobbins": {
+      "name": "J.K. Dobbins",
+      "position": "RB",
+      "position_ecr_rank": 34,
+      "position_ecr_pool_size": 165
+    },
+    "kyle monangai": {
+      "name": "Kyle Monangai",
+      "position": "RB",
+      "position_ecr_rank": 35,
+      "position_ecr_pool_size": 165
+    },
+    "rachaad white": {
+      "name": "Rachaad White",
+      "position": "RB",
+      "position_ecr_rank": 36,
+      "position_ecr_pool_size": 165
+    },
+    "blake corum": {
+      "name": "Blake Corum",
+      "position": "RB",
+      "position_ecr_rank": 37,
+      "position_ecr_pool_size": 165
+    },
+    "aaron jones": {
+      "name": "Aaron Jones Sr.",
+      "position": "RB",
+      "position_ecr_rank": 38,
+      "position_ecr_pool_size": 165
+    },
+    "jonathon brooks": {
+      "name": "Jonathon Brooks",
+      "position": "RB",
+      "position_ecr_rank": 39,
+      "position_ecr_pool_size": 165
+    },
+    "jacory croskey merritt": {
+      "name": "Jacory Croskey-Merritt",
+      "position": "RB",
+      "position_ecr_rank": 40,
+      "position_ecr_pool_size": 165
+    },
+    "jordan mason": {
+      "name": "Jordan Mason",
+      "position": "RB",
+      "position_ecr_rank": 41,
+      "position_ecr_pool_size": 165
+    },
+    "tyrone tracy": {
+      "name": "Tyrone Tracy Jr.",
+      "position": "RB",
+      "position_ecr_rank": 42,
+      "position_ecr_pool_size": 165
+    },
+    "woody marks": {
+      "name": "Woody Marks",
+      "position": "RB",
+      "position_ecr_rank": 43,
+      "position_ecr_pool_size": 165
+    },
+    "tyler allgeier": {
+      "name": "Tyler Allgeier",
+      "position": "RB",
+      "position_ecr_rank": 44,
+      "position_ecr_pool_size": 165
+    },
+    "chris rodriguez": {
+      "name": "Chris Rodriguez Jr.",
+      "position": "RB",
+      "position_ecr_rank": 45,
+      "position_ecr_pool_size": 165
+    },
+    "tyjae spears": {
+      "name": "Tyjae Spears",
+      "position": "RB",
+      "position_ecr_rank": 46,
+      "position_ecr_pool_size": 165
+    },
+    "alvin kamara": {
+      "name": "Alvin Kamara",
+      "position": "RB",
+      "position_ecr_rank": 47,
+      "position_ecr_pool_size": 165
+    },
+    "zach charbonnet": {
+      "name": "Zach Charbonnet",
+      "position": "RB",
+      "position_ecr_rank": 48,
+      "position_ecr_pool_size": 165
+    },
+    "dylan sampson": {
+      "name": "Dylan Sampson",
+      "position": "RB",
+      "position_ecr_rank": 49,
+      "position_ecr_pool_size": 165
+    },
+    "isiah pacheco": {
+      "name": "Isiah Pacheco",
+      "position": "RB",
+      "position_ecr_rank": 50,
+      "position_ecr_pool_size": 165
+    },
+    "keaton mitchell": {
+      "name": "Keaton Mitchell",
+      "position": "RB",
+      "position_ecr_rank": 51,
+      "position_ecr_pool_size": 165
+    },
+    "tank bigsby": {
+      "name": "Tank Bigsby",
+      "position": "RB",
+      "position_ecr_rank": 52,
+      "position_ecr_pool_size": 165
+    },
+    "brian robinson": {
+      "name": "Brian Robinson Jr.",
+      "position": "RB",
+      "position_ecr_rank": 53,
+      "position_ecr_pool_size": 165
+    },
+    "jonah coleman": {
+      "name": "Jonah Coleman",
+      "position": "RB",
+      "position_ecr_rank": 54,
+      "position_ecr_pool_size": 165
+    },
+    "braelon allen": {
+      "name": "Braelon Allen",
+      "position": "RB",
+      "position_ecr_rank": 55,
+      "position_ecr_pool_size": 165
+    },
+    "ray davis": {
+      "name": "Ray Davis",
+      "position": "RB",
+      "position_ecr_rank": 56,
+      "position_ecr_pool_size": 165
+    },
+    "sean tucker": {
+      "name": "Sean Tucker",
+      "position": "RB",
+      "position_ecr_rank": 57,
+      "position_ecr_pool_size": 165
+    },
+    "kimani vidal": {
+      "name": "Kimani Vidal",
+      "position": "RB",
+      "position_ecr_rank": 58,
+      "position_ecr_pool_size": 165
+    },
+    "emmett johnson": {
+      "name": "Emmett Johnson",
+      "position": "RB",
+      "position_ecr_rank": 59,
+      "position_ecr_pool_size": 165
+    },
+    "james conner": {
+      "name": "James Conner",
+      "position": "RB",
+      "position_ecr_rank": 60,
+      "position_ecr_pool_size": 165
+    },
+    "emanuel wilson": {
+      "name": "Emanuel Wilson",
+      "position": "RB",
+      "position_ecr_rank": 61,
+      "position_ecr_pool_size": 165
+    },
+    "mike washington": {
+      "name": "Mike Washington Jr.",
+      "position": "RB",
+      "position_ecr_rank": 62,
+      "position_ecr_pool_size": 165
+    },
+    "nicholas singleton": {
+      "name": "Nicholas Singleton",
+      "position": "RB",
+      "position_ecr_rank": 63,
+      "position_ecr_pool_size": 165
+    },
+    "marshawn lloyd": {
+      "name": "MarShawn Lloyd",
+      "position": "RB",
+      "position_ecr_rank": 64,
+      "position_ecr_pool_size": 165
+    },
+    "kaytron allen": {
+      "name": "Kaytron Allen",
+      "position": "RB",
+      "position_ecr_rank": 65,
+      "position_ecr_pool_size": 165
+    },
+    "jaydon blue": {
+      "name": "Jaydon Blue",
+      "position": "RB",
+      "position_ecr_rank": 66,
+      "position_ecr_pool_size": 165
+    },
+    "jaylen wright": {
+      "name": "Jaylen Wright",
+      "position": "RB",
+      "position_ecr_rank": 67,
+      "position_ecr_pool_size": 165
+    },
+    "ollie gordon": {
+      "name": "Ollie Gordon II",
+      "position": "RB",
+      "position_ecr_rank": 68,
+      "position_ecr_pool_size": 165
+    },
+    "justice hill": {
+      "name": "Justice Hill",
+      "position": "RB",
+      "position_ecr_rank": 69,
+      "position_ecr_pool_size": 165
+    },
+    "isaiah davis": {
+      "name": "Isaiah Davis",
+      "position": "RB",
+      "position_ecr_rank": 70,
+      "position_ecr_pool_size": 165
+    },
+    "george holani": {
+      "name": "George Holani",
+      "position": "RB",
+      "position_ecr_rank": 71,
+      "position_ecr_pool_size": 165
+    },
+    "demond claiborne": {
+      "name": "Demond Claiborne",
+      "position": "RB",
+      "position_ecr_rank": 72,
+      "position_ecr_pool_size": 165
+    },
+    "ty johnson": {
+      "name": "Ty Johnson",
+      "position": "RB",
+      "position_ecr_rank": 73,
+      "position_ecr_pool_size": 165
+    },
+    "jordan james": {
+      "name": "Jordan James",
+      "position": "RB",
+      "position_ecr_rank": 74,
+      "position_ecr_pool_size": 165
+    },
+    "dj giddens": {
+      "name": "DJ Giddens",
+      "position": "RB",
+      "position_ecr_rank": 75,
+      "position_ecr_pool_size": 165
+    },
+    "chris brooks": {
+      "name": "Chris Brooks",
+      "position": "RB",
+      "position_ecr_rank": 76,
+      "position_ecr_pool_size": 165
+    },
+    "samaje perine": {
+      "name": "Samaje Perine",
+      "position": "RB",
+      "position_ecr_rank": 77,
+      "position_ecr_pool_size": 165
+    },
+    "lequint allen": {
+      "name": "LeQuint Allen Jr.",
+      "position": "RB",
+      "position_ecr_rank": 78,
+      "position_ecr_pool_size": 165
+    },
+    "trey benson": {
+      "name": "Trey Benson",
+      "position": "RB",
+      "position_ecr_rank": 79,
+      "position_ecr_pool_size": 165
+    },
+    "kaelon black": {
+      "name": "Kaelon Black",
+      "position": "RB",
+      "position_ecr_rank": 80,
+      "position_ecr_pool_size": 165
+    },
+    "malik davis": {
+      "name": "Malik Davis",
+      "position": "RB",
+      "position_ecr_rank": 81,
+      "position_ecr_pool_size": 165
+    },
+    "devin neal": {
+      "name": "Devin Neal",
+      "position": "RB",
+      "position_ecr_rank": 82,
+      "position_ecr_pool_size": 165
+    },
+    "kaleb johnson": {
+      "name": "Kaleb Johnson",
+      "position": "RB",
+      "position_ecr_rank": 83,
+      "position_ecr_pool_size": 165
+    },
+    "emari demercado": {
+      "name": "Emari Demercado",
+      "position": "RB",
+      "position_ecr_rank": 84,
+      "position_ecr_pool_size": 165
+    },
+    "devin singletary": {
+      "name": "Devin Singletary",
+      "position": "RB",
+      "position_ecr_rank": 85,
+      "position_ecr_pool_size": 165
+    },
+    "kendre miller": {
+      "name": "Kendre Miller",
+      "position": "RB",
+      "position_ecr_rank": 86,
+      "position_ecr_pool_size": 165
+    },
+    "brashard smith": {
+      "name": "Brashard Smith",
+      "position": "RB",
+      "position_ecr_rank": 87,
+      "position_ecr_pool_size": 165
+    },
+    "jerome ford": {
+      "name": "Jerome Ford",
+      "position": "RB",
+      "position_ecr_rank": 88,
+      "position_ecr_pool_size": 165
+    },
+    "adam randall": {
+      "name": "Adam Randall",
+      "position": "RB",
+      "position_ecr_rank": 89,
+      "position_ecr_pool_size": 165
+    },
+    "najee harris": {
+      "name": "Najee Harris",
+      "position": "RB",
+      "position_ecr_rank": 90,
+      "position_ecr_pool_size": 165
+    },
+    "tahj brooks": {
+      "name": "Tahj Brooks",
+      "position": "RB",
+      "position_ecr_rank": 91,
+      "position_ecr_pool_size": 165
+    },
+    "seth mcgowan": {
+      "name": "Seth McGowan",
+      "position": "RB",
+      "position_ecr_rank": 92,
+      "position_ecr_pool_size": 165
+    },
+    "trevor etienne": {
+      "name": "Trevor Etienne",
+      "position": "RB",
+      "position_ecr_rank": 93,
+      "position_ecr_pool_size": 165
+    },
+    "jarquez hunter": {
+      "name": "Jarquez Hunter",
+      "position": "RB",
+      "position_ecr_rank": 94,
+      "position_ecr_pool_size": 165
+    },
+    "isaac guerendo": {
+      "name": "Isaac Guerendo",
+      "position": "RB",
+      "position_ecr_rank": 95,
+      "position_ecr_pool_size": 165
+    },
+    "jaleel mclaughlin": {
+      "name": "Jaleel McLaughlin",
+      "position": "RB",
+      "position_ecr_rank": 96,
+      "position_ecr_pool_size": 165
+    },
+    "audric estime": {
+      "name": "Audric Estime",
+      "position": "RB",
+      "position_ecr_rank": 97,
+      "position_ecr_pool_size": 165
+    },
+    "will shipley": {
+      "name": "Will Shipley",
+      "position": "RB",
+      "position_ecr_rank": 98,
+      "position_ecr_pool_size": 165
+    },
+    "kareem hunt": {
+      "name": "Kareem Hunt",
+      "position": "RB",
+      "position_ecr_rank": 99,
+      "position_ecr_pool_size": 165
+    },
+    "joe mixon": {
+      "name": "Joe Mixon",
+      "position": "RB",
+      "position_ecr_rank": 100,
+      "position_ecr_pool_size": 165
+    },
+    "eli heidenreich": {
+      "name": "Eli Heidenreich",
+      "position": "RB",
+      "position_ecr_rank": 101,
+      "position_ecr_pool_size": 165
+    },
+    "bam knight": {
+      "name": "Bam Knight",
+      "position": "RB",
+      "position_ecr_rank": 102,
+      "position_ecr_pool_size": 165
+    },
+    "michael carter": {
+      "name": "Michael Carter",
+      "position": "RB",
+      "position_ecr_rank": 103,
+      "position_ecr_pool_size": 165
+    },
+    "jawhar jordan": {
+      "name": "Jawhar Jordan",
+      "position": "RB",
+      "position_ecr_rank": 104,
+      "position_ecr_pool_size": 165
+    },
+    "nick chubb": {
+      "name": "Nick Chubb",
+      "position": "RB",
+      "position_ecr_rank": 105,
+      "position_ecr_pool_size": 165
+    },
+    "jmari taylor": {
+      "name": "J'Mari Taylor",
+      "position": "RB",
+      "position_ecr_rank": 106,
+      "position_ecr_pool_size": 165
+    },
+    "raheim sanders": {
+      "name": "Raheim Sanders",
+      "position": "RB",
+      "position_ecr_rank": 107,
+      "position_ecr_pool_size": 165
+    },
+    "phil mafah": {
+      "name": "Phil Mafah",
+      "position": "RB",
+      "position_ecr_rank": 108,
+      "position_ecr_pool_size": 165
+    },
+    "kyle juszczyk": {
+      "name": "Kyle Juszczyk",
+      "position": "RB",
+      "position_ecr_rank": 109,
+      "position_ecr_pool_size": 165
+    },
+    "austin ekeler": {
+      "name": "Austin Ekeler",
+      "position": "RB",
+      "position_ecr_rank": 110,
+      "position_ecr_pool_size": 165
+    },
+    "dameon pierce": {
+      "name": "Dameon Pierce",
+      "position": "RB",
+      "position_ecr_rank": 111,
+      "position_ecr_pool_size": 165
+    },
+    "jam miller": {
+      "name": "Jam Miller",
+      "position": "RB",
+      "position_ecr_rank": 112,
+      "position_ecr_pool_size": 165
+    },
+    "roschon johnson": {
+      "name": "Roschon Johnson",
+      "position": "RB",
+      "position_ecr_rank": 113,
+      "position_ecr_pool_size": 165
+    },
+    "terrell jennings": {
+      "name": "Terrell Jennings",
+      "position": "RB",
+      "position_ecr_rank": 114,
+      "position_ecr_pool_size": 165
+    },
+    "sione vaki": {
+      "name": "Sione Vaki",
+      "position": "RB",
+      "position_ecr_rank": 115,
+      "position_ecr_pool_size": 165
+    },
+    "rasheen ali": {
+      "name": "Rasheen Ali",
+      "position": "RB",
+      "position_ecr_rank": 116,
+      "position_ecr_pool_size": 165
+    },
+    "jeremy mcnichols": {
+      "name": "Jeremy McNichols",
+      "position": "RB",
+      "position_ecr_rank": 117,
+      "position_ecr_pool_size": 165
+    },
+    "damien martinez": {
+      "name": "Damien Martinez",
+      "position": "RB",
+      "position_ecr_rank": 118,
+      "position_ecr_pool_size": 165
+    },
+    "zavier scott": {
+      "name": "Zavier Scott",
+      "position": "RB",
+      "position_ecr_rank": 119,
+      "position_ecr_pool_size": 165
+    },
+    "robert henry": {
+      "name": "Robert Henry Jr.",
+      "position": "RB",
+      "position_ecr_rank": 120,
+      "position_ecr_pool_size": 165
+    },
+    "dylan laube": {
+      "name": "Dylan Laube",
+      "position": "RB",
+      "position_ecr_rank": 121,
+      "position_ecr_pool_size": 165
+    },
+    "antonio gibson": {
+      "name": "Antonio Gibson",
+      "position": "RB",
+      "position_ecr_rank": 122,
+      "position_ecr_pool_size": 165
+    },
+    "khalil herbert": {
+      "name": "Khalil Herbert",
+      "position": "RB",
+      "position_ecr_rank": 123,
+      "position_ecr_pool_size": 165
+    },
+    "jaydn ott": {
+      "name": "Jaydn Ott",
+      "position": "RB",
+      "position_ecr_rank": 124,
+      "position_ecr_pool_size": 165
+    },
+    "ty chandler": {
+      "name": "Ty Chandler",
+      "position": "RB",
+      "position_ecr_rank": 125,
+      "position_ecr_pool_size": 165
+    },
+    "miles sanders": {
+      "name": "Miles Sanders",
+      "position": "RB",
+      "position_ecr_rank": 126,
+      "position_ecr_pool_size": 165
+    },
+    "hunter luepke": {
+      "name": "Hunter Luepke",
+      "position": "RB",
+      "position_ecr_rank": 127,
+      "position_ecr_pool_size": 165
+    },
+    "myles montgomery": {
+      "name": "Myles Montgomery",
+      "position": "RB",
+      "position_ecr_rank": 128,
+      "position_ecr_pool_size": 165
+    },
+    "ronnie rivers": {
+      "name": "Ronnie Rivers",
+      "position": "RB",
+      "position_ecr_rank": 129,
+      "position_ecr_pool_size": 165
+    },
+    "jaret patterson": {
+      "name": "Jaret Patterson",
+      "position": "RB",
+      "position_ecr_rank": 130,
+      "position_ecr_pool_size": 165
+    },
+    "roman hemby": {
+      "name": "Roman Hemby",
+      "position": "RB",
+      "position_ecr_rank": 131,
+      "position_ecr_pool_size": 165
+    },
+    "raheem mostert": {
+      "name": "Raheem Mostert",
+      "position": "RB",
+      "position_ecr_rank": 132,
+      "position_ecr_pool_size": 165
+    },
+    "elijah mitchell": {
+      "name": "Elijah Mitchell",
+      "position": "RB",
+      "position_ecr_rank": 133,
+      "position_ecr_pool_size": 165
+    },
+    "tyler goodson": {
+      "name": "Tyler Goodson",
+      "position": "RB",
+      "position_ecr_rank": 134,
+      "position_ecr_pool_size": 165
+    },
+    "cash jones": {
+      "name": "Cash Jones",
+      "position": "RB",
+      "position_ecr_rank": 135,
+      "position_ecr_pool_size": 165
+    },
+    "donovan edwards": {
+      "name": "Donovan Edwards",
+      "position": "RB",
+      "position_ecr_rank": 136,
+      "position_ecr_pool_size": 165
+    },
+    "noah whittington": {
+      "name": "Noah Whittington",
+      "position": "RB",
+      "position_ecr_rank": 137,
+      "position_ecr_pool_size": 165
+    },
+    "frank gore": {
+      "name": "Frank Gore Jr.",
+      "position": "RB",
+      "position_ecr_rank": 138,
+      "position_ecr_pool_size": 165
+    },
+    "aj dillon": {
+      "name": "AJ Dillon",
+      "position": "RB",
+      "position_ecr_rank": 139,
+      "position_ecr_pool_size": 165
+    },
+    "ameer abdullah": {
+      "name": "Ameer Abdullah",
+      "position": "RB",
+      "position_ecr_rank": 140,
+      "position_ecr_pool_size": 165
+    },
+    "salvon ahmed": {
+      "name": "Salvon Ahmed",
+      "position": "RB",
+      "position_ecr_rank": 141,
+      "position_ecr_pool_size": 165
+    },
+    "kalel mullings": {
+      "name": "Kalel Mullings",
+      "position": "RB",
+      "position_ecr_rank": 142,
+      "position_ecr_pool_size": 165
+    },
+    "jordan waters": {
+      "name": "Jordan Waters",
+      "position": "RB",
+      "position_ecr_rank": 143,
+      "position_ecr_pool_size": 165
+    },
+    "tyler badie": {
+      "name": "Tyler Badie",
+      "position": "RB",
+      "position_ecr_rank": 144,
+      "position_ecr_pool_size": 165
+    },
+    "elijah tau tolliver": {
+      "name": "Elijah Tau-Tolliver",
+      "position": "RB",
+      "position_ecr_rank": 145,
+      "position_ecr_pool_size": 165
+    },
+    "chip trayanum": {
+      "name": "Chip Trayanum",
+      "position": "RB",
+      "position_ecr_rank": 146,
+      "position_ecr_pool_size": 165
+    },
+    "jacardia wright": {
+      "name": "Jacardia Wright",
+      "position": "RB",
+      "position_ecr_rank": 147,
+      "position_ecr_pool_size": 165
+    },
+    "reggie gilliam": {
+      "name": "Reggie Gilliam",
+      "position": "RB",
+      "position_ecr_rank": 148,
+      "position_ecr_pool_size": 165
+    },
+    "pierre strong": {
+      "name": "Pierre Strong Jr.",
+      "position": "RB",
+      "position_ecr_rank": 149,
+      "position_ecr_pool_size": 165
+    },
+    "sincere mccormick": {
+      "name": "Sincere McCormick",
+      "position": "RB",
+      "position_ecr_rank": 150,
+      "position_ecr_pool_size": 165
+    },
+    "alexander mattison": {
+      "name": "Alexander Mattison",
+      "position": "RB",
+      "position_ecr_rank": 151,
+      "position_ecr_pool_size": 165
+    },
+    "zamir white": {
+      "name": "Zamir White",
+      "position": "RB",
+      "position_ecr_rank": 152,
+      "position_ecr_pool_size": 165
+    },
+    "miles davis": {
+      "name": "Miles Davis",
+      "position": "RB",
+      "position_ecr_rank": 153,
+      "position_ecr_pool_size": 165
+    },
+    "cam akers": {
+      "name": "Cam Akers",
+      "position": "RB",
+      "position_ecr_rank": 154,
+      "position_ecr_pool_size": 165
+    },
+    "evan hull": {
+      "name": "Evan Hull",
+      "position": "RB",
+      "position_ecr_rank": 155,
+      "position_ecr_pool_size": 165
+    },
+    "cj donaldson": {
+      "name": "CJ Donaldson",
+      "position": "RB",
+      "position_ecr_rank": 156,
+      "position_ecr_pool_size": 165
+    },
+    "jamal haynes": {
+      "name": "Jamal Haynes",
+      "position": "RB",
+      "position_ecr_rank": 157,
+      "position_ecr_pool_size": 165
+    },
+    "dean connors": {
+      "name": "Dean Connors",
+      "position": "RB",
+      "position_ecr_rank": 158,
+      "position_ecr_pool_size": 165
+    },
+    "gus edwards": {
+      "name": "Gus Edwards",
+      "position": "RB",
+      "position_ecr_rank": 159,
+      "position_ecr_pool_size": 165
+    },
+    "terion stewart": {
+      "name": "Terion Stewart",
+      "position": "RB",
+      "position_ecr_rank": 160,
+      "position_ecr_pool_size": 165
+    },
+    "alec ingold": {
+      "name": "Alec Ingold",
+      "position": "RB",
+      "position_ecr_rank": 161,
+      "position_ecr_pool_size": 165
+    },
+    "jaquinden jackson": {
+      "name": "Ja'Quinden Jackson",
+      "position": "RB",
+      "position_ecr_rank": 162,
+      "position_ecr_pool_size": 165
+    },
+    "deejay dallas": {
+      "name": "DeeJay Dallas",
+      "position": "RB",
+      "position_ecr_rank": 163,
+      "position_ecr_pool_size": 165
+    },
+    "brittain brown": {
+      "name": "Brittain Brown",
+      "position": "RB",
+      "position_ecr_rank": 164,
+      "position_ecr_pool_size": 165
+    },
+    "adam prentice": {
+      "name": "Adam Prentice",
+      "position": "RB",
+      "position_ecr_rank": 165,
+      "position_ecr_pool_size": 165
+    },
+    "jamarr chase": {
+      "name": "Ja'Marr Chase",
+      "position": "WR",
+      "position_ecr_rank": 1,
+      "position_ecr_pool_size": 226
+    },
+    "puka nacua": {
+      "name": "Puka Nacua",
+      "position": "WR",
+      "position_ecr_rank": 2,
+      "position_ecr_pool_size": 226
+    },
+    "jaxon smith njigba": {
+      "name": "Jaxon Smith-Njigba",
+      "position": "WR",
+      "position_ecr_rank": 3,
+      "position_ecr_pool_size": 226
+    },
+    "amon ra st brown": {
+      "name": "Amon-Ra St. Brown",
+      "position": "WR",
+      "position_ecr_rank": 4,
+      "position_ecr_pool_size": 226
+    },
+    "ceedee lamb": {
+      "name": "CeeDee Lamb",
+      "position": "WR",
+      "position_ecr_rank": 5,
+      "position_ecr_pool_size": 226
+    },
+    "justin jefferson": {
+      "name": "Justin Jefferson",
+      "position": "WR",
+      "position_ecr_rank": 6,
+      "position_ecr_pool_size": 226
+    },
+    "drake london": {
+      "name": "Drake London",
+      "position": "WR",
+      "position_ecr_rank": 7,
+      "position_ecr_pool_size": 226
+    },
+    "aj brown": {
+      "name": "A.J. Brown",
+      "position": "WR",
+      "position_ecr_rank": 8,
+      "position_ecr_pool_size": 226
+    },
+    "nico collins": {
+      "name": "Nico Collins",
+      "position": "WR",
+      "position_ecr_rank": 9,
+      "position_ecr_pool_size": 226
+    },
+    "george pickens": {
+      "name": "George Pickens",
+      "position": "WR",
+      "position_ecr_rank": 10,
+      "position_ecr_pool_size": 226
+    },
+    "rashee rice": {
+      "name": "Rashee Rice",
+      "position": "WR",
+      "position_ecr_rank": 11,
+      "position_ecr_pool_size": 226
+    },
+    "chris olave": {
+      "name": "Chris Olave",
+      "position": "WR",
+      "position_ecr_rank": 12,
+      "position_ecr_pool_size": 226
+    },
+    "devonta smith": {
+      "name": "DeVonta Smith",
+      "position": "WR",
+      "position_ecr_rank": 13,
+      "position_ecr_pool_size": 226
+    },
+    "zay flowers": {
+      "name": "Zay Flowers",
+      "position": "WR",
+      "position_ecr_rank": 14,
+      "position_ecr_pool_size": 226
+    },
+    "garrett wilson": {
+      "name": "Garrett Wilson",
+      "position": "WR",
+      "position_ecr_rank": 15,
+      "position_ecr_pool_size": 226
+    },
+    "malik nabers": {
+      "name": "Malik Nabers",
+      "position": "WR",
+      "position_ecr_rank": 16,
+      "position_ecr_pool_size": 226
+    },
+    "tetairoa mcmillan": {
+      "name": "Tetairoa McMillan",
+      "position": "WR",
+      "position_ecr_rank": 17,
+      "position_ecr_pool_size": 226
+    },
+    "tee higgins": {
+      "name": "Tee Higgins",
+      "position": "WR",
+      "position_ecr_rank": 18,
+      "position_ecr_pool_size": 226
+    },
+    "ladd mcconkey": {
+      "name": "Ladd McConkey",
+      "position": "WR",
+      "position_ecr_rank": 19,
+      "position_ecr_pool_size": 226
+    },
+    "emeka egbuka": {
+      "name": "Emeka Egbuka",
+      "position": "WR",
+      "position_ecr_rank": 20,
+      "position_ecr_pool_size": 226
+    },
+    "jaylen waddle": {
+      "name": "Jaylen Waddle",
+      "position": "WR",
+      "position_ecr_rank": 21,
+      "position_ecr_pool_size": 226
+    },
+    "terry mclaurin": {
+      "name": "Terry McLaurin",
+      "position": "WR",
+      "position_ecr_rank": 22,
+      "position_ecr_pool_size": 226
+    },
+    "luther burden": {
+      "name": "Luther Burden III",
+      "position": "WR",
+      "position_ecr_rank": 23,
+      "position_ecr_pool_size": 226
+    },
+    "davante adams": {
+      "name": "Davante Adams",
+      "position": "WR",
+      "position_ecr_rank": 24,
+      "position_ecr_pool_size": 226
+    },
+    "mike evans": {
+      "name": "Mike Evans",
+      "position": "WR",
+      "position_ecr_rank": 25,
+      "position_ecr_pool_size": 226
+    },
+    "dj moore": {
+      "name": "DJ Moore",
+      "position": "WR",
+      "position_ecr_rank": 26,
+      "position_ecr_pool_size": 226
+    },
+    "jameson williams": {
+      "name": "Jameson Williams",
+      "position": "WR",
+      "position_ecr_rank": 27,
+      "position_ecr_pool_size": 226
+    },
+    "christian watson": {
+      "name": "Christian Watson",
+      "position": "WR",
+      "position_ecr_rank": 28,
+      "position_ecr_pool_size": 226
+    },
+    "rome odunze": {
+      "name": "Rome Odunze",
+      "position": "WR",
+      "position_ecr_rank": 29,
+      "position_ecr_pool_size": 226
+    },
+    "carnell tate": {
+      "name": "Carnell Tate",
+      "position": "WR",
+      "position_ecr_rank": 30,
+      "position_ecr_pool_size": 226
+    },
+    "marvin harrison": {
+      "name": "Marvin Harrison Jr.",
+      "position": "WR",
+      "position_ecr_rank": 31,
+      "position_ecr_pool_size": 226
+    },
+    "parker washington": {
+      "name": "Parker Washington",
+      "position": "WR",
+      "position_ecr_rank": 32,
+      "position_ecr_pool_size": 226
+    },
+    "brian thomas": {
+      "name": "Brian Thomas Jr.",
+      "position": "WR",
+      "position_ecr_rank": 33,
+      "position_ecr_pool_size": 226
+    },
+    "dk metcalf": {
+      "name": "DK Metcalf",
+      "position": "WR",
+      "position_ecr_rank": 34,
+      "position_ecr_pool_size": 226
+    },
+    "chris godwin": {
+      "name": "Chris Godwin Jr.",
+      "position": "WR",
+      "position_ecr_rank": 35,
+      "position_ecr_pool_size": 226
+    },
+    "michael pittman": {
+      "name": "Michael Pittman Jr.",
+      "position": "WR",
+      "position_ecr_rank": 36,
+      "position_ecr_pool_size": 226
+    },
+    "alec pierce": {
+      "name": "Alec Pierce",
+      "position": "WR",
+      "position_ecr_rank": 37,
+      "position_ecr_pool_size": 226
+    },
+    "courtland sutton": {
+      "name": "Courtland Sutton",
+      "position": "WR",
+      "position_ecr_rank": 38,
+      "position_ecr_pool_size": 226
+    },
+    "josh downs": {
+      "name": "Josh Downs",
+      "position": "WR",
+      "position_ecr_rank": 39,
+      "position_ecr_pool_size": 226
+    },
+    "wandale robinson": {
+      "name": "Wan'Dale Robinson",
+      "position": "WR",
+      "position_ecr_rank": 40,
+      "position_ecr_pool_size": 226
+    },
+    "jordyn tyson": {
+      "name": "Jordyn Tyson",
+      "position": "WR",
+      "position_ecr_rank": 41,
+      "position_ecr_pool_size": 226
+    },
+    "michael wilson": {
+      "name": "Michael Wilson",
+      "position": "WR",
+      "position_ecr_rank": 42,
+      "position_ecr_pool_size": 226
+    },
+    "quentin johnston": {
+      "name": "Quentin Johnston",
+      "position": "WR",
+      "position_ecr_rank": 43,
+      "position_ecr_pool_size": 226
+    },
+    "jakobi meyers": {
+      "name": "Jakobi Meyers",
+      "position": "WR",
+      "position_ecr_rank": 44,
+      "position_ecr_pool_size": 226
+    },
+    "makai lemon": {
+      "name": "Makai Lemon",
+      "position": "WR",
+      "position_ecr_rank": 45,
+      "position_ecr_pool_size": 226
+    },
+    "jordan addison": {
+      "name": "Jordan Addison",
+      "position": "WR",
+      "position_ecr_rank": 46,
+      "position_ecr_pool_size": 226
+    },
+    "jayden reed": {
+      "name": "Jayden Reed",
+      "position": "WR",
+      "position_ecr_rank": 47,
+      "position_ecr_pool_size": 226
+    },
+    "jayden higgins": {
+      "name": "Jayden Higgins",
+      "position": "WR",
+      "position_ecr_rank": 48,
+      "position_ecr_pool_size": 226
+    },
+    "khalil shakir": {
+      "name": "Khalil Shakir",
+      "position": "WR",
+      "position_ecr_rank": 49,
+      "position_ecr_pool_size": 226
+    },
+    "xavier worthy": {
+      "name": "Xavier Worthy",
+      "position": "WR",
+      "position_ecr_rank": 50,
+      "position_ecr_pool_size": 226
+    },
+    "jalen coker": {
+      "name": "Jalen Coker",
+      "position": "WR",
+      "position_ecr_rank": 51,
+      "position_ecr_pool_size": 226
+    },
+    "romeo doubs": {
+      "name": "Romeo Doubs",
+      "position": "WR",
+      "position_ecr_rank": 52,
+      "position_ecr_pool_size": 226
+    },
+    "kc concepcion": {
+      "name": "KC Concepcion",
+      "position": "WR",
+      "position_ecr_rank": 53,
+      "position_ecr_pool_size": 226
+    },
+    "matthew golden": {
+      "name": "Matthew Golden",
+      "position": "WR",
+      "position_ecr_rank": 54,
+      "position_ecr_pool_size": 226
+    },
+    "rashid shaheed": {
+      "name": "Rashid Shaheed",
+      "position": "WR",
+      "position_ecr_rank": 55,
+      "position_ecr_pool_size": 226
+    },
+    "jauan jennings": {
+      "name": "Jauan Jennings",
+      "position": "WR",
+      "position_ecr_rank": 56,
+      "position_ecr_pool_size": 226
+    },
+    "jerry jeudy": {
+      "name": "Jerry Jeudy",
+      "position": "WR",
+      "position_ecr_rank": 57,
+      "position_ecr_pool_size": 226
+    },
+    "omar cooper": {
+      "name": "Omar Cooper Jr.",
+      "position": "WR",
+      "position_ecr_rank": 58,
+      "position_ecr_pool_size": 226
+    },
+    "adonai mitchell": {
+      "name": "Adonai Mitchell",
+      "position": "WR",
+      "position_ecr_rank": 59,
+      "position_ecr_pool_size": 226
+    },
+    "denzel boston": {
+      "name": "Denzel Boston",
+      "position": "WR",
+      "position_ecr_rank": 60,
+      "position_ecr_pool_size": 226
+    },
+    "tre tucker": {
+      "name": "Tre Tucker",
+      "position": "WR",
+      "position_ecr_rank": 61,
+      "position_ecr_pool_size": 226
+    },
+    "jalen mcmillan": {
+      "name": "Jalen McMillan",
+      "position": "WR",
+      "position_ecr_rank": 62,
+      "position_ecr_pool_size": 226
+    },
+    "deebo samuel": {
+      "name": "Deebo Samuel Sr.",
+      "position": "WR",
+      "position_ecr_rank": 63,
+      "position_ecr_pool_size": 226
+    },
+    "travis hunter": {
+      "name": "Travis Hunter",
+      "position": "WR",
+      "position_ecr_rank": 64,
+      "position_ecr_pool_size": 226
+    },
+    "tre harris": {
+      "name": "Tre' Harris",
+      "position": "WR",
+      "position_ecr_rank": 65,
+      "position_ecr_pool_size": 226
+    },
+    "ryan flournoy": {
+      "name": "Ryan Flournoy",
+      "position": "WR",
+      "position_ecr_rank": 66,
+      "position_ecr_pool_size": 226
+    },
+    "dezhaun stribling": {
+      "name": "De'Zhaun Stribling",
+      "position": "WR",
+      "position_ecr_rank": 67,
+      "position_ecr_pool_size": 226
+    },
+    "stefon diggs": {
+      "name": "Stefon Diggs",
+      "position": "WR",
+      "position_ecr_rank": 68,
+      "position_ecr_pool_size": 226
+    },
+    "kayshon boutte": {
+      "name": "Kayshon Boutte",
+      "position": "WR",
+      "position_ecr_rank": 69,
+      "position_ecr_pool_size": 226
+    },
+    "calvin ridley": {
+      "name": "Calvin Ridley",
+      "position": "WR",
+      "position_ecr_rank": 70,
+      "position_ecr_pool_size": 226
+    },
+    "jalen nailor": {
+      "name": "Jalen Nailor",
+      "position": "WR",
+      "position_ecr_rank": 71,
+      "position_ecr_pool_size": 226
+    },
+    "dontayvion wicks": {
+      "name": "Dontayvion Wicks",
+      "position": "WR",
+      "position_ecr_rank": 72,
+      "position_ecr_pool_size": 226
+    },
+    "troy franklin": {
+      "name": "Troy Franklin",
+      "position": "WR",
+      "position_ecr_rank": 73,
+      "position_ecr_pool_size": 226
+    },
+    "malik washington": {
+      "name": "Malik Washington",
+      "position": "WR",
+      "position_ecr_rank": 74,
+      "position_ecr_pool_size": 226
+    },
+    "jaylin noel": {
+      "name": "Jaylin Noel",
+      "position": "WR",
+      "position_ecr_rank": 75,
+      "position_ecr_pool_size": 226
+    },
+    "pat bryant": {
+      "name": "Pat Bryant",
+      "position": "WR",
+      "position_ecr_rank": 76,
+      "position_ecr_pool_size": 226
+    },
+    "darnell mooney": {
+      "name": "Darnell Mooney",
+      "position": "WR",
+      "position_ecr_rank": 77,
+      "position_ecr_pool_size": 226
+    },
+    "rashod bateman": {
+      "name": "Rashod Bateman",
+      "position": "WR",
+      "position_ecr_rank": 78,
+      "position_ecr_pool_size": 226
+    },
+    "antonio williams": {
+      "name": "Antonio Williams",
+      "position": "WR",
+      "position_ecr_rank": 79,
+      "position_ecr_pool_size": 226
+    },
+    "isaac teslaa": {
+      "name": "Isaac TeSlaa",
+      "position": "WR",
+      "position_ecr_rank": 80,
+      "position_ecr_pool_size": 226
+    },
+    "cooper kupp": {
+      "name": "Cooper Kupp",
+      "position": "WR",
+      "position_ecr_rank": 81,
+      "position_ecr_pool_size": 226
+    },
+    "tank dell": {
+      "name": "Tank Dell",
+      "position": "WR",
+      "position_ecr_rank": 82,
+      "position_ecr_pool_size": 226
+    },
+    "zachariah branch": {
+      "name": "Zachariah Branch",
+      "position": "WR",
+      "position_ecr_rank": 83,
+      "position_ecr_pool_size": 226
+    },
+    "germie bernard": {
+      "name": "Germie Bernard",
+      "position": "WR",
+      "position_ecr_rank": 84,
+      "position_ecr_pool_size": 226
+    },
+    "keon coleman": {
+      "name": "Keon Coleman",
+      "position": "WR",
+      "position_ecr_rank": 85,
+      "position_ecr_pool_size": 226
+    },
+    "chimere dike": {
+      "name": "Chimere Dike",
+      "position": "WR",
+      "position_ecr_rank": 86,
+      "position_ecr_pool_size": 226
+    },
+    "jack bech": {
+      "name": "Jack Bech",
+      "position": "WR",
+      "position_ecr_rank": 87,
+      "position_ecr_pool_size": 226
+    },
+    "elic ayomanor": {
+      "name": "Elic Ayomanor",
+      "position": "WR",
+      "position_ecr_rank": 88,
+      "position_ecr_pool_size": 226
+    },
+    "tory horton": {
+      "name": "Tory Horton",
+      "position": "WR",
+      "position_ecr_rank": 89,
+      "position_ecr_pool_size": 226
+    },
+    "elijah sarratt": {
+      "name": "Elijah Sarratt",
+      "position": "WR",
+      "position_ecr_rank": 90,
+      "position_ecr_pool_size": 226
+    },
+    "malachi fields": {
+      "name": "Malachi Fields",
+      "position": "WR",
+      "position_ecr_rank": 91,
+      "position_ecr_pool_size": 226
+    },
+    "ted hurst": {
+      "name": "Ted Hurst III",
+      "position": "WR",
+      "position_ecr_rank": 92,
+      "position_ecr_pool_size": 226
+    },
+    "darius slayton": {
+      "name": "Darius Slayton",
+      "position": "WR",
+      "position_ecr_rank": 93,
+      "position_ecr_pool_size": 226
+    },
+    "christian kirk": {
+      "name": "Christian Kirk",
+      "position": "WR",
+      "position_ecr_rank": 94,
+      "position_ecr_pool_size": 226
+    },
+    "chris bell": {
+      "name": "Chris Bell",
+      "position": "WR",
+      "position_ecr_rank": 95,
+      "position_ecr_pool_size": 226
+    },
+    "tyquan thornton": {
+      "name": "Tyquan Thornton",
+      "position": "WR",
+      "position_ecr_rank": 96,
+      "position_ecr_pool_size": 226
+    },
+    "marvin mims": {
+      "name": "Marvin Mims Jr.",
+      "position": "WR",
+      "position_ecr_rank": 97,
+      "position_ecr_pool_size": 226
+    },
+    "xavier legette": {
+      "name": "Xavier Legette",
+      "position": "WR",
+      "position_ecr_rank": 98,
+      "position_ecr_pool_size": 226
+    },
+    "devaughn vele": {
+      "name": "Devaughn Vele",
+      "position": "WR",
+      "position_ecr_rank": 99,
+      "position_ecr_pool_size": 226
+    },
+    "hollywood brown": {
+      "name": "Hollywood Brown",
+      "position": "WR",
+      "position_ecr_rank": 100,
+      "position_ecr_pool_size": 226
+    },
+    "brandon aiyuk": {
+      "name": "Brandon Aiyuk",
+      "position": "WR",
+      "position_ecr_rank": 101,
+      "position_ecr_pool_size": 226
+    },
+    "keenan allen": {
+      "name": "Keenan Allen",
+      "position": "WR",
+      "position_ecr_rank": 102,
+      "position_ecr_pool_size": 226
+    },
+    "jakobi lane": {
+      "name": "Ja'Kobi Lane",
+      "position": "WR",
+      "position_ecr_rank": 103,
+      "position_ecr_pool_size": 226
+    },
+    "mack hollins": {
+      "name": "Mack Hollins",
+      "position": "WR",
+      "position_ecr_rank": 104,
+      "position_ecr_pool_size": 226
+    },
+    "skyler bell": {
+      "name": "Skyler Bell",
+      "position": "WR",
+      "position_ecr_rank": 105,
+      "position_ecr_pool_size": 226
+    },
+    "kyle williams": {
+      "name": "Kyle Williams",
+      "position": "WR",
+      "position_ecr_rank": 106,
+      "position_ecr_pool_size": 226
+    },
+    "isaiah bond": {
+      "name": "Isaiah Bond",
+      "position": "WR",
+      "position_ecr_rank": 107,
+      "position_ecr_pool_size": 226
+    },
+    "tyreek hill": {
+      "name": "Tyreek Hill",
+      "position": "WR",
+      "position_ecr_rank": 108,
+      "position_ecr_pool_size": 226
+    },
+    "andrei iosivas": {
+      "name": "Andrei Iosivas",
+      "position": "WR",
+      "position_ecr_rank": 109,
+      "position_ecr_pool_size": 226
+    },
+    "caleb douglas": {
+      "name": "Caleb Douglas",
+      "position": "WR",
+      "position_ecr_rank": 110,
+      "position_ecr_pool_size": 226
+    },
+    "chris brazzell": {
+      "name": "Chris Brazzell II",
+      "position": "WR",
+      "position_ecr_rank": 111,
+      "position_ecr_pool_size": 226
+    },
+    "luke mccaffrey": {
+      "name": "Luke McCaffrey",
+      "position": "WR",
+      "position_ecr_rank": 112,
+      "position_ecr_pool_size": 226
+    },
+    "cedric tillman": {
+      "name": "Cedric Tillman",
+      "position": "WR",
+      "position_ecr_rank": 113,
+      "position_ecr_pool_size": 226
+    },
+    "jalen tolbert": {
+      "name": "Jalen Tolbert",
+      "position": "WR",
+      "position_ecr_rank": 114,
+      "position_ecr_pool_size": 226
+    },
+    "cyrus allen": {
+      "name": "Cyrus Allen",
+      "position": "WR",
+      "position_ecr_rank": 115,
+      "position_ecr_pool_size": 226
+    },
+    "tez johnson": {
+      "name": "Tez Johnson",
+      "position": "WR",
+      "position_ecr_rank": 116,
+      "position_ecr_pool_size": 226
+    },
+    "jalen royals": {
+      "name": "Jalen Royals",
+      "position": "WR",
+      "position_ecr_rank": 117,
+      "position_ecr_pool_size": 226
+    },
+    "calvin austin": {
+      "name": "Calvin Austin III",
+      "position": "WR",
+      "position_ecr_rank": 118,
+      "position_ecr_pool_size": 226
+    },
+    "olamide zaccheaus": {
+      "name": "Olamide Zaccheaus",
+      "position": "WR",
+      "position_ecr_rank": 119,
+      "position_ecr_pool_size": 226
+    },
+    "konata mumpfield": {
+      "name": "Konata Mumpfield",
+      "position": "WR",
+      "position_ecr_rank": 120,
+      "position_ecr_pool_size": 226
+    },
+    "jahan dotson": {
+      "name": "Jahan Dotson",
+      "position": "WR",
+      "position_ecr_rank": 121,
+      "position_ecr_pool_size": 226
+    },
+    "demario douglas": {
+      "name": "DeMario Douglas",
+      "position": "WR",
+      "position_ecr_rank": 122,
+      "position_ecr_pool_size": 226
+    },
+    "treylon burks": {
+      "name": "Treylon Burks",
+      "position": "WR",
+      "position_ecr_rank": 123,
+      "position_ecr_pool_size": 226
+    },
+    "joshua palmer": {
+      "name": "Joshua Palmer",
+      "position": "WR",
+      "position_ecr_rank": 124,
+      "position_ecr_pool_size": 226
+    },
+    "bryce lance": {
+      "name": "Bryce Lance",
+      "position": "WR",
+      "position_ecr_rank": 125,
+      "position_ecr_pool_size": 226
+    },
+    "kendrick bourne": {
+      "name": "Kendrick Bourne",
+      "position": "WR",
+      "position_ecr_rank": 126,
+      "position_ecr_pool_size": 226
+    },
+    "brenen thompson": {
+      "name": "Brenen Thompson",
+      "position": "WR",
+      "position_ecr_rank": 127,
+      "position_ecr_pool_size": 226
+    },
+    "jaylin lane": {
+      "name": "Jaylin Lane",
+      "position": "WR",
+      "position_ecr_rank": 128,
+      "position_ecr_pool_size": 226
+    },
+    "donte thornton": {
+      "name": "Dont'e Thornton Jr.",
+      "position": "WR",
+      "position_ecr_rank": 129,
+      "position_ecr_pool_size": 226
+    },
+    "john metchie": {
+      "name": "John Metchie III",
+      "position": "WR",
+      "position_ecr_rank": 130,
+      "position_ecr_pool_size": 226
+    },
+    "xavier hutchinson": {
+      "name": "Xavier Hutchinson",
+      "position": "WR",
+      "position_ecr_rank": 131,
+      "position_ecr_pool_size": 226
+    },
+    "savion williams": {
+      "name": "Savion Williams",
+      "position": "WR",
+      "position_ecr_rank": 132,
+      "position_ecr_pool_size": 226
+    },
+    "tutu atwell": {
+      "name": "Tutu Atwell",
+      "position": "WR",
+      "position_ecr_rank": 133,
+      "position_ecr_pool_size": 226
+    },
+    "kevin coleman": {
+      "name": "Kevin Coleman Jr.",
+      "position": "WR",
+      "position_ecr_rank": 134,
+      "position_ecr_pool_size": 226
+    },
+    "kalif raymond": {
+      "name": "Kalif Raymond",
+      "position": "WR",
+      "position_ecr_rank": 135,
+      "position_ecr_pool_size": 226
+    },
+    "kavontae turpin": {
+      "name": "KaVontae Turpin",
+      "position": "WR",
+      "position_ecr_rank": 136,
+      "position_ecr_pool_size": 226
+    },
+    "nick westbrook ikhine": {
+      "name": "Nick Westbrook-Ikhine",
+      "position": "WR",
+      "position_ecr_rank": 137,
+      "position_ecr_pool_size": 226
+    },
+    "zavion thomas": {
+      "name": "Zavion Thomas",
+      "position": "WR",
+      "position_ecr_rank": 138,
+      "position_ecr_pool_size": 226
+    },
+    "devontez walker": {
+      "name": "Devontez Walker",
+      "position": "WR",
+      "position_ecr_rank": 139,
+      "position_ecr_pool_size": 226
+    },
+    "cj daniels": {
+      "name": "CJ Daniels",
+      "position": "WR",
+      "position_ecr_rank": 140,
+      "position_ecr_pool_size": 226
+    },
+    "jordan whittington": {
+      "name": "Jordan Whittington",
+      "position": "WR",
+      "position_ecr_rank": 141,
+      "position_ecr_pool_size": 226
+    },
+    "deion burks": {
+      "name": "Deion Burks",
+      "position": "WR",
+      "position_ecr_rank": 142,
+      "position_ecr_pool_size": 226
+    },
+    "dyami brown": {
+      "name": "Dyami Brown",
+      "position": "WR",
+      "position_ecr_rank": 143,
+      "position_ecr_pool_size": 226
+    },
+    "malik benson": {
+      "name": "Malik Benson",
+      "position": "WR",
+      "position_ecr_rank": 144,
+      "position_ecr_pool_size": 226
+    },
+    "ashton dulin": {
+      "name": "Ashton Dulin",
+      "position": "WR",
+      "position_ecr_rank": 145,
+      "position_ecr_pool_size": 226
+    },
+    "demarcus robinson": {
+      "name": "Demarcus Robinson",
+      "position": "WR",
+      "position_ecr_rank": 146,
+      "position_ecr_pool_size": 226
+    },
+    "roman wilson": {
+      "name": "Roman Wilson",
+      "position": "WR",
+      "position_ecr_rank": 147,
+      "position_ecr_pool_size": 226
+    },
+    "greg dortch": {
+      "name": "Greg Dortch",
+      "position": "WR",
+      "position_ecr_rank": 148,
+      "position_ecr_pool_size": 226
+    },
+    "colbie young": {
+      "name": "Colbie Young",
+      "position": "WR",
+      "position_ecr_rank": 149,
+      "position_ecr_pool_size": 226
+    },
+    "mitch tinsley": {
+      "name": "Mitch Tinsley",
+      "position": "WR",
+      "position_ecr_rank": 150,
+      "position_ecr_pool_size": 226
+    },
+    "tai felton": {
+      "name": "Tai Felton",
+      "position": "WR",
+      "position_ecr_rank": 151,
+      "position_ecr_pool_size": 226
+    },
+    "tim patrick": {
+      "name": "Tim Patrick",
+      "position": "WR",
+      "position_ecr_rank": 152,
+      "position_ecr_pool_size": 226
+    },
+    "marquez valdes scantling": {
+      "name": "Marquez Valdes-Scantling",
+      "position": "WR",
+      "position_ecr_rank": 153,
+      "position_ecr_pool_size": 226
+    },
+    "jake bobo": {
+      "name": "Jake Bobo",
+      "position": "WR",
+      "position_ecr_rank": 154,
+      "position_ecr_pool_size": 226
+    },
+    "odell beckham": {
+      "name": "Odell Beckham Jr.",
+      "position": "WR",
+      "position_ecr_rank": 155,
+      "position_ecr_pool_size": 226
+    },
+    "tyler lockett": {
+      "name": "Tyler Lockett",
+      "position": "WR",
+      "position_ecr_rank": 156,
+      "position_ecr_pool_size": 226
+    },
+    "scotty miller": {
+      "name": "Scotty Miller",
+      "position": "WR",
+      "position_ecr_rank": 157,
+      "position_ecr_pool_size": 226
+    },
+    "jahdae walker": {
+      "name": "Jahdae Walker",
+      "position": "WR",
+      "position_ecr_rank": 158,
+      "position_ecr_pool_size": 226
+    },
+    "xavier smith": {
+      "name": "Xavier Smith",
+      "position": "WR",
+      "position_ecr_rank": 159,
+      "position_ecr_pool_size": 226
+    },
+    "reggie virgil": {
+      "name": "Reggie Virgil",
+      "position": "WR",
+      "position_ecr_rank": 160,
+      "position_ecr_pool_size": 226
+    },
+    "derius davis": {
+      "name": "Derius Davis",
+      "position": "WR",
+      "position_ecr_rank": 161,
+      "position_ecr_pool_size": 226
+    },
+    "theo wease": {
+      "name": "Theo Wease Jr.",
+      "position": "WR",
+      "position_ecr_rank": 162,
+      "position_ecr_pool_size": 226
+    },
+    "elijah moore": {
+      "name": "Elijah Moore",
+      "position": "WR",
+      "position_ecr_rank": 163,
+      "position_ecr_pool_size": 226
+    },
+    "mecole hardman": {
+      "name": "Mecole Hardman Jr.",
+      "position": "WR",
+      "position_ecr_rank": 164,
+      "position_ecr_pool_size": 226
+    },
+    "jimmy horn": {
+      "name": "Jimmy Horn Jr.",
+      "position": "WR",
+      "position_ecr_rank": 165,
+      "position_ecr_pool_size": 226
+    },
+    "keandre lambert smith": {
+      "name": "KeAndre Lambert-Smith",
+      "position": "WR",
+      "position_ecr_rank": 166,
+      "position_ecr_pool_size": 226
+    },
+    "liljordan humphrey": {
+      "name": "Lil'Jordan Humphrey",
+      "position": "WR",
+      "position_ecr_rank": 167,
+      "position_ecr_pool_size": 226
+    },
+    "myles price": {
+      "name": "Myles Price",
+      "position": "WR",
+      "position_ecr_rank": 168,
+      "position_ecr_pool_size": 226
+    },
+    "jakobie keeney james": {
+      "name": "Jakobie Keeney-James",
+      "position": "WR",
+      "position_ecr_rank": 169,
+      "position_ecr_pool_size": 226
+    },
+    "efton chism": {
+      "name": "Efton Chism III",
+      "position": "WR",
+      "position_ecr_rank": 170,
+      "position_ecr_pool_size": 226
+    },
+    "deandre hopkins": {
+      "name": "DeAndre Hopkins",
+      "position": "WR",
+      "position_ecr_rank": 171,
+      "position_ecr_pool_size": 226
+    },
+    "kevin austin": {
+      "name": "Kevin Austin Jr.",
+      "position": "WR",
+      "position_ecr_rank": 172,
+      "position_ecr_pool_size": 226
+    },
+    "josh cameron": {
+      "name": "Josh Cameron",
+      "position": "WR",
+      "position_ecr_rank": 173,
+      "position_ecr_pool_size": 226
+    },
+    "xavier restrepo": {
+      "name": "Xavier Restrepo",
+      "position": "WR",
+      "position_ecr_rank": 174,
+      "position_ecr_pool_size": 226
+    },
+    "anthony gould": {
+      "name": "Anthony Gould",
+      "position": "WR",
+      "position_ecr_rank": 175,
+      "position_ecr_pool_size": 226
+    },
+    "michael woods": {
+      "name": "Michael Woods II",
+      "position": "WR",
+      "position_ecr_rank": 176,
+      "position_ecr_pool_size": 226
+    },
+    "kendric pryor": {
+      "name": "Kendric Pryor",
+      "position": "WR",
+      "position_ecr_rank": 177,
+      "position_ecr_pool_size": 226
+    },
+    "kendrick law": {
+      "name": "Kendrick Law",
+      "position": "WR",
+      "position_ecr_rank": 178,
+      "position_ecr_pool_size": 226
+    },
+    "ben skowronek": {
+      "name": "Ben Skowronek",
+      "position": "WR",
+      "position_ecr_rank": 179,
+      "position_ecr_pool_size": 226
+    },
+    "justin watson": {
+      "name": "Justin Watson",
+      "position": "WR",
+      "position_ecr_rank": 180,
+      "position_ecr_pool_size": 226
+    },
+    "jeshaun jones": {
+      "name": "Jeshaun Jones",
+      "position": "WR",
+      "position_ecr_rank": 181,
+      "position_ecr_pool_size": 226
+    },
+    "sterling shepard": {
+      "name": "Sterling Shepard",
+      "position": "WR",
+      "position_ecr_rank": 182,
+      "position_ecr_pool_size": 226
+    },
+    "jordan watkins": {
+      "name": "Jordan Watkins",
+      "position": "WR",
+      "position_ecr_rank": 183,
+      "position_ecr_pool_size": 226
+    },
+    "zay jones": {
+      "name": "Zay Jones",
+      "position": "WR",
+      "position_ecr_rank": 184,
+      "position_ecr_pool_size": 226
+    },
+    "jacob cowing": {
+      "name": "Jacob Cowing",
+      "position": "WR",
+      "position_ecr_rank": 185,
+      "position_ecr_pool_size": 226
+    },
+    "xavier weaver": {
+      "name": "Xavier Weaver",
+      "position": "WR",
+      "position_ecr_rank": 186,
+      "position_ecr_pool_size": 226
+    },
+    "montorie foster": {
+      "name": "Montorie Foster Jr.",
+      "position": "WR",
+      "position_ecr_rank": 187,
+      "position_ecr_pool_size": 226
+    },
+    "skyy moore": {
+      "name": "Skyy Moore",
+      "position": "WR",
+      "position_ecr_rank": 188,
+      "position_ecr_pool_size": 226
+    },
+    "curtis samuel": {
+      "name": "Curtis Samuel",
+      "position": "WR",
+      "position_ecr_rank": 189,
+      "position_ecr_pool_size": 226
+    },
+    "brandin cooks": {
+      "name": "Brandin Cooks",
+      "position": "WR",
+      "position_ecr_rank": 190,
+      "position_ecr_pool_size": 226
+    },
+    "ronnie bell": {
+      "name": "Ronnie Bell",
+      "position": "WR",
+      "position_ecr_rank": 191,
+      "position_ecr_pool_size": 226
+    },
+    "mason tipton": {
+      "name": "Mason Tipton",
+      "position": "WR",
+      "position_ecr_rank": 192,
+      "position_ecr_pool_size": 226
+    },
+    "jermaine burton": {
+      "name": "Jermaine Burton",
+      "position": "WR",
+      "position_ecr_rank": 193,
+      "position_ecr_pool_size": 226
+    },
+    "josh reynolds": {
+      "name": "Josh Reynolds",
+      "position": "WR",
+      "position_ecr_rank": 194,
+      "position_ecr_pool_size": 226
+    },
+    "russell gage": {
+      "name": "Russell Gage Jr.",
+      "position": "WR",
+      "position_ecr_rank": 195,
+      "position_ecr_pool_size": 226
+    },
+    "kaden wetjen": {
+      "name": "Kaden Wetjen",
+      "position": "WR",
+      "position_ecr_rank": 196,
+      "position_ecr_pool_size": 226
+    },
+    "emmanuel henderson": {
+      "name": "Emmanuel Henderson Jr.",
+      "position": "WR",
+      "position_ecr_rank": 197,
+      "position_ecr_pool_size": 226
+    },
+    "bub means": {
+      "name": "Bub Means",
+      "position": "WR",
+      "position_ecr_rank": 198,
+      "position_ecr_pool_size": 226
+    },
+    "quez watkins": {
+      "name": "Quez Watkins",
+      "position": "WR",
+      "position_ecr_rank": 199,
+      "position_ecr_pool_size": 226
+    },
+    "coleman owen": {
+      "name": "Coleman Owen",
+      "position": "WR",
+      "position_ecr_rank": 200,
+      "position_ecr_pool_size": 226
+    },
+    "dohnte meyers": {
+      "name": "Dohnte Meyers",
+      "position": "WR",
+      "position_ecr_rank": 201,
+      "position_ecr_pool_size": 226
+    },
+    "terrace marshall": {
+      "name": "Terrace Marshall Jr.",
+      "position": "WR",
+      "position_ecr_rank": 202,
+      "position_ecr_pool_size": 226
+    },
+    "david sills": {
+      "name": "David Sills V",
+      "position": "WR",
+      "position_ecr_rank": 203,
+      "position_ecr_pool_size": 226
+    },
+    "michael briscoe": {
+      "name": "Michael Briscoe",
+      "position": "WR",
+      "position_ecr_rank": 204,
+      "position_ecr_pool_size": 226
+    },
+    "van jefferson": {
+      "name": "Van Jefferson",
+      "position": "WR",
+      "position_ecr_rank": 205,
+      "position_ecr_pool_size": 226
+    },
+    "barion brown": {
+      "name": "Barion Brown",
+      "position": "WR",
+      "position_ecr_rank": 206,
+      "position_ecr_pool_size": 226
+    },
+    "diontae johnson": {
+      "name": "Diontae Johnson",
+      "position": "WR",
+      "position_ecr_rank": 207,
+      "position_ecr_pool_size": 226
+    },
+    "michael bandy": {
+      "name": "Michael Bandy",
+      "position": "WR",
+      "position_ecr_rank": 208,
+      "position_ecr_pool_size": 226
+    },
+    "ainias smith": {
+      "name": "Ainias Smith",
+      "position": "WR",
+      "position_ecr_rank": 209,
+      "position_ecr_pool_size": 226
+    },
+    "isaiah williams": {
+      "name": "Isaiah Williams",
+      "position": "WR",
+      "position_ecr_rank": 212,
+      "position_ecr_pool_size": 226
+    },
+    "michael wortham": {
+      "name": "Michael Wortham",
+      "position": "WR",
+      "position_ecr_rank": 211,
+      "position_ecr_pool_size": 226
+    },
+    "jared wayne": {
+      "name": "Jared Wayne",
+      "position": "WR",
+      "position_ecr_rank": 213,
+      "position_ecr_pool_size": 226
+    },
+    "maurice alexander": {
+      "name": "Maurice Alexander",
+      "position": "WR",
+      "position_ecr_rank": 214,
+      "position_ecr_pool_size": 226
+    },
+    "j michael sturdivant": {
+      "name": "J. Michael Sturdivant",
+      "position": "WR",
+      "position_ecr_rank": 215,
+      "position_ecr_pool_size": 226
+    },
+    "kj osborn": {
+      "name": "K.J. Osborn",
+      "position": "WR",
+      "position_ecr_rank": 216,
+      "position_ecr_pool_size": 226
+    },
+    "jalen reagor": {
+      "name": "Jalen Reagor",
+      "position": "WR",
+      "position_ecr_rank": 217,
+      "position_ecr_pool_size": 226
+    },
+    "arian smith": {
+      "name": "Arian Smith",
+      "position": "WR",
+      "position_ecr_rank": 218,
+      "position_ecr_pool_size": 226
+    },
+    "chris blair": {
+      "name": "Chris Blair",
+      "position": "WR",
+      "position_ecr_rank": 219,
+      "position_ecr_pool_size": 226
+    },
+    "devin duvernay": {
+      "name": "Devin Duvernay",
+      "position": "WR",
+      "position_ecr_rank": 220,
+      "position_ecr_pool_size": 226
+    },
+    "joshua cephus": {
+      "name": "Joshua Cephus",
+      "position": "WR",
+      "position_ecr_rank": 221,
+      "position_ecr_pool_size": 226
+    },
+    "juju smith schuster": {
+      "name": "JuJu Smith-Schuster",
+      "position": "WR",
+      "position_ecr_rank": 222,
+      "position_ecr_pool_size": 226
+    },
+    "brandon johnson": {
+      "name": "Brandon Johnson",
+      "position": "WR",
+      "position_ecr_rank": 223,
+      "position_ecr_pool_size": 226
+    },
+    "noah brown": {
+      "name": "Noah Brown",
+      "position": "WR",
+      "position_ecr_rank": 224,
+      "position_ecr_pool_size": 226
+    },
+    "jonathan mingo": {
+      "name": "Jonathan Mingo",
+      "position": "WR",
+      "position_ecr_rank": 225,
+      "position_ecr_pool_size": 226
+    },
+    "cj williams": {
+      "name": "CJ Williams",
+      "position": "WR",
+      "position_ecr_rank": 226,
+      "position_ecr_pool_size": 226
+    },
+    "bo nix": {
+      "name": "Bo Nix",
+      "position": null,
+      "overall_ecr_rank": 100,
+      "overall_adp_rank": 115
+    },
+    "brock bowers": {
+      "name": "Brock Bowers",
+      "position": null,
+      "overall_ecr_rank": 19,
+      "overall_adp_rank": 22
+    },
+    "brock purdy": {
+      "name": "Brock Purdy",
+      "position": null,
+      "overall_ecr_rank": 94,
+      "overall_adp_rank": 102
+    },
+    "caleb williams": {
+      "name": "Caleb Williams",
+      "position": null,
+      "overall_ecr_rank": 65,
+      "overall_adp_rank": 79
+    },
+    "colston loveland": {
+      "name": "Colston Loveland",
+      "position": null,
+      "overall_ecr_rank": 35,
+      "overall_adp_rank": 43
+    },
+    "dak prescott": {
+      "name": "Dak Prescott",
+      "position": null,
+      "overall_ecr_rank": 77,
+      "overall_adp_rank": 78
+    },
+    "dallas goedert": {
+      "name": "Dallas Goedert",
+      "position": null,
+      "overall_ecr_rank": 124,
+      "overall_adp_rank": 112
+    },
+    "dalton kincaid": {
+      "name": "Dalton Kincaid",
+      "position": null,
+      "overall_ecr_rank": 114,
+      "overall_adp_rank": 124
+    },
+    "kyle pitts": {
+      "name": "Kyle Pitts Sr.",
+      "position": null,
+      "overall_ecr_rank": 79,
+      "overall_adp_rank": 67
+    },
+    "kyler murray": {
+      "name": "Kyler Murray",
+      "position": null,
+      "overall_ecr_rank": 113,
+      "overall_adp_rank": 133
+    },
+    "tj hockenson": {
+      "name": "T.J. Hockenson",
+      "position": null,
+      "overall_ecr_rank": 174,
+      "overall_adp_rank": 155
+    },
+    "trey mcbride": {
+      "name": "Trey McBride",
+      "position": null,
+      "overall_ecr_rank": 17,
+      "overall_adp_rank": 19
+    },
+    "tucker kraft": {
+      "name": "Tucker Kraft",
+      "position": null,
+      "overall_ecr_rank": 70,
+      "overall_adp_rank": 72
+    },
+    "drake maye": {
+      "name": "Drake Maye",
+      "position": null,
+      "overall_ecr_rank": 40,
+      "overall_adp_rank": 52
+    },
+    "george kittle": {
+      "name": "George Kittle",
+      "position": null,
+      "overall_ecr_rank": 105,
+      "overall_adp_rank": 92
+    },
+    "greg dulcich": {
+      "name": "Greg Dulcich",
+      "position": null,
+      "overall_ecr_rank": 239,
+      "overall_adp_rank": 224
+    },
+    "harold fannin": {
+      "name": "Harold Fannin Jr.",
+      "position": null,
+      "overall_ecr_rank": 69,
+      "overall_adp_rank": 65
+    },
+    "travis kelce": {
+      "name": "Travis Kelce",
+      "position": null,
+      "overall_ecr_rank": 95,
+      "overall_adp_rank": 100
+    },
+    "trevor lawrence": {
+      "name": "Trevor Lawrence",
+      "position": null,
+      "overall_ecr_rank": 76,
+      "overall_adp_rank": 89
+    },
+    "hunter henry": {
+      "name": "Hunter Henry",
+      "position": null,
+      "overall_ecr_rank": 154,
+      "overall_adp_rank": 152
+    },
+    "isaiah likely": {
+      "name": "Isaiah Likely",
+      "position": null,
+      "overall_ecr_rank": 119,
+      "overall_adp_rank": 109
+    },
+    "jake ferguson": {
+      "name": "Jake Ferguson",
+      "position": null,
+      "overall_ecr_rank": 111,
+      "overall_adp_rank": 113
+    }
+  }
+}

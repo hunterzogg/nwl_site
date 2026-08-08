@@ -539,11 +539,14 @@ same follow-up request as the Upside Ranking move above.
 **Per-pick Value grade** (Grades tab): expanding a manager's row now shows a letter grade on
 every individual pick, not just raw stats - a new "Value" column on the pick table (desktop
 table and mobile `.table-card` both). Mirrors `pages/mock-draft.html`'s `computePickGrades`
-shape: **75% quality** (VBD percentile) + **25% ADP value** (percentile of `pick - adp`), both
+shape: **75% quality** (VBD percentile) + **25% value** (percentile of the `value` field), both
 percentile-ranked across **all 180 real picks** (not per-manager) via the new
 `compute_pick_grades()` in `fetch_espn_draft.py`, writing `pick_grade`/`pick_percentile` onto
-every pick record. Head Coach picks are quality-only (no real market ADP), consistent with how
-the rest of the script already treats them.
+every pick record. Head Coach picks are quality-only, consistent with how the rest of the script
+already treats them. **Note:** this was ADP-based when first written; a later change this same
+session switched the underlying `value` field to be ECR-based instead - see "Value grading
+switched from ADP to ECR" further down for the full story. `compute_pick_grades()` itself didn't
+need to change, since it just reads whatever `value` already means.
 
 **Contender Profile** (new Draft Analysis tab, 2nd position, right after Grades): the
 "does roster construction predict winning" framework Hunter asked for. Before building anything,
@@ -576,6 +579,62 @@ pattern-matching against a 13-team-year sample, not a prediction.
 Both re-ran cleanly (`python3 scripts/fetch_espn_draft.py`) and were verified live in-browser
 (desktop table + mobile cards for the Value column; Contender Profile tab renders the full
 historical writeup + per-manager leaderboard), no console errors.
+
+---
+
+## Value grading switched from ADP to ECR (added this session)
+
+Hunter provided a personal FantasyPros API key (`scripts/fantasypros_credentials.json`,
+gitignored - never commit this) with explicit instructions: draft value should be measured
+against **ECR** (expert consensus rank) instead of ADP, since ECR reflects actual analyst
+judgment on a player's value rather than just crowd draft behavior. This turned into real
+API-limitation archaeology - documented in full here since it explains why the data pipeline
+looks the way it does:
+
+- **FantasyPros' official v2 API, free tier, caps every bulk request at 10 results** -
+  `consensus-rankings` and the players-list endpoint both report the true `count` (e.g. 165 RBs)
+  but only ever return 10 player objects, regardless of `position`/`scoring`/any other filter.
+  Undocumented in their public docs (which only call it "the free limited public API"). A brief
+  window early in this key's life returned full uncapped data (165 RBs, 226 WRs, 598 ADP
+  players) before settling into this cap - looked like a trial burst, not something that can be
+  relied on.
+- **Single-player lookups (`/nfl/players?player={id}`) are NOT subject to the 10-result cap**
+  (they only ever return 1 result) - but the free tier has no name-search endpoint, so there's no
+  bulk way to resolve our 168 ESPN-sourced player names into FantasyPros' own numeric player IDs.
+  Worked around this by scraping each player's **public FantasyPros page**
+  (`fantasypros.com/nfl/players/{slug}.php`) - not behind any login/paywall, unlike the
+  gated ADP table - for their embedded `player-id`, then calling the single-player API endpoint
+  with that ID. This path got rate-limited (HTTP 429) after roughly 20 calls in a session.
+- **Net result** (`scripts/fantasypros_snapshot_2026.json`, `_meta` key has the same summary):
+  100% of drafted RBs and WRs (132/132) have real ECR data, from the lucky uncapped bulk window.
+  Only 22 of 36 drafted QBs/TEs do, from individual lookups before hitting the rate limit. The
+  other 14 fall back to a neutral (0.0) value contribution in grading - not a guess, an honest
+  "no signal" default.
+- **Two different data shapes feed the same grading math**, because of how each half was
+  obtained: RB/WR entries carry `position_ecr_rank`/`position_ecr_pool_size` (POSITIONAL rank,
+  from the position-scoped bulk pull); QB/TE entries carry `overall_ecr_rank`/`overall_adp_rank`
+  (OVERALL rank, from the single-player lookup, which doesn't expose positional rank).
+  `build_grades()` in `scripts/fetch_espn_draft.py` handles both: RB/WR use the
+  `position_draft_rank` vs `position_ecr_rank` diff (normalized by pool size, mirroring the
+  historical `normalized_diff` convention - see the Contender Profile section above); QB/TE fall
+  back to `overall pick - overall_ecr_rank`, divided by 180 (the draft size) to land on a
+  roughly comparable scale to the normalized RB/WR values.
+- **ADP display was deliberately kept uniform (ESPN's own number, for every player)** rather
+  than mixing FantasyPros' overall ADP (only available for the same 22 QB/TE) with ESPN's ADP
+  for everyone else - a mixed source would have skewed the Reaches & Steals tab, making QB/TE
+  picks look like outsized reaches/steals purely because of a source discrepancy, not real
+  value. ADP no longer drives any grading math (ECR does), so precision there matters less than
+  consistency. `scripts/fantasypros_adp_2026.csv` (the old hand-exported ADP snapshot from
+  before this session) was deleted as a result - fully superseded.
+- **New script: `scripts/fetch_fantasypros_snapshot.py`** - the actual one-off tool that
+  produced the snapshot (bulk RB/WR pull + per-player QB/TE lookups with retry/backoff,
+  incremental saving so a 429 mid-run doesn't lose progress). Re-run it to refresh the snapshot;
+  it picks up wherever the previous run left off rather than starting over. A paid/higher-tier
+  FantasyPros key would make this whole script (and the RB/WR-vs-QB/TE data-shape split above)
+  unnecessary - `fetch_espn_draft.py` could just read the bulk endpoint directly, uncapped.
+- `scripts/fetch_espn_draft.py` itself no longer talks to FantasyPros at all - it just loads
+  `scripts/fantasypros_snapshot_2026.json`. Re-ran and verified live in-browser (Grades tab pick
+  values, Reaches & Steals tab, no console errors) after every change described above.
 
 ---
 

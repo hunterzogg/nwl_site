@@ -21,15 +21,19 @@ Data pulled:
      Projected points/ADP for coaches are read from pages/mock-draft.html's embedded coach
      pool (the same 32-team projected-wins-based dataset that tool already uses) rather than
      re-derived here.
-  4. ADP itself is NOT ESPN's own internal number - it's real market-consensus ADP (average of
-     Yahoo/Sleeper/RTSports) from FantasyPros' half-PPR overall ADP page, per explicit request
-     to grade against the wider market rather than ESPN's in-house number. FantasyPros paywalls
-     everything past the top 5 rows without a login, so there's no live pull here - Hunter
-     hand-exported the full CSV (scripts/fantasypros_adp_2026.csv, a one-time snapshot, not
-     auto-refreshed) and it's matched to drafted players by normalized name (168/168 skill
-     players matched cleanly on the first pass - see load_fantasypros_adp()). Falls back to
-     ESPN's own ADP for anything unmatched (shouldn't happen for real drafted players, but
-     could for a name FantasyPros doesn't carry).
+  4. FantasyPros ECR (expert consensus rank - the signal draft value is graded against, see
+     below) and ADP, loaded from scripts/fantasypros_snapshot_2026.json - NOT a live pull on
+     every run. FantasyPros' official v2 API (scripts/fantasypros_credentials.json, gitignored,
+     holds a personal API key) was the intended live source, but its free tier caps every bulk
+     request at 10 results regardless of filters, and rate-limits individual single-player
+     lookups hard after ~20 calls in a session - discovered by testing, not documented anywhere.
+     The snapshot was hand-assembled this session via a mix of (a) a brief window where bulk
+     RB/WR pulls returned full uncapped data before the key's access degraded (100% of drafted
+     RB/WR covered), and (b) individual single-player API lookups for QB/TE, with player IDs
+     resolved by scraping each player's public FantasyPros page (no API key needed for that
+     step) - rate-limited before finishing, so only 22 of 36 drafted QBs/TEs are covered. See
+     fetch_fantasypros_data()'s docstring and the snapshot file's own "_meta" key for the full
+     story, including how to refresh it (ideally with a paid/higher-tier key).
 
 Grading methodology (adapted from pages/mock-draft.html's computeGrades/computePickGrades -
 see draft_grades_2026.json's "methodology" field for the exact weights):
@@ -40,21 +44,37 @@ see draft_grades_2026.json's "methodology" field for the exact weights):
     valuable player in each eligible slot wins it - not simply the order things were drafted
     in. Everyone else is bench.
   - Team grade = percentile blend of four signals: (a) starting lineup's total projected points
-    - the heaviest-weighted signal, (b) bench's total projected points, (c) ADP reach value
-    (draftedAt - adp, round-weighted, across the whole roster), (d) upside (points over each
-    position's VBD replacement baseline, round-weighted, across the whole roster - no rookie/
-    breakout bonus here, unlike the mock draft tool, since ESPN's live API doesn't expose
-    either flag for real players).
+    - the heaviest-weighted signal, (b) bench's total projected points, (c) value captured vs
+    ECR (round-weighted, across the whole roster - see below, NOT simply "picked ahead of or
+    behind ADP"), (d) upside (points over each position's VBD replacement baseline, round-
+    weighted, across the whole roster - no rookie/breakout bonus here, unlike the mock draft
+    tool, since ESPN's live API doesn't expose either flag for real players).
   - Position sub-grades (QB/RB/WR/TE/HC) use a separate 3-way blend (points/value/upside,
     points-dominant) scoped to ONLY that position's starters - a bench-buried 4th WR doesn't
     move the WR grade either way. The bench-only grade badge uses the same 3-way blend, scoped
     to a manager's bench-slotted picks regardless of position.
+  - **Value captured vs ECR, not ADP**: per explicit request ("a better indicator of value
+    capture rather than just picking ahead or behind the ADP"), the value signal is NOT
+    `pick_number - adp`. It mirrors this site's own long-standing historical draft-grading
+    convention (`scripts/build_draft_grades.py` / `pages/draft.html`'s `position_draft_rank` vs
+    `position_finish_rank`) - just substituting **ECR position rank** in place of a finish rank
+    that doesn't exist yet for an unplayed season. For every skill pick: `position_draft_rank`
+    = which Nth player at that position was taken in the REAL draft (league-wide order, e.g.
+    "the 8th RB off the board"); `position_ecr_rank` = FantasyPros' expert-consensus positional
+    rank for that player. `ecr_value = position_draft_rank - position_ecr_rank` (positive = the
+    player fell past where experts ranked him at his position = real value; negative = taken
+    ahead of expert consensus = a reach) - normalized by dividing by the position's ECR pool
+    size (same `normalized_diff` convention as the historical file) before feeding the grade
+    blend, so a QB pool of ~50 and a WR pool of ~250 stay comparable. ADP is still pulled and
+    shown for context (see per-pick `adp`), it just no longer drives the grade math.
 
-Setup: identical to fetch_espn_week.py - needs scripts/espn_credentials.json (gitignored,
-personal ESPN login cookies) already in place. No new setup if that script has been run before.
+Setup: identical to fetch_espn_week.py for ESPN auth - needs scripts/espn_credentials.json
+(gitignored, personal ESPN login cookies) already in place. This script itself does NOT need a
+FantasyPros API key - it just reads scripts/fantasypros_snapshot_2026.json. To refresh that
+snapshot, run scripts/fetch_fantasypros_snapshot.py, which does need
+scripts/fantasypros_credentials.json (gitignored, `{"api_key": "..."}`).
 """
 import argparse
-import csv
 import json
 import re
 import ssl
@@ -69,7 +89,7 @@ SITE_DIR = SCRIPT_DIR.parent
 CREDENTIALS_PATH = SCRIPT_DIR / "espn_credentials.json"
 TEAM_MAP_PATH = SCRIPT_DIR / "espn_team_map.json"
 MOCK_DRAFT_PATH = SITE_DIR / "pages" / "mock-draft.html"
-FANTASYPROS_ADP_PATH = SCRIPT_DIR / "fantasypros_adp_2026.csv"
+FANTASYPROS_SNAPSHOT_PATH = SCRIPT_DIR / "fantasypros_snapshot_2026.json"
 OUTPUT_PATH = SITE_DIR / "data" / "season_2026" / "draft_grades_2026.json"
 
 DEFAULT_LEAGUE_ID = 39276
@@ -96,7 +116,7 @@ GRADE_ROUND_WEIGHT = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
                        10: 0.9, 11: 0.75, 12: 0.6, 13: 0.45, 14: 0.3, 15: 0.2}
 
 # Overall team grade: 4-way blend, starter points weighted heaviest per explicit request -
-# bench points, ADP value, and upside all still count, but starting-lineup output dominates
+# bench points, ECR value, and upside all still count, but starting-lineup output dominates
 # since that's what actually scores.
 GRADE_WEIGHTS = {"starter_points": 0.55, "bench_points": 0.15, "value": 0.15, "upside": 0.15}
 
@@ -106,7 +126,7 @@ GRADE_WEIGHTS = {"starter_points": 0.55, "bench_points": 0.15, "value": 0.15, "u
 SUBGRADE_WEIGHTS = {"points": 0.80, "value": 0.08, "upside": 0.12}
 
 # Per-pick grade (shown when a manager's row is expanded on the Grades tab): mirrors
-# pages/mock-draft.html's computePickGrades (mostly "how good is this player" with ADP value as
+# pages/mock-draft.html's computePickGrades (mostly "how good is this player" with ECR value as
 # a smaller adjustment) - percentile-ranked across all 180 real picks, not per-manager, so a
 # pick's grade reflects how it stacks up against the whole draft.
 PICK_GRADE_WEIGHTS = {"quality": 0.75, "value": 0.25}
@@ -197,28 +217,35 @@ def _normalize_name(name):
     return re.sub(r"\s+", " ", name).strip()
 
 
-def load_fantasypros_adp():
-    """Real market-consensus ADP (average of Yahoo/Sleeper/RTSports) from FantasyPros' half-PPR
-    overall ADP page, used in place of ESPN's own in-house ADP for every value/reach signal.
-    FantasyPros paywalls everything past the top 5 rows without a login, so this isn't a live
-    pull - it's a hand-exported CSV snapshot (scripts/fantasypros_adp_2026.csv). Re-export and
-    overwrite that file if you want a fresher snapshot before re-running this script."""
-    if not FANTASYPROS_ADP_PATH.exists():
-        print(f"WARNING: {FANTASYPROS_ADP_PATH} not found - falling back to ESPN's own ADP for value/reach.")
+def fetch_fantasypros_data(season):
+    """FantasyPros ECR/ADP, keyed by normalized player name. Returns entries in one of two
+    shapes depending on how that player's data was obtained (see scripts/fantasypros_snapshot_2026.json
+    and its own header comment for the full story of why):
+      - RB/WR: {"position_ecr_rank": N, "position_ecr_pool_size": N} - positional ECR rank, from
+        FantasyPros' bulk consensus-rankings endpoint (position=RB or WR), which happened to
+        return full uncapped lists before this key's access degraded to its free-tier cap.
+      - QB/TE (partial - 22 of 36 drafted QBs/TEs): {"overall_ecr_rank": N, "overall_adp_rank": N}
+        - OVERALL rank (not positional), from FantasyPros' single-player lookup endpoint
+        (/nfl/players?player=ID), which is NOT subject to the bulk 10-result cap - fetched one
+        player at a time via their public player-page HTML (to resolve name -> FantasyPros
+        player ID) then the API. Rate-limited hard after ~20 calls in a session, so 14 of the
+        168 drafted skill players have no live ECR data at all - those fall back to a neutral
+        (0.0) value contribution, not a guess.
+    This is a snapshot (scripts/fantasypros_snapshot_2026.json), not a live pull on every run -
+    FantasyPros' free API tier caps bulk requests at 10 results and rate-limits individual
+    lookups aggressively, so re-fetching this on every script run isn't practical. Re-run the
+    one-off fetch (see HANDOFF.md) and overwrite that file if you want fresher numbers, ideally
+    with a paid/higher-tier key so it can be a real live pull like the rest of this script."""
+    if not FANTASYPROS_SNAPSHOT_PATH.exists():
+        print(f"WARNING: {FANTASYPROS_SNAPSHOT_PATH} not found - value grading will have no ECR "
+              "signal (falls back to neutral for every pick). See that file's absence: it's a "
+              "one-off hand-fetched snapshot, not auto-generated by this script.")
         return {}
-    adp = {}
-    with open(FANTASYPROS_ADP_PATH) as f:
-        for row in csv.DictReader(f):
-            raw = row.get("Player (Bye)", "")
-            m = re.match(r"^(.*?)\s{2,}\S.*\(\d+\)\s*$", raw)
-            name = m.group(1).strip() if m else raw.strip()
-            try:
-                avg = float(row["AVG"])
-            except (ValueError, KeyError):
-                continue
-            adp[_normalize_name(name)] = avg
-    print(f"Loaded {len(adp)} FantasyPros market ADP values from {FANTASYPROS_ADP_PATH.name}.")
-    return adp
+    with open(FANTASYPROS_SNAPSHOT_PATH) as f:
+        snapshot = json.load(f)["players"]
+    print(f"Loaded FantasyPros ECR/ADP snapshot for {len(snapshot)} players "
+          f"({FANTASYPROS_SNAPSHOT_PATH.name}).")
+    return snapshot
 
 
 def fetch_player_pool(season):
@@ -232,9 +259,9 @@ def fetch_player_pool(season):
         }
     })
     data = http_get(f"{API_HOST}{path}?view=kona_player_info", extra_headers={"x-fantasy-filter": filt})
-    fp_adp = load_fantasypros_adp()
+    fp_data = fetch_fantasypros_data(season)
     pool = {}
-    fp_matched = 0
+    fp_ecr_matched = 0
     for entry in data.get("players", []):
         p = entry.get("player", {})
         pid = p.get("id")
@@ -249,22 +276,31 @@ def fetch_player_pool(season):
         name = p.get("fullName", f"Player {pid}")
         espn_adp = p.get("ownership", {}).get("averageDraftPosition") or 999.0
         dr = p.get("draftRanksByRankType", {}).get("STANDARD", {}).get("rank") or espn_adp
-        fp_match = fp_adp.get(_normalize_name(name))
-        if fp_match is not None:
-            fp_matched += 1
+        fp_match = fp_data.get(_normalize_name(name), {})
+        if fp_match.get("position_ecr_rank") is not None or fp_match.get("overall_ecr_rank") is not None:
+            fp_ecr_matched += 1
+        # ADP display is ESPN's own number for EVERY player, uniformly - not FantasyPros', even
+        # for the 22 QB/TE that happen to have a FantasyPros overall_adp_rank. Mixing two ADP
+        # sources with different scales/precision on the same "ADP" column would skew the
+        # Reaches & Steals tab (e.g. making QB/TE look like outsized reaches/steals just because
+        # FantasyPros' ADP differs systematically from ESPN's, not because of real value). ADP is
+        # purely informational now anyway - grading reads position_ecr_rank/overall_ecr_rank.
         pool[pid] = {
             "name": name,
             "pos": pos,
             "nfl_team": PRO_TEAM_ABBREV.get(p.get("proTeamId"), ""),
             "pts": round(pts, 1),
-            "adp": fp_match if fp_match is not None else espn_adp,
+            "adp": espn_adp,
             "espn_adp": espn_adp,
             "dr": dr,
+            "position_ecr_rank": fp_match.get("position_ecr_rank"),
+            "position_ecr_pool_size": fp_match.get("position_ecr_pool_size"),
+            "overall_ecr_rank": fp_match.get("overall_ecr_rank"),
         }
     print(f"Pulled {len(pool)} skill-position players' projections from ESPN.")
-    if fp_adp:
-        print(f"Matched {fp_matched}/{len(pool)} of them to FantasyPros market ADP "
-              f"(the rest fall outside FantasyPros' ~337-player list and use ESPN's ADP instead).")
+    if fp_data:
+        print(f"Matched {fp_ecr_matched}/{len(pool)} to FantasyPros ECR (the grading signal). "
+              "ADP display uses ESPN's own number uniformly (see fetch_player_pool comment).")
     assign_position_pool_ranks(pool)
     return pool
 
@@ -309,11 +345,14 @@ def resolve_pick_player(pick, player_pool, coach_pool):
         if coach:
             return {"name": coach["n"], "pos": "HC", "nfl_team": abbrev,
                      "pts": coach.get("pts", 0.0), "adp": coach.get("adp", 999.0), "dr": coach.get("adp", 999.0),
-                     "position_pool_rank": None, "position_pool_size": None}
+                     "position_pool_rank": None, "position_pool_size": None,
+                     "position_ecr_rank": None, "position_ecr_pool_size": None, "overall_ecr_rank": None}
         return {"name": f"{abbrev or 'Unknown'} Head Coach", "pos": "HC", "nfl_team": abbrev,
-                 "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None}
+                 "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None,
+                 "position_ecr_rank": None, "position_ecr_pool_size": None, "overall_ecr_rank": None}
     return {"name": f"Unmatched Player {pid}", "pos": "UNK", "nfl_team": "",
-             "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None}
+             "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None,
+             "position_ecr_rank": None, "position_ecr_pool_size": None, "overall_ecr_rank": None}
 
 
 def assign_optimal_lineup(records):
@@ -443,8 +482,8 @@ def ranked_position(pct_dict, key):
 
 def compute_pick_grades(all_picks_flat):
     """Mutates every record in all_picks_flat with pick_grade/pick_percentile - quality (VBD)
-    percentile-ranked across the whole draft, blended with ADP-value percentile per
-    PICK_GRADE_WEIGHTS. Head Coach picks have no real market ADP, so they're graded on quality
+    percentile-ranked across the whole draft, blended with ECR-value percentile per
+    PICK_GRADE_WEIGHTS. Head Coach picks have no ECR data, so they're graded on quality
     alone (consistent with how the rest of this script already treats them)."""
     quality_pct = percentile_ranks({i: r["vbd"] for i, r in enumerate(all_picks_flat)})
     value_pct = percentile_ranks({i: r["value"] for i, r in enumerate(all_picks_flat)})
@@ -511,13 +550,40 @@ def build_grades(picks, player_pool, coach_pool, team_map):
     vbd_baseline = compute_vbd_baseline(player_pool)
 
     all_picks_by_manager = {}  # manager -> list of pick records
+    position_draft_counter = {}  # position -> how many taken so far, league-wide draft order
     for pick in sorted(picks, key=lambda p: p["overallPickNumber"]):
         manager = resolve_manager(pick["teamId"], team_map)
         player = resolve_pick_player(pick, player_pool, coach_pool)
-        reach = pick["overallPickNumber"] - player["adp"]
         vbd = upside_score(player, vbd_baseline)
         pool_rank = player.get("position_pool_rank")
         pool_size = player.get("position_pool_size")
+
+        # Value captured vs ECR (see module docstring) - NOT pick vs ADP. Two data shapes,
+        # depending on what FantasyPros' rate-limited free tier let us get for this player (see
+        # fetch_fantasypros_data): (a) RB/WR - position_draft_rank (this player's spot in
+        # league-wide draft order among others at the same position, e.g. "the 8th RB off the
+        # board") vs FantasyPros' POSITIONAL ECR rank, normalized by the ECR pool size so
+        # positions with different pool sizes stay comparable (same convention as
+        # scripts/build_draft_grades.py's historical normalized_diff); (b) QB/TE (partial
+        # coverage - see snapshot file) - only an OVERALL ECR rank was obtainable, so this falls
+        # back to overall pick number vs overall ECR rank, divided by the ~180-pick draft size to
+        # land on a roughly comparable scale. Picks with no ECR data at all (the free tier
+        # couldn't be coaxed into covering every player) get a neutral 0.0 - not a guess.
+        ecr_rank = player.get("position_ecr_rank")
+        ecr_pool_size = player.get("position_ecr_pool_size")
+        overall_ecr_rank = player.get("overall_ecr_rank")
+        position_draft_rank = None
+        ecr_value = None
+        normalized_value = 0.0
+        if ecr_rank is not None:
+            position_draft_counter[player["pos"]] = position_draft_counter.get(player["pos"], 0) + 1
+            position_draft_rank = position_draft_counter[player["pos"]]
+            ecr_value = position_draft_rank - ecr_rank
+            normalized_value = ecr_value / ecr_pool_size if ecr_pool_size else 0.0
+        elif overall_ecr_rank is not None:
+            ecr_value = pick["overallPickNumber"] - overall_ecr_rank
+            normalized_value = ecr_value / len(picks)
+
         record = {
             "round": pick["roundId"],
             "pick": pick["overallPickNumber"],
@@ -527,7 +593,12 @@ def build_grades(picks, player_pool, coach_pool, team_map):
             "nfl_team": player["nfl_team"],
             "projected_pts": player["pts"],
             "adp": round(player["adp"], 1) if player["adp"] < 999 else None,
-            "value": round(reach, 1),
+            "position_ecr_rank": ecr_rank,
+            "position_ecr_pool_size": ecr_pool_size,
+            "overall_ecr_rank": overall_ecr_rank,
+            "position_draft_rank": position_draft_rank,
+            "ecr_value": ecr_value,
+            "value": round(normalized_value, 4),
             "vbd": round(vbd, 1),
             "keeper": pick.get("keeper", False),
             "position_pool_rank": pool_rank,
@@ -537,7 +608,7 @@ def build_grades(picks, player_pool, coach_pool, team_map):
         }
         all_picks_by_manager.setdefault(manager, []).append(record)
 
-    # Per-pick grade (mostly "how good is this player," with ADP value as a smaller adjustment),
+    # Per-pick grade (mostly "how good is this player," with ECR value as a smaller adjustment),
     # percentile-ranked across ALL 180 real picks - shown when a manager's row is expanded.
     compute_pick_grades([r for recs in all_picks_by_manager.values() for r in recs])
 
@@ -546,7 +617,7 @@ def build_grades(picks, player_pool, coach_pool, team_map):
     for recs in all_picks_by_manager.values():
         assign_optimal_lineup(recs)
 
-    # ---- Overall team grades: starter pts (heaviest), bench pts, ADP value, upside ----
+    # ---- Overall team grades: starter pts (heaviest), bench pts, ECR value, upside ----
     starter_pts, bench_pts, avg_value, avg_upside = {}, {}, {}, {}
     for mgr, recs in all_picks_by_manager.items():
         starter_pts[mgr] = sum(r["projected_pts"] for r in recs if r["is_starter"])
@@ -604,7 +675,7 @@ def build_grades(picks, player_pool, coach_pool, team_map):
             "ranks": overall[mgr]["ranks"],
             "starter_projected_pts": round(starter_pts[mgr], 1),
             "bench_projected_pts": round(bench_pts[mgr], 1),
-            "avg_adp_value": round(avg_value[mgr], 1),
+            "avg_ecr_value": round(avg_value[mgr], 4),
             "avg_upside": round(avg_upside[mgr], 1),
             "position_grades": position_grades[mgr],
             "bench_grade": {
@@ -643,20 +714,23 @@ def main():
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "methodology": {
             "grade_weights": GRADE_WEIGHTS,
-            "note": ("Grades are based on 2026 preseason projections and ADP, not actual season "
-                     "results (the season hasn't happened yet). Starters/bench reflect each "
-                     "manager's best possible lineup (highest-projected players by slot "
-                     "eligibility - 1 QB, 2 RB, 2 WR, 1 TE, 1 TE/WR flex, 1 FLEX, 1 HC), not "
-                     "ESPN's live roster or draft order. Overall grade = percentile blend of "
+            "note": ("Grades are based on 2026 preseason projections, not actual season results "
+                     "(the season hasn't happened yet). Starters/bench reflect each manager's "
+                     "best possible lineup (highest-projected players by slot eligibility - 1 "
+                     "QB, 2 RB, 2 WR, 1 TE, 1 TE/WR flex, 1 FLEX, 1 HC), not ESPN's live roster "
+                     "or draft order. Overall grade = percentile blend of "
                      f"starting-lineup points ({round(GRADE_WEIGHTS['starter_points']*100)}%, "
                      "the heaviest signal), bench points "
-                     f"({round(GRADE_WEIGHTS['bench_points']*100)}%), ADP-reach value "
-                     f"({round(GRADE_WEIGHTS['value']*100)}%), and VBD upside "
-                     f"({round(GRADE_WEIGHTS['upside']*100)}%). Each pick's own Value grade "
-                     f"(shown when a manager's row is expanded) is a separate blend - "
+                     f"({round(GRADE_WEIGHTS['bench_points']*100)}%), value captured vs ECR "
+                     f"({round(GRADE_WEIGHTS['value']*100)}%, NOT simply picked ahead of or "
+                     "behind ADP - see position_draft_rank/position_ecr_rank on each pick), "
+                     f"and VBD upside ({round(GRADE_WEIGHTS['upside']*100)}%). Each pick's own "
+                     "Value grade (shown when a manager's row is expanded) is a separate blend - "
                      f"{round(PICK_GRADE_WEIGHTS['quality']*100)}% quality (points over "
-                     f"replacement) / {round(PICK_GRADE_WEIGHTS['value']*100)}% ADP value - "
-                     "percentile-ranked across all 180 real picks, not per-manager."),
+                     f"replacement) / {round(PICK_GRADE_WEIGHTS['value']*100)}% ECR value - "
+                     "percentile-ranked across all 180 real picks, not per-manager. Real market "
+                     "ADP (live from FantasyPros) is still shown per pick for context, it just "
+                     "no longer drives the grade math."),
         },
         "managers": managers_out,
         "contender_profile": contender_profile,
