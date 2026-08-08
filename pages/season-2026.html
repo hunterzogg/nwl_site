@@ -299,11 +299,13 @@ function renderDraft() {
   }
   const POS_ORDER = ['QB', 'RB', 'WR', 'TE', 'HC'];
   document.getElementById('draftContent').innerHTML = `
+    <p class="updated-note">Updated ${new Date(draftGrades.updated_at).toLocaleString()}</p>
+    <div id="draftLeaderboard"></div>
     <div class="methodology">
-      ${draftGrades.methodology.note}
       <details>
-        <summary>Show grade weighting</summary>
+        <summary>Show methodology</summary>
         <div style="margin-top:8px;">
+          ${draftGrades.methodology.note}
           Overall grade blends four percentile-ranked signals across all 12 teams:
           <strong>${Math.round(draftGrades.methodology.grade_weights.starter_points * 100)}%</strong> best-possible starting-lineup projected points (the heaviest signal),
           <strong>${Math.round(draftGrades.methodology.grade_weights.bench_points * 100)}%</strong> bench projected points,
@@ -313,8 +315,6 @@ function renderDraft() {
         </div>
       </details>
     </div>
-    <p class="updated-note">Updated ${new Date(draftGrades.updated_at).toLocaleString()}</p>
-    <div id="draftLeaderboard"></div>
   `;
 
   document.getElementById('draftLeaderboard').innerHTML = draftGrades.managers.map((m, i) => `
