@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Analysis — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=7">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.panel { display: none; }
+.panel.active { display: block; }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.empty-state {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-muted);
+}
+.empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
+.methodology {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
+}
+.methodology strong { color: var(--text); }
+.methodology details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem; margin-top: 8px; }
+.grade-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  min-width: 42px; padding: 4px 8px; border-radius: 5px; letter-spacing: 0.02em;
+}
+.grade-badge.sm { font-size: 0.8rem; min-width: 34px; padding: 2px 6px; }
+.grade-lead {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+  cursor: pointer; flex-wrap: wrap;
+}
+.grade-lead .rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 26px; flex-shrink: 0; }
+.grade-lead .mgr-body { flex: 1; min-width: 180px; }
+.grade-lead .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.grade-lead .chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.15s; flex-shrink: 0; }
+.grade-lead.expanded .chevron { transform: rotate(180deg); }
+.grade-detail { display: none; padding: 12px 18px 16px; margin-top: -10px; margin-bottom: 10px; border: 1px solid var(--line); border-top: none; border-radius: 0 0 8px 8px; background: var(--surface); }
+.grade-detail.expanded { display: block; }
+.composite { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem; flex-shrink: 0; }
+.pos-grade-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.pos-grade-chip { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--text-muted); }
+.pos-grade-chip .lbl { font-family: var(--font-mono); }
+
+.award-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.award-title {
+  font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.01em;
+  color: var(--blue-bright); margin-bottom: 6px;
+}
+.award-mgr-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.award-blurb { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+.leaderboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.leaderboard-title {
+  font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 12px; border-left: 3px solid var(--blue-bright); padding-left: 10px;
+}
+.value-row {
+  display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.88rem;
+}
+.value-row:last-child { border-bottom: none; }
+.value-row .rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 20px; flex-shrink: 0; }
+.value-row .player-body { flex: 1; min-width: 0; }
+.value-row .player-sub { color: var(--text-muted); font-size: 0.78rem; margin-top: 1px; }
+.value-row .value-num { font-family: var(--font-mono); font-weight: 600; flex-shrink: 0; }
+.value-num.steal { color: #4FA876; }
+.value-num.reach { color: #E0524A; }
+
+.rank-num-big { font-family: var(--font-mono); font-size: 1rem; color: var(--text-muted); width: 28px; flex-shrink: 0; display: inline-block; }
+.source-chip {
+  display: inline-block; font-size: 0.72rem; color: var(--text-muted); background: var(--surface-raised);
+  border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; margin: 2px 3px 0 0;
+}
+.mention-num { font-family: var(--font-mono); font-weight: 700; color: var(--blue-bright); }
+.mgr-summary-row {
+  display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 12px 18px; margin-bottom: 8px;
+}
+.mgr-summary-row .mgr-body { flex: 1; }
+.mgr-summary-row .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.mgr-summary-row .total-num { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; color: var(--blue-bright); }
+
+.subtab-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.subtab-btn {
+  font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 8px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.subtab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.subpanel { display: none; }
+.subpanel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Draft Analysis</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Grades, contender profile, superlatives, steals &amp; reaches, and media upside for the 2026 draft.</p>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="grades">Grades</button>
+    <button class="tab-btn" data-tab="contender">Contender Profile</button>
+    <button class="tab-btn" data-tab="superlatives">Superlatives</button>
+    <button class="tab-btn" data-tab="reaches">Reaches &amp; Steals</button>
+    <button class="tab-btn" data-tab="upside">Upside Ranking</button>
+  </div>
+
+  <div class="panel active" id="panel-grades">
+    <div id="gradesContent"></div>
+  </div>
+
+  <div class="panel" id="panel-contender">
+    <div id="contenderContent"></div>
+  </div>
+
+  <div class="panel" id="panel-superlatives">
+    <div id="superlativesContent"></div>
+  </div>
+
+  <div class="panel" id="panel-reaches">
+    <div id="reachesContent"></div>
+  </div>
+
+  <div class="panel" id="panel-upside">
+    <div class="subtab-row">
+      <button class="subtab-btn active" data-subtab="upside-players">Player Rankings</button>
+      <button class="subtab-btn" data-subtab="upside-managers">By Manager</button>
+    </div>
+    <div class="subpanel active" id="subpanel-upside-players"><div id="upsidePlayersContent"></div></div>
+    <div class="subpanel" id="subpanel-upside-managers"><div id="upsideManagersContent"></div></div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=13"></script>
+<script>
+let managers = [];
+let draftGrades = null;
+let superlatives = null;
+let upside = null;
+
+function emptyState(headline, sub) {
+  return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
+}
+
+function gradeColor(label) {
+  if (label.startsWith('A')) return '#4FA876';
+  if (label.startsWith('B')) return '#4F86D6';
+  if (label.startsWith('C')) return '#9AA5B8';
+  if (label.startsWith('D')) return '#D9B23C';
+  return '#E0524A';
+}
+function gradeBadge(label, sm) {
+  return `<span class="grade-badge${sm ? ' sm' : ''}" style="background:${gradeColor(label)}22;color:${gradeColor(label)};border:1px solid ${gradeColor(label)}55;">${label}</span>`;
+}
+
+// ---------- Grades tab ----------
+function pickTableHTML(picks) {
+  const rowHTML = (p) => `
+    <td class="num">${p.round}.${p.round_pick}</td>
+    <td>${p.player}${p.keeper ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(keeper)</span>' : ''}</td>
+    <td>${posTag(p.position)}</td>
+    <td>${p.nfl_team || ''}</td>
+    <td class="num">${p.projected_pts.toFixed(1)}</td>
+    <td class="num">${p.adp !== null ? p.adp.toFixed(1) : '—'}</td>
+    <td>${gradeBadge(p.pick_grade, true)}</td>
+    <td>${p.is_starter ? p.slot : 'Bench'}</td>
+  `;
+  return `
+    <div class="table-wide" style="overflow-x:auto;">
+    <table>
+      <thead><tr><th class="num">Pick</th><th>Player</th><th>Pos</th><th>NFL</th><th class="num">Proj Pts</th><th class="num">ADP</th><th>Value</th><th>Slot</th></tr></thead>
+      <tbody>${picks.map(p => `<tr>${rowHTML(p)}</tr>`).join('')}</tbody>
+    </table>
+    </div>
+    <div class="table-cards">
+      ${picks.map(p => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${p.player}</span>
+            ${posTag(p.position)}
+            ${gradeBadge(p.pick_grade, true)}
+          </div>
+          <div class="table-card-sub">Pick ${p.round}.${p.round_pick} &middot; ${p.nfl_team || ''} &middot; ${p.is_starter ? p.slot : 'Bench'}</div>
+          <div class="table-card-sub">${p.projected_pts.toFixed(1)} proj pts &middot; ADP ${p.adp !== null ? p.adp.toFixed(1) : '—'}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderGrades() {
+  if (!draftGrades || !draftGrades.managers || !draftGrades.managers.length) {
+    document.getElementById('gradesContent').innerHTML = emptyState(
+      'No draft data yet', 'Run scripts/fetch_espn_draft.py once the 2026 draft is complete.');
+    return;
+  }
+  const POS_ORDER = ['QB', 'RB', 'WR', 'TE', 'HC'];
+  document.getElementById('gradesContent').innerHTML = `
+    <p class="updated-note">Updated ${new Date(draftGrades.updated_at).toLocaleString()}</p>
+    <div id="draftLeaderboard"></div>
+    <div class="methodology">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          ${draftGrades.methodology.note}
+          Overall grade blends four percentile-ranked signals across all 12 teams:
+          <strong>${Math.round(draftGrades.methodology.grade_weights.starter_points * 100)}%</strong> best-possible starting-lineup projected points (the heaviest signal),
+          <strong>${Math.round(draftGrades.methodology.grade_weights.bench_points * 100)}%</strong> bench projected points,
+          <strong>${Math.round(draftGrades.methodology.grade_weights.value * 100)}%</strong> ADP-reach value,
+          <strong>${Math.round(draftGrades.methodology.grade_weights.upside * 100)}%</strong> upside over each position's replacement baseline.
+          Position and bench badges below use a separate points-dominant blend scoped to just that group's picks.
+          Each pick's own "Value" badge (visible when you expand a manager below) is a different blend - mostly player quality, with real ADP value as a smaller adjustment - percentile-ranked across all 180 picks in the draft, not just one manager's roster.
+        </div>
+      </details>
+    </div>
+  `;
+
+  document.getElementById('draftLeaderboard').innerHTML = draftGrades.managers.map((m, i) => `
+    <div class="grade-lead" data-manager="${m.manager}">
+      <span class="rank-num">${i + 1}</span>
+      ${gradeBadge(m.overall_grade)}
+      <div class="mgr-body">
+        ${managerTag(managers, m.manager)}
+        <div class="mgr-sub">${m.starter_projected_pts.toFixed(1)} starter pts &middot; ${m.bench_projected_pts.toFixed(1)} bench pts &middot; bench grade ${gradeBadge(m.bench_grade.grade, true)}</div>
+      </div>
+      <span class="composite">Value ${Math.round(m.overall_percentile * 100)}</span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="grade-detail">
+      <div class="pos-grade-row">
+        ${POS_ORDER.map(pos => `
+          <span class="pos-grade-chip">
+            <span class="lbl">${pos}</span>
+            ${gradeBadge(m.position_grades[pos].grade, true)}
+          </span>
+        `).join('')}
+        <span class="pos-grade-chip"><span class="lbl">BENCH</span>${gradeBadge(m.bench_grade.grade, true)}</span>
+      </div>
+      ${pickTableHTML(m.picks)}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.grade-lead').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('expanded');
+      el.nextElementSibling.classList.toggle('expanded');
+    });
+  });
+}
+
+// ---------- Contender Profile tab ----------
+function renderContenderProfile() {
+  if (!draftGrades || !draftGrades.contender_profile || !draftGrades.contender_profile.managers) {
+    document.getElementById('contenderContent').innerHTML = emptyState(
+      'No contender profile yet', 'Run scripts/fetch_espn_draft.py once the 2026 draft is complete.');
+    return;
+  }
+  const cp = draftGrades.contender_profile;
+  const ctx = cp.historical_context;
+  const rows = Object.entries(cp.managers).sort((a, b) => b[1].percentile - a[1].percentile);
+
+  document.getElementById('contenderContent').innerHTML = `
+    <div class="methodology">
+      <strong>This is informational only - it is NOT part of the overall/position/bench grades above.</strong>
+      We analyzed all ${ctx.sample_size} years of NWL championship-winning drafts to see whether roster construction actually predicts winning. Short answer: barely.
+      <details open>
+        <summary>Show the full historical findings</summary>
+        <div style="margin-top:8px;">
+          <p style="margin:0 0 8px;">${ctx.position_mix_finding}</p>
+          <p style="margin:0 0 8px;">${ctx.draft_value_finding}</p>
+          <p style="margin:0 0 8px;">${ctx.difference_maker_finding}</p>
+          <p style="margin:0;">${ctx.note}</p>
+        </div>
+      </details>
+    </div>
+    ${rows.map(([mgr, v], i) => `
+      <div class="mgr-summary-row">
+        <span class="rank-num-big">${i + 1}</span>
+        <div class="mgr-body">
+          ${managerTag(managers, mgr)}
+          <div class="mgr-sub">${v.top12_hits} picks projecting top-12 at their position &middot; ${v.top24_hits} projecting top-24</div>
+        </div>
+        ${gradeBadge(v.grade)}
+      </div>
+    `).join('')}
+  `;
+}
+
+// ---------- Superlatives tab ----------
+function renderSuperlatives() {
+  if (!superlatives || !superlatives.awards || !superlatives.awards.length) {
+    document.getElementById('superlativesContent').innerHTML = emptyState(
+      'No superlatives yet', 'Superlatives are generated once the draft grades are computed.');
+    return;
+  }
+  document.getElementById('superlativesContent').innerHTML = superlatives.awards.map(a => `
+    <div class="award-card">
+      <div class="award-title">${a.title}</div>
+      <div class="award-mgr-row">${managerTag(managers, a.manager)}</div>
+      <div class="award-blurb">${a.blurb}</div>
+    </div>
+  `).join('');
+}
+
+// ---------- Reaches & Steals tab ----------
+function renderReaches() {
+  if (!draftGrades || !draftGrades.managers || !draftGrades.managers.length) {
+    document.getElementById('reachesContent').innerHTML = emptyState(
+      'No draft data yet', 'Run scripts/fetch_espn_draft.py once the 2026 draft is complete.');
+    return;
+  }
+  const allPicks = [];
+  draftGrades.managers.forEach(m => {
+    m.picks.forEach(p => allPicks.push(Object.assign({ manager: m.manager }, p)));
+  });
+  const skillPicks = allPicks.filter(p => p.position !== 'HC' && p.adp !== null);
+
+  const steals = skillPicks.slice().sort((a, b) => (b.pick - b.adp) - (a.pick - a.adp)).slice(0, 10);
+  const reachPool = skillPicks.filter(p => p.round <= 13);
+  const reaches = reachPool.slice().sort((a, b) => (b.adp - b.pick) - (a.adp - a.pick)).slice(0, 10);
+
+  const rowHTML = (p, delta, cls) => `
+    <div class="value-row">
+      <span class="rank-num"></span>
+      <div class="player-body">
+        <div>${p.player} ${posTag(p.position)}</div>
+        <div class="player-sub">Pick ${p.pick} (R${p.round}.${p.round_pick}) &middot; ADP ${p.adp.toFixed(1)} &middot; ${managerTag(managers, p.manager)}</div>
+      </div>
+      <span class="value-num ${cls}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>
+    </div>
+  `;
+
+  document.getElementById('reachesContent').innerHTML = `
+    <div class="methodology">
+      ADP is real market consensus (average of Yahoo/Sleeper/RTSports via FantasyPros), not ESPN's own number.
+      A "steal" is a player who fell past their ADP; a "reach" is a player taken well ahead of it.
+      Reaches exclude the final two rounds (14-15), where late fliers naturally drift far from any meaningful ADP.
+      Head Coach picks are excluded from both lists - real market ADP doesn't cover them.
+    </div>
+    <div class="leaderboard-grid">
+      <div>
+        <div class="leaderboard-title">Biggest Steals</div>
+        ${steals.map(p => rowHTML(p, p.pick - p.adp, 'steal')).join('')}
+      </div>
+      <div>
+        <div class="leaderboard-title">Biggest Reaches (rounds 1-13)</div>
+        ${reaches.map(p => rowHTML(p, p.adp - p.pick, 'reach')).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Upside Ranking tab ----------
+function upsideMethodologyHTML() {
+  if (!upside) return '';
+  return `
+    <div class="methodology">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          ${upside.methodology.note}
+          <br><br>
+          Sources checked: ${upside.methodology.sources.join(', ')}.
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function renderUpsidePlayers() {
+  if (!upside || !upside.players || !upside.players.length) {
+    document.getElementById('upsidePlayersContent').innerHTML = emptyState(
+      'No upside rankings yet', 'Run the upside research pass once the draft is complete.');
+    return;
+  }
+  const rowHTML = (p) => `
+    <td class="num">${p.rank}</td>
+    <td>${p.player}</td>
+    <td>${posTag(p.position)}</td>
+    <td>${p.nfl_team || ''}</td>
+    <td>${managerTag(managers, p.manager)}</td>
+    <td class="num"><span class="mention-num">${p.mentions}</span></td>
+    <td>${p.sources.map(s => `<span class="source-chip">${s}</span>`).join('')}</td>
+  `;
+  document.getElementById('upsidePlayersContent').innerHTML = `
+    <p class="updated-note">Updated ${new Date(upside.updated_at).toLocaleString()}</p>
+    ${upsideMethodologyHTML()}
+    <div class="table-wide" style="overflow-x:auto;">
+    <table>
+      <thead><tr><th class="num">Rank</th><th>Player</th><th>Pos</th><th>NFL</th><th>Manager</th><th class="num">Mentions</th><th>Sources</th></tr></thead>
+      <tbody>${upside.players.map(p => `<tr>${rowHTML(p)}</tr>`).join('')}</tbody>
+    </table>
+    </div>
+    <div class="table-cards">
+      ${upside.players.map(p => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${p.rank}. ${p.player}</span>
+            ${posTag(p.position)}
+          </div>
+          <div class="table-card-sub">${p.nfl_team || ''} &middot; ${managerTag(managers, p.manager)} &middot; <span class="mention-num">${p.mentions}</span> mentions</div>
+          <div class="table-card-sub">${p.sources.map(s => `<span class="source-chip">${s}</span>`).join('')}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderUpsideManagers() {
+  if (!upside || !upside.players || !upside.players.length) {
+    document.getElementById('upsideManagersContent').innerHTML = emptyState(
+      'No upside rankings yet', 'Run the upside research pass once the draft is complete.');
+    return;
+  }
+  const byMgr = {};
+  upside.players.forEach(p => {
+    if (!byMgr[p.manager]) byMgr[p.manager] = { total: 0, players: [] };
+    byMgr[p.manager].total += p.mentions;
+    byMgr[p.manager].players.push(p);
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => b[1].total - a[1].total);
+
+  document.getElementById('upsideManagersContent').innerHTML = `
+    ${upsideMethodologyHTML()}
+    ${rows.map(([mgr, v], i) => `
+      <div class="mgr-summary-row">
+        <span class="rank-num-big">${i + 1}</span>
+        <div class="mgr-body">
+          ${managerTag(managers, mgr)}
+          <div class="mgr-sub">${v.players.length} hyped picks: ${v.players.slice().sort((a,b)=>b.mentions-a.mentions).map(p => p.player).join(', ')}</div>
+        </div>
+        <span class="total-num">${v.total}</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+async function init() {
+  managers = await getManagers();
+  [draftGrades, superlatives, upside] = await Promise.all([
+    loadDataSafe('season_2026/draft_grades_2026', null),
+    loadDataSafe('season_2026/draft_superlatives_2026', null),
+    loadDataSafe('season_2026/upside_rankings_2026', null),
+  ]);
+
+  renderGrades();
+  renderContenderProfile();
+  renderSuperlatives();
+  renderReaches();
+  renderUpsidePlayers();
+  renderUpsideManagers();
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('subpanel-' + btn.dataset.subtab).classList.add('active');
+    });
+  });
+}
+
+renderNav('draft analysis');
+init();
+</script>
+</body>
+</html>

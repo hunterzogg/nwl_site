@@ -1,0 +1,1134 @@
+{
+  "season": 2026,
+  "updated_at": "2026-08-08T00:00:00Z",
+  "methodology": {
+    "sources": [
+      "ESPN",
+      "CBS Sports",
+      "Yahoo Sports",
+      "PFF",
+      "RotoBaller",
+      "Draft Sharks",
+      "WalterFootball",
+      "The Fantasy Football Counselor",
+      "Bleacher Report",
+      "4for4",
+      "FantasyPros",
+      "The Falcoholic (SB Nation)",
+      "DIRECTV Insider"
+    ],
+    "note": "\"Upside\" here isn't a stats projection - it's a media-buzz signal. Each of our 168 drafted skill-position players was checked against 24 real 2026 fantasy football sleeper/breakout/league-winner articles published between May and August 2026 across 13 outlets. The score is simply how many of those articles named the player - more mentions means more of the industry is independently betting on a leap. Ties are broken by real market ADP (the earlier-drafted player ranks higher). Players with zero media mentions aren't listed, not necessarily because they lack upside - they just weren't flagged by this particular batch of coverage."
+  },
+  "players": [
+    {
+      "player": "Tyler Shough",
+      "position": "QB",
+      "nfl_team": "NO",
+      "manager": "Palaia",
+      "pick": 167,
+      "adp": 147.7,
+      "mentions": 9,
+      "sources": [
+        "CBS Sports",
+        "DIRECTV Insider",
+        "Draft Sharks",
+        "ESPN",
+        "FantasyPros",
+        "RotoBaller",
+        "The Fantasy Football Counselor",
+        "WalterFootball"
+      ],
+      "rank": 1
+    },
+    {
+      "player": "Isaiah Likely",
+      "position": "TE",
+      "nfl_team": "NYG",
+      "manager": "Conlin",
+      "pick": 109,
+      "adp": 105.7,
+      "mentions": 8,
+      "sources": [
+        "DIRECTV Insider",
+        "Draft Sharks",
+        "ESPN",
+        "The Falcoholic",
+        "The Fantasy Football Counselor",
+        "Yahoo Sports"
+      ],
+      "rank": 2
+    },
+    {
+      "player": "Jonathon Brooks",
+      "position": "RB",
+      "nfl_team": "CAR",
+      "manager": "Glaser",
+      "pick": 67,
+      "adp": 96.7,
+      "mentions": 7,
+      "sources": [
+        "Bleacher Report",
+        "CBS Sports",
+        "DIRECTV Insider",
+        "Draft Sharks",
+        "ESPN",
+        "The Falcoholic"
+      ],
+      "rank": 3
+    },
+    {
+      "player": "Luther Burden III",
+      "position": "WR",
+      "nfl_team": "CHI",
+      "manager": "Goetz",
+      "pick": 48,
+      "adp": 48.3,
+      "mentions": 6,
+      "sources": [
+        "DIRECTV Insider",
+        "ESPN",
+        "PFF",
+        "RotoBaller",
+        "The Fantasy Football Counselor",
+        "Yahoo Sports"
+      ],
+      "rank": 4
+    },
+    {
+      "player": "Justin Herbert",
+      "position": "QB",
+      "nfl_team": "LAC",
+      "manager": "Ainsworth",
+      "pick": 103,
+      "adp": 80.0,
+      "mentions": 6,
+      "sources": [
+        "ESPN",
+        "FantasyPros"
+      ],
+      "rank": 5
+    },
+    {
+      "player": "Kyler Murray",
+      "position": "QB",
+      "nfl_team": "MIN",
+      "manager": "Zogg",
+      "pick": 137,
+      "adp": 135.7,
+      "mentions": 6,
+      "sources": [
+        "CBS Sports",
+        "DIRECTV Insider",
+        "RotoBaller",
+        "The Falcoholic"
+      ],
+      "rank": 6
+    },
+    {
+      "player": "Bhayshul Tuten",
+      "position": "RB",
+      "nfl_team": "JAX",
+      "manager": "Pfaffinger",
+      "pick": 62,
+      "adp": 55.3,
+      "mentions": 5,
+      "sources": [
+        "Bleacher Report",
+        "CBS Sports",
+        "DIRECTV Insider",
+        "ESPN",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 7
+    },
+    {
+      "player": "Jalen McMillan",
+      "position": "WR",
+      "nfl_team": "TB",
+      "manager": "Muenchow",
+      "pick": 130,
+      "adp": 179.0,
+      "mentions": 5,
+      "sources": [
+        "Bleacher Report",
+        "Draft Sharks",
+        "ESPN",
+        "FantasyPros",
+        "RotoBaller"
+      ],
+      "rank": 8
+    },
+    {
+      "player": "Omarion Hampton",
+      "position": "RB",
+      "nfl_team": "LAC",
+      "manager": "Pfaffinger",
+      "pick": 11,
+      "adp": 15.7,
+      "mentions": 4,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 9
+    },
+    {
+      "player": "Jeremiyah Love",
+      "position": "RB",
+      "nfl_team": "ARI",
+      "manager": "Larson",
+      "pick": 20,
+      "adp": 25.7,
+      "mentions": 4,
+      "sources": [
+        "DIRECTV Insider",
+        "ESPN",
+        "The Fantasy Football Counselor",
+        "Yahoo Sports"
+      ],
+      "rank": 10
+    },
+    {
+      "player": "Romeo Doubs",
+      "position": "WR",
+      "nfl_team": "NE",
+      "manager": "Ainsworth",
+      "pick": 127,
+      "adp": 141.3,
+      "mentions": 4,
+      "sources": [
+        "DIRECTV Insider",
+        "The Falcoholic",
+        "The Fantasy Football Counselor",
+        "WalterFootball"
+      ],
+      "rank": 11
+    },
+    {
+      "player": "Kenyon Sadiq",
+      "position": "TE",
+      "nfl_team": "NYJ",
+      "manager": "Glaser",
+      "pick": 139,
+      "adp": 155.3,
+      "mentions": 4,
+      "sources": [
+        "ESPN",
+        "The Falcoholic",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 12
+    },
+    {
+      "player": "Emeka Egbuka",
+      "position": "WR",
+      "nfl_team": "TB",
+      "manager": "Glaser",
+      "pick": 30,
+      "adp": 41.0,
+      "mentions": 3,
+      "sources": [
+        "ESPN",
+        "PFF",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 13
+    },
+    {
+      "player": "Quinshon Judkins",
+      "position": "RB",
+      "nfl_team": "CLE",
+      "manager": "Pfaffinger",
+      "pick": 38,
+      "adp": 47.7,
+      "mentions": 3,
+      "sources": [
+        "PFF",
+        "The Fantasy Football Counselor",
+        "Yahoo Sports"
+      ],
+      "rank": 14
+    },
+    {
+      "player": "Jadarian Price",
+      "position": "RB",
+      "nfl_team": "SEA",
+      "manager": "Conlin",
+      "pick": 61,
+      "adp": 60.3,
+      "mentions": 3,
+      "sources": [
+        "Bleacher Report",
+        "ESPN"
+      ],
+      "rank": 15
+    },
+    {
+      "player": "Kyle Monangai",
+      "position": "RB",
+      "nfl_team": "CHI",
+      "manager": "Prodahl",
+      "pick": 93,
+      "adp": 84.7,
+      "mentions": 3,
+      "sources": [
+        "DIRECTV Insider",
+        "ESPN",
+        "The Falcoholic"
+      ],
+      "rank": 16
+    },
+    {
+      "player": "Alec Pierce",
+      "position": "WR",
+      "nfl_team": "IND",
+      "manager": "Larson",
+      "pick": 68,
+      "adp": 85.7,
+      "mentions": 3,
+      "sources": [
+        "CBS Sports",
+        "RotoBaller",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 17
+    },
+    {
+      "player": "Jaxson Dart",
+      "position": "QB",
+      "nfl_team": "NYG",
+      "manager": "Pfaffinger",
+      "pick": 86,
+      "adp": 86.7,
+      "mentions": 3,
+      "sources": [
+        "DIRECTV Insider",
+        "ESPN"
+      ],
+      "rank": 18
+    },
+    {
+      "player": "Blake Corum",
+      "position": "RB",
+      "nfl_team": "LAR",
+      "manager": "Glaser",
+      "pick": 91,
+      "adp": 94.3,
+      "mentions": 3,
+      "sources": [
+        "CBS Sports",
+        "RotoBaller",
+        "The Falcoholic"
+      ],
+      "rank": 19
+    },
+    {
+      "player": "Jayden Reed",
+      "position": "WR",
+      "nfl_team": "GB",
+      "manager": "Palaia",
+      "pick": 119,
+      "adp": 116.7,
+      "mentions": 3,
+      "sources": [
+        "Bleacher Report",
+        "RotoBaller",
+        "WalterFootball"
+      ],
+      "rank": 20
+    },
+    {
+      "player": "Wan'Dale Robinson",
+      "position": "WR",
+      "nfl_team": "TEN",
+      "manager": "Stover",
+      "pick": 99,
+      "adp": 116.7,
+      "mentions": 3,
+      "sources": [
+        "ESPN",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 21
+    },
+    {
+      "player": "Josh Downs",
+      "position": "WR",
+      "nfl_team": "IND",
+      "manager": "Conlin",
+      "pick": 85,
+      "adp": 117.7,
+      "mentions": 3,
+      "sources": [
+        "Bleacher Report",
+        "CBS Sports",
+        "RotoBaller"
+      ],
+      "rank": 22
+    },
+    {
+      "player": "Matthew Golden",
+      "position": "WR",
+      "nfl_team": "GB",
+      "manager": "Larson",
+      "pick": 92,
+      "adp": 149.3,
+      "mentions": 3,
+      "sources": [
+        "CBS Sports",
+        "ESPN"
+      ],
+      "rank": 23
+    },
+    {
+      "player": "Jayden Higgins",
+      "position": "WR",
+      "nfl_team": "HOU",
+      "manager": "Glaser",
+      "pick": 102,
+      "adp": 159.3,
+      "mentions": 3,
+      "sources": [
+        "DIRECTV Insider",
+        "Draft Sharks",
+        "ESPN"
+      ],
+      "rank": 24
+    },
+    {
+      "player": "Isiah Pacheco",
+      "position": "RB",
+      "nfl_team": "DET",
+      "manager": "Goetz",
+      "pick": 120,
+      "adp": 160.7,
+      "mentions": 3,
+      "sources": [
+        "Bleacher Report",
+        "FantasyPros"
+      ],
+      "rank": 25
+    },
+    {
+      "player": "Cam Skattebo",
+      "position": "RB",
+      "nfl_team": "NYG",
+      "manager": "Glaser",
+      "pick": 43,
+      "adp": 37.7,
+      "mentions": 2,
+      "sources": [
+        "ESPN",
+        "RotoBaller"
+      ],
+      "rank": 26
+    },
+    {
+      "player": "Travis Etienne Jr.",
+      "position": "RB",
+      "nfl_team": "NO",
+      "manager": "Prodahl",
+      "pick": 45,
+      "adp": 40.0,
+      "mentions": 2,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 27
+    },
+    {
+      "player": "David Montgomery",
+      "position": "RB",
+      "nfl_team": "HOU",
+      "manager": "Ainsworth",
+      "pick": 55,
+      "adp": 51.3,
+      "mentions": 2,
+      "sources": [
+        "RotoBaller",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 28
+    },
+    {
+      "player": "Parker Washington",
+      "position": "WR",
+      "nfl_team": "JAX",
+      "manager": "Ainsworth",
+      "pick": 79,
+      "adp": 84.3,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "RotoBaller"
+      ],
+      "rank": 29
+    },
+    {
+      "player": "Jordyn Tyson",
+      "position": "WR",
+      "nfl_team": "NO",
+      "manager": "Prodahl",
+      "pick": 76,
+      "adp": 85.7,
+      "mentions": 2,
+      "sources": [
+        "DIRECTV Insider",
+        "ESPN"
+      ],
+      "rank": 30
+    },
+    {
+      "player": "Makai Lemon",
+      "position": "WR",
+      "nfl_team": "PHI",
+      "manager": "Hagan",
+      "pick": 88,
+      "adp": 96.3,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "Yahoo Sports"
+      ],
+      "rank": 31
+    },
+    {
+      "player": "Brock Purdy",
+      "position": "QB",
+      "nfl_team": "SF",
+      "manager": "Hagan",
+      "pick": 153,
+      "adp": 104.3,
+      "mentions": 2,
+      "sources": [
+        "ESPN",
+        "FantasyPros"
+      ],
+      "rank": 32
+    },
+    {
+      "player": "Bo Nix",
+      "position": "QB",
+      "nfl_team": "DEN",
+      "manager": "Stover",
+      "pick": 147,
+      "adp": 106.3,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 33
+    },
+    {
+      "player": "Michael Pittman Jr.",
+      "position": "WR",
+      "nfl_team": "PIT",
+      "manager": "Pfaffinger",
+      "pick": 83,
+      "adp": 107.3,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "ESPN"
+      ],
+      "rank": 34
+    },
+    {
+      "player": "Rachaad White",
+      "position": "RB",
+      "nfl_team": "WSH",
+      "manager": "Palaia",
+      "pick": 98,
+      "adp": 111.3,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "RotoBaller"
+      ],
+      "rank": 35
+    },
+    {
+      "player": "Jordan Mason",
+      "position": "RB",
+      "nfl_team": "MIN",
+      "manager": "Muenchow",
+      "pick": 111,
+      "adp": 115.0,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "DIRECTV Insider"
+      ],
+      "rank": 36
+    },
+    {
+      "player": "Dallas Goedert",
+      "position": "TE",
+      "nfl_team": "PHI",
+      "manager": "Pfaffinger",
+      "pick": 107,
+      "adp": 119.7,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "WalterFootball"
+      ],
+      "rank": 37
+    },
+    {
+      "player": "Chris Rodriguez Jr.",
+      "position": "RB",
+      "nfl_team": "JAX",
+      "manager": "Zogg",
+      "pick": 113,
+      "adp": 159.7,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "The Falcoholic"
+      ],
+      "rank": 38
+    },
+    {
+      "player": "Denzel Boston",
+      "position": "WR",
+      "nfl_team": "CLE",
+      "manager": "Conlin",
+      "pick": 133,
+      "adp": 171.3,
+      "mentions": 2,
+      "sources": [
+        "FantasyPros",
+        "RotoBaller"
+      ],
+      "rank": 39
+    },
+    {
+      "player": "Dylan Sampson",
+      "position": "RB",
+      "nfl_team": "CLE",
+      "manager": "Stover",
+      "pick": 166,
+      "adp": 171.3,
+      "mentions": 2,
+      "sources": [
+        "FantasyPros",
+        "The Falcoholic"
+      ],
+      "rank": 40
+    },
+    {
+      "player": "Keaton Mitchell",
+      "position": "RB",
+      "nfl_team": "LAC",
+      "manager": "Pfaffinger",
+      "pick": 155,
+      "adp": 173.7,
+      "mentions": 2,
+      "sources": [
+        "ESPN",
+        "FantasyPros"
+      ],
+      "rank": 41
+    },
+    {
+      "player": "Tank Bigsby",
+      "position": "RB",
+      "nfl_team": "PHI",
+      "manager": "Goetz",
+      "pick": 144,
+      "adp": 181.0,
+      "mentions": 2,
+      "sources": [
+        "FantasyPros",
+        "RotoBaller"
+      ],
+      "rank": 42
+    },
+    {
+      "player": "Isaac TeSlaa",
+      "position": "WR",
+      "nfl_team": "DET",
+      "manager": "Ainsworth",
+      "pick": 151,
+      "adp": 193.3,
+      "mentions": 2,
+      "sources": [
+        "The Falcoholic",
+        "WalterFootball"
+      ],
+      "rank": 43
+    },
+    {
+      "player": "Greg Dulcich",
+      "position": "TE",
+      "nfl_team": "MIA",
+      "manager": "Glaser",
+      "pick": 163,
+      "adp": 201.5,
+      "mentions": 2,
+      "sources": [
+        "4for4",
+        "ESPN"
+      ],
+      "rank": 44
+    },
+    {
+      "player": "Adonai Mitchell",
+      "position": "WR",
+      "nfl_team": "NYJ",
+      "manager": "Prodahl",
+      "pick": 141,
+      "adp": 208.5,
+      "mentions": 2,
+      "sources": [
+        "ESPN",
+        "FantasyPros"
+      ],
+      "rank": 45
+    },
+    {
+      "player": "Tre Tucker",
+      "position": "WR",
+      "nfl_team": "LV",
+      "manager": "Muenchow",
+      "pick": 135,
+      "adp": 210.5,
+      "mentions": 2,
+      "sources": [
+        "CBS Sports",
+        "WalterFootball"
+      ],
+      "rank": 46
+    },
+    {
+      "player": "Ashton Jeanty",
+      "position": "RB",
+      "nfl_team": "LV",
+      "manager": "Conlin",
+      "pick": 13,
+      "adp": 11.0,
+      "mentions": 1,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 47
+    },
+    {
+      "player": "Javonte Williams",
+      "position": "RB",
+      "nfl_team": "DAL",
+      "manager": "Larson",
+      "pick": 29,
+      "adp": 31.0,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 48
+    },
+    {
+      "player": "Ladd McConkey",
+      "position": "WR",
+      "nfl_team": "LAC",
+      "manager": "Conlin",
+      "pick": 37,
+      "adp": 45.0,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 49
+    },
+    {
+      "player": "TreVeyon Henderson",
+      "position": "RB",
+      "nfl_team": "NE",
+      "manager": "Prodahl",
+      "pick": 52,
+      "adp": 50.7,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 50
+    },
+    {
+      "player": "DJ Moore",
+      "position": "WR",
+      "nfl_team": "BUF",
+      "manager": "Palaia",
+      "pick": 50,
+      "adp": 52.0,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 51
+    },
+    {
+      "player": "Mike Evans",
+      "position": "WR",
+      "nfl_team": "SF",
+      "manager": "Muenchow",
+      "pick": 82,
+      "adp": 60.3,
+      "mentions": 1,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 52
+    },
+    {
+      "player": "Rome Odunze",
+      "position": "WR",
+      "nfl_team": "CHI",
+      "manager": "Zogg",
+      "pick": 56,
+      "adp": 64.0,
+      "mentions": 1,
+      "sources": [
+        "Bleacher Report"
+      ],
+      "rank": 53
+    },
+    {
+      "player": "Carnell Tate",
+      "position": "WR",
+      "nfl_team": "TEN",
+      "manager": "Larson",
+      "pick": 53,
+      "adp": 71.7,
+      "mentions": 1,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 54
+    },
+    {
+      "player": "Brian Thomas Jr.",
+      "position": "WR",
+      "nfl_team": "JAX",
+      "manager": "Goetz",
+      "pick": 72,
+      "adp": 72.7,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 55
+    },
+    {
+      "player": "Rhamondre Stevenson",
+      "position": "RB",
+      "nfl_team": "NE",
+      "manager": "Zogg",
+      "pick": 89,
+      "adp": 75.3,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 56
+    },
+    {
+      "player": "RJ Harvey",
+      "position": "RB",
+      "nfl_team": "DEN",
+      "manager": "Hagan",
+      "pick": 105,
+      "adp": 77.0,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 57
+    },
+    {
+      "player": "Marvin Harrison Jr.",
+      "position": "WR",
+      "nfl_team": "ARI",
+      "manager": "Conlin",
+      "pick": 60,
+      "adp": 77.7,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 58
+    },
+    {
+      "player": "Chuba Hubbard",
+      "position": "RB",
+      "nfl_team": "CAR",
+      "manager": "Goetz",
+      "pick": 73,
+      "adp": 78.0,
+      "mentions": 1,
+      "sources": [
+        "RotoBaller"
+      ],
+      "rank": 59
+    },
+    {
+      "player": "Tony Pollard",
+      "position": "RB",
+      "nfl_team": "TEN",
+      "manager": "Stover",
+      "pick": 70,
+      "adp": 80.0,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 60
+    },
+    {
+      "player": "Trevor Lawrence",
+      "position": "QB",
+      "nfl_team": "JAX",
+      "manager": "Glaser",
+      "pick": 78,
+      "adp": 84.7,
+      "mentions": 1,
+      "sources": [
+        "FantasyPros"
+      ],
+      "rank": 61
+    },
+    {
+      "player": "Michael Wilson",
+      "position": "WR",
+      "nfl_team": "ARI",
+      "manager": "Larson",
+      "pick": 77,
+      "adp": 86.7,
+      "mentions": 1,
+      "sources": [
+        "The Falcoholic"
+      ],
+      "rank": 62
+    },
+    {
+      "player": "J.K. Dobbins",
+      "position": "RB",
+      "nfl_team": "DEN",
+      "manager": "Palaia",
+      "pick": 71,
+      "adp": 92.3,
+      "mentions": 1,
+      "sources": [
+        "RotoBaller"
+      ],
+      "rank": 63
+    },
+    {
+      "player": "George Kittle",
+      "position": "TE",
+      "nfl_team": "SF",
+      "manager": "Prodahl",
+      "pick": 124,
+      "adp": 99.7,
+      "mentions": 1,
+      "sources": [
+        "ESPN"
+      ],
+      "rank": 64
+    },
+    {
+      "player": "Travis Kelce",
+      "position": "TE",
+      "nfl_team": "KC",
+      "manager": "Ainsworth",
+      "pick": 114,
+      "adp": 100.7,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 65
+    },
+    {
+      "player": "Dalton Kincaid",
+      "position": "TE",
+      "nfl_team": "BUF",
+      "manager": "Muenchow",
+      "pick": 154,
+      "adp": 104.7,
+      "mentions": 1,
+      "sources": [
+        "Draft Sharks"
+      ],
+      "rank": 66
+    },
+    {
+      "player": "Quentin Johnston",
+      "position": "WR",
+      "nfl_team": "LAC",
+      "manager": "Goetz",
+      "pick": 97,
+      "adp": 108.7,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 67
+    },
+    {
+      "player": "Jakobi Meyers",
+      "position": "WR",
+      "nfl_team": "JAX",
+      "manager": "Stover",
+      "pick": 94,
+      "adp": 113.3,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 68
+    },
+    {
+      "player": "Mark Andrews",
+      "position": "TE",
+      "nfl_team": "BAL",
+      "manager": "Ainsworth",
+      "pick": 138,
+      "adp": 115.3,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 69
+    },
+    {
+      "player": "Tyler Allgeier",
+      "position": "RB",
+      "nfl_team": "ARI",
+      "manager": "Larson",
+      "pick": 149,
+      "adp": 142.7,
+      "mentions": 1,
+      "sources": [
+        "The Fantasy Football Counselor"
+      ],
+      "rank": 70
+    },
+    {
+      "player": "Rashid Shaheed",
+      "position": "WR",
+      "nfl_team": "SEA",
+      "manager": "Conlin",
+      "pick": 108,
+      "adp": 150.0,
+      "mentions": 1,
+      "sources": [
+        "Draft Sharks"
+      ],
+      "rank": 71
+    },
+    {
+      "player": "Alvin Kamara",
+      "position": "RB",
+      "nfl_team": "NO",
+      "manager": "Pfaffinger",
+      "pick": 131,
+      "adp": 150.0,
+      "mentions": 1,
+      "sources": [
+        "FantasyPros"
+      ],
+      "rank": 72
+    },
+    {
+      "player": "Jonah Coleman",
+      "position": "RB",
+      "nfl_team": "DEN",
+      "manager": "Prodahl",
+      "pick": 172,
+      "adp": 153.3,
+      "mentions": 1,
+      "sources": [
+        "RotoBaller"
+      ],
+      "rank": 73
+    },
+    {
+      "player": "De'Zhaun Stribling",
+      "position": "WR",
+      "nfl_team": "SF",
+      "manager": "Pfaffinger",
+      "pick": 134,
+      "adp": 160.0,
+      "mentions": 1,
+      "sources": [
+        "FantasyPros"
+      ],
+      "rank": 74
+    },
+    {
+      "player": "Jalen Coker",
+      "position": "WR",
+      "nfl_team": "CAR",
+      "manager": "Glaser",
+      "pick": 126,
+      "adp": 162.7,
+      "mentions": 1,
+      "sources": [
+        "RotoBaller"
+      ],
+      "rank": 75
+    },
+    {
+      "player": "Omar Cooper Jr.",
+      "position": "WR",
+      "nfl_team": "NYJ",
+      "manager": "Goetz",
+      "pick": 168,
+      "adp": 171.7,
+      "mentions": 1,
+      "sources": [
+        "FantasyPros"
+      ],
+      "rank": 76
+    },
+    {
+      "player": "Jalen Nailor",
+      "position": "WR",
+      "nfl_team": "LV",
+      "manager": "Goetz",
+      "pick": 145,
+      "adp": 187.7,
+      "mentions": 1,
+      "sources": [
+        "CBS Sports"
+      ],
+      "rank": 77
+    },
+    {
+      "player": "Tank Dell",
+      "position": "WR",
+      "nfl_team": "HOU",
+      "manager": "Glaser",
+      "pick": 150,
+      "adp": 210.5,
+      "mentions": 1,
+      "sources": [
+        "WalterFootball"
+      ],
+      "rank": 78
+    },
+    {
+      "player": "Germie Bernard",
+      "position": "WR",
+      "nfl_team": "PIT",
+      "manager": "Ainsworth",
+      "pick": 175,
+      "adp": 258.0,
+      "mentions": 1,
+      "sources": [
+        "The Falcoholic"
+      ],
+      "rank": 79
+    }
+  ]
+}

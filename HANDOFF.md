@@ -82,6 +82,7 @@ nwl_site/
     ├── draft.html                # Draft board / Round 1-3 Strategy / Slot Analysis / Draft Grades
     ├── transactions.html         # Transaction Log / Trade Database / Summary tabs
     ├── season-2026.html          # Current-season hub - Matchups / Standings / Power Rankings / Commentary
+    ├── draft-analysis.html       # 2026 real-draft analysis - Grades / Contender Profile / Superlatives / Reaches & Steals / Upside Ranking tabs
     └── mock-draft.html           # 15-round mock draft vs 11 CPU managers - own detailed handoff, see below
 ```
 
@@ -112,7 +113,7 @@ Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), 
 
 **Cache-busting:** `style.css` is loaded as `style.css?v=7` from every page (currently) — bump this query string (find/replace across all HTML files) any time style.css changes, since GitHub Pages / most browsers cache it aggressively and won't otherwise pick up edits. Same idea applies to `shared.js?v=10` if that file is ever changed, and to `pickem.js?v=5` on `pickem.html` specifically.
 
-**Nav groups (added this session):** `renderNav()` now splits nav links into two labeled groups instead of one flat list — **In Season** (amber: 2026 Hub, Mock Draft, Pick'em, defined as `NWL_IN_SEASON_PAGES` in `shared.js`) and **League History** (the 6 archive pages, unchanged `NWL_PAGES`) — with a small uppercase `.nav-group-label` before each cluster so the distinction is explicit, not just implied by a divider. The Feedback nav link (and its Google Form) was removed entirely per explicit request, along with the now-dead `.nav-feedback` CSS rule. "2026 Season" was renamed to **"2026 Hub"** everywhere — nav label, `season-2026.html`'s `<title>` and banner, and the banner text on `index.html`/`pickem.html` — filename (`pages/season-2026.html`) was deliberately left unchanged to avoid breaking existing links/bookmarks.
+**Nav groups (added this session):** `renderNav()` now splits nav links into two labeled groups instead of one flat list — **In Season** (amber: 2026 Hub, Mock Draft, Pick'em, Draft Analysis - defined as `NWL_IN_SEASON_PAGES` in `shared.js`) and **League History** (the 6 archive pages, unchanged `NWL_PAGES`) — with a small uppercase `.nav-group-label` before each cluster so the distinction is explicit, not just implied by a divider. The Feedback nav link (and its Google Form) was removed entirely per explicit request, along with the now-dead `.nav-feedback` CSS rule. "2026 Season" was renamed to **"2026 Hub"** everywhere — nav label, `season-2026.html`'s `<title>` and banner, and the banner text on `index.html`/`pickem.html` — filename (`pages/season-2026.html`) was deliberately left unchanged to avoid breaking existing links/bookmarks.
 
 **Logo sizes reduced this session** (per explicit "too big" feedback, reversing some of the earlier session's enlargement): nav logo `88px` (`.brand img`, down from 120px) with `.brand{font-size:1.15rem}` (down from 1.5rem); homepage hero logo `clamp(260px, 42vw, 420px)` (down from `clamp(360px, 58vw, 580px)`).
 
@@ -401,11 +402,14 @@ weekly once the season starts, review/edit the Power Rankings and Commentary dra
 
 ---
 
-## 2026 Draft Grades (added this session)
+## 2026 Draft Analysis (added this session)
 
-The real 2026 draft finished in ESPN; a new script pulls it and grades every team, shown as a
-5th tab ("2026 Draft") on `pages/season-2026.html`, alongside Matchups/Standings/Power
-Rankings/Commentary.
+The real 2026 draft finished in ESPN; a new script pulls it and grades every team. Originally
+shipped as a 5th tab on `pages/season-2026.html`, then **moved to its own dedicated page**,
+`pages/draft-analysis.html`, per explicit request - grouped in nav under "In Season" (alongside
+2026 Hub, Mock Draft, Pick'em), with three tabs of its own: **Grades**, **Superlatives**, and
+**Reaches & Steals**. `season-2026.html` is back to its original 4 tabs (Matchups/Standings/
+Power Rankings/Commentary) with no draft content.
 
 - **`scripts/fetch_espn_draft.py`** - new, one-time-per-draft pull (safe to re-run, just
   overwrites the output). Pulls `view=mDraftDetail` from the same authenticated league endpoint
@@ -442,14 +446,13 @@ Rankings/Commentary.
   breakout bonus on the upside term (unlike the mock draft tool) - ESPN's live API doesn't
   expose either flag for real players. Writes `data/season_2026/draft_grades_2026.json`:
   overall + per-position (QB/RB/WR/TE/HC) + bench grades per manager, plus the full pick list.
-- `pages/season-2026.html`'s new tab reads that file via the page's existing `loadDataSafe()`
-  empty-state pattern, and reuses `pages/draft.html`'s expandable-leaderboard CSS/JS pattern
-  (`.grade-lead`/`.grade-detail`/`gradeBadge()`) rather than inventing a new one - copied inline
-  into this page's own `<style>`/`<script>` since those classes live per-page, not in shared
-  `style.css`. The per-pick table dropped its "vs ADP" column and green/red highlighting
-  entirely per explicit feedback - ADP is still shown for context, just not diffed/colored
-  against the pick number. Verified live in-browser (desktop + mobile widths, table-cards
-  breakpoint), no console errors.
+- The Grades tab reads that file via `loadDataSafe()`, and reuses `pages/draft.html`'s
+  expandable-leaderboard CSS/JS pattern (`.grade-lead`/`.grade-detail`/`gradeBadge()`) rather
+  than inventing a new one - copied inline into `draft-analysis.html`'s own `<style>`/`<script>`
+  since those classes live per-page, not in shared `style.css`. The per-pick table dropped its
+  "vs ADP" column and green/red highlighting entirely per explicit feedback - ADP is still shown
+  for context, just not diffed/colored against the pick number. Verified live in-browser
+  (desktop + mobile widths, table-cards breakpoint), no console errors.
 - Run it again (`python3 scripts/fetch_espn_draft.py`) any time projections/ADP move before the
   season starts - it's a pure recompute, nothing to review/approve first (no `published` gate,
   unlike Power Rankings/Commentary), since it's grading input data, not editorial content.
@@ -468,6 +471,111 @@ Rankings/Commentary.
   `pages/mock-draft.html`'s coach pool as before). This also reshuffled the "biggest reach"
   answer used for the Pick'em draft-night question - see REVIEW_LOG-equivalent chat history if
   you need the before/after numbers.
+- **Superlatives tab**: `data/season_2026/draft_superlatives_2026.json` - one hand-curated
+  fun-fact "award" per manager (12 total, each a distinct category so no two managers get the
+  same kind of superlative - steals, reaches, position stacks, QB/TE/bench extremes, draft-open
+  streaks, etc.), each with a funny title + a data-backed blurb citing real numbers from that
+  manager's draft. This is NOT auto-generated by a formula - it's a one-time curated write-up
+  (Claude picked the most interesting/distinct storyline per manager from the computed stats,
+  by hand, the same way Power Rankings/Commentary blurbs get human judgment applied) - there's
+  no script that regenerates this file, so if the ADP source or grading methodology changes
+  again, the specific numbers cited in these blurbs could go stale and would need a manual
+  re-check/rewrite, not just a script re-run.
+- **Reaches & Steals tab**: no separate data file - computed entirely client-side in
+  `draft-analysis.html` from `draft_grades_2026.json`'s existing per-pick `adp`/`value` fields
+  (top 10 steals by `pick - adp`, top 10 reaches by `adp - pick` restricted to `round <= 13`
+  per explicit request to exclude the last two dart-throw rounds). Head Coach picks excluded
+  from both (no real market ADP for coaches).
+- **Nav**: added `NWL_DRAFT_ANALYSIS_PAGE` to `assets/js/shared.js`'s `NWL_IN_SEASON_PAGES`
+  array (renderNav's single source of truth for nav links - no per-page nav markup to update
+  elsewhere). Bumped `shared.js?v=11` (then `v=12` for the Upside Ranking page below) across
+  every HTML file's script tag per the site's cache-busting convention, since `shared.js`
+  itself changed each time.
+
+---
+
+## Upside Ranking (added this session; moved + broadened next session)
+
+Ranks our 168 drafted skill-position players by how often real fantasy football media named them
+as a "sleeper," "breakout," or "league winner" for 2026. **Originally its own top-level page**
+(`pages/upside-ranking.html`, `NWL_UPSIDE_RANKING_PAGE` in nav) - per explicit follow-up request,
+**moved to live as a tab inside `pages/draft-analysis.html` instead** (final tab: "Upside
+Ranking", with its own small `.subtab-btn` toggle between **Player Rankings** and **By Manager**,
+since it's really two sub-views, not two top-level tabs). `pages/upside-ranking.html` was deleted
+and `NWL_UPSIDE_RANKING_PAGE` removed from `shared.js`'s `NWL_IN_SEASON_PAGES` - Draft Analysis
+is now the only nav entry for all of this.
+
+- **Not a stats projection** - a media-buzz signal. Research was broadened from the original pass
+  (12 articles, 8 outlets, 70/168 players matched) to **24 articles across 13 outlets** (added
+  Bleacher Report, 4for4, FantasyPros' own written sleeper articles, The Falcoholic/SB Nation's
+  "32 teams, 32 sleepers" list, and DIRECTV Insider) per explicit request for more comprehensive
+  coverage - now **79 of 168 drafted skill players (47%)** show up in at least one article, 254
+  total mentions. Same extraction method throughout: read each article, pull every named player,
+  normalize name, match against our actual draft picks.
+- FantasyPros' own sleepers *hub* (`fantasypros.com/content/nfl/sleepers-nfl/`) is still not used
+  as a source - it's a login-gated aggregator page, not a discrete player list - but FantasyPros'
+  own *written* sleeper articles (e.g. "20 Fantasy Football Sleepers Experts Love to Draft") are
+  fully public and were added this pass.
+- Score = raw mention count (an ESPN "10 analysts pick a sleeper per position" grid or a
+  "32 teams, 32 sleepers" list counts each pick as its own mention). Ties broken by real market
+  ADP (FantasyPros, same file the draft grading uses) - earlier-ADP player ranks higher on a tie.
+- **Hand-researched, not script-generated** - same caveat as the Superlatives file: there's no
+  script that re-runs this search. `data/season_2026/upside_rankings_2026.json` is a point-in-time
+  snapshot (articles dated May-Aug 2026); re-running this later in the season means redoing the
+  web research pass by hand, not just re-executing something.
+- Interesting cross-reference with the Draft Analysis grades: **Glaser** has both the league's
+  worst overall draft grade (F) and the single most media hype on the roster (27 total mentions
+  across 10 flagged players after the broadened pass) - a "boom or bust" profile the two pages
+  tell different halves of.
+- Verified live in-browser (desktop + mobile widths, table-cards breakpoint), no console errors.
+
+---
+
+## Per-pick Value grade + Contender Profile (added this session)
+
+Two more additions to `pages/draft-analysis.html` / `scripts/fetch_espn_draft.py`, both from the
+same follow-up request as the Upside Ranking move above.
+
+**Per-pick Value grade** (Grades tab): expanding a manager's row now shows a letter grade on
+every individual pick, not just raw stats - a new "Value" column on the pick table (desktop
+table and mobile `.table-card` both). Mirrors `pages/mock-draft.html`'s `computePickGrades`
+shape: **75% quality** (VBD percentile) + **25% ADP value** (percentile of `pick - adp`), both
+percentile-ranked across **all 180 real picks** (not per-manager) via the new
+`compute_pick_grades()` in `fetch_espn_draft.py`, writing `pick_grade`/`pick_percentile` onto
+every pick record. Head Coach picks are quality-only (no real market ADP), consistent with how
+the rest of the script already treats them.
+
+**Contender Profile** (new Draft Analysis tab, 2nd position, right after Grades): the
+"does roster construction predict winning" framework Hunter asked for. Before building anything,
+Claude analyzed all 13 years of NWL championship-winning drafts (`data/team_seasons_playoff.json`
+`final_finish == '1'` joined against `data/draft_picks.json` and `data/draft_grades.json`) to see
+what actually correlates with winning:
+- **Positional pick mix** (RB%/WR%/QB%/TE% of total picks) does NOT distinguish champions from
+  the field - both are ~31% RB / ~36% WR.
+- **Our own existing draft-grade methodology** (the z-scored ADP-value-vs-finish composite
+  `pages/draft.html` already computes) is a weak predictor - the champion's own within-season
+  draft-grade rank averaged **6th of ~12** (league-average) across 13 years, and the 2014
+  champion (Glaser) had the single **worst-graded draft in the league that year** and still won
+  it all.
+- **"Difference-maker depth"** - how many picks finished as a top-12 or top-24 fantasy performer
+  at their position that season, regardless of when drafted - was the best signal found, but only
+  **moderate**: champions averaged roughly top-3-of-12 in the league on this measure.
+
+Given confirmed with Hunter directly: because the signal is real but too weak to justify moving
+a team's letter grade, **Contender Profile is informational only - it is NOT blended into the
+overall/position/bench grades**. For 2026 (no actual finishes exist yet), the metric is proxied
+by ranking every drafted player's 2026 projected points against the full projected pool at their
+position (`assign_position_pool_ranks()` in `fetch_espn_draft.py`, run once right after
+`fetch_player_pool()` - flags every pick `is_top12`/`is_top24`), then blending each manager's
+`top12_hits`/`top24_hits` counts **60/40** (top-12 was the tighter historical correlate) into a
+`contender_profile.grade` per manager via `compute_contender_profile()`. The tab itself leads
+with the honest historical writeup (verbatim, from `CONTENDER_HISTORICAL_CONTEXT` in the script
+so the page and this doc always agree) before the leaderboard, explicitly captioned as directional
+pattern-matching against a 13-team-year sample, not a prediction.
+
+Both re-ran cleanly (`python3 scripts/fetch_espn_draft.py`) and were verified live in-browser
+(desktop table + mobile cards for the Value column; Contender Profile tab renders the full
+historical writeup + per-manager leaderboard), no console errors.
 
 ---
 

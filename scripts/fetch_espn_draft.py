@@ -105,6 +105,18 @@ GRADE_WEIGHTS = {"starter_points": 0.55, "bench_points": 0.15, "value": 0.15, "u
 # was split into the 4-way starter/bench breakdown.
 SUBGRADE_WEIGHTS = {"points": 0.80, "value": 0.08, "upside": 0.12}
 
+# Per-pick grade (shown when a manager's row is expanded on the Grades tab): mirrors
+# pages/mock-draft.html's computePickGrades (mostly "how good is this player" with ADP value as
+# a smaller adjustment) - percentile-ranked across all 180 real picks, not per-manager, so a
+# pick's grade reflects how it stacks up against the whole draft.
+PICK_GRADE_WEIGHTS = {"quality": 0.75, "value": 0.25}
+
+# Contender Profile (informational only - see build_contender_profile): how many of a manager's
+# picks project as a top-12 / top-24 fantasy finisher at their position, blended 60/40 since
+# top-12 depth was the tighter of the two historical correlates with actually winning the
+# league (see the "historical_context" written into the output file for the real numbers).
+CONTENDER_WEIGHTS = {"top12": 0.6, "top24": 0.4}
+
 try:
     import certifi
     SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
@@ -253,7 +265,22 @@ def fetch_player_pool(season):
     if fp_adp:
         print(f"Matched {fp_matched}/{len(pool)} of them to FantasyPros market ADP "
               f"(the rest fall outside FantasyPros' ~337-player list and use ESPN's ADP instead).")
+    assign_position_pool_ranks(pool)
     return pool
+
+
+def assign_position_pool_ranks(player_pool):
+    """Ranks every pooled player against others at their own position by projected points, and
+    mutates each entry with position_pool_rank/position_pool_size - feeds the Contender Profile's
+    top-12/top-24 "difference-maker depth" metric (see build_contender_profile)."""
+    by_pos = {}
+    for entry in player_pool.values():
+        by_pos.setdefault(entry["pos"], []).append(entry)
+    for pos, entries in by_pos.items():
+        entries.sort(key=lambda e: -e["pts"])
+        for i, entry in enumerate(entries):
+            entry["position_pool_rank"] = i + 1
+            entry["position_pool_size"] = len(entries)
 
 
 def load_coach_pool():
@@ -281,11 +308,12 @@ def resolve_pick_player(pick, player_pool, coach_pool):
         coach = coach_pool.get(abbrev)
         if coach:
             return {"name": coach["n"], "pos": "HC", "nfl_team": abbrev,
-                     "pts": coach.get("pts", 0.0), "adp": coach.get("adp", 999.0), "dr": coach.get("adp", 999.0)}
+                     "pts": coach.get("pts", 0.0), "adp": coach.get("adp", 999.0), "dr": coach.get("adp", 999.0),
+                     "position_pool_rank": None, "position_pool_size": None}
         return {"name": f"{abbrev or 'Unknown'} Head Coach", "pos": "HC", "nfl_team": abbrev,
-                 "pts": 0.0, "adp": 999.0, "dr": 999.0}
+                 "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None}
     return {"name": f"Unmatched Player {pid}", "pos": "UNK", "nfl_team": "",
-             "pts": 0.0, "adp": 999.0, "dr": 999.0}
+             "pts": 0.0, "adp": 999.0, "dr": 999.0, "position_pool_rank": None, "position_pool_size": None}
 
 
 def assign_optimal_lineup(records):
@@ -413,6 +441,72 @@ def ranked_position(pct_dict, key):
     return ordered.index(key) + 1
 
 
+def compute_pick_grades(all_picks_flat):
+    """Mutates every record in all_picks_flat with pick_grade/pick_percentile - quality (VBD)
+    percentile-ranked across the whole draft, blended with ADP-value percentile per
+    PICK_GRADE_WEIGHTS. Head Coach picks have no real market ADP, so they're graded on quality
+    alone (consistent with how the rest of this script already treats them)."""
+    quality_pct = percentile_ranks({i: r["vbd"] for i, r in enumerate(all_picks_flat)})
+    value_pct = percentile_ranks({i: r["value"] for i, r in enumerate(all_picks_flat)})
+    for i, r in enumerate(all_picks_flat):
+        if r["position"] == "HC":
+            pct = quality_pct[i]
+        else:
+            pct = (PICK_GRADE_WEIGHTS["quality"] * quality_pct[i]
+                   + PICK_GRADE_WEIGHTS["value"] * value_pct[i])
+        r["pick_grade"] = gradeLetter(pct)
+        r["pick_percentile"] = round(pct, 4)
+
+
+# The three historical findings from analyzing all 13 NWL championship-winning drafts (see
+# HANDOFF.md for the full writeup and how these were derived from data/team_seasons_playoff.json
+# + data/draft_picks.json + data/draft_grades.json) - written once here so build_contender_profile
+# and the output JSON both quote the exact same numbers.
+CONTENDER_HISTORICAL_CONTEXT = {
+    "sample_size": 13,
+    "position_mix_finding": ("Positional pick mix (RB%/WR%/QB%/TE% of total picks) does NOT "
+                              "distinguish champions from the field - champions drafted ~31% RB "
+                              "/ ~36% WR, statistically identical to everyone else."),
+    "draft_value_finding": ("Our own draft-grade methodology (ADP value vs. eventual finish) is "
+                             "a weak predictor - the champion's within-season draft-grade rank "
+                             "averaged 6th of ~12 (league-average) across 13 years, and the 2014 "
+                             "champion (Glaser) had the single WORST-graded draft in the league "
+                             "that year and still won it all."),
+    "difference_maker_finding": ("The best signal found was \"difference-maker depth\" - how "
+                                  "many picks finished as a top-12 or top-24 fantasy performer "
+                                  "at their position that season, regardless of when drafted. "
+                                  "Champions averaged roughly top-3-of-12 in the league on this "
+                                  "measure - a real but only moderate correlation, not a "
+                                  "guarantee."),
+    "note": ("This is why Contender Profile is informational only and is NOT blended into the "
+              "overall/position/bench grades above - the historical signal is real but too weak "
+              "to justify moving a team's letter grade on it. 2026 has no actual finishes yet, "
+              "so top-12/top-24 hits here are proxied by each pick's projected points rank "
+              "against the full 2026 projected pool at their position, the same shape as the "
+              "historical metric."),
+}
+
+
+def compute_contender_profile(all_picks_by_manager):
+    top12_hits, top24_hits = {}, {}
+    for mgr, recs in all_picks_by_manager.items():
+        skill_recs = [r for r in recs if r["position"] != "HC"]
+        top12_hits[mgr] = sum(1 for r in skill_recs if r["is_top12"])
+        top24_hits[mgr] = sum(1 for r in skill_recs if r["is_top24"])
+
+    graded = blended_grade({"top12": top12_hits, "top24": top24_hits}, CONTENDER_WEIGHTS)
+
+    managers_out = {}
+    for mgr in all_picks_by_manager:
+        managers_out[mgr] = {
+            "top12_hits": top12_hits[mgr],
+            "top24_hits": top24_hits[mgr],
+            "percentile": graded[mgr]["percentile"],
+            "grade": graded[mgr]["grade"],
+        }
+    return {"historical_context": CONTENDER_HISTORICAL_CONTEXT, "weights": CONTENDER_WEIGHTS, "managers": managers_out}
+
+
 def build_grades(picks, player_pool, coach_pool, team_map):
     vbd_baseline = compute_vbd_baseline(player_pool)
 
@@ -422,6 +516,8 @@ def build_grades(picks, player_pool, coach_pool, team_map):
         player = resolve_pick_player(pick, player_pool, coach_pool)
         reach = pick["overallPickNumber"] - player["adp"]
         vbd = upside_score(player, vbd_baseline)
+        pool_rank = player.get("position_pool_rank")
+        pool_size = player.get("position_pool_size")
         record = {
             "round": pick["roundId"],
             "pick": pick["overallPickNumber"],
@@ -434,8 +530,16 @@ def build_grades(picks, player_pool, coach_pool, team_map):
             "value": round(reach, 1),
             "vbd": round(vbd, 1),
             "keeper": pick.get("keeper", False),
+            "position_pool_rank": pool_rank,
+            "position_pool_size": pool_size,
+            "is_top12": pool_rank is not None and pool_rank <= 12,
+            "is_top24": pool_rank is not None and pool_rank <= 24,
         }
         all_picks_by_manager.setdefault(manager, []).append(record)
+
+    # Per-pick grade (mostly "how good is this player," with ADP value as a smaller adjustment),
+    # percentile-ranked across ALL 180 real picks - shown when a manager's row is expanded.
+    compute_pick_grades([r for recs in all_picks_by_manager.values() for r in recs])
 
     # Assigns each manager's full draft class to the best possible starting lineup by
     # projected points (see assign_optimal_lineup) - sets "slot"/"is_starter" on every record.
@@ -510,7 +614,9 @@ def build_grades(picks, player_pool, coach_pool, team_map):
             },
             "picks": sorted(all_picks_by_manager[mgr], key=lambda r: r["pick"]),
         })
-    return managers_out
+
+    contender_profile = compute_contender_profile(all_picks_by_manager)
+    return managers_out, contender_profile
 
 
 def main():
@@ -530,7 +636,7 @@ def main():
     if unmatched:
         print(f"WARNING: {len(unmatched)} drafted player IDs had no ESPN projection match: {unmatched}")
 
-    managers_out = build_grades(picks, player_pool, coach_pool, team_map)
+    managers_out, contender_profile = build_grades(picks, player_pool, coach_pool, team_map)
 
     output = {
         "season": args.season,
@@ -546,9 +652,14 @@ def main():
                      "the heaviest signal), bench points "
                      f"({round(GRADE_WEIGHTS['bench_points']*100)}%), ADP-reach value "
                      f"({round(GRADE_WEIGHTS['value']*100)}%), and VBD upside "
-                     f"({round(GRADE_WEIGHTS['upside']*100)}%)."),
+                     f"({round(GRADE_WEIGHTS['upside']*100)}%). Each pick's own Value grade "
+                     f"(shown when a manager's row is expanded) is a separate blend - "
+                     f"{round(PICK_GRADE_WEIGHTS['quality']*100)}% quality (points over "
+                     f"replacement) / {round(PICK_GRADE_WEIGHTS['value']*100)}% ADP value - "
+                     "percentile-ranked across all 180 real picks, not per-manager."),
         },
         "managers": managers_out,
+        "contender_profile": contender_profile,
     }
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_PATH, "w") as f:
