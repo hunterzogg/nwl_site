@@ -49,6 +49,34 @@
   font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--text-muted); margin-bottom: 12px; border-left: 3px solid var(--live); padding-left: 10px;
 }
+.methodology {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
+}
+.methodology strong { color: var(--text); }
+.methodology details summary { cursor: pointer; color: var(--live-bright); font-size: 0.85rem; margin-top: 8px; }
+.grade-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  min-width: 42px; padding: 4px 8px; border-radius: 5px; letter-spacing: 0.02em;
+}
+.grade-badge.sm { font-size: 0.8rem; min-width: 34px; padding: 2px 6px; }
+.grade-lead {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+  cursor: pointer; flex-wrap: wrap;
+}
+.grade-lead .rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 26px; flex-shrink: 0; }
+.grade-lead .mgr-body { flex: 1; min-width: 180px; }
+.grade-lead .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.grade-lead .chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.15s; flex-shrink: 0; }
+.grade-lead.expanded .chevron { transform: rotate(180deg); }
+.grade-detail { display: none; padding: 12px 18px 16px; margin-top: -10px; margin-bottom: 10px; border: 1px solid var(--line); border-top: none; border-radius: 0 0 8px 8px; background: var(--surface); }
+.grade-detail.expanded { display: block; }
+.composite { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem; flex-shrink: 0; }
+.pos-grade-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.pos-grade-chip { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--text-muted); }
+.pos-grade-chip .lbl { font-family: var(--font-mono); }
 </style>
 </head>
 <body>
@@ -69,6 +97,7 @@
     <button class="tab-btn" data-tab="standings">Standings</button>
     <button class="tab-btn" data-tab="power">Power Rankings</button>
     <button class="tab-btn" data-tab="commentary">Commentary</button>
+    <button class="tab-btn" data-tab="draft">2026 Draft</button>
   </div>
 
   <div class="panel active" id="panel-matchups">
@@ -95,6 +124,10 @@
     </div>
     <div id="commentaryContent"></div>
   </div>
+
+  <div class="panel" id="panel-draft">
+    <div id="draftContent"></div>
+  </div>
 </div>
 
 <footer>National Wayzata League &middot; est. 2013</footer>
@@ -102,7 +135,7 @@
 <script src="../assets/js/shared.js?v=10"></script>
 <script>
 let managers = [];
-let matchups = [], standings = null, powerRankings = [], commentary = [];
+let matchups = [], standings = null, powerRankings = [], commentary = [], draftGrades = null;
 
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
@@ -214,6 +247,109 @@ function renderPower() {
   `).join('');
 }
 
+// ---------- 2026 Draft ----------
+function gradeColor(label) {
+  if (label.startsWith('A')) return '#4FA876';
+  if (label.startsWith('B')) return '#4F86D6';
+  if (label.startsWith('C')) return '#9AA5B8';
+  if (label.startsWith('D')) return '#D9B23C';
+  return '#E0524A';
+}
+function gradeBadge(label, sm) {
+  return `<span class="grade-badge${sm ? ' sm' : ''}" style="background:${gradeColor(label)}22;color:${gradeColor(label)};border:1px solid ${gradeColor(label)}55;">${label}</span>`;
+}
+
+function pickTableHTML(picks) {
+  const rowHTML = (p) => `
+    <td class="num">${p.round}.${p.round_pick}</td>
+    <td>${p.player}${p.keeper ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(keeper)</span>' : ''}</td>
+    <td>${posTag(p.position)}</td>
+    <td>${p.nfl_team || ''}</td>
+    <td class="num">${p.projected_pts.toFixed(1)}</td>
+    <td class="num">${p.adp !== null ? p.adp.toFixed(1) : '—'}</td>
+    <td>${p.is_starter ? p.slot : 'Bench'}</td>
+  `;
+  return `
+    <div class="table-wide" style="overflow-x:auto;">
+    <table>
+      <thead><tr><th class="num">Pick</th><th>Player</th><th>Pos</th><th>NFL</th><th class="num">Proj Pts</th><th class="num">ADP</th><th>Slot</th></tr></thead>
+      <tbody>${picks.map(p => `<tr>${rowHTML(p)}</tr>`).join('')}</tbody>
+    </table>
+    </div>
+    <div class="table-cards">
+      ${picks.map(p => `
+        <div class="table-card">
+          <div class="table-card-top">
+            <span class="grow">${p.player}</span>
+            ${posTag(p.position)}
+          </div>
+          <div class="table-card-sub">Pick ${p.round}.${p.round_pick} &middot; ${p.nfl_team || ''} &middot; ${p.is_starter ? p.slot : 'Bench'}</div>
+          <div class="table-card-sub">${p.projected_pts.toFixed(1)} proj pts &middot; ADP ${p.adp !== null ? p.adp.toFixed(1) : '—'}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderDraft() {
+  if (!draftGrades || !draftGrades.managers || !draftGrades.managers.length) {
+    document.getElementById('draftContent').innerHTML = emptyState(
+      'No draft data yet', 'Run scripts/fetch_espn_draft.py once the 2026 draft is complete.');
+    return;
+  }
+  const POS_ORDER = ['QB', 'RB', 'WR', 'TE', 'HC'];
+  document.getElementById('draftContent').innerHTML = `
+    <div class="methodology">
+      ${draftGrades.methodology.note}
+      <details>
+        <summary>Show grade weighting</summary>
+        <div style="margin-top:8px;">
+          Overall grade blends four percentile-ranked signals across all 12 teams:
+          <strong>${Math.round(draftGrades.methodology.grade_weights.starter_points * 100)}%</strong> best-possible starting-lineup projected points (the heaviest signal),
+          <strong>${Math.round(draftGrades.methodology.grade_weights.bench_points * 100)}%</strong> bench projected points,
+          <strong>${Math.round(draftGrades.methodology.grade_weights.value * 100)}%</strong> ADP-reach value,
+          <strong>${Math.round(draftGrades.methodology.grade_weights.upside * 100)}%</strong> upside over each position's replacement baseline.
+          Position and bench badges below use a separate points-dominant blend scoped to just that group's picks.
+        </div>
+      </details>
+    </div>
+    <p class="updated-note">Updated ${new Date(draftGrades.updated_at).toLocaleString()}</p>
+    <div id="draftLeaderboard"></div>
+  `;
+
+  document.getElementById('draftLeaderboard').innerHTML = draftGrades.managers.map((m, i) => `
+    <div class="grade-lead" data-manager="${m.manager}">
+      <span class="rank-num">${i + 1}</span>
+      ${gradeBadge(m.overall_grade)}
+      <div class="mgr-body">
+        ${managerTag(managers, m.manager)}
+        <div class="mgr-sub">${m.starter_projected_pts.toFixed(1)} starter pts &middot; ${m.bench_projected_pts.toFixed(1)} bench pts &middot; bench grade ${gradeBadge(m.bench_grade.grade, true)}</div>
+      </div>
+      <span class="composite">Value ${Math.round(m.overall_percentile * 100)}</span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="grade-detail">
+      <div class="pos-grade-row">
+        ${POS_ORDER.map(pos => `
+          <span class="pos-grade-chip">
+            <span class="lbl">${pos}</span>
+            ${gradeBadge(m.position_grades[pos].grade, true)}
+          </span>
+        `).join('')}
+        <span class="pos-grade-chip"><span class="lbl">BENCH</span>${gradeBadge(m.bench_grade.grade, true)}</span>
+      </div>
+      ${pickTableHTML(m.picks)}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.grade-lead').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('expanded');
+      el.nextElementSibling.classList.toggle('expanded');
+    });
+  });
+}
+
 const GISCUS_REPO = 'hunterzogg/nwl_site';
 const GISCUS_REPO_ID = 'R_kgDOTSHvaA';
 const GISCUS_CATEGORY = 'Announcements';
@@ -259,11 +395,12 @@ function renderCommentary() {
 
 async function init() {
   managers = await getManagers();
-  [matchups, standings, powerRankings, commentary] = await Promise.all([
+  [matchups, standings, powerRankings, commentary, draftGrades] = await Promise.all([
     loadDataSafe('season_2026/matchups', []),
     loadDataSafe('season_2026/standings', null),
     loadDataSafe('season_2026/power_rankings', []),
     loadDataSafe('season_2026/commentary', []),
+    loadDataSafe('season_2026/draft_grades_2026', null),
   ]);
 
   const matchupWeeks = matchups.map(m => m.week);
@@ -279,6 +416,7 @@ async function init() {
   renderStandings();
   renderPower();
   renderCommentary();
+  renderDraft();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {

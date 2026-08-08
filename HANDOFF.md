@@ -401,6 +401,61 @@ weekly once the season starts, review/edit the Power Rankings and Commentary dra
 
 ---
 
+## 2026 Draft Grades (added this session)
+
+The real 2026 draft finished in ESPN; a new script pulls it and grades every team, shown as a
+5th tab ("2026 Draft") on `pages/season-2026.html`, alongside Matchups/Standings/Power
+Rankings/Commentary.
+
+- **`scripts/fetch_espn_draft.py`** - new, one-time-per-draft pull (safe to re-run, just
+  overwrites the output). Pulls `view=mDraftDetail` from the same authenticated league endpoint
+  `fetch_espn_week.py` already uses (same `espn_credentials.json`/`espn_team_map.json`) for the
+  180 real picks, and the public no-auth `kona_player_info` endpoint (same one the mock draft
+  tool's ADP refresh uses - see that tool's own HANDOFF) for every skill player's 2026 projected
+  points and real ADP, matched by ESPN's numeric player ID (more reliable than name-matching).
+  Head Coach picks come back from `mDraftDetail` with a negative playerId encoding the NFL team
+  (`-14000 - proTeamId`) since `kona_player_info` doesn't cover coaches - those are matched
+  against the 32-team coach pool already embedded in `pages/mock-draft.html` instead.
+- Starters/bench aren't read from ESPN's live roster (it changes all season) and aren't just
+  "whoever was drafted into which round" either - `assign_optimal_lineup()` re-assigns each
+  manager's full 15-man draft class to the best possible starting lineup by projected points
+  (1 QB, 2 RB, 2 WR, 1 TE, 1 TE/WR flex, 1 FLEX (RB/WR/TE), 1 HC - confirmed against this
+  league's real `mSettings` `rosterSettings.lineupSlotCounts`), not the order things were
+  drafted in. QB/HC have no competition for their single slot; RB/WR/TE share a nested set of
+  slots (WR/TE can also fill the flex, RB/WR/TE can also fill FLEX) and are processed together
+  in points-descending order, each player taking the most specific slot still open to it - the
+  standard (and optimal, by an exchange argument) greedy for this kind of nested/laminar
+  flex-slot structure. Fixed a real case this caught: a lower-projected tight end taken earlier
+  no longer blocks a higher-projected one taken later from starting.
+- Overall team grade = percentile blend across all 12 teams of **four** signals, reweighted per
+  explicit follow-up feedback: **55% best-lineup starting points (heaviest), 15% bench points,
+  15% ADP-reach value, 15% VBD upside** (`GRADE_WEIGHTS`) - up from the first pass's 3-signal,
+  points-only-for-starters formula. Position sub-grades (QB/RB/WR/TE/HC) use the original 3-way
+  points-dominant blend (`SUBGRADE_WEIGHTS`, 80/8/12), but are scoped to **starters only** at
+  that position per explicit fix - extra bench-only picks at a position no longer move that
+  position's grade either way, since they're already captured in the separate bench grade
+  instead. (Concrete case that motivated the fix: Zogg's WR corps graded D+ under the old
+  "sum of every WR pick's points" metric, because teams that happened to draft more total WRs
+  racked up a bigger sum regardless of lineup quality - his actual 4 starting WRs were
+  excellent. Now scored on starters only, it grades A.) The bench-only badge uses the same
+  3-way blend, scoped to bench-slotted picks regardless of position - unchanged. No rookie/
+  breakout bonus on the upside term (unlike the mock draft tool) - ESPN's live API doesn't
+  expose either flag for real players. Writes `data/season_2026/draft_grades_2026.json`:
+  overall + per-position (QB/RB/WR/TE/HC) + bench grades per manager, plus the full pick list.
+- `pages/season-2026.html`'s new tab reads that file via the page's existing `loadDataSafe()`
+  empty-state pattern, and reuses `pages/draft.html`'s expandable-leaderboard CSS/JS pattern
+  (`.grade-lead`/`.grade-detail`/`gradeBadge()`) rather than inventing a new one - copied inline
+  into this page's own `<style>`/`<script>` since those classes live per-page, not in shared
+  `style.css`. The per-pick table dropped its "vs ADP" column and green/red highlighting
+  entirely per explicit feedback - ADP is still shown for context, just not diffed/colored
+  against the pick number. Verified live in-browser (desktop + mobile widths, table-cards
+  breakpoint), no console errors.
+- Run it again (`python3 scripts/fetch_espn_draft.py`) any time projections/ADP move before the
+  season starts - it's a pure recompute, nothing to review/approve first (no `published` gate,
+  unlike Power Rankings/Commentary), since it's grading input data, not editorial content.
+
+---
+
 ## Known Bugs & Data Issues
 
 ### Active / Unresolved
