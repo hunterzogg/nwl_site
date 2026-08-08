@@ -453,6 +453,21 @@ Rankings/Commentary.
 - Run it again (`python3 scripts/fetch_espn_draft.py`) any time projections/ADP move before the
   season starts - it's a pure recompute, nothing to review/approve first (no `published` gate,
   unlike Power Rankings/Commentary), since it's grading input data, not editorial content.
+- **ADP source swapped from ESPN's own number to real market-consensus ADP**, per explicit
+  request: FantasyPros' half-PPR overall ADP page (average of Yahoo/Sleeper/RTSports) now feeds
+  every value/reach signal (the per-pick "vs ADP" number, `avg_adp_value`, and the `value`
+  component of both the overall and sub-grade blends) instead of ESPN's in-house ADP. FantasyPros
+  paywalls everything past the top 5 rows without a login, and Claude can't create accounts or
+  log in - so this isn't a live pull. Hunter exported the full CSV himself and it's checked into
+  `scripts/fantasypros_adp_2026.csv` (a one-time snapshot, not a secret, not auto-refreshed - it
+  needs a fresh manual export + overwrite if you want current numbers later in the season).
+  `load_fantasypros_adp()` parses it and matches to ESPN's player pool by normalized name (strip
+  punctuation/Jr./Sr./II-IV, lowercase) - matched 168/168 drafted skill players cleanly on the
+  first pass. ESPN's own ADP is kept as a fallback (`espn_adp` field) for anything unmatched, and
+  Head Coach ADP is untouched (FantasyPros doesn't carry coach entries - still sourced from
+  `pages/mock-draft.html`'s coach pool as before). This also reshuffled the "biggest reach"
+  answer used for the Pick'em draft-night question - see REVIEW_LOG-equivalent chat history if
+  you need the before/after numbers.
 
 ---
 

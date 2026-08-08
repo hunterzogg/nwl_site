@@ -10,18 +10,26 @@ fresh computation (useful if projections/ADP move before the season starts).
 Data pulled:
   1. mDraftDetail (authenticated, same espn_credentials.json as fetch_espn_week.py) - the
      actual picks: teamId, playerId, round, overall pick number, keeper flag.
-  2. kona_player_info (public, no auth needed) - the same projections/ADP endpoint the mock
-     draft tool uses (see its own HANDOFF.md): each player's 2026 projected points
-     (stats[{seasonId:2026,statSourceId:1,statSplitTypeId:0}].appliedTotal) and real crowd ADP
-     (ownership.averageDraftPosition). Matched to draft picks by ESPN's numeric player ID -
-     more reliable than the mock draft tool's name-matching, since draft picks and this
-     endpoint share the same global ESPN player ID space.
+  2. kona_player_info (public, no auth needed) - the same projections endpoint the mock draft
+     tool uses (see its own HANDOFF.md): each player's 2026 projected points
+     (stats[{seasonId:2026,statSourceId:1,statSplitTypeId:0}].appliedTotal). Matched to draft
+     picks by ESPN's numeric player ID - more reliable than the mock draft tool's name-matching,
+     since draft picks and this endpoint share the same global ESPN player ID space.
   3. Head Coach picks (draftable in this league's format) come back from mDraftDetail with a
      negative playerId encoding the NFL team (-14000 - proTeamId, e.g. -14012 = Chiefs,
      proTeamId 12) since kona_player_info only covers skill-position players, not coaches.
      Projected points/ADP for coaches are read from pages/mock-draft.html's embedded coach
      pool (the same 32-team projected-wins-based dataset that tool already uses) rather than
      re-derived here.
+  4. ADP itself is NOT ESPN's own internal number - it's real market-consensus ADP (average of
+     Yahoo/Sleeper/RTSports) from FantasyPros' half-PPR overall ADP page, per explicit request
+     to grade against the wider market rather than ESPN's in-house number. FantasyPros paywalls
+     everything past the top 5 rows without a login, so there's no live pull here - Hunter
+     hand-exported the full CSV (scripts/fantasypros_adp_2026.csv, a one-time snapshot, not
+     auto-refreshed) and it's matched to drafted players by normalized name (168/168 skill
+     players matched cleanly on the first pass - see load_fantasypros_adp()). Falls back to
+     ESPN's own ADP for anything unmatched (shouldn't happen for real drafted players, but
+     could for a name FantasyPros doesn't carry).
 
 Grading methodology (adapted from pages/mock-draft.html's computeGrades/computePickGrades -
 see draft_grades_2026.json's "methodology" field for the exact weights):
@@ -46,6 +54,7 @@ Setup: identical to fetch_espn_week.py - needs scripts/espn_credentials.json (gi
 personal ESPN login cookies) already in place. No new setup if that script has been run before.
 """
 import argparse
+import csv
 import json
 import re
 import ssl
@@ -60,6 +69,7 @@ SITE_DIR = SCRIPT_DIR.parent
 CREDENTIALS_PATH = SCRIPT_DIR / "espn_credentials.json"
 TEAM_MAP_PATH = SCRIPT_DIR / "espn_team_map.json"
 MOCK_DRAFT_PATH = SITE_DIR / "pages" / "mock-draft.html"
+FANTASYPROS_ADP_PATH = SCRIPT_DIR / "fantasypros_adp_2026.csv"
 OUTPUT_PATH = SITE_DIR / "data" / "season_2026" / "draft_grades_2026.json"
 
 DEFAULT_LEAGUE_ID = 39276
@@ -165,6 +175,40 @@ def fetch_draft_picks(league_id, season, creds):
     return picks
 
 
+def _normalize_name(name):
+    """Loose match key for cross-source name matching (ESPN vs FantasyPros): lowercase, drop
+    punctuation and Jr./Sr./II/III/IV suffixes, collapse whitespace."""
+    name = name.lower()
+    name = re.sub(r"[.']", "", name)
+    name = re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "", name)
+    name = re.sub(r"[^a-z0-9\s]", " ", name)
+    return re.sub(r"\s+", " ", name).strip()
+
+
+def load_fantasypros_adp():
+    """Real market-consensus ADP (average of Yahoo/Sleeper/RTSports) from FantasyPros' half-PPR
+    overall ADP page, used in place of ESPN's own in-house ADP for every value/reach signal.
+    FantasyPros paywalls everything past the top 5 rows without a login, so this isn't a live
+    pull - it's a hand-exported CSV snapshot (scripts/fantasypros_adp_2026.csv). Re-export and
+    overwrite that file if you want a fresher snapshot before re-running this script."""
+    if not FANTASYPROS_ADP_PATH.exists():
+        print(f"WARNING: {FANTASYPROS_ADP_PATH} not found - falling back to ESPN's own ADP for value/reach.")
+        return {}
+    adp = {}
+    with open(FANTASYPROS_ADP_PATH) as f:
+        for row in csv.DictReader(f):
+            raw = row.get("Player (Bye)", "")
+            m = re.match(r"^(.*?)\s{2,}\S.*\(\d+\)\s*$", raw)
+            name = m.group(1).strip() if m else raw.strip()
+            try:
+                avg = float(row["AVG"])
+            except (ValueError, KeyError):
+                continue
+            adp[_normalize_name(name)] = avg
+    print(f"Loaded {len(adp)} FantasyPros market ADP values from {FANTASYPROS_ADP_PATH.name}.")
+    return adp
+
+
 def fetch_player_pool(season):
     path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leaguedefaults/3"
     filt = json.dumps({
@@ -176,7 +220,9 @@ def fetch_player_pool(season):
         }
     })
     data = http_get(f"{API_HOST}{path}?view=kona_player_info", extra_headers={"x-fantasy-filter": filt})
+    fp_adp = load_fantasypros_adp()
     pool = {}
+    fp_matched = 0
     for entry in data.get("players", []):
         p = entry.get("player", {})
         pid = p.get("id")
@@ -188,17 +234,25 @@ def fetch_player_pool(season):
             if stat.get("seasonId") == season and stat.get("statSourceId") == 1 and stat.get("statSplitTypeId") == 0:
                 pts = stat.get("appliedTotal", 0.0)
                 break
-        adp = p.get("ownership", {}).get("averageDraftPosition") or 999.0
-        dr = p.get("draftRanksByRankType", {}).get("STANDARD", {}).get("rank") or adp
+        name = p.get("fullName", f"Player {pid}")
+        espn_adp = p.get("ownership", {}).get("averageDraftPosition") or 999.0
+        dr = p.get("draftRanksByRankType", {}).get("STANDARD", {}).get("rank") or espn_adp
+        fp_match = fp_adp.get(_normalize_name(name))
+        if fp_match is not None:
+            fp_matched += 1
         pool[pid] = {
-            "name": p.get("fullName", f"Player {pid}"),
+            "name": name,
             "pos": pos,
             "nfl_team": PRO_TEAM_ABBREV.get(p.get("proTeamId"), ""),
             "pts": round(pts, 1),
-            "adp": adp,
+            "adp": fp_match if fp_match is not None else espn_adp,
+            "espn_adp": espn_adp,
             "dr": dr,
         }
-    print(f"Pulled {len(pool)} skill-position players' projections/ADP from ESPN.")
+    print(f"Pulled {len(pool)} skill-position players' projections from ESPN.")
+    if fp_adp:
+        print(f"Matched {fp_matched}/{len(pool)} of them to FantasyPros market ADP "
+              f"(the rest fall outside FantasyPros' ~337-player list and use ESPN's ADP instead).")
     return pool
 
 
