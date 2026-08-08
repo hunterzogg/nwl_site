@@ -4,9 +4,14 @@
 
 Static website for the National Wayzata League (NWL), a 13-season dynasty-style fantasy football league. Built with vanilla HTML/CSS/JS. All data is stored as JSON files loaded via `fetch()` — requires a local server or real hosting to run (double-clicking HTML files won't work due to browser `file://` security restrictions).
 
-**Live at https://hunterzogg.github.io/nwl_site/** (GitHub Pages, deployed from
-github.com/hunterzogg/nwl_site, `main` branch, root path). Public repo - GitHub Pages' free tier
-requires it; there's no true "private but shared" middle ground without paying for GitHub Pro.
+**Live in two places, both auto-deployed from the same `main` branch:**
+- **https://hunterzogg.github.io/nwl_site/** (GitHub Pages, static only). Public repo - GitHub
+  Pages' free tier requires it; there's no true "private but shared" middle ground without
+  paying for GitHub Pro.
+- **https://nwl-site.vercel.app** (Vercel — added this session so the Pick'em feature has
+  somewhere to run its `/api/*` serverless functions + Postgres database, which GitHub Pages
+  can't do). All the static pages work identically on both; **Pick'em only works on the Vercel
+  URL**. Neither host has been retired — both stay in sync automatically on every push.
 
 **Project lives at `~/Sites/nwl_site`** (moved out of Downloads - see REVIEW_LOG Round 15; later
 relocated from `~/nwl_site` into `~/Sites/` - macOS's conventional per-user local web root) and is
@@ -16,9 +21,12 @@ cd ~/Sites/nwl_site
 git add -A
 git commit -m "describe the change"
 git push
-# GitHub Pages rebuilds automatically, usually live within a minute
+# Both GitHub Pages and Vercel rebuild automatically, usually live within a minute
 ```
 `scripts/espn_credentials.json` is gitignored - never gets committed or pushed, stays local only.
+`.env.local` (pulled via `vercel env pull`, holds `POSTGRES_URL`/`SESSION_SECRET`/etc.) is also
+gitignored and stays local only - needed for any one-off script that talks to the database
+directly (e.g. `scripts/seed_managers.js`, or an ad-hoc `node -e "..."` query).
 
 **To run locally (for testing before you push):**
 ```
@@ -102,7 +110,11 @@ Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), 
 
 **Responsive tables** (`.table-wide` / `.table-cards` in style.css): any table with too many columns to fit a phone screen renders twice — once as the normal `<table>` wrapped in `.table-wide`, once as a stack of `.table-card` divs wrapped in `.table-cards` — and a `@media (max-width: 640px)` rule toggles which one is visible, no JS involved. Used on rankings, draft (board/strategy/slots/grades), transactions (log/trades/summary), and season-2026 standings. Deliberately *not* used on genuine data grids like the Hall of Fame weekly-scores matrix, where a card would just restate the same wide row — that one stays an intentionally scrollable table. When adding a new wide table, follow this pattern rather than introducing a new one.
 
-**Cache-busting:** `style.css` is loaded as `style.css?v=4` from every page — bump this query string (find/replace across all HTML files) any time style.css changes, since GitHub Pages / most browsers cache it aggressively and won't otherwise pick up edits. Same idea applies to `shared.js?v=3` if that file is ever changed.
+**Cache-busting:** `style.css` is loaded as `style.css?v=7` from every page (currently) — bump this query string (find/replace across all HTML files) any time style.css changes, since GitHub Pages / most browsers cache it aggressively and won't otherwise pick up edits. Same idea applies to `shared.js?v=10` if that file is ever changed, and to `pickem.js?v=5` on `pickem.html` specifically.
+
+**Nav groups (added this session):** `renderNav()` now splits nav links into two labeled groups instead of one flat list — **In Season** (amber: 2026 Hub, Mock Draft, Pick'em, defined as `NWL_IN_SEASON_PAGES` in `shared.js`) and **League History** (the 6 archive pages, unchanged `NWL_PAGES`) — with a small uppercase `.nav-group-label` before each cluster so the distinction is explicit, not just implied by a divider. The Feedback nav link (and its Google Form) was removed entirely per explicit request, along with the now-dead `.nav-feedback` CSS rule. "2026 Season" was renamed to **"2026 Hub"** everywhere — nav label, `season-2026.html`'s `<title>` and banner, and the banner text on `index.html`/`pickem.html` — filename (`pages/season-2026.html`) was deliberately left unchanged to avoid breaking existing links/bookmarks.
+
+**Logo sizes reduced this session** (per explicit "too big" feedback, reversing some of the earlier session's enlargement): nav logo `88px` (`.brand img`, down from 120px) with `.brand{font-size:1.15rem}` (down from 1.5rem); homepage hero logo `clamp(260px, 42vw, 420px)` (down from `clamp(360px, 58vw, 580px)`).
 
 **Mobile nav collapse (added this session):** `renderNav()` in `shared.js` now wraps the brand + a `.nav-toggle` hamburger button in a `.nav-top-row`, with a click handler toggling a `.nav-open` class on `.topnav` (plus an outside-click listener to auto-close). Under `@media (max-width:640px)` in `style.css`, `.nav-links` is hidden by default and only shown when `.topnav.nav-open` — desktop is completely unaffected (toggle hidden, links always visible) since it's all scoped inside that one breakpoint. This is the single place nav markup is generated, so no per-page changes were needed.
 
@@ -111,9 +123,7 @@ Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), 
 ## Pages — Current State
 
 ### index.html ✅
-Scorebug showing 3 stats (seasons, total points scored all-time, matchups), a distinct amber "2026 Season" banner linking to the current-season hub, nav cards to all 6 historical-archive sections, NWL shield logo (sized much larger as of this session via a new `.hero-logo` class, now `clamp(360px, 58vw, 580px)` — bumped up three times this session per follow-up feedback, started at 170px fixed). Subtitle copy is deliberately grand ("Thirteen years of rivalries, dynasties, and legendary collapses...") rather than utilitarian. A prominent blue "Run a Mock Draft" CTA button (`.hero-cta`) sits directly below the scorebug stats row, linking to `pages/mock-draft.html` — added this session since the mock draft tool otherwise only had its regular nav-link visibility; initially placed right under the subtitle, then moved below the stats per follow-up feedback.
-
-**Shared nav logo also enlarged this session** (`assets/js/shared.js`'s `renderNav()`, the `.brand img` inline style — started at `height:24px`, went up to `88px`, then `150px` (with the `.brand` text bumped from `1.1rem` to `2.2rem` alongside it) as a "show me a bigger jump" test, then settled at `height:120px`/`.brand{font-size:1.5rem}` (roughly the midpoint of 88/150, text scaled down proportionately) as the final size after review — affects every page site-wide, not just the homepage, since `renderNav()` is the single shared nav-building function. Bumped `shared.js`'s and `style.css`'s cache-busting version strings each time (now `?v=8`/`?v=6`) per this repo's standing convention. `.topnav` has no fixed height, so it just grows to fit — verified no clipping/overlap at either desktop or mobile widths at the final size (the 150px/2.2rem experiment did push nav-links to wrap onto a second row at mid-range widths ~700-1280px, which is part of why it got dialed back).
+Scorebug showing 3 stats (seasons, total points scored all-time, matchups), a distinct amber "2026 Hub" banner linking to the current-season hub, nav cards to all 6 historical-archive sections, NWL shield logo via `.hero-logo`. Logo sizing has been tuned back and forth across sessions — see the Design System section above for current sizes (nav logo `88px`, hero logo `clamp(260px, 42vw, 420px)`), both scaled back down this session after growing too large in an earlier one. Subtitle copy is deliberately grand ("Thirteen years of rivalries, dynasties, and legendary collapses...") rather than utilitarian. A prominent blue "Run a Mock Draft" CTA button (`.hero-cta`) sits directly below the scorebug stats row, linking to `pages/mock-draft.html`.
 
 ### season-2026.html ✅
 The current-season hub — visually separate from the historical archive (see Phase 2 section below for the full design rationale). Four tabs: Matchups, Standings, Power Rankings, Commentary. Reads from `data/season_2026/*.json`, populated by `scripts/fetch_espn_week.py`. Empty states everywhere until the season starts.
@@ -145,43 +155,90 @@ Three tabs:
 - **Trade Database**: filterable by season, manager, and now player name search. 2022 is year-only precision, 2023-2025 have exact dates. Player format: "POS - Player Name".
 - **Summary**: historical league totals by season (from Mgr Summary A35, covers all 2013-2025), per-manager career counts (now includes Most/Fewest transactions in a season, with the year), acquisition type breakdown. On mobile, the per-manager career card splits avg/season onto its own line from most/fewest (previously all three were crammed onto one `.table-card-sub` line).
 
-### pages/pickem.html + pages/pickem-admin.html 🚧 (code complete, not yet deployed)
-Season-long NWL-specific pick'em competition — weekly "this or that" / "over-under" prop
-questions (manager vs. manager, division/standings props, player props tied to a manager's
-roster, Scorigami/meta props), a per-manager login (shared 6-digit passcode, no email/signup),
-manual grading by Hunter via a hidden admin page (`pickem-admin.html`, not linked in nav, gated
-by a separate `ADMIN_PASSCODE`), and a season + weekly leaderboard.
+### pages/pickem.html + pages/pickem-admin.html ✅ live on Vercel
+Season-long NWL-specific pick'em competition — draft-night props, season-long calls, and weekly
+props (see `NWL_Pickem_Flier` artifact/PDF for the league-facing description), self-service
+manager accounts, manual grading by Hunter via a hidden admin page, and a season + weekly
+leaderboard. **The site is now hosted on Vercel** (`https://nwl-site.vercel.app`), not just
+GitHub Pages — GitHub Pages can't run the `/api/*` serverless functions or talk to a database,
+so Pick'em only works on the Vercel deployment. Static pages still work identically on either
+host; GitHub Pages has not been retired.
 
-**Requires the Vercel migration below to actually run** — GitHub Pages can't execute the `/api/*`
-serverless functions or talk to a database, so this is fully built (frontend pages, API routes,
-schema) but inert until deployed to Vercel and the manual setup steps are done. Until then,
-`pickem.html` degrades gracefully (empty states, no console errors — verified in-browser) since
-every `fetch('/api/...')` call is wrapped to fall back cleanly.
+**Accounts are self-service, not admin-distributed** (changed from the original passcode design
+this session — see "Level of effort" discussion in session history if resuming this thread):
+`managers.passcode_hash` starts `NULL` for every manager; `api/login.js` does double duty as
+claim-or-verify — if the hash is `NULL`, whatever the manager types in becomes their password
+(hashed via `bcryptjs`) and logs them in; otherwise it's a normal password check. No email flow.
+Forgot-password equivalent: the admin page's "Manager Accounts" panel resets a manager's hash
+back to `NULL` so their next login re-claims the account. `scripts/seed_managers.js` only ever
+creates unclaimed rows now (`ON CONFLICT DO NOTHING`, safe to re-run for new managers next
+season) — it no longer generates or prints passcodes. **Stowe** (former manager, 2013-2016) is
+explicitly excluded from every Pick'em manager-choice surface (login dropdown, `pick_manager`
+question options, admin grading/reset dropdowns) via a hardcoded `PICKEM_INACTIVE_MANAGERS`
+array in both `pickem.js` and `pickem-admin.html` — he stays in `data/managers.json` untouched
+since the historical archive pages still need him.
 
-**New pieces, all following existing site conventions:**
-- `package.json` (repo's first — only new deps are `@vercel/postgres` and `bcryptjs`)
-- `api/*.js` — one file per endpoint (Vercel auto-detects `/api/*` as serverless functions, no
-  framework needed): `login`/`me`/`logout` (manager passcode auth via signed httpOnly cookie,
-  see `api/lib/session.js`), `questions` (public read of published props), `picks` (auth-gated
-  read/write, server-side rejects writes past `lock_at` — not just a disabled button),
-  `leaderboard` (season + this-week points via a SQL `SUM`, no separate leaderboard table to
-  drift out of sync), `admin/login` + `admin/questions` + `admin/grade` (separate
-  `ADMIN_PASSCODE`-gated cookie, not a manager login).
-- `scripts/schema.sql` — 3 tables (`managers`, `questions`, `picks`). Run once against the
-  Vercel Postgres database via the dashboard's query console.
-- `scripts/seed_managers.js` — one-time script, generates a random 6-digit passcode per manager
-  (from `data/managers.json`), bcrypt-hashes it into the `managers` table, prints plaintext once
-  to your terminal only (never written to a file or committed) for you to share with the league.
-- `pages/pickem.html` + `assets/js/pickem.js` — same tab-row/panel pattern as
-  `season-2026.html`, same `managerTag()`/`.table-wide`/`.table-cards` conventions.
-- Nav: added to `NWL_PAGES` in `shared.js` (bumped `shared.js?v=9` site-wide per convention).
-  `pickem-admin.html` is deliberately **not** in `NWL_PAGES` — bookmark-only.
+**Three question types**, all sharing the same `questions`/`picks` schema:
+- `this_or_that` / `over_under` — two fixed options (`option_a`/`option_b`), stored/compared as
+  literal `'a'`/`'b'`. (`over_under` is really just a display label — mechanically identical to
+  `this_or_that`, e.g. "Over 20.5" / "Under 20.5" as the two option strings.)
+- `pick_manager` — no fixed options; the frontend renders all 12 active managers as live choices
+  from `data/managers.json`. `option_a`/`option_b` are `NULL` for these rows (column is nullable
+  — required a manual `ALTER TABLE ... DROP NOT NULL` on the already-live DB when this type was
+  added, since the original schema had them `NOT NULL`).
+- `number_guess` — free-form numeric answer (e.g. "how many tendies get eaten"), graded within
+  **±2** of the real number instead of an exact match. `api/leaderboard.js`'s point-awarding SQL
+  is a shared `CORRECT_CASE` expression: numeric-distance comparison for `number_guess`, exact
+  string equality for everything else — needed `sql.query()` (parameterized, not the tagged
+  template) since the CASE expression itself is built as a string.
 
-**Not yet done (manual, account-level steps only Hunter can do — see full checklist in this
-session's plan / ask Claude to walk through it):** create a Vercel account, import the GitHub
-repo, provision Postgres via Vercel's Storage tab, set `SESSION_SECRET`/`ADMIN_PASSCODE` env
-vars, run `scripts/schema.sql` once, run `scripts/seed_managers.js` once to generate real
-passcodes, decide when/whether to retire GitHub Pages in favor of the Vercel deployment.
+**Pick submission is Submit/Edit, not autosave** (changed this session per explicit feedback):
+clicking an option only updates a local `draftPicks` object and re-renders — nothing hits the
+API until "Submit Picks" is clicked, which saves every answered-but-unlocked question in one
+pass and switches the page to a read-only "saved" view (green "✓ Your picks are saved."
+confirmation, all not-yet-locked question cards visually greyed out/desaturated via a
+`.submitted` class). "Edit Picks" reopens it; changes require hitting Submit again to actually
+persist — nothing autosaves. A manager who already has saved picks lands in the saved view by
+default on login, not the editable one. Graded questions are excluded from the grey-out (the
+correct/incorrect coloring matters more there than the generic "submitted" look).
+
+**Admin page (`pickem-admin.html`, bookmark-only — not in `NWL_PAGES`/nav, gated by a separate
+`ADMIN_PASSCODE`)** has four sections: New Question (all 3 types, options row hides itself for
+`pick_manager`/`number_guess`), Manager Accounts (reset any manager's password), Bulk Update
+Lock Time (re-locks every question in a given week at once — added after discovering there was
+no way to edit an already-created question's `lock_at`, needed when the real draft date/time
+shifted), and Manage Questions (publish + grade — `pick_manager`/`number_guess` grading uses a
+dropdown/number-input respectively instead of the two win-buttons `this_or_that` uses).
+
+**Known sharp edge, already hit once and fixed:** any numeric field that can legitimately be
+`0` (like `week` for the "Draft Day" bucket) breaks a naive `!value` truthiness check in
+JavaScript, since `0` is falsy — `api/admin/questions.js`'s POST validation had exactly this bug
+(every week-0 question silently failed as "missing required fields" until fixed). Watch for the
+same pattern anywhere else a numeric ID/index could be `0`.
+
+**Current live status (as of this session):** 12 draft-day questions (week 0) are published,
+locked at 8pm ET on draft night. 10 of 12 active managers have submitted all 12 picks
+(Ainsworth, Conlin, Glaser, Goetz, Larson, Muenchow, Palaia, Prodahl, Stover, Zogg) — **Hagan and
+Pfaffinger have not picked yet.** None of the 12 questions are graded yet — that's Hunter's next
+step once draft results are known (`pickem-admin.html` → Manage Questions → grade each one).
+Season-long and weekly props are designed/described in the flier but not yet entered as real
+questions in the database.
+
+**League-facing flier**: `NWL_Pickem_Flier.pdf` was generated by rendering a hand-built HTML page
+(dark navy/amber, matching the site's own palette) through headless Chrome's print-to-PDF —
+notably renders in a *light* theme by default (Chrome headless resolves `prefers-color-scheme:
+light`), which turned out to be a better fit for an actual printable handout anyway. Needed an
+explicit `<meta charset="UTF-8">` (was missing initially, corrupted the em dash) and print-media
+CSS (`-webkit-print-color-adjust: exact`, `break-inside: avoid` on cards) to render backgrounds
+and avoid ugly mid-item page breaks. Source file isn't part of the site repo — it lived in the
+session's scratchpad — regenerate from scratch if the flier needs updating again rather than
+looking for it in this repo.
+
+**Manual setup already completed this session** (for reference, if standing up a fresh
+environment or a future season): Vercel account created, GitHub repo imported, Postgres
+provisioned via Storage tab, `SESSION_SECRET`/`ADMIN_PASSCODE` env vars set, `scripts/schema.sql`
+run (one statement at a time — the query console rejects multi-statement pastes), all 13
+managers seeded via `scripts/seed_managers.js` (Stowe excluded).
 
 ### mock-draft.html ✅
 Standalone 15-round, 12-team snake mock draft simulator against 11 CPU-controlled managers modeled on real NWL draft history (position mix, QB/TE timing, rookie appetite), plus a novelty Head Coach category (draft an NFL team, scored on projected wins/losses — a made-up category, not part of the real NWL format). Reachable via its own top-level nav link next to "2026 Season" — deliberately not nested under it and not part of the historical "Explore the archive" grid, since it's 2026 draft prep, not an archive page. Fully folded into the site's shared nav/CSS/fonts (`../assets/css/style.css`, `shared.js`'s `renderNav()`) rather than carrying its own separate theme, which it originally did — its CSS variable names collided with the shared palette, so its `:root` tokens are now aliased onto the site's real tokens instead of redefining them.
@@ -381,15 +438,24 @@ manager-profile data entry (above) and Phase 2 (live 2026 season data, below).
 ## Resuming This Project
 
 The project is no longer a zip handoff - it's a live git repo at `~/Sites/nwl_site`
-(github.com/hunterzogg/nwl_site), deployed to https://hunterzogg.github.io/nwl_site/. To pick up
+(github.com/hunterzogg/nwl_site), deployed to **both** https://hunterzogg.github.io/nwl_site/
+(static pages) and https://nwl-site.vercel.app (adds Pick'em's `/api/*` + Postgres). To pick up
 where things left off, tell Claude:
 
-> "We're continuing the NWL fantasy football website project at ~/Sites/nwl_site. Read HANDOFF.md and REVIEW_LOG.md there for full context. Both Phase 1 (historical archive) and Phase 2 (2026 season hub) are built and live - what's left is [whatever you actually want done next, e.g. filling in favorite_nfl_team, or running the weekly fetch script together once the season starts]."
+> "We're continuing the NWL fantasy football website project at ~/Sites/nwl_site. Read HANDOFF.md and REVIEW_LOG.md there for full context. Phase 1 (historical archive), Phase 2 (2026 season hub), and Pick'em (draft-night props, self-service accounts) are built and live on Vercel - what's left is [e.g. grading the draft-night questions, entering season-long/weekly props, or whatever else you want done next]."
 
 Key context to re-establish:
-- Stack: vanilla HTML/CSS/JS, static site, no build tools, no backend
-- Publishing: `git add -A && git commit -m "..." && git push` from `~/Sites/nwl_site` - GitHub Pages
-  rebuilds automatically within about a minute. There is no more zip-file workflow.
+- Stack: vanilla HTML/CSS/JS static site, no build tools, **plus** a thin Vercel serverless
+  backend (`/api/*.js`, no framework) and Postgres for Pick'em only - everything else is still
+  pure static/no-backend.
+- Publishing: `git add -A && git commit -m "..." && git push` from `~/Sites/nwl_site` - both
+  GitHub Pages and Vercel rebuild automatically within about a minute. There is no more
+  zip-file workflow.
+- Editing live Pick'em content (questions, grading, manager password resets) happens through
+  `pickem-admin.html` on the **Vercel** URL, gated by `ADMIN_PASSCODE` - Claude cannot type that
+  passcode in on Hunter's behalf (a hard rule, not a technical limitation), so any live
+  admin-page work needs Hunter to log in himself first, then Claude can drive the rest of the
+  page via the browser tools.
 - Data source for anything not yet extracted: `NWL_Master.xlsx` at
   `~/Documents/Fantasy Football/NWL/NWL_Master.xlsx` (re-upload/re-point to it if a fresh session
   needs to pull something new from the spreadsheet)
