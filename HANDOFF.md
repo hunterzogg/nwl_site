@@ -360,6 +360,20 @@ this dev server hits the same production database and claims a real manager's ac
 their password) - confirmed the saved-bar renders first-child in saved mode and the submit-bar
 renders last-child in editing mode.
 
+**Follow-up bug fix, same session**: `pageMode` (which drives the saved-vs-editing view) was being
+decided from *all* of a manager's picks ever (`Object.keys(myPicks).length`), not just the
+currently open batch - so a manager who'd already submitted the (now-archived) Draft questions but
+hadn't touched the new Preseason batch yet landed straight in the read-only "saved" view for
+Preseason too, with nothing actually saved there and no obvious way in without noticing the Edit
+button. Per explicit correction: only submitting the *current* open batch should ever produce the
+"saved" view - a brand new batch should always start open and editable, no Edit click required.
+Replaced the inline check with `computePageMode()`, which only looks at whether `myPicks` has an
+entry among the currently-unlocked question IDs. Verified against real production data (via the
+same `vercel dev` local preview, state injected directly rather than a real login for the same
+account-claiming reason as above): a manager with a Draft-only pick history now correctly gets
+`pageMode: 'editing'` for the open Preseason batch; a manager who's also picked something in the
+open batch correctly gets `'saved'` with the Edit bar on top.
+
 ### mock-draft.html ✅
 Standalone 15-round, 12-team snake mock draft simulator against 11 CPU-controlled managers modeled on real NWL draft history (position mix, QB/TE timing, rookie appetite), plus a novelty Head Coach category (draft an NFL team, scored on projected wins/losses — a made-up category, not part of the real NWL format). Reachable via its own top-level nav link next to "2026 Season" — deliberately not nested under it and not part of the historical "Explore the archive" grid, since it's 2026 draft prep, not an archive page. Fully folded into the site's shared nav/CSS/fonts (`../assets/css/style.css`, `shared.js`'s `renderNav()`) rather than carrying its own separate theme, which it originally did — its CSS variable names collided with the shared palette, so its `:root` tokens are now aliased onto the site's real tokens instead of redefining them.
 

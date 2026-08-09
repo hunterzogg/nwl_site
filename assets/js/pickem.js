@@ -98,15 +98,29 @@ function renderLogin() {
   };
 }
 
+// pageMode only cares about the CURRENTLY OPEN batch ("This Week"), not a manager's picks
+// history overall - a manager who already submitted the (now-archived) Draft questions but
+// hasn't touched this week's new batch yet should land straight in the open, editable view, not
+// a "saved" view with nothing actually saved for what's in front of them. Only submitting the
+// current batch should flip it to 'saved' - that's what "only have to hit edit after your first
+// submission" means in practice.
+function computePageMode() {
+  if (!currentManager) return 'editing';
+  const now = new Date();
+  const openIds = questions.filter(q => new Date(q.lock_at) > now).map(q => q.id);
+  const hasSubmittedOpenBatch = openIds.some(id => myPicks[id] !== undefined);
+  return hasSubmittedOpenBatch ? 'saved' : 'editing';
+}
+
 async function loadPicks() {
   myPicks = {};
   if (!currentManager) { draftPicks = {}; pageMode = 'editing'; return; }
   const rows = await api('picks').catch(() => []);
   rows.forEach(r => { myPicks[r.question_id] = r.choice; });
   draftPicks = { ...myPicks };
-  // Managers who already have saved picks land in a read-only "saved" view by default -
-  // Edit Picks is what puts the buttons back into a clickable state.
-  pageMode = Object.keys(myPicks).length ? 'saved' : 'editing';
+  // Managers who already submitted picks for the currently open batch land in a read-only
+  // "saved" view by default - Edit Picks is what puts the buttons back into a clickable state.
+  pageMode = computePageMode();
 }
 
 function selectDraft(questionId, choice) {
