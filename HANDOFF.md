@@ -311,6 +311,55 @@ provisioned via Storage tab, `SESSION_SECRET`/`ADMIN_PASSCODE` env vars set, `sc
 run (one statement at a time — the query console rejects multi-statement pastes), all 13
 managers seeded via `scripts/seed_managers.js` (Stowe excluded).
 
+**Season-long props bumped to 3 points each** (up from the schema default of 1), per explicit
+request that they should carry more weight than draft-night/weekly props since they're a
+season-long commitment rather than a single week's guess - direct `UPDATE questions SET points =
+3 WHERE week = -1` (same connection pattern as everything else, no new script needed for a
+one-line change). Also **published live** (`UPDATE questions SET published = true WHERE week =
+-1`) - all 16 are now visible and pickable on `pages/pickem.html`, still ungraded, still locking
+Week 1 kickoff.
+
+**Pick'em page restructured into per-batch tabs** (`assets/js/pickem.js`, `pages/pickem.html`):
+previously there were only two static tabs, "This Week's Picks" (literally every published
+question, regardless of whether it had locked weeks ago) and "Leaderboard" - meaning locked
+Draft Day questions and open Preseason questions were just mixed together in one long list. Per
+explicit request, this is now dynamic:
+- **"This Week"** - pools every question that hasn't locked yet, across whatever week bucket(s)
+  it belongs to (in practice there's only ever one open batch at a time, but nothing breaks if
+  two happen to overlap) - this is the only tab where picks are editable/submittable.
+  **"Leaderboard"** - unchanged.
+- **One archive tab per fully-locked week bucket** - built once at page load
+  (`buildTabs()` in `pickem.js`), sorted chronologically and labeled via a small `weekLabel()`
+  helper: `week === 0` → "Draft", `week === -1` → "Preseason", everything else → "Week N". Numeric
+  week order doesn't match chronological order (-1 sorts before 0 but Draft Day happened before
+  Preseason props lock), so there's a separate `weekSortKey()` that maps 0→-2 and -1→-1 before
+  sorting, rather than sorting on the raw week number.
+- Card rendering itself didn't need new logic - `questionCardHTML()` (extracted from the old
+  monolithic `renderPicks()`) already handled the "locked" display correctly (disabled buttons,
+  correct/incorrect coloring once graded, "picks are locked" note), so archive tabs just feed it
+  a filtered `questionsList` with no action bar, while "This Week" gets the same renderer plus the
+  Submit/Edit action bar.
+- Verified against real production data (fetched `/api/questions` from the live Vercel deployment
+  and ran the new grouping/labeling/rendering logic against it, in a scratch in-page test that
+  didn't touch any deployed files): 28 real questions correctly split into "This Week" (16 -
+  the Preseason props, not locked until Sept 9) and a "Draft" archive tab (12, all locked)); tab
+  switching, card counts, and per-card meta lines (labels, points, lock state) all matched
+  expectations exactly. Bumped `pickem.js?v=6` per the site's cache-busting convention.
+
+**Action bar placement, per explicit follow-up feedback**: the first-time Submit bar stays at the
+bottom of a panel's question cards (below whatever you're actively answering) - unchanged. But
+once picks are saved, the "&#10003; Your picks are saved / Edit Picks" bar now renders at the
+**top** instead of the bottom - a manager returning to a panel wants to see "am I locked in, and
+how do I change that" immediately, not after scrolling back down through every card they already
+answered. `renderQuestionsPanel()` in `pickem.js` now builds `topBar`/`bottomBar` separately
+instead of one shared `actionBar` appended after the cards. Verified with a `vercel dev` local
+preview (real Postgres, not a static-file mock) added as a new `.claude/launch.json` entry,
+`nwl-site-vercel-dev` - by directly setting `pageMode`/`currentManager` and re-calling
+`renderPicks()` in the browser console rather than actually logging in, since a real login on
+this dev server hits the same production database and claims a real manager's account (sets
+their password) - confirmed the saved-bar renders first-child in saved mode and the submit-bar
+renders last-child in editing mode.
+
 ### mock-draft.html ✅
 Standalone 15-round, 12-team snake mock draft simulator against 11 CPU-controlled managers modeled on real NWL draft history (position mix, QB/TE timing, rookie appetite), plus a novelty Head Coach category (draft an NFL team, scored on projected wins/losses — a made-up category, not part of the real NWL format). Reachable via its own top-level nav link next to "2026 Season" — deliberately not nested under it and not part of the historical "Explore the archive" grid, since it's 2026 draft prep, not an archive page. Fully folded into the site's shared nav/CSS/fonts (`../assets/css/style.css`, `shared.js`'s `renderNav()`) rather than carrying its own separate theme, which it originally did — its CSS variable names collided with the shared palette, so its `:root` tokens are now aliased onto the site's real tokens instead of redefining them.
 

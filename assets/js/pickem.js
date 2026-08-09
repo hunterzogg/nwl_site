@@ -4,6 +4,22 @@ let questions = [];
 let myPicks = {};    // question_id -> choice, last saved to the server
 let draftPicks = {};  // question_id -> choice, local working copy (may include unsaved edits)
 let pageMode = 'editing'; // 'editing' (buttons live, Submit shown) | 'saved' (read-only, Edit shown)
+let archivedWeeks = []; // week numbers whose questions are all locked, oldest-first - built once in buildTabs()
+
+// Every batch of questions gets a `week` bucket - 0 is Draft Day, -1 is the season-long
+// "Preseason" props (locks after the draft but before Week 1), 1+ are real weekly props. Numeric
+// week order doesn't match chronological order (-1 sorts before 0), so label/sort are separate
+// helpers rather than using the raw number directly.
+function weekLabel(week) {
+  if (week === 0) return 'Draft';
+  if (week === -1) return 'Preseason';
+  return `Week ${week}`;
+}
+function weekSortKey(week) {
+  if (week === 0) return -2;
+  if (week === -1) return -1;
+  return week;
+}
 
 // Stowe is a former manager (2013-2016), still kept in data/managers.json for the historical
 // archive, but he doesn't draft/play in the live season - exclude him from every pick'em
@@ -132,70 +148,83 @@ function renderGuessBody(q, mine, graded, disabled) {
   `;
 }
 
-function renderPicks() {
-  const el = document.getElementById('picksContent');
-  if (!questions.length) {
-    el.innerHTML = emptyState('No picks open yet', 'Check back once this week\'s prop questions are published.');
+function questionCardHTML(q) {
+  const now = new Date();
+  const locked = new Date(q.lock_at) <= now;
+  const graded = q.correct_option !== null;
+  const mine = draftPicks[q.id];
+  const disabled = !currentManager || locked || pageMode === 'saved';
+
+  let body;
+  if (q.type === 'number_guess') {
+    body = renderGuessBody(q, mine, graded, disabled);
+  } else {
+    const optClass = (opt) => {
+      let cls = 'option-btn';
+      if (mine === opt) cls += ' selected';
+      if (graded) cls += (q.correct_option === opt) ? ' correct' : (mine === opt ? ' incorrect' : '');
+      return cls;
+    };
+    const options = q.type === 'pick_manager'
+      ? activeManagers().map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
+      : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
+         <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
+    body = `<div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">${options}</div>`;
+  }
+
+  const submittedClass = currentManager && pageMode === 'saved' && !graded ? ' submitted' : '';
+  return `
+    <div class="question-card${submittedClass}">
+      <div class="question-prompt">${q.prompt}</div>
+      <div class="question-meta">${weekLabel(q.week)} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
+      ${body}
+      ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}
+      ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}
+    </div>
+  `;
+}
+
+// Renders one panel's worth of question cards into containerId. showActionBar is only true for
+// the "This Week" panel - archive panels are always fully locked already (every card in them
+// disables itself via questionCardHTML's own locked check), so there's nothing to submit/edit.
+function renderQuestionsPanel(containerId, questionsList, showActionBar) {
+  const el = document.getElementById(containerId);
+  if (!questionsList.length) {
+    el.innerHTML = emptyState('No picks here yet', 'Check back once this batch of prop questions is published.');
     return;
   }
   const now = new Date();
-  const cardsHtml = questions.map(q => {
-    const locked = new Date(q.lock_at) <= now;
-    const graded = q.correct_option !== null;
-    const mine = draftPicks[q.id];
-    const disabled = !currentManager || locked || pageMode === 'saved';
+  const cardsHtml = questionsList.map(questionCardHTML).join('');
 
-    let body;
-    if (q.type === 'number_guess') {
-      body = renderGuessBody(q, mine, graded, disabled);
-    } else {
-      const optClass = (opt) => {
-        let cls = 'option-btn';
-        if (mine === opt) cls += ' selected';
-        if (graded) cls += (q.correct_option === opt) ? ' correct' : (mine === opt ? ' incorrect' : '');
-        return cls;
-      };
-      const options = q.type === 'pick_manager'
-        ? activeManagers().map(m => `<button class="${optClass(m.manager)}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="${m.manager}">${m.manager}</button>`).join('')
-        : `<button class="${optClass('a')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="a">${q.option_a}</button>
-           <button class="${optClass('b')}" ${disabled ? 'disabled' : ''} data-qid="${q.id}" data-choice="b">${q.option_b}</button>`;
-      body = `<div class="option-row${q.type === 'pick_manager' ? ' manager-grid' : ''}">${options}</div>`;
-    }
-
-    const submittedClass = currentManager && pageMode === 'saved' && !graded ? ' submitted' : '';
-    return `
-      <div class="question-card${submittedClass}">
-        <div class="question-prompt">${q.prompt}</div>
-        <div class="question-meta">Week ${q.week} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
-        ${body}
-        ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}
-        ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}
-      </div>
-    `;
-  }).join('');
-
-  const anyUnlocked = questions.some(q => new Date(q.lock_at) > now);
-  let actionBar = '';
-  if (currentManager && anyUnlocked) {
-    if (pageMode === 'saved') {
-      actionBar = `
-        <div class="picks-actionbar saved">
-          <span class="picks-confirm">&#10003; Your picks are saved.</span>
-          <button class="btn btn-ghost" id="editPicksBtn">Edit Picks</button>
-        </div>`;
-    } else {
-      const unlockedQs = questions.filter(q => new Date(q.lock_at) > now);
-      const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
-      actionBar = `
-        <div class="picks-actionbar">
-          <span class="picks-progress">${answered} of ${unlockedQs.length} answered</span>
-          <button class="btn" id="submitPicksBtn" ${answered === 0 ? 'disabled' : ''}>Submit Picks</button>
-          <span class="login-error" id="submitError"></span>
-        </div>`;
+  // The first-time Submit bar stays at the bottom (below the questions you're actively
+  // answering), but once picks are saved, the Edit bar moves to the top - a returning manager
+  // wants "am I already locked in, and how do I change that" before scrolling back through
+  // every card, not after.
+  let topBar = '';
+  let bottomBar = '';
+  if (showActionBar) {
+    const anyUnlocked = questionsList.some(q => new Date(q.lock_at) > now);
+    if (currentManager && anyUnlocked) {
+      if (pageMode === 'saved') {
+        topBar = `
+          <div class="picks-actionbar saved">
+            <span class="picks-confirm">&#10003; Your picks are saved.</span>
+            <button class="btn btn-ghost" id="editPicksBtn">Edit Picks</button>
+          </div>`;
+      } else {
+        const unlockedQs = questionsList.filter(q => new Date(q.lock_at) > now);
+        const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
+        bottomBar = `
+          <div class="picks-actionbar">
+            <span class="picks-progress">${answered} of ${unlockedQs.length} answered</span>
+            <button class="btn" id="submitPicksBtn" ${answered === 0 ? 'disabled' : ''}>Submit Picks</button>
+            <span class="login-error" id="submitError"></span>
+          </div>`;
+      }
     }
   }
 
-  el.innerHTML = cardsHtml + actionBar;
+  el.innerHTML = topBar + cardsHtml + bottomBar;
 
   el.querySelectorAll('.option-btn:not(:disabled)').forEach(btn => {
     btn.addEventListener('click', () => selectDraft(Number(btn.dataset.qid), btn.dataset.choice));
@@ -207,7 +236,7 @@ function renderPicks() {
       if (btn) btn.disabled = false;
       const progress = el.querySelector('.picks-progress');
       if (progress) {
-        const unlockedQs = questions.filter(q => new Date(q.lock_at) > new Date());
+        const unlockedQs = questionsList.filter(q => new Date(q.lock_at) > new Date());
         const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
         progress.textContent = `${answered} of ${unlockedQs.length} answered`;
       }
@@ -217,6 +246,51 @@ function renderPicks() {
   if (submitBtn) submitBtn.addEventListener('click', submitAllPicks);
   const editBtn = document.getElementById('editPicksBtn');
   if (editBtn) editBtn.addEventListener('click', editPicks);
+}
+
+// Builds the tab row + one panel per tab (This Week, Leaderboard, then one archive tab per week
+// that's fully locked) - called once at init, since which weeks exist/are locked doesn't change
+// within a session. "This Week" pools every not-yet-locked question regardless of its week bucket
+// (in practice there's only ever one open batch at a time, but nothing breaks if two overlap).
+function buildTabs() {
+  const now = new Date();
+  const weeksPresent = [...new Set(questions.map(q => q.week))];
+  archivedWeeks = weeksPresent
+    .filter(week => questions.filter(q => q.week === week).every(q => new Date(q.lock_at) <= now))
+    .sort((a, b) => weekSortKey(a) - weekSortKey(b));
+
+  const tabButtons = [
+    '<button class="tab-btn active" data-tab="this-week">This Week</button>',
+    '<button class="tab-btn" data-tab="leaderboard">Leaderboard</button>',
+    ...archivedWeeks.map(week => `<button class="tab-btn" data-tab="week-${week}">${weekLabel(week)}</button>`),
+  ];
+  document.getElementById('tabRow').innerHTML = tabButtons.join('');
+
+  const panels = [
+    '<div class="panel active" id="panel-this-week"><div id="picksContent"></div></div>',
+    '<div class="panel" id="panel-leaderboard"><div id="leaderboardContent"></div></div>',
+    ...archivedWeeks.map(week => `<div class="panel" id="panel-week-${week}"><div id="archiveContent-${week}"></div></div>`),
+  ];
+  document.getElementById('panelsContainer').innerHTML = panels.join('');
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+function renderPicks() {
+  const now = new Date();
+  const archivedWeekSet = new Set(archivedWeeks);
+  const openQuestions = questions.filter(q => !archivedWeekSet.has(q.week));
+  renderQuestionsPanel('picksContent', openQuestions, true);
+  archivedWeeks.forEach(week => {
+    renderQuestionsPanel(`archiveContent-${week}`, questions.filter(q => q.week === week), false);
+  });
 }
 
 async function renderLeaderboard() {
@@ -268,17 +342,9 @@ async function init() {
 
   questions = await api('questions').catch(() => []);
   await loadPicks();
+  buildTabs();
   renderPicks();
   renderLeaderboard();
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-    });
-  });
 }
 
 renderNav('pick\'em');
