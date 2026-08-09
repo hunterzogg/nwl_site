@@ -22,18 +22,24 @@ Data pulled:
      pool (the same 32-team projected-wins-based dataset that tool already uses) rather than
      re-derived here.
   4. FantasyPros ECR (expert consensus rank - the signal draft value is graded against, see
-     below) and ADP, loaded from scripts/fantasypros_snapshot_2026.json - NOT a live pull on
-     every run. FantasyPros' official v2 API (scripts/fantasypros_credentials.json, gitignored,
-     holds a personal API key) was the intended live source, but its free tier caps every bulk
-     request at 10 results regardless of filters, and rate-limits individual single-player
-     lookups hard after ~20 calls in a session - discovered by testing, not documented anywhere.
-     The snapshot was hand-assembled this session via a mix of (a) a brief window where bulk
-     RB/WR pulls returned full uncapped data before the key's access degraded (100% of drafted
-     RB/WR covered), and (b) individual single-player API lookups for QB/TE, with player IDs
-     resolved by scraping each player's public FantasyPros page (no API key needed for that
-     step) - rate-limited before finishing, so only 22 of 36 drafted QBs/TEs are covered. See
+     below), loaded from scripts/fantasypros_snapshot_2026.json - NOT a live pull on every run.
+     FantasyPros' official v2 API (scripts/fantasypros_credentials.json, gitignored, holds a
+     personal API key) was the intended live source, but its free tier caps every bulk request
+     at 10 results regardless of filters, and rate-limits individual single-player lookups hard
+     after ~20 calls in a session - discovered by testing, not documented anywhere. The snapshot
+     was hand-assembled this session via a mix of (a) a brief window where bulk RB/WR pulls
+     returned full uncapped data before the key's access degraded (100% of drafted RB/WR
+     covered), and (b) individual single-player API lookups for QB/TE, with player IDs resolved
+     by scraping each player's public FantasyPros page (no API key needed for that step) -
+     rate-limited before finishing, so only 22 of 36 drafted QBs/TEs are covered. See
      fetch_fantasypros_data()'s docstring and the snapshot file's own "_meta" key for the full
      story, including how to refresh it (ideally with a paid/higher-tier key).
+  5. ADP (a separate signal from ECR above - crowd draft behavior, not expert opinion), loaded
+     from scripts/fantasypros_realtime_adp_2026.json - FantasyPros' public Real-Time ADP feed
+     (fantasypros.com/nfl/real-time-adp/). This one's a full, uncapped ~300-player snapshot (no
+     API key involved at all) - see fetch_realtime_adp()'s docstring for why it's a hand-fetched
+     browser pull rather than something this script calls live like the ESPN endpoints above.
+     Falls back to ESPN's own ADP for anyone outside that top-~300 pool.
 
 Grading methodology (adapted from pages/mock-draft.html's computeGrades/computePickGrades -
 see draft_grades_2026.json's "methodology" field for the exact weights):
@@ -90,6 +96,7 @@ CREDENTIALS_PATH = SCRIPT_DIR / "espn_credentials.json"
 TEAM_MAP_PATH = SCRIPT_DIR / "espn_team_map.json"
 MOCK_DRAFT_PATH = SITE_DIR / "pages" / "mock-draft.html"
 FANTASYPROS_SNAPSHOT_PATH = SCRIPT_DIR / "fantasypros_snapshot_2026.json"
+FANTASYPROS_REALTIME_ADP_PATH = SCRIPT_DIR / "fantasypros_realtime_adp_2026.json"
 OUTPUT_PATH = SITE_DIR / "data" / "season_2026" / "draft_grades_2026.json"
 
 DEFAULT_LEAGUE_ID = 39276
@@ -110,10 +117,36 @@ DEFAULT_POSITION_MAP = {1: "QB", 2: "RB", 3: "WR", 4: "TE"}
 # ~2.5/team at RB, ~3/team at WR accounting for shared flex slots, ~1.25/team at TE).
 VBD_REPLACEMENT_RANK = {"QB": 12, "RB": 30, "WR": 36, "TE": 15}
 
-# Same round-weighting as pages/mock-draft.html:1338 - late-round bench fliers count less
-# toward the grade than early/mid-round picks.
-GRADE_ROUND_WEIGHT = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
-                       10: 0.9, 11: 0.75, 12: 0.6, 13: 0.45, 14: 0.3, 15: 0.2}
+# Late-round picks are lottery tickets - low roster cost, so reaching past ECR consensus (or
+# projecting below a typical starter's baseline) shouldn't be penalized the way it would for an
+# early/mid-round pick that actually costs a competitive roster spot - and a real gem found late
+# should actively earn a *better* grade for outclassing the other players taken around that point
+# in the draft, not just avoid being punished. Rather than a lookup table keyed by round number -
+# which snaps abruptly right at whatever round is chosen as the cutoff, so a pick at 11.12 and a
+# pick at 12.1 could grade very differently for no real reason - every place in this script that
+# treats late picks specially uses one shared continuous function of the pick's OVERALL draft
+# position (not its round), so grading eases in smoothly pick by pick with no discrete jump.
+def lateness_ramp(pick_number, total_picks, start_frac=0.6, end_frac=1.0):
+    """0..1 continuous ramp by fractional position in the draft - 0 through start_frac, then
+    rises linearly to 1.0 by end_frac. No per-round step anywhere - two picks a few spots apart
+    always get nearly the same ramp value, regardless of which round each falls in."""
+    frac = pick_number / total_picks
+    if frac <= start_frac:
+        return 0.0
+    return min(1.0, (frac - start_frac) / (end_frac - start_frac))
+
+
+# Same round-weighting shape as pages/mock-draft.html:1338 (late-round bench fliers count less
+# toward the team's overall grade than early/mid-round picks) but driven by lateness_ramp above
+# instead of a per-round table - decays continuously from full weight to ROUND_WEIGHT_FLOOR.
+# start_frac=0.6 preserves the historical boundary (round 9 of 15) this table used to ease off
+# from.
+ROUND_WEIGHT_FLOOR = 0.2
+
+
+def round_weight_for_pick(pick_number, total_picks):
+    return 1 - lateness_ramp(pick_number, total_picks) * (1 - ROUND_WEIGHT_FLOOR)
+
 
 # Overall team grade: 4-way blend, starter points weighted heaviest per explicit request -
 # bench points, ECR value, and upside all still count, but starting-lineup output dominates
@@ -128,8 +161,57 @@ SUBGRADE_WEIGHTS = {"points": 0.80, "value": 0.08, "upside": 0.12}
 # Per-pick grade (shown when a manager's row is expanded on the Grades tab): mirrors
 # pages/mock-draft.html's computePickGrades (mostly "how good is this player" with ECR value as
 # a smaller adjustment) - percentile-ranked across all 180 real picks, not per-manager, so a
-# pick's grade reflects how it stacks up against the whole draft.
+# pick's grade reflects how it stacks up against the whole draft. The value/reach component fades
+# out for late picks (see pick_grade_weights_for_pick) so a lottery-ticket swing isn't penalized
+# for reaching past consensus.
 PICK_GRADE_WEIGHTS = {"quality": 0.75, "value": 0.25}
+
+# Ramp window for the per-pick grade specifically - starts a bit earlier and finishes sooner
+# (fully "late-graded" by 80% of the way through the draft, roughly round 12) than the team-level
+# ROUND_WEIGHT_FLOOR ramp above.
+PICK_GRADE_RAMP_START_FRAC = 0.55
+PICK_GRADE_RAMP_END_FRAC = 0.80
+
+# How many picks on either side (by overall draft order, skill positions only - see
+# rolling_quality_percentile) make up a late pick's "nearby players" comparison window. Tuned
+# empirically: too narrow (originally 15) regresses every late pick toward the middle instead of
+# letting real standouts separate, since picks close together in draft order are already
+# similarly talented (draft order roughly tracks ADP) - comparing a good round-13 pick only to its
+# closest 15 neighbors just finds more mediocre round-13 company. Too wide - or an unbounded "every
+# pick from round 8 on" pool - has the opposite problem: a round-15 pick's window then permanently
+# includes the stronger round-8/9 talent anchoring that pool, so no round-15 pick can ever grade
+# well no matter how good it is, since it's always diluted by comparison to better-projected
+# players taken much earlier. A wide-but-still-local rolling window is the middle ground - big
+# enough that a genuine standout has real competition to beat, not so big that it drags in players
+# from a fundamentally different tier of the draft.
+PICK_GRADE_WINDOW_RADIUS = 45
+
+
+def pick_grade_weights_for_pick(pick_number, total_picks):
+    ramp = lateness_ramp(pick_number, total_picks, PICK_GRADE_RAMP_START_FRAC, PICK_GRADE_RAMP_END_FRAC)
+    value_w = PICK_GRADE_WEIGHTS["value"] * (1 - ramp)
+    return {"quality": 1 - value_w, "value": value_w}
+
+
+def rolling_quality_percentile(records, idx_pool, window_radius):
+    """Percentile-ranks VBD within a window of the `window_radius` nearest picks on either side,
+    by overall draft position - restricted to idx_pool (skill positions only, see
+    compute_pick_grades - Head Coaches are graded on a totally different quality scale and should
+    never enter a skill pick's comparison window, or vice versa). Clipped at idx_pool's own edges,
+    so a pick near the end of the draft gets an increasingly backward-skewed window rather than a
+    smaller one. Returns {index: pct}, blended against the whole-draft percentile via
+    lateness_ramp in compute_pick_grades - so this window's exact makeup never causes a grade
+    discontinuity, only picks whose own ramp is already > 0 have it matter at all."""
+    order = sorted(idx_pool, key=lambda i: records[i]["pick"])
+    pos_of = {idx: pos for pos, idx in enumerate(order)}
+    m = len(order)
+    out = {}
+    for idx in order:
+        pos = pos_of[idx]
+        lo, hi = max(0, pos - window_radius), min(m, pos + window_radius + 1)
+        window_vals = {i: records[i]["vbd"] for i in order[lo:hi]}
+        out[idx] = percentile_ranks(window_vals)[idx]
+    return out
 
 # Contender Profile (informational only - see build_contender_profile): how many of a manager's
 # picks project as a top-12 / top-24 fantasy finisher at their position, blended 60/40 since
@@ -248,6 +330,29 @@ def fetch_fantasypros_data(season):
     return snapshot
 
 
+def fetch_realtime_adp():
+    """FantasyPros' Real-Time ADP (https://www.fantasypros.com/nfl/real-time-adp/), keyed by
+    normalized player name -> overall ADP rank (1 = first overall). This is the crowd-consensus
+    "where are people drafting this player right now" number - a different signal than the ECR
+    snapshot above (expert opinion). See fantasypros_realtime_adp_2026.json's own "_meta" key for
+    how this was fetched (a hand-driven browser pull - this specific endpoint 403s on a plain
+    script call even with matching headers, likely bot-detection on the request fingerprint, and
+    isn't reachable through the normal capped free-tier API either). Covers the top ~300 players
+    by ADP; anyone drafted outside that pool falls back to ESPN's own ADP number (see
+    fetch_player_pool) - deep-bench players this many rounds past ADP don't have a real
+    market-consensus number worth reporting anyway."""
+    if not FANTASYPROS_REALTIME_ADP_PATH.exists():
+        print(f"WARNING: {FANTASYPROS_REALTIME_ADP_PATH} not found - ADP display/Reaches & Steals "
+              "will fall back to ESPN's own ADP for every player.")
+        return {}
+    with open(FANTASYPROS_REALTIME_ADP_PATH) as f:
+        players = json.load(f)["players"]
+    by_name = {_normalize_name(p["n"]): p["adp"] for p in players}
+    print(f"Loaded FantasyPros Real-Time ADP for {len(by_name)} players "
+          f"({FANTASYPROS_REALTIME_ADP_PATH.name}).")
+    return by_name
+
+
 def fetch_player_pool(season):
     path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leaguedefaults/3"
     filt = json.dumps({
@@ -260,8 +365,10 @@ def fetch_player_pool(season):
     })
     data = http_get(f"{API_HOST}{path}?view=kona_player_info", extra_headers={"x-fantasy-filter": filt})
     fp_data = fetch_fantasypros_data(season)
+    fp_adp = fetch_realtime_adp()
     pool = {}
     fp_ecr_matched = 0
+    fp_adp_matched = 0
     for entry in data.get("players", []):
         p = entry.get("player", {})
         pid = p.get("id")
@@ -279,18 +386,22 @@ def fetch_player_pool(season):
         fp_match = fp_data.get(_normalize_name(name), {})
         if fp_match.get("position_ecr_rank") is not None or fp_match.get("overall_ecr_rank") is not None:
             fp_ecr_matched += 1
-        # ADP display is ESPN's own number for EVERY player, uniformly - not FantasyPros', even
-        # for the 22 QB/TE that happen to have a FantasyPros overall_adp_rank. Mixing two ADP
-        # sources with different scales/precision on the same "ADP" column would skew the
-        # Reaches & Steals tab (e.g. making QB/TE look like outsized reaches/steals just because
-        # FantasyPros' ADP differs systematically from ESPN's, not because of real value). ADP is
-        # purely informational now anyway - grading reads position_ecr_rank/overall_ecr_rank.
+        # ADP display: FantasyPros' Real-Time ADP (crowd consensus, refreshed far more often than
+        # ESPN's own in-house number - see fetch_realtime_adp) when the player is in that
+        # snapshot's top-~300 coverage, falling back to ESPN's own averageDraftPosition for
+        # anyone outside that pool. This is a different FantasyPros signal than
+        # position_ecr_rank/overall_ecr_rank below (expert consensus rank, still what drives the
+        # actual grade math) - ADP only feeds the Reaches & Steals tab and the per-pick "ADP"
+        # display column.
+        real_adp = fp_adp.get(_normalize_name(name))
+        if real_adp is not None:
+            fp_adp_matched += 1
         pool[pid] = {
             "name": name,
             "pos": pos,
             "nfl_team": PRO_TEAM_ABBREV.get(p.get("proTeamId"), ""),
             "pts": round(pts, 1),
-            "adp": espn_adp,
+            "adp": real_adp if real_adp is not None else espn_adp,
             "espn_adp": espn_adp,
             "dr": dr,
             "position_ecr_rank": fp_match.get("position_ecr_rank"),
@@ -299,8 +410,10 @@ def fetch_player_pool(season):
         }
     print(f"Pulled {len(pool)} skill-position players' projections from ESPN.")
     if fp_data:
-        print(f"Matched {fp_ecr_matched}/{len(pool)} to FantasyPros ECR (the grading signal). "
-              "ADP display uses ESPN's own number uniformly (see fetch_player_pool comment).")
+        print(f"Matched {fp_ecr_matched}/{len(pool)} to FantasyPros ECR (the grading signal).")
+    if fp_adp:
+        print(f"Matched {fp_adp_matched}/{len(pool)} to FantasyPros Real-Time ADP (ADP display); "
+              "everyone else falls back to ESPN's own ADP.")
     assign_position_pool_ranks(pool)
     return pool
 
@@ -481,18 +594,48 @@ def ranked_position(pct_dict, key):
 
 
 def compute_pick_grades(all_picks_flat):
-    """Mutates every record in all_picks_flat with pick_grade/pick_percentile - quality (VBD)
-    percentile-ranked across the whole draft, blended with ECR-value percentile per
-    PICK_GRADE_WEIGHTS. Head Coach picks have no ECR data, so they're graded on quality
-    alone (consistent with how the rest of this script already treats them)."""
-    quality_pct = percentile_ranks({i: r["vbd"] for i, r in enumerate(all_picks_flat)})
-    value_pct = percentile_ranks({i: r["value"] for i, r in enumerate(all_picks_flat)})
+    """Mutates every record in all_picks_flat with pick_grade/pick_percentile.
+
+    Head Coach picks are a fundamentally different quality scale than skill players - "vbd" for a
+    coach is just their raw projected-wins-based points (there's no VBD_REPLACEMENT_RANK baseline
+    for HC), nowhere near comparable to a skill player's points-over-replacement. They also have
+    no ECR data. So coaches are graded entirely separately: percentile-ranked only against the
+    other 11 Head Coach picks, no round/lateness adjustment, no value component - "how good a
+    coach pick is this, compared to the other coaches drafted."
+
+    Skill-position picks: quality (VBD) percentile-ranked, blended with ECR-value percentile per
+    PICK_GRADE_WEIGHTS (tapered continuously by overall pick number - see
+    pick_grade_weights_for_pick). Quality itself is a smooth blend of two percentile rankings: the
+    whole-draft ranking (as before) and a rolling ranking against the nearest
+    PICK_GRADE_WINDOW_RADIUS picks on either side, skill positions only (see
+    rolling_quality_percentile) - mixed by the same ramp used for the weight taper, so an early
+    pick is graded ~entirely against the whole draft (unchanged from before) and a late pick is
+    graded increasingly against a wide-but-local pool of its peers, with a smooth pick-by-pick
+    transition rather than a hard switch at some specific round. This is what makes an A both
+    reachable AND meaningful for a genuinely good late pick, without making it impossible for a
+    round-13+ pick specifically: ranking a late sleeper's VBD against the whole draft (including
+    round-1 studs) makes A mathematically unreachable, but an unbounded "everyone from round 8 on"
+    comparison pool has the opposite problem - a round-15 pick is then permanently diluted by
+    comparison to the stronger round-8/9 talent anchoring that pool, so it can never grade well
+    either. The rolling window is the middle ground - see PICK_GRADE_WINDOW_RADIUS's comment."""
+    n = len(all_picks_flat)
+    skill_idx = [i for i, r in enumerate(all_picks_flat) if r["position"] != "HC"]
+    hc_idx = [i for i, r in enumerate(all_picks_flat) if r["position"] == "HC"]
+
+    global_quality_pct = percentile_ranks({i: all_picks_flat[i]["vbd"] for i in skill_idx})
+    rolling_quality_pct = rolling_quality_percentile(all_picks_flat, skill_idx, PICK_GRADE_WINDOW_RADIUS)
+    value_pct = percentile_ranks({i: all_picks_flat[i]["value"] for i in skill_idx})
+    hc_quality_pct = percentile_ranks({i: all_picks_flat[i]["vbd"] for i in hc_idx})
+
     for i, r in enumerate(all_picks_flat):
         if r["position"] == "HC":
-            pct = quality_pct[i]
+            pct = hc_quality_pct[i]
         else:
-            pct = (PICK_GRADE_WEIGHTS["quality"] * quality_pct[i]
-                   + PICK_GRADE_WEIGHTS["value"] * value_pct[i])
+            ramp = lateness_ramp(r["pick"], n, PICK_GRADE_RAMP_START_FRAC, PICK_GRADE_RAMP_END_FRAC)
+            q_pct = (1 - ramp) * global_quality_pct[i] + ramp * rolling_quality_pct[i]
+            weights = pick_grade_weights_for_pick(r["pick"], n)
+            pct = (weights["quality"] * q_pct
+                   + weights["value"] * value_pct[i])
         r["pick_grade"] = gradeLetter(pct)
         r["pick_percentile"] = round(pct, 4)
 
@@ -527,11 +670,15 @@ CONTENDER_HISTORICAL_CONTEXT = {
 
 
 def compute_contender_profile(all_picks_by_manager):
-    top12_hits, top24_hits = {}, {}
+    top12_hits, top24_hits, top12_players = {}, {}, {}
     for mgr, recs in all_picks_by_manager.items():
         skill_recs = [r for r in recs if r["position"] != "HC"]
         top12_hits[mgr] = sum(1 for r in skill_recs if r["is_top12"])
         top24_hits[mgr] = sum(1 for r in skill_recs if r["is_top24"])
+        top12_players[mgr] = sorted(
+            [{"player": r["player"], "position": r["position"], "round": r["round"], "pick": r["pick"]}
+             for r in skill_recs if r["is_top12"]],
+            key=lambda x: x["pick"])
 
     graded = blended_grade({"top12": top12_hits, "top24": top24_hits}, CONTENDER_WEIGHTS)
 
@@ -540,6 +687,7 @@ def compute_contender_profile(all_picks_by_manager):
         managers_out[mgr] = {
             "top12_hits": top12_hits[mgr],
             "top24_hits": top24_hits[mgr],
+            "top12_players": top12_players[mgr],
             "percentile": graded[mgr]["percentile"],
             "grade": graded[mgr]["grade"],
         }
@@ -625,7 +773,7 @@ def build_grades(picks, player_pool, coach_pool, team_map):
 
         total_reach_w, total_upside_w, total_w = 0.0, 0.0, 0.0
         for r in recs:
-            w = GRADE_ROUND_WEIGHT.get(r["round"], 1)
+            w = round_weight_for_pick(r["pick"], len(picks))
             total_reach_w += r["value"] * w
             total_upside_w += r["vbd"] * w
             total_w += w

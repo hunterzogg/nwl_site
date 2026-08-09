@@ -658,6 +658,246 @@ looks the way it does:
 
 ---
 
+## Contender Profile dropdown, Real-Time ADP, Upside Ranking simplified (added this session)
+
+Three follow-up tweaks to `pages/draft-analysis.html` / `scripts/fetch_espn_draft.py`.
+
+**Contender Profile per-manager dropdown**: each manager's row is now clickable (reuses the same
+`.grade-lead`/`.grade-detail` expand pattern as the Grades tab leaderboard) and expands to list
+which specific picks were flagged `is_top12` - player, position, pick number - instead of only
+showing the raw `top12_hits`/`top24_hits` counts. `compute_contender_profile()` in
+`fetch_espn_draft.py` now also builds `top12_players` (sorted by pick) per manager into the output
+JSON. The "Show the full historical findings" `<details>` block defaults to **collapsed** now
+(was `open` by default) per explicit request - the two-sentence summary above it still shows
+without expanding.
+
+**ADP switched from ESPN to FantasyPros' Real-Time ADP**: the `adp` field used by the Grades tab's
+per-pick display and the Reaches & Steals tab is no longer ESPN's own `averageDraftPosition` -
+it's now FantasyPros' Real-Time ADP (`fantasypros.com/nfl/real-time-adp/`), the crowd-consensus
+number FantasyPros itself markets as their most current ADP feed (distinct from the ECR snapshot
+used for the actual letter grades, which is untouched). This is a **new, separate snapshot file**,
+`scripts/fantasypros_realtime_adp_2026.json` (300 players, skill positions + K + DST, rank 1-300) -
+not the same file as `fantasypros_snapshot_2026.json` (ECR). Real ADP archaeology, since this took
+a few wrong turns before landing on a working method:
+- FantasyPros' free-tier v2 API (the same `x-api-key`-based API used for ECR) caps **every** bulk
+  request at 10 results, confirmed this time even with `type=ADP` explicitly requested and every
+  `limit`/`page`/`scoring` variation tried - there was no repeat of the ECR fetch's earlier "brief
+  uncapped window" for ADP specifically.
+- The public, unpaywalled `fantasypros.com/nfl/real-time-adp/` page itself, though, renders the
+  **full ~300-player list** with no login and no cap. It's entirely client-rendered (nothing in
+  the raw HTML - confirmed via `curl`), so it had to be driven with a real browser rather than a
+  simple script fetch. Inspecting the page's own network calls found the exact backing endpoint:
+  `api.fantasypros.com/v2/json/nfl/2026/consensus-rankings?week=0&filters=79:236:4350&position=ALL&type=adp&scoring=HALF&experts=show`
+  (note: `api.fantasypros.com/v2/...`, no API key, NOT the same host/path as the capped
+  `api.fantasypros.com/public/v2/...` key-based API) - called from the page's own JS with
+  `fetch(url, {credentials:'include'})`, it returned all 300 players uncapped.
+- That same URL called directly from a script (`curl`/`urllib`, even with a matching
+  `Origin`/`Referer` and browser User-Agent) gets a flat `403 Forbidden` - almost certainly
+  request-fingerprint bot detection (TLS/JA3, not a missing header), not something worth chasing
+  further for a once-per-refresh snapshot. So, like the Superlatives and Upside Ranking data, this
+  is a **hand-fetched browser snapshot** (see the file's own `_meta` key for the exact refresh
+  steps: open the real-time-adp page in a real browser, call that same URL from the page's own JS
+  console/context, save the result) - `fetch_espn_draft.py` just loads the file, same pattern as
+  the ECR snapshot.
+- `fetch_realtime_adp()` in `fetch_espn_draft.py` loads it keyed by normalized player name -
+  covers 242 of the 168+ pool's relevant players cleanly; anyone outside the top-300 (deep bench/
+  waiver-wire fliers) falls back to ESPN's own ADP, same fallback pattern already used for ECR
+  gaps. Verified: Jahmyr Gibbs (adp 1), Amon-Ra St. Brown (adp 8), DeVonta Smith (adp 31) all match
+  the live page's numbered list exactly; Caleb Douglas (outside FantasyPros' top 300) correctly
+  fell back to ESPN's 170.3.
+- Nothing about the **grading math** changed - `position_ecr_rank`/`overall_ecr_rank` (from the
+  separate ECR snapshot) still drive the letter grades entirely, per the "Value grading switched
+  from ADP to ECR" section above. Only the informational `adp` field (Reaches & Steals, the
+  per-pick ADP column) moved sources.
+
+**Upside Ranking simplified to one view**: per explicit request, the "Player Rankings" sub-tab was
+removed from the Upside Ranking tab - it now shows only the "By Manager" view directly, no sub-tab
+toggle. `renderUpsidePlayers()` and the `.subtab-btn`/`.subpanel` markup/CSS/click-handling were
+deleted outright (dead code, not hidden) since nothing else on this page used that pattern.
+
+All three verified live in-browser (fresh tab, no console errors): Contender Profile rows expand
+to show the top-12 player list and the historical-findings block loads collapsed; Reaches & Steals
+now shows FantasyPros ADP values (spot-checked against the two archaeology bullets above); Upside
+Ranking loads straight into the by-manager view with no leftover sub-tab UI.
+
+---
+
+## Collapsed-by-default methodology boxes, integer ADP, Media Buzz rename (added this session)
+
+Three more follow-ups to `pages/draft-analysis.html`, per explicit request.
+
+**Description boxes default collapsed site-wide**: audited every page for a `.methodology`-style
+explanatory box (checked all of `pages/*.html`) - `draft.html` and `rankings.html` already followed
+the pattern (a short always-visible summary sentence + a `<details>` for the rest, closed by
+default), and three of `draft-analysis.html`'s four `.methodology` boxes already did too. The one
+outlier was the Reaches & Steals tab's box, which had no `<details>` at all - always fully open.
+Wrapped it in a closed-by-default `<details>` (matching the Grades/Media Buzz tabs' fully-collapsed
+style, since its text doesn't split naturally into a short teaser + longer detail). This is now the
+standard for any future description/methodology box on the site - collapsed by default, expand to
+read.
+
+**Reaches & Steals ADP shown as whole numbers**: since ADP display switched to FantasyPros'
+Real-Time ADP this session (integer ranks, see above), every value in this tab was rendering as
+e.g. "97.0" - a decimal that never varies. Both the ADP column and the +/- delta badge now use
+`Math.round()` instead of `.toFixed(1)`. Scoped to just this tab (the Grades tab's per-pick ADP
+column was left as-is, out of scope for this request).
+
+**"Upside Ranking" renamed "Media Buzz Ranking"**, plus a stricter inclusion rule: per explicit
+request, a player should only count if they're *consistently* flagged across sources, not just
+mentioned once. The old `mentions` count could come entirely from a single outlet's list-style
+article (e.g. an ESPN "10 experts, 10 sleepers" grid counts as multiple mentions from one site) -
+that's not really a cross-media consensus. Re-filtered the existing research data
+(`len(set(sources)) >= 2`, i.e. at least 2 *distinct* outlets, not just 2 mentions) down from 79 to
+44 qualifying players, re-ranked by mention count with the existing ADP tiebreak preserved, and
+reworded the methodology note to state the new criterion explicitly. This is still hand-researched
+data (see the "Upside Ranking" section above) - no new web research was done, just a stricter
+filter applied to the same 24-article dataset. Renamed the underlying file
+`data/season_2026/upside_rankings_2026.json` &rarr; `media_buzz_rankings_2026.json` (old file
+deleted) and renamed every "upside"-labeled identifier in `draft-analysis.html`'s JS to
+`mediaBuzz`/`renderMediaBuzz`/etc. (the unrelated VBD "upside" signal used elsewhere in the
+Grades tab's grade-weights blend was left untouched - different concept, same word).
+
+All three verified live in-browser (fresh tab, no console errors): Reaches & Steals methodology now
+starts collapsed with plain-integer ADP/delta values; the tab reads "Media Buzz Ranking" and shows
+all 12 managers' filtered hyped-pick lists.
+
+---
+
+## Late-round per-pick grades weighted toward upside, not ADP reach (added this session)
+
+Per explicit feedback: late-round picks (round 12+) are low-cost "lottery ticket" swings, so a
+reach past ECR consensus there shouldn't drag the per-pick grade down the way the same reach would
+in an early/mid round, where a miss costs an actual competitive roster spot. This only touches the
+**per-pick "Value" badge** (`pick_grade`, shown when a manager's row is expanded on the Grades
+tab) - the team-level overall/position/bench grades and Reaches & Steals were untouched.
+
+`PICK_GRADE_WEIGHTS` (quality 75% / value 25%, quality = VBD-based "how good is this player",
+value = ECR-based reach/value) is now round-dependent via a new
+`pick_grade_weights_for_round()` in `fetch_espn_draft.py`: unchanged through round 11, then the
+25% value/reach weight tapers linearly to 0% by round 15 (round 12 &asymp; 19% value, round 13
+&asymp; 12.5%, round 14 &asymp; 6%, round 15 = 0%, quality absorbing the difference each step) - so
+a round-15 pick is graded entirely on projected quality/upside, with no ADP-reach penalty at all.
+Verified against real output: Adonai Mitchell (round 12, WR taken well ahead of ADP but middling
+projected points) still only grades D+, since the reach no longer counts against him but his real
+upside is genuinely modest - while Brock Purdy and Bo Nix (round 13 QB reaches with real
+top-QB-tier upside) now grade B- instead of being dragged down by the ADP gap. Re-ran
+`fetch_espn_draft.py` and verified live in-browser (Grades tab per-pick table, no console errors).
+
+**Follow-up same session - added the overall pick number, and fixed a second problem this
+surfaced**: `pickTableHTML()` in `draft-analysis.html` now shows the overall pick number next to
+round.pick (e.g. "12.9 (141)" / "Pick 12.9 (141)" on the mobile card), both desktop table and card.
+
+Hunter then asked directly: with the taper above, is an A grade even reachable in a late round? It
+wasn't - checked the real output and the best round-12+ pick in the whole draft only reached B-
+(0.56 percentile). The taper zeroes out the *value/reach* penalty by round 15, but `quality` (VBD)
+was still percentile-ranked against **all 180 picks**, including round-1 studs with VBD well over
++80. A round-15 flier would need to out-project players taken in the first two rounds to crack A -
+structurally impossible, since a player still on the board in round 15 is there precisely because
+they don't project that well in absolute terms.
+
+Fixed by re-ranking the quality signal for round-12+ picks **within that cohort only** (a second
+`percentile_ranks()` call scoped to `round >= PICK_GRADE_LATE_ROUND_START`, in
+`compute_pick_grades()`), instead of against the full draft - answers "is this a good pick for
+this late," which is what a lottery-ticket grade should mean. Verified: the best round-12+ pick
+this draft (Bo Nix, round 13) now grades A- (0.84 percentile, up from B-/0.56); the Buffalo Bills
+Head Coach pick (round 14, graded on quality alone since HC has no ECR data) hit A+. Round 15 in
+this particular draft still tops out around C+ (Calvin Ridley) - not every round is guaranteed a
+top grade, but it's no longer mathematically impossible the way it was before. Re-ran
+`fetch_espn_draft.py` and verified live in-browser (per-pick pick-number display and the new
+late-round grades), no console errors.
+
+**Second follow-up same session - replaced the round-12 cutoff with a continuous rolling
+comparison, and applied the same idea to the overall team grade**: per explicit feedback, a hard
+switch exactly at round 12 meant a pick at 11.12 and a pick at 12.1 could grade very differently
+for no real reason, and "compare against the round-12+ cohort" is a fixed group, not genuinely
+"the players around them." Replaced every late-round special-case in `fetch_espn_draft.py` with
+one shared `lateness_ramp(pick_number, total_picks)` - a continuous 0..1 function of a pick's
+*overall* draft position (not its round number): 0 through the first 60% of the draft (the same
+boundary the old round-9 full-weight cutoff implied), then rising linearly to 1.0 at the very last
+pick. No per-round table, no step function - two picks a few spots apart always get nearly
+identical treatment now, regardless of which round each happens to land in.
+
+This one ramp now drives three things that were previously three separate hard-cutoff mechanisms:
+1. **Per-pick quality percentile** (`compute_pick_grades`): blends the whole-draft VBD percentile
+   with a new `rolling_quality_percentile()` - each pick's VBD re-ranked only against the
+   `PICK_GRADE_WINDOW_RADIUS` (15) nearest picks on either side by overall draft order, clipped at
+   the draft's edges - weighted by the ramp. An early pick is graded almost entirely against the
+   whole draft (unchanged from the original behavior); a very late pick is graded almost entirely
+   against its actual neighbors; the transition in between is smooth pick-by-pick, not a jump.
+2. **Per-pick quality/value blend weight** (`pick_grade_weights_for_pick`, replacing
+   `pick_grade_weights_for_round`): the same shape as before (75/25 fading to 100/0), just driven
+   by the ramp instead of a round lookup table.
+3. **Team-level overall grade's round-weighting** (`round_weight_for_pick`, replacing the
+   `GRADE_ROUND_WEIGHT` per-round dict) - per Hunter's explicit follow-up ask to fold this same
+   logic into the overall grade too. Same shape (full weight down to a 0.2 floor at the very last
+   pick), same continuous ramp, used when averaging `value`/`upside` into each manager's overall
+   grade - so a manager's overall grade no longer has a hidden round-12-ish step either.
+Verified no discontinuity: picks 121-139 (spanning the old round-11/round-12 boundary at pick 133)
+grade on a smooth continuum with no jump at the boundary. Grades stayed sane overall (top managers
+still Prodahl A / Hagan A- / Ainsworth A-, matching the pre-change ordering) and a late lottery
+pick can still reach the top of the scale (round 14/15 Head Coach picks hit A/A+ this run, round
+13 Bo Nix hit B+). Re-ran `fetch_espn_draft.py` and verified live in-browser, no console errors.
+
+**Third follow-up same session - the rolling window was making grades WORSE for late-round gems,
+fixed by widening to a shared late-tier pool**: Hunter checked and pointed out most round-12+
+grades had actually gone *down* under the rolling-window version, when the goal was to *reward*
+finding good players late, not just stop penalizing them. Diagnosed why: draft order roughly
+tracks real value (ADP-like), so a narrow window of a pick's ~15 closest neighbors on either side
+is already full of similarly-drafted, similarly-talented players - comparing a good round-13 pick
+only to its immediate neighbors just finds more mediocre round-13 company, regression to the mean,
+not a way for a real standout to separate. Tried widening the window (tested radius up to 90) and
+it didn't help - a *symmetric* window that wide starts pulling in stronger earlier-round players
+too, which pulls the bar back up. What actually worked in testing: comparing a late pick against
+the full pool of *every* pick from a fixed point in the draft onward (not a narrow window, not
+symmetric) - the same shape as the earlier round-12-cohort fix, just re-derived as a continuous
+fraction of overall pick number instead of an integer round, and blended into the final grade via
+the same continuous ramp so there's still no discontinuity anywhere.
+
+`rolling_quality_percentile()` (narrow sliding window) was replaced with
+`late_tier_quality_percentile()` (percentile within the pool of every pick past
+`PICK_GRADE_RAMP_START_FRAC`, currently 0.55 - i.e. "the rest of the late-round field," not just a
+handful of neighbors). The per-pick grade also got its own dedicated ramp
+(`PICK_GRADE_RAMP_START_FRAC=0.55` &rarr; `PICK_GRADE_RAMP_END_FRAC=0.80`, roughly rounds 8-12),
+separate from the team-level `round_weight_for_pick` ramp (still 0.6&rarr;1.0/round 9-15) - tuned
+empirically so a real late-round standout is compared almost entirely against its late-round peers
+by the time it matters, instead of still being dragged down by a lingering blend with the
+whole-draft percentile. Verified: Bo Nix, Matthew Stafford, Mark Andrews, and Brock Purdy (the
+same real standouts from the very first fix) are back to A- grades, and the round-11/12 boundary
+(picks 118-140) still shows a smooth continuum driven by underlying VBD, no jump. Re-ran
+`fetch_espn_draft.py` and verified live in-browser, no console errors.
+
+**Fourth follow-up same session - back to a rolling window (much wider than the original), plus
+Head Coaches split into their own pool**: two more pieces of explicit feedback. First, the
+"everyone from round 8 on" pool from the third follow-up had its own problem Hunter caught: it's
+an unbounded comparison group anchored at a fixed early point, so a round-13+ pick's VBD is
+*permanently* diluted by comparison to the stronger round-8/9 talent in that pool - no round-15
+pick could ever grade well, no matter how good it actually was, since the pool always contains
+better-projected players taken much earlier. Reverted to a genuine rolling window (the original
+approach from the second follow-up) but sized way up from the original 15-pick radius that had
+caused the regression-to-the-mean problem in the first place - tested radius values from 20 to 90
+against the real data; 45 (so up to a ~90-pick window, about 3 rounds either side, clipped at the
+draft's edges) was the sweet spot where genuine standouts (Bo Nix, Stafford, Purdy, Andrews) climb
+back to A/A- while the grade distribution still has plenty of C/D/F for picks that are just
+ordinary lottery tickets - a real curve, not a blanket reward. `PICK_GRADE_WINDOW_RADIUS = 45`,
+used by the reinstated `rolling_quality_percentile()`.
+
+Second: Head Coach picks were getting graded on the same quality percentile as skill players, but
+"vbd" for a coach is just raw projected-wins-based points (no VBD_REPLACEMENT_RANK baseline
+exists for HC) - not remotely the same scale as a skill player's points-over-replacement, which is
+exactly the pre-existing quirk flagged (but left unfixed) after the very first follow-up, where
+late-round HC picks were landing implausible A+/A grades just by being compared against
+skill-position busts. Per explicit request, HC picks are now percentile-ranked **only against the
+other 11 Head Coach picks** in the draft - no round/lateness adjustment, no value component (they
+never had ECR data anyway). Verified: the 12 HC picks now spread sensibly from A+ (Kansas City
+Chiefs, the best real projected-wins coach pick) down to F (New England Patriots, the worst),
+instead of the previous scale-mismatched inflation. `compute_pick_grades()` now builds `skill_idx`/
+`hc_idx` up front and keeps every percentile computation (global quality, rolling window, ECR
+value) scoped to skill picks only, so HC's differently-scaled numbers never leak into a skill
+pick's comparison group either. Re-ran `fetch_espn_draft.py` and verified live in-browser, no
+console errors.
+
+---
+
 ## Known Bugs & Data Issues
 
 ### Active / Unresolved

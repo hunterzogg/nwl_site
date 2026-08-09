@@ -93,30 +93,20 @@
 .mgr-summary-row .mgr-body { flex: 1; }
 .mgr-summary-row .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 .mgr-summary-row .total-num { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; color: var(--blue-bright); }
-
-.subtab-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-.subtab-btn {
-  font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 8px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-  color: var(--text-muted); cursor: pointer;
-}
-.subtab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
-.subpanel { display: none; }
-.subpanel.active { display: block; }
 </style>
 </head>
 <body>
 
 <div class="container" style="padding-top: 24px;">
   <h1 style="margin-bottom: 6px;">Draft Analysis</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Grades, contender profile, superlatives, steals &amp; reaches, and media upside for the 2026 draft.</p>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Grades, contender profile, superlatives, steals &amp; reaches, and media buzz for the 2026 draft.</p>
 
   <div class="tab-row">
     <button class="tab-btn active" data-tab="grades">Grades</button>
     <button class="tab-btn" data-tab="contender">Contender Profile</button>
     <button class="tab-btn" data-tab="superlatives">Superlatives</button>
     <button class="tab-btn" data-tab="reaches">Reaches &amp; Steals</button>
-    <button class="tab-btn" data-tab="upside">Upside Ranking</button>
+    <button class="tab-btn" data-tab="upside">Media Buzz Ranking</button>
   </div>
 
   <div class="panel active" id="panel-grades">
@@ -136,12 +126,7 @@
   </div>
 
   <div class="panel" id="panel-upside">
-    <div class="subtab-row">
-      <button class="subtab-btn active" data-subtab="upside-players">Player Rankings</button>
-      <button class="subtab-btn" data-subtab="upside-managers">By Manager</button>
-    </div>
-    <div class="subpanel active" id="subpanel-upside-players"><div id="upsidePlayersContent"></div></div>
-    <div class="subpanel" id="subpanel-upside-managers"><div id="upsideManagersContent"></div></div>
+    <div id="upsideManagersContent"></div>
   </div>
 </div>
 
@@ -152,7 +137,7 @@
 let managers = [];
 let draftGrades = null;
 let superlatives = null;
-let upside = null;
+let mediaBuzz = null;
 
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
@@ -172,7 +157,7 @@ function gradeBadge(label, sm) {
 // ---------- Grades tab ----------
 function pickTableHTML(picks) {
   const rowHTML = (p) => `
-    <td class="num">${p.round}.${p.round_pick}</td>
+    <td class="num">${p.round}.${p.round_pick} <span style="color:var(--text-muted);">(${p.pick})</span></td>
     <td>${p.player}${p.keeper ? ' <span style="color:var(--text-muted);font-size:0.75rem;">(keeper)</span>' : ''}</td>
     <td>${posTag(p.position)}</td>
     <td>${p.nfl_team || ''}</td>
@@ -196,7 +181,7 @@ function pickTableHTML(picks) {
             ${posTag(p.position)}
             ${gradeBadge(p.pick_grade, true)}
           </div>
-          <div class="table-card-sub">Pick ${p.round}.${p.round_pick} &middot; ${p.nfl_team || ''} &middot; ${p.is_starter ? p.slot : 'Bench'}</div>
+          <div class="table-card-sub">Pick ${p.round}.${p.round_pick} (${p.pick}) &middot; ${p.nfl_team || ''} &middot; ${p.is_starter ? p.slot : 'Bench'}</div>
           <div class="table-card-sub">${p.projected_pts.toFixed(1)} proj pts &middot; ADP ${p.adp !== null ? p.adp.toFixed(1) : '—'}</div>
         </div>
       `).join('')}
@@ -225,7 +210,7 @@ function renderGrades() {
           <strong>${Math.round(draftGrades.methodology.grade_weights.value * 100)}%</strong> ADP-reach value,
           <strong>${Math.round(draftGrades.methodology.grade_weights.upside * 100)}%</strong> upside over each position's replacement baseline.
           Position and bench badges below use a separate points-dominant blend scoped to just that group's picks.
-          Each pick's own "Value" badge (visible when you expand a manager below) is a different blend - mostly player quality, with real ADP value as a smaller adjustment - percentile-ranked across all 180 picks in the draft, not just one manager's roster.
+          Each pick's own "Value" badge (visible when you expand a manager below) is a different blend - mostly player quality, with real ADP value as a smaller adjustment - percentile-ranked across all 180 picks in the draft, not just one manager's roster. That value/reach component fades out continuously for late-round picks (low-cost lottery tickets, graded on upside potential rather than penalized for reaching past consensus), and quality itself shifts toward comparing a late pick against a wide rolling window of the players actually taken around that point in the draft, not the whole draft - so a genuine gem found late gets rewarded with a higher grade for outclassing its real competition, not just spared a penalty. Both ease in smoothly by overall pick number, with no cutoff at any specific round. Head Coach picks are graded separately against only the other 11 coaches drafted, since coach and player quality aren't on a comparable scale.
         </div>
       </details>
     </div>
@@ -279,7 +264,7 @@ function renderContenderProfile() {
     <div class="methodology">
       <strong>This is informational only - it is NOT part of the overall/position/bench grades above.</strong>
       We analyzed all ${ctx.sample_size} years of NWL championship-winning drafts to see whether roster construction actually predicts winning. Short answer: barely.
-      <details open>
+      <details>
         <summary>Show the full historical findings</summary>
         <div style="margin-top:8px;">
           <p style="margin:0 0 8px;">${ctx.position_mix_finding}</p>
@@ -290,16 +275,38 @@ function renderContenderProfile() {
       </details>
     </div>
     ${rows.map(([mgr, v], i) => `
-      <div class="mgr-summary-row">
+      <div class="grade-lead" data-manager="${mgr}">
         <span class="rank-num-big">${i + 1}</span>
         <div class="mgr-body">
           ${managerTag(managers, mgr)}
           <div class="mgr-sub">${v.top12_hits} picks projecting top-12 at their position &middot; ${v.top24_hits} projecting top-24</div>
         </div>
         ${gradeBadge(v.grade)}
+        <span class="chevron">&#9660;</span>
+      </div>
+      <div class="grade-detail">
+        ${v.top12_players && v.top12_players.length ? `
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">Top-12 potential</div>
+          ${v.top12_players.map(p => `
+            <div class="value-row">
+              <span class="rank-num"></span>
+              <div class="player-body">
+                <div>${p.player} ${posTag(p.position)}</div>
+                <div class="player-sub">Pick ${p.pick} (R${p.round})</div>
+              </div>
+            </div>
+          `).join('')}
+        ` : `<p style="margin:0;color:var(--text-muted);font-size:0.88rem;">No picks projecting top-12 at their position.</p>`}
       </div>
     `).join('')}
   `;
+
+  document.querySelectorAll('#contenderContent .grade-lead').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('expanded');
+      el.nextElementSibling.classList.toggle('expanded');
+    });
+  });
 }
 
 // ---------- Superlatives tab ----------
@@ -340,18 +347,23 @@ function renderReaches() {
       <span class="rank-num"></span>
       <div class="player-body">
         <div>${p.player} ${posTag(p.position)}</div>
-        <div class="player-sub">Pick ${p.pick} (R${p.round}.${p.round_pick}) &middot; ADP ${p.adp.toFixed(1)} &middot; ${managerTag(managers, p.manager)}</div>
+        <div class="player-sub">Pick ${p.pick} (R${p.round}.${p.round_pick}) &middot; ADP ${Math.round(p.adp)} &middot; ${managerTag(managers, p.manager)}</div>
       </div>
-      <span class="value-num ${cls}">${delta > 0 ? '+' : ''}${delta.toFixed(1)}</span>
+      <span class="value-num ${cls}">${delta > 0 ? '+' : ''}${Math.round(delta)}</span>
     </div>
   `;
 
   document.getElementById('reachesContent').innerHTML = `
     <div class="methodology">
-      This is a different lens than the Grades tab: this leaderboard is vs. ESPN's own ADP (crowd draft data), not the FantasyPros expert-consensus rank (ECR) the letter grades are based on.
-      A "steal" is a player who fell past their ADP; a "reach" is a player taken well ahead of it.
-      Reaches exclude the final two rounds (14-15), where late fliers naturally drift far from any meaningful ADP.
-      Head Coach picks are excluded from both lists - ADP doesn't cover them.
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          This is a different lens than the Grades tab: this leaderboard is vs. FantasyPros' Real-Time ADP (crowd draft data), not the FantasyPros expert-consensus rank (ECR) the letter grades are based on.
+          A "steal" is a player who fell past their ADP; a "reach" is a player taken well ahead of it.
+          Reaches exclude the final two rounds (14-15), where late fliers naturally drift far from any meaningful ADP.
+          Head Coach picks are excluded from both lists - ADP doesn't cover them.
+        </div>
+      </details>
     </div>
     <div class="leaderboard-grid">
       <div>
@@ -366,70 +378,31 @@ function renderReaches() {
   `;
 }
 
-// ---------- Upside Ranking tab ----------
-function upsideMethodologyHTML() {
-  if (!upside) return '';
+// ---------- Media Buzz Ranking tab ----------
+function mediaBuzzMethodologyHTML() {
+  if (!mediaBuzz) return '';
   return `
     <div class="methodology">
       <details>
         <summary>Show methodology</summary>
         <div style="margin-top:8px;">
-          ${upside.methodology.note}
+          ${mediaBuzz.methodology.note}
           <br><br>
-          Sources checked: ${upside.methodology.sources.join(', ')}.
+          Sources checked: ${mediaBuzz.methodology.sources.join(', ')}.
         </div>
       </details>
     </div>
   `;
 }
 
-function renderUpsidePlayers() {
-  if (!upside || !upside.players || !upside.players.length) {
-    document.getElementById('upsidePlayersContent').innerHTML = emptyState(
-      'No upside rankings yet', 'Run the upside research pass once the draft is complete.');
-    return;
-  }
-  const rowHTML = (p) => `
-    <td class="num">${p.rank}</td>
-    <td>${p.player}</td>
-    <td>${posTag(p.position)}</td>
-    <td>${p.nfl_team || ''}</td>
-    <td>${managerTag(managers, p.manager)}</td>
-    <td class="num"><span class="mention-num">${p.mentions}</span></td>
-    <td>${p.sources.map(s => `<span class="source-chip">${s}</span>`).join('')}</td>
-  `;
-  document.getElementById('upsidePlayersContent').innerHTML = `
-    <p class="updated-note">Updated ${new Date(upside.updated_at).toLocaleString()}</p>
-    ${upsideMethodologyHTML()}
-    <div class="table-wide" style="overflow-x:auto;">
-    <table>
-      <thead><tr><th class="num">Rank</th><th>Player</th><th>Pos</th><th>NFL</th><th>Manager</th><th class="num">Mentions</th><th>Sources</th></tr></thead>
-      <tbody>${upside.players.map(p => `<tr>${rowHTML(p)}</tr>`).join('')}</tbody>
-    </table>
-    </div>
-    <div class="table-cards">
-      ${upside.players.map(p => `
-        <div class="table-card">
-          <div class="table-card-top">
-            <span class="grow">${p.rank}. ${p.player}</span>
-            ${posTag(p.position)}
-          </div>
-          <div class="table-card-sub">${p.nfl_team || ''} &middot; ${managerTag(managers, p.manager)} &middot; <span class="mention-num">${p.mentions}</span> mentions</div>
-          <div class="table-card-sub">${p.sources.map(s => `<span class="source-chip">${s}</span>`).join('')}</div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function renderUpsideManagers() {
-  if (!upside || !upside.players || !upside.players.length) {
+function renderMediaBuzz() {
+  if (!mediaBuzz || !mediaBuzz.players || !mediaBuzz.players.length) {
     document.getElementById('upsideManagersContent').innerHTML = emptyState(
-      'No upside rankings yet', 'Run the upside research pass once the draft is complete.');
+      'No media buzz rankings yet', 'Run the media buzz research pass once the draft is complete.');
     return;
   }
   const byMgr = {};
-  upside.players.forEach(p => {
+  mediaBuzz.players.forEach(p => {
     if (!byMgr[p.manager]) byMgr[p.manager] = { total: 0, players: [] };
     byMgr[p.manager].total += p.mentions;
     byMgr[p.manager].players.push(p);
@@ -437,7 +410,8 @@ function renderUpsideManagers() {
   const rows = Object.entries(byMgr).sort((a, b) => b[1].total - a[1].total);
 
   document.getElementById('upsideManagersContent').innerHTML = `
-    ${upsideMethodologyHTML()}
+    <p class="updated-note">Updated ${new Date(mediaBuzz.updated_at).toLocaleString()}</p>
+    ${mediaBuzzMethodologyHTML()}
     ${rows.map(([mgr, v], i) => `
       <div class="mgr-summary-row">
         <span class="rank-num-big">${i + 1}</span>
@@ -453,18 +427,17 @@ function renderUpsideManagers() {
 
 async function init() {
   managers = await getManagers();
-  [draftGrades, superlatives, upside] = await Promise.all([
+  [draftGrades, superlatives, mediaBuzz] = await Promise.all([
     loadDataSafe('season_2026/draft_grades_2026', null),
     loadDataSafe('season_2026/draft_superlatives_2026', null),
-    loadDataSafe('season_2026/upside_rankings_2026', null),
+    loadDataSafe('season_2026/media_buzz_rankings_2026', null),
   ]);
 
   renderGrades();
   renderContenderProfile();
   renderSuperlatives();
   renderReaches();
-  renderUpsidePlayers();
-  renderUpsideManagers();
+  renderMediaBuzz();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -472,15 +445,6 @@ async function init() {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-    });
-  });
-
-  document.querySelectorAll('.subtab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('subpanel-' + btn.dataset.subtab).classList.add('active');
     });
   });
 }
