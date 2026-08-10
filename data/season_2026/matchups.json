@@ -1,0 +1,50 @@
+[
+  {
+    "week": 1,
+    "updated_at": "2026-08-10T17:25:54.246739+00:00",
+    "games": [
+      {
+        "home_manager": "Goetz",
+        "home_score": 0.0,
+        "away_manager": "Stover",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      },
+      {
+        "home_manager": "Palaia",
+        "home_score": 0.0,
+        "away_manager": "Glaser",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      },
+      {
+        "home_manager": "Hagan",
+        "home_score": 0.0,
+        "away_manager": "Conlin",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      },
+      {
+        "home_manager": "Muenchow",
+        "home_score": 0.0,
+        "away_manager": "Pfaffinger",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      },
+      {
+        "home_manager": "Zogg",
+        "home_score": 0.0,
+        "away_manager": "Ainsworth",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      },
+      {
+        "home_manager": "Larson",
+        "home_score": 0.0,
+        "away_manager": "Prodahl",
+        "away_score": 0.0,
+        "winner": "UNDECIDED"
+      }
+    ]
+  }
+]

@@ -1,0 +1,126 @@
+{
+  "week": 1,
+  "updated_at": "2026-08-10T17:25:54.261304+00:00",
+  "standings": [
+    {
+      "manager": "Goetz",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Muenchow",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Conlin",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Glaser",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Stover",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Palaia",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Ainsworth",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Zogg",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Prodahl",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Larson",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Hagan",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    },
+    {
+      "manager": "Pfaffinger",
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "streak_type": "NONE",
+      "streak_length": 0
+    }
+  ]
+}
