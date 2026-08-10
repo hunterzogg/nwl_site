@@ -257,13 +257,53 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
     return output
 
 
+def fetch_projected_points(league_id, season, week, creds):
+    """
+    Sum of ESPN's own weekly projected points (statSourceId 1 = projected, statSplitTypeId 1 =
+    that single scoring period) for every player in a team's starting lineup - i.e. every roster
+    slot except Bench (20) and IR (21), whatever those starters happen to be. Returns
+    {team_id: projected_points}. Players ESPN hasn't projected yet (deep bench/practice-squad
+    types) just contribute 0, same as ESPN's own UI would show.
+    """
+    BENCH_SLOTS = {20, 21}
+    path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}"
+    url = f"{API_HOST}{path}?view=mRoster&scoringPeriodId={week}"
+    req = urllib.request.Request(url)
+    req.add_header("Cookie", f"espn_s2={creds['espn_s2']}; SWID={creds['swid']}")
+    req.add_header("Accept", "application/json")
+    try:
+        with urllib.request.urlopen(req, context=SSL_CONTEXT) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError:
+        return {}  # projections are a nice-to-have; don't hard-fail the whole fetch over them
+
+    projected = {}
+    for t in data.get("teams", []):
+        total = 0.0
+        for entry in t.get("roster", {}).get("entries", []):
+            if entry.get("lineupSlotId") in BENCH_SLOTS:
+                continue
+            player = entry.get("playerPoolEntry", {}).get("player", {})
+            for s in player.get("stats", []):
+                if (s.get("scoringPeriodId") == week and s.get("seasonId") == season
+                        and s.get("statSourceId") == 1 and s.get("statSplitTypeId") == 1):
+                    total += s.get("appliedTotal", 0.0)
+                    break
+        projected[t["id"]] = round(total, 1)
+    return projected
+
+
+def _round_half(x):
+    return round(x * 2) / 2
+
+
 def cmd_fetch_week(args, creds):
     team_map = load_team_map()
     if not team_map:
         print("No scripts/espn_team_map.json found. Run with --map-teams first.")
         sys.exit(1)
 
-    data = fetch_league_raw(args.league_id, args.season, ["mMatchupScore", "mTeam", "mScoreboard"], creds)
+    data = fetch_league_raw(args.league_id, args.season, ["mMatchupScore", "mTeam", "mScoreboard", "mSettings"], creds)
 
     week = args.week or data.get("scoringPeriodId")
     if not week:
@@ -271,6 +311,8 @@ def cmd_fetch_week(args, creds):
         sys.exit(1)
 
     teams_by_id = {t["id"]: t for t in data.get("teams", [])}
+    division_by_id = {d["id"]: d["name"] for d in data.get("settings", {}).get("scheduleSettings", {}).get("divisions", [])}
+    projected_by_team = fetch_projected_points(args.league_id, args.season, week, creds)
 
     # ---- Matchups ----
     matchups = []
@@ -279,12 +321,28 @@ def cmd_fetch_week(args, creds):
             continue
         home = m.get("home", {})
         away = m.get("away", {})
+        home_proj = projected_by_team.get(home.get("teamId"))
+        away_proj = projected_by_team.get(away.get("teamId")) if away else None
+
+        line = None
+        if away and home_proj is not None and away_proj is not None:
+            diff = home_proj - away_proj
+            favorite = resolve_manager(home.get("teamId"), team_map) if diff >= 0 else resolve_manager(away.get("teamId"), team_map)
+            line = {
+                "favorite": favorite,
+                "spread": _round_half(abs(diff)),
+                "over_under": _round_half(home_proj + away_proj),
+            }
+
         matchups.append({
             "home_manager": resolve_manager(home.get("teamId"), team_map),
             "home_score": home.get("totalPoints", 0),
+            "home_projected": home_proj,
             "away_manager": resolve_manager(away.get("teamId"), team_map) if away else None,
             "away_score": away.get("totalPoints", 0) if away else None,
+            "away_projected": away_proj,
             "winner": m.get("winner"),  # HOME / AWAY / UNDECIDED / TIE
+            "line": line,
         })
 
     matchups_path = SITE_DIR / "data" / "season_2026" / "matchups.json"
@@ -305,6 +363,7 @@ def cmd_fetch_week(args, creds):
         record = t.get("record", {}).get("overall", {})
         standings.append({
             "manager": resolve_manager(t["id"], team_map),
+            "division": division_by_id.get(t.get("divisionId"), "Unknown"),
             "wins": record.get("wins", 0),
             "losses": record.get("losses", 0),
             "ties": record.get("ties", 0),

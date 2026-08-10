@@ -1,9 +1,10 @@
 {
   "week": 1,
-  "updated_at": "2026-08-10T17:25:54.261304+00:00",
+  "updated_at": "2026-08-10T17:42:55.517408+00:00",
   "standings": [
     {
       "manager": "Goetz",
+      "division": "Bronze",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -14,6 +15,7 @@
     },
     {
       "manager": "Muenchow",
+      "division": "Silver",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -24,6 +26,7 @@
     },
     {
       "manager": "Conlin",
+      "division": "Gold",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -34,6 +37,7 @@
     },
     {
       "manager": "Glaser",
+      "division": "Silver",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -44,6 +48,7 @@
     },
     {
       "manager": "Stover",
+      "division": "Gold",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -54,6 +59,7 @@
     },
     {
       "manager": "Palaia",
+      "division": "Silver",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -64,6 +70,7 @@
     },
     {
       "manager": "Ainsworth",
+      "division": "Gold",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -74,6 +81,7 @@
     },
     {
       "manager": "Zogg",
+      "division": "Bronze",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -84,6 +92,7 @@
     },
     {
       "manager": "Prodahl",
+      "division": "Bronze",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -94,6 +103,7 @@
     },
     {
       "manager": "Larson",
+      "division": "Silver",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -104,6 +114,7 @@
     },
     {
       "manager": "Hagan",
+      "division": "Bronze",
       "wins": 0,
       "losses": 0,
       "ties": 0,
@@ -114,6 +125,7 @@
     },
     {
       "manager": "Pfaffinger",
+      "division": "Gold",
       "wins": 0,
       "losses": 0,
       "ties": 0,

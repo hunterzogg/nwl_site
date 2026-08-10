@@ -33,6 +33,18 @@
 .matchup-side.winner .matchup-score { color: var(--live-bright); }
 .matchup-score { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; }
 .matchup-vs { text-align: center; color: var(--text-muted); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.08em; padding: 2px 0; }
+.matchup-proj { color: var(--text-muted); font-size: 0.78rem; font-family: var(--font-mono); }
+.matchup-line { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+.matchup-line b { color: var(--text); font-family: var(--font-mono); }
+.division-title { color: var(--text-muted); font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 20px 0 8px; }
+.division-title:first-child { margin-top: 0; }
+.division-badge {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.03em; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle;
+}
+.division-Gold { color: #D9B23C; background: rgba(217, 178, 60, 0.12); }
+.division-Silver { color: #9A9A9A; background: rgba(154, 154, 154, 0.14); }
+.division-Bronze { color: #A9784F; background: rgba(169, 120, 79, 0.14); }
 .rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
 .rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
 .rank-trend { width: 22px; flex-shrink: 0; text-align: center; font-size: 0.9rem; }
@@ -104,9 +116,21 @@
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [];
+let managerDivision = {};
+const DIVISION_ORDER = ['Gold', 'Silver', 'Bronze'];
 
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
+}
+
+function divisionBadge(manager) {
+  const div = managerDivision[manager];
+  if (!div) return '';
+  return `<span class="division-badge division-${div}">${div}</span>`;
+}
+
+function managerTagWithDivision(mgrList, name) {
+  return managerTag(mgrList, name) + divisionBadge(name);
 }
 
 function populateWeekSelect(selectId, weeks, onChange) {
@@ -139,14 +163,22 @@ function renderMatchups() {
         return `
         <div class="matchup-card">
           <div class="matchup-side ${homeWin ? 'winner' : ''}">
-            ${managerTag(managers, g.home_manager)}
+            ${managerTagWithDivision(managers, g.home_manager)}
             <span class="matchup-score">${g.home_score.toFixed(1)}</span>
           </div>
+          ${g.home_projected != null ? `<div class="matchup-proj" style="text-align:right;">proj ${g.home_projected.toFixed(1)}</div>` : ''}
           <div class="matchup-vs">at</div>
           <div class="matchup-side ${awayWin ? 'winner' : ''}">
-            ${g.away_manager ? managerTag(managers, g.away_manager) : '<span style="color:var(--text-muted)">BYE</span>'}
+            ${g.away_manager ? managerTagWithDivision(managers, g.away_manager) : '<span style="color:var(--text-muted)">BYE</span>'}
             <span class="matchup-score">${g.away_score !== null ? g.away_score.toFixed(1) : ''}</span>
           </div>
+          ${g.away_projected != null ? `<div class="matchup-proj" style="text-align:right;">proj ${g.away_projected.toFixed(1)}</div>` : ''}
+          ${g.line ? `
+            <div class="matchup-line">
+              <span>Line: <b>${g.line.favorite}${g.line.spread > 0 ? ' -' + g.line.spread.toFixed(1) : ' (PK)'}</b></span>
+              <span>O/U <b>${g.line.over_under.toFixed(1)}</b></span>
+            </div>
+          ` : ''}
         </div>
       `;
       }).join('')}
@@ -160,37 +192,49 @@ function renderStandings() {
       'No standings yet', 'Standings will appear here once the 2026 season is underway.');
     return;
   }
+  const divisions = [...new Set(standings.standings.map(s => s.division))]
+    .sort((a, b) => DIVISION_ORDER.indexOf(a) - DIVISION_ORDER.indexOf(b));
+  const byDivision = {};
+  divisions.forEach(div => {
+    byDivision[div] = standings.standings
+      .filter(s => s.division === div)
+      .sort((a, b) => b.wins - a.wins || b.points_for - a.points_for);
+  });
+
   document.getElementById('standingsContent').innerHTML = `
     <p class="updated-note">As of week ${standings.week} &middot; updated ${new Date(standings.updated_at).toLocaleString()}</p>
-    <div class="table-wide" style="overflow-x:auto;">
-    <table>
-      <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
-      <tbody>
-        ${standings.standings.map(s => `
-          <tr>
-            <td>${managerTag(managers, s.manager)}</td>
-            <td class="num">${s.wins}</td>
-            <td class="num">${s.losses}</td>
-            <td class="num">${s.ties}</td>
-            <td class="num">${s.points_for.toFixed(1)}</td>
-            <td class="num">${s.points_against.toFixed(1)}</td>
-            <td class="num">${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    </div>
-    <div class="table-cards">
-      ${standings.standings.map(s => `
-        <div class="table-card">
-          <div class="table-card-top">
-            <span class="grow">${managerTag(managers, s.manager)}</span>
-            <span class="mono">${s.wins}-${s.losses}${s.ties ? '-' + s.ties : ''}</span>
+    ${divisions.map(div => `
+      <div class="division-title">${div}</div>
+      <div class="table-wide" style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
+        <tbody>
+          ${byDivision[div].map(s => `
+            <tr>
+              <td>${managerTag(managers, s.manager)}</td>
+              <td class="num">${s.wins}</td>
+              <td class="num">${s.losses}</td>
+              <td class="num">${s.ties}</td>
+              <td class="num">${s.points_for.toFixed(1)}</td>
+              <td class="num">${s.points_against.toFixed(1)}</td>
+              <td class="num">${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      </div>
+      <div class="table-cards">
+        ${byDivision[div].map(s => `
+          <div class="table-card">
+            <div class="table-card-top">
+              <span class="grow">${managerTag(managers, s.manager)}</span>
+              <span class="mono">${s.wins}-${s.losses}${s.ties ? '-' + s.ties : ''}</span>
+            </div>
+            <div class="table-card-sub">PF ${s.points_for.toFixed(1)} &middot; PA ${s.points_against.toFixed(1)} &middot; Streak ${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</div>
           </div>
-          <div class="table-card-sub">PF ${s.points_for.toFixed(1)} &middot; PA ${s.points_against.toFixed(1)} &middot; Streak ${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</div>
-        </div>
-      `).join('')}
-    </div>
+        `).join('')}
+      </div>
+    `).join('')}
   `;
 }
 
@@ -208,7 +252,7 @@ function renderPower() {
       <div class="rank-num-big">${r.rank}</div>
       <div class="rank-trend ${r.trend}">${trendArrow[r.trend] || ''}</div>
       <div class="rank-body">
-        ${managerTag(managers, r.manager)}
+        ${managerTagWithDivision(managers, r.manager)}
         ${r.blurb ? `<div class="rank-blurb">${r.blurb}</div>` : ''}
       </div>
     </div>
@@ -266,6 +310,11 @@ async function init() {
     loadDataSafe('season_2026/power_rankings', []),
     loadDataSafe('season_2026/commentary', []),
   ]);
+
+  managerDivision = {};
+  if (standings && standings.standings) {
+    standings.standings.forEach(s => { managerDivision[s.manager] = s.division; });
+  }
 
   const matchupWeeks = matchups.map(m => m.week);
   populateWeekSelect('matchupsWeek', matchupWeeks, renderMatchups);
