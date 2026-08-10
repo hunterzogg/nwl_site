@@ -5,10 +5,14 @@ const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Hub' };
 const NWL_MOCK_DRAFT_PAGE = { href: 'pages/mock-draft.html', label: 'Mock Draft' };
 const NWL_PICKEM_PAGE = { href: 'pages/pickem.html', label: "Pick'em" };
 const NWL_DRAFT_ANALYSIS_PAGE = { href: 'pages/draft-analysis.html', label: 'Draft Analysis' };
+const NWL_TRADE_TOOLS_PAGE = { href: 'pages/trade-tools.html', label: 'Trade Tools' };
 
 // In-season pages (amber, grouped together) vs. league history / archive pages (grouped
 // separately) - kept as two distinct arrays so renderNav can label and style each group.
-const NWL_IN_SEASON_PAGES = [NWL_LIVE_PAGE, NWL_MOCK_DRAFT_PAGE, NWL_PICKEM_PAGE, NWL_DRAFT_ANALYSIS_PAGE];
+// NWL_MOCK_DRAFT_PAGE is deliberately NOT in this list - the real 2026 draft is over, so the
+// mock draft tool is archived (unlinked from nav/homepage) but the page/const itself is left
+// intact and fully functional if visited directly, ready to resurface next preseason.
+const NWL_IN_SEASON_PAGES = [NWL_LIVE_PAGE, NWL_PICKEM_PAGE, NWL_DRAFT_ANALYSIS_PAGE, NWL_TRADE_TOOLS_PAGE];
 
 const NWL_PAGES = [
   { href: 'pages/hall-of-fame.html', label: 'Hall of Fame' },

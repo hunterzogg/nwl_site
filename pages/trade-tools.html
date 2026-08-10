@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade Tools — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=7">
+<style>
+.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text-muted); cursor: pointer;
+}
+.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
+.panel { display: none; }
+.panel.active { display: block; }
+.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.controls-row select {
+  background: var(--surface); border: 1px solid var(--line); color: var(--text);
+  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 160px;
+}
+.empty-state {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-muted);
+}
+.empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.methodology {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
+}
+.methodology strong { color: var(--text); }
+.methodology details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem; margin-top: 8px; }
+.methodology ul { margin: 8px 0 0; padding-left: 20px; }
+.grade-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+  min-width: 42px; padding: 4px 8px; border-radius: 5px; letter-spacing: 0.02em;
+}
+.grade-badge.sm { font-size: 0.8rem; min-width: 34px; padding: 2px 6px; }
+.grade-lead {
+  display: flex; align-items: center; gap: 14px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px;
+  cursor: pointer; flex-wrap: wrap;
+}
+.grade-lead .mgr-body { flex: 1; min-width: 220px; }
+.grade-lead .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.trade-side { line-height: 1.6; }
+.trade-arrow { color: var(--text-muted); font-size: 0.85rem; margin: 2px 0; }
+.grade-lead .chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.15s; flex-shrink: 0; }
+.grade-lead.expanded .chevron { transform: rotate(180deg); }
+.grade-detail { display: none; padding: 12px 18px 16px; margin-top: -10px; margin-bottom: 10px; border: 1px solid var(--line); border-top: none; border-radius: 0 0 8px 8px; background: var(--surface); }
+.grade-detail.expanded { display: block; }
+.composite { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem; flex-shrink: 0; }
+.pos-grade-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.pos-grade-chip { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono); }
+.pos-grade-chip .lbl { font-family: var(--font-display); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.03em; }
+
+.tt-btn {
+  font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.03em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 4px; cursor: pointer; border: 1px solid var(--blue-bright);
+  background: transparent; color: var(--blue-bright); flex-shrink: 0;
+}
+.tt-btn:hover { background: var(--blue-bright); color: #fff; }
+.tt-btn.remove { border-color: var(--red); color: var(--red); }
+.tt-btn.remove:hover { background: var(--red); color: #fff; }
+.tt-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.tt-btn:disabled:hover { background: transparent; color: var(--blue-bright); }
+
+.roster-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 0.86rem;
+}
+.roster-row:last-child { border-bottom: none; }
+.roster-row .player-body { flex: 1; min-width: 0; }
+.roster-row .player-sub { color: var(--text-muted); font-size: 0.76rem; margin-top: 1px; }
+.roster-row .value-num { font-family: var(--font-mono); font-weight: 600; flex-shrink: 0; width: 52px; text-align: right; }
+
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 800px) { .calc-grid { grid-template-columns: 1fr; } }
+.calc-side { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+.calc-side h3 { margin: 0 0 4px; font-size: 1rem; }
+.calc-side h4 { margin: 16px 0 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.calc-side .roster-scroll { max-height: 320px; overflow-y: auto; }
+.calc-summary-side { flex: 1; min-width: 240px; }
+.calc-summary-side .mgr-sub { font-size: 0.82rem; color: var(--text-muted); }
+.calc-warning { color: var(--red); font-size: 0.85rem; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <h1 style="margin-bottom: 6px;">Trade Tools</h1>
+  <p style="color: var(--text-muted); margin-bottom: 24px;">Find realistic trades and evaluate proposed ones, based on rest-of-season value and each team's own positional needs - not just value in a vacuum.</p>
+
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="finder">Trade Finder</button>
+    <button class="tab-btn" data-tab="calculator">Trade Calculator</button>
+  </div>
+
+  <div class="panel active" id="panel-finder">
+    <div class="controls-row">
+      <select id="finderYourTeam"></select>
+      <select id="finderPosition"></select>
+      <select id="finderPartner"></select>
+    </div>
+    <div class="methodology">
+      <strong>How suggestions are scored:</strong> mostly whether each side would actually score more fantasy points per week and have a stronger bench - not an abstract value score. Every trade also shows how it would move each team in the 12-team power ranking, and if it would leave a lineup spot empty, exactly who to pick up from waivers to fill it.
+      <details>
+        <summary>Show full methodology</summary>
+        <div id="finderMethodologyDetail" style="margin-top: 8px;"></div>
+      </details>
+    </div>
+    <div id="finderResults"></div>
+  </div>
+
+  <div class="panel" id="panel-calculator">
+    <div class="controls-row">
+      <select id="calcTeamA"></select>
+      <select id="calcTeamB"></select>
+    </div>
+    <div id="calcWarning"></div>
+    <div class="calc-grid" id="calcGrid"></div>
+    <div id="calcSummaryWrap" style="margin-top: 20px;"></div>
+    <div class="methodology" style="margin-top: 20px;">
+      <strong>How Fairness is scored:</strong> half raw value parity, half whether each side would actually score more points per week and have a stronger bench - shown directly below in projected points, not an abstract score, plus how it moves each team in the 12-team power ranking and who to add from waivers if it leaves a lineup spot empty.
+      <details>
+        <summary>Show full methodology</summary>
+        <div id="calcMethodologyDetail" style="margin-top: 8px;"></div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=14"></script>
+<script>
+let managers = [];
+let rosters = null;
+let needs = null;
+let weeksRemaining = 1;
+let powerRanking = null;
+const POSITIONS = ['QB', 'RB', 'WR', 'TE'];
+
+let calcTeamA = null, calcTeamB = null;
+let calcSendsA = [], calcSendsB = [];
+
+function emptyState(headline, sub) {
+  return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
+}
+
+function gradeColor(label) {
+  if (label.startsWith('A')) return '#4FA876';
+  if (label.startsWith('B')) return '#4F86D6';
+  if (label.startsWith('C')) return '#9AA5B8';
+  if (label.startsWith('D')) return '#D9B23C';
+  return '#E0524A';
+}
+function gradeBadge(label, sm) {
+  return `<span class="grade-badge${sm ? ' sm' : ''}" style="background:${gradeColor(label)}22;color:${gradeColor(label)};border:1px solid ${gradeColor(label)}55;">${label}</span>`;
+}
+function fairnessGradeLetter(pct) {
+  if (pct >= 0.94) return 'A+';
+  if (pct >= 0.86) return 'A';
+  if (pct >= 0.78) return 'A-';
+  if (pct >= 0.70) return 'B+';
+  if (pct >= 0.62) return 'B';
+  if (pct >= 0.54) return 'B-';
+  if (pct >= 0.46) return 'C+';
+  if (pct >= 0.38) return 'C';
+  if (pct >= 0.30) return 'C-';
+  if (pct >= 0.22) return 'D+';
+  if (pct >= 0.14) return 'D';
+  return 'F';
+}
+
+function wireExpandableRows(container) {
+  container.querySelectorAll('.grade-lead').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('expanded');
+      el.nextElementSibling.classList.toggle('expanded');
+    });
+  });
+}
+
+// ---------- Value/needs engine ----------
+
+// Direct port of scripts/fetch_espn_rosters.py's assign_optimal_lineup (in turn the same
+// algorithm scripts/fetch_espn_draft.py already uses for Draft Grades) - fed ros_value instead
+// of preseason projected points. Needed client-side (not just the JSON's precomputed slot/
+// is_starter) because the Calculator re-slots a team's lineup live as players are hypothetically
+// added/removed from a trade.
+function assignStarters(players) {
+  players.forEach(p => { p.slot = 'BEN'; p.is_starter = false; });
+  const qbs = players.filter(p => p.position === 'QB').sort((a, b) => b.ros_value - a.ros_value);
+  if (qbs[0]) { qbs[0].slot = 'QB'; qbs[0].is_starter = true; }
+  const hcs = players.filter(p => p.position === 'HC').sort((a, b) => b.ros_value - a.ros_value);
+  if (hcs[0]) { hcs[0].slot = 'HC'; hcs[0].is_starter = true; }
+  const flexPool = players.filter(p => ['RB', 'WR', 'TE'].includes(p.position)).sort((a, b) => b.ros_value - a.ros_value);
+  const remaining = { RB: 2, WR: 2, TE: 1, WT: 1, FLEX: 1 };
+  for (const p of flexPool) {
+    if (p.position === 'RB') {
+      if (remaining.RB > 0) { p.slot = remaining.RB === 2 ? 'RB1' : 'RB2'; remaining.RB--; }
+      else if (remaining.FLEX > 0) { p.slot = 'FLEX'; remaining.FLEX--; }
+      else continue;
+    } else if (p.position === 'WR') {
+      if (remaining.WR > 0) { p.slot = remaining.WR === 2 ? 'WR1' : 'WR2'; remaining.WR--; }
+      else if (remaining.WT > 0) { p.slot = 'W/T'; remaining.WT--; }
+      else if (remaining.FLEX > 0) { p.slot = 'FLEX'; remaining.FLEX--; }
+      else continue;
+    } else {
+      if (remaining.TE > 0) { p.slot = 'TE'; remaining.TE--; }
+      else if (remaining.WT > 0) { p.slot = 'W/T'; remaining.WT--; }
+      else if (remaining.FLEX > 0) { p.slot = 'FLEX'; remaining.FLEX--; }
+      else continue;
+    }
+    p.is_starter = true;
+  }
+  return players;
+}
+
+function tradeablePlayers(manager) {
+  const team = rosters.teams.find(t => t.manager === manager);
+  return team ? team.players.filter(p => p.position !== 'HC') : [];
+}
+
+// Per team, per position: starterValue/benchValue (VBD sum), and needScore/surplusScore relative
+// to the league average at that position. Flex-slotted players (FLEX/W-T) are credited to their
+// natural `position`, not a separate "flex" bucket.
+function computeTeamNeeds() {
+  const managerList = rosters.teams.map(t => t.manager);
+  const starterValue = {}, benchValue = {};
+  rosters.teams.forEach(t => {
+    const pool = tradeablePlayers(t.manager).map(p => ({ ...p }));
+    assignStarters(pool);
+    starterValue[t.manager] = {}; benchValue[t.manager] = {};
+    POSITIONS.forEach(pos => {
+      starterValue[t.manager][pos] = pool.filter(p => p.position === pos && p.is_starter).reduce((s, p) => s + p.vbd_value, 0);
+      benchValue[t.manager][pos] = pool.filter(p => p.position === pos && !p.is_starter).reduce((s, p) => s + p.vbd_value, 0);
+    });
+  });
+  const leagueAvgStarter = {}, leagueAvgBench = {};
+  POSITIONS.forEach(pos => {
+    leagueAvgStarter[pos] = managerList.reduce((s, m) => s + starterValue[m][pos], 0) / managerList.length;
+    leagueAvgBench[pos] = managerList.reduce((s, m) => s + benchValue[m][pos], 0) / managerList.length;
+  });
+  const out = {};
+  managerList.forEach(m => {
+    out[m] = {};
+    POSITIONS.forEach(pos => {
+      out[m][pos] = {
+        starterValue: starterValue[m][pos],
+        benchValue: benchValue[m][pos],
+        needScore: leagueAvgStarter[pos] - starterValue[m][pos],
+        surplusScore: benchValue[m][pos] - leagueAvgBench[pos],
+      };
+    });
+  });
+  return out;
+}
+
+// A roster's best possible starting lineup (see assignStarters), summarized as both VBD (for
+// internal fairness comparisons, which need to be position-normalized) and raw projected points
+// (what a normal person actually cares about: will this help me score more each week). Bench
+// totals are the same, for whoever DIDN'T make the starting lineup.
+function computeLineupTotals(players) {
+  const pool = players.map(p => ({ ...p }));
+  assignStarters(pool);
+  const starters = pool.filter(p => p.is_starter);
+  const bench = pool.filter(p => !p.is_starter && p.position !== 'HC');
+  return {
+    starterVbd: starters.reduce((s, p) => s + (p.vbd_value || 0), 0),
+    starterPts: starters.reduce((s, p) => s + (p.ros_value || 0), 0),
+    benchVbd: bench.reduce((s, p) => s + (p.vbd_value || 0), 0),
+    benchPts: bench.reduce((s, p) => s + (p.ros_value || 0), 0),
+  };
+}
+
+// Positions a team would have ZERO rostered players at after giving up `removeBundle` (having
+// had at least one before).
+function positionsEmptiedByTrade(rosterPlayers, removeBundle, addBundle) {
+  const removeIds = new Set(removeBundle.map(p => p.espn_id));
+  const before = {}, after = {};
+  rosterPlayers.forEach(p => {
+    before[p.position] = (before[p.position] || 0) + 1;
+    if (!removeIds.has(p.espn_id)) after[p.position] = (after[p.position] || 0) + 1;
+  });
+  // Players coming back in the SAME trade count too - e.g. trading your only TE for a different
+  // TE should never register as "leaves you with no TE," only a trade that actually leaves the
+  // position empty after both the outgoing and incoming players are accounted for should.
+  (addBundle || []).forEach(p => { after[p.position] = (after[p.position] || 0) + 1; });
+  return Object.keys(before).filter(pos => pos !== 'HC' && before[pos] > 0 && !after[pos]);
+}
+
+// The single best available free agent at a position (rosters.free_agents, already sorted by
+// value, pre-computed by fetch_espn_rosters.py from everyone NOT on any of the 12 rosters).
+function bestFreeAgent(pos) {
+  const pool = rosters.free_agents && rosters.free_agents[pos];
+  return pool && pool.length ? pool[0] : null;
+}
+
+// The full before/after picture of a hypothetical trade for one team: removes `removeBundle`,
+// adds `addBundle` - and if that empties out a position entirely, auto-adds the best available
+// waiver free agent there before totaling the new lineup, so "you'd need to stream a
+// replacement" isn't an invisible assumption baked into a single number, it's an actual named
+// player factored into the math and shown to the user.
+function evaluateTradeImpact(rosterPlayers, beforeTotals, removeBundle, addBundle) {
+  const removeIds = new Set(removeBundle.map(p => p.espn_id));
+  let afterRoster = rosterPlayers.filter(p => !removeIds.has(p.espn_id)).concat(addBundle);
+  const emptied = positionsEmptiedByTrade(rosterPlayers, removeBundle, addBundle);
+  const pickups = {};
+  emptied.forEach(pos => {
+    const fa = bestFreeAgent(pos);
+    if (fa) { afterRoster = afterRoster.concat([fa]); pickups[pos] = fa; }
+  });
+  const afterTotals = computeLineupTotals(afterRoster);
+  return {
+    starterPtsDelta: afterTotals.starterPts - beforeTotals.starterPts,
+    benchPtsDelta: afterTotals.benchPts - beforeTotals.benchPts,
+    afterStarterPts: afterTotals.starterPts,
+    emptied, pickups,
+  };
+}
+
+// Maps a points delta (can be negative) to a 0..1 score - 0.5 at no change, saturating toward 1
+// for a clear improvement and toward 0 for a clear downgrade. `halfScale` sets how many points
+// of swing counts as "halfway to maxed out" - smaller for starters (a couple points/week matters
+// a lot), larger for bench (depth swings are real but shouldn't dominate the score).
+function pointsGainScore(delta, halfScale) {
+  return delta >= 0
+    ? 0.5 + 0.5 * (delta / (delta + halfScale))
+    : 0.5 - 0.5 * (-delta / (-delta + halfScale));
+}
+
+// League-wide power ranking by current best-lineup starter points (raw, not VBD - literally "who
+// would score the most points per week right now") - computed once per data load, then used to
+// show how a trade would move a team up or down the 12-team field, holding every other team's
+// roster fixed except the two actually trading.
+function computePowerRanking() {
+  const startersPtsByManager = {};
+  rosters.teams.forEach(t => {
+    startersPtsByManager[t.manager] = computeLineupTotals(tradeablePlayers(t.manager)).starterPts;
+  });
+  const rankByManager = rankManagers(startersPtsByManager);
+  return { startersPtsByManager, rankByManager };
+}
+
+function rankManagers(valueByManager) {
+  const sorted = Object.entries(valueByManager).sort((a, b) => b[1] - a[1]);
+  const rankByManager = {};
+  sorted.forEach(([m], i) => { rankByManager[m] = i + 1; });
+  return rankByManager;
+}
+
+// ---------- Trade Finder ----------
+
+// Fairness band: percentage of the larger side's value, floored so small/bench trades still get
+// a workable band (a fixed absolute tolerance would be wrong for a 60-VBD-point blockbuster; a
+// pure percentage breaks down near zero-value players).
+function fairnessTolerance(a, b) {
+  return Math.max(0.25 * Math.max(Math.abs(a), Math.abs(b)), 8.0);
+}
+
+// All non-empty subsets of `pool` up to `maxSize` players - used to build "give"/"get" packages
+// (1-for-1 through 3-for-3, not just single players). Pool is pre-capped by the caller (top 10
+// players by value) so this stays small: C(10,1)+C(10,2)+C(10,3) = 175 bundles.
+function combinations(arr, size) {
+  if (size === 0) return [[]];
+  if (arr.length < size) return [];
+  const [first, ...rest] = arr;
+  const withFirst = combinations(rest, size - 1).map(c => [first, ...c]);
+  return withFirst.concat(combinations(rest, size));
+}
+function allBundles(pool, maxSize) {
+  let out = [];
+  for (let size = 1; size <= maxSize; size++) out = out.concat(combinations(pool, size));
+  return out;
+}
+
+function bundleValue(bundle) {
+  return bundle.reduce((s, p) => s + p.vbd_value, 0);
+}
+
+// A "star" is valuable enough that a real manager won't move them for mere parity - roughly
+// early-round-pick caliber. Threshold is in (already league-adjusted, see TRADE_VALUE_WEIGHT in
+// fetch_espn_rosters.py) VBD points, so a QB/TE needs to be truly elite to clear it, matching how
+// this league actually negotiates rather than generic consensus.
+const STAR_VBD_THRESHOLD = 45;
+function bundleHasStar(bundle) {
+  return bundle.some(p => p.vbd_value > STAR_VBD_THRESHOLD);
+}
+// Extra value the side NOT giving up a star must pay, when only one bundle contains one - teams
+// are reluctant to trade a difference-maker for value that merely nets out even.
+const STAR_PREMIUM = 0.20;
+
+// {position: count} - used to detect a same-position "wash" trade (see sameComposition).
+function positionMultiset(bundle) {
+  const counts = {};
+  bundle.forEach(p => { counts[p.position] = (counts[p.position] || 0) + 1; });
+  return counts;
+}
+function sameComposition(a, b) {
+  const ca = positionMultiset(a), cb = positionMultiset(b);
+  const keys = new Set([...Object.keys(ca), ...Object.keys(cb)]);
+  for (const k of keys) if ((ca[k] || 0) !== (cb[k] || 0)) return false;
+  return true;
+}
+
+// Scores a candidate give/get bundle pair. Fairness still runs on VBD (bundleValue) because
+// that's the one number that's comparable across different positions - a fair swap needs
+// position-normalized value, raw points would make a QB look like it's always worth more than a
+// TE. But the actual SUGGESTION signal - what decides whether this trade is any good, and what
+// gets shown to the user - runs entirely on real projected points per week and bench points per
+// week, plus league rank movement, computed via evaluateTradeImpact (which also auto-fills any
+// position a trade would empty out with the best real waiver free agent, so "you'd need to
+// stream a replacement" is priced in with an actual player, not an assumed zero).
+function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partnerManager, partnerRoster, partnerBeforeTotals) {
+  const giveValue = bundleValue(give), getValue = bundleValue(get);
+  const gap = Math.abs(getValue - giveValue);
+  const tolerance = fairnessTolerance(giveValue, getValue);
+  if (gap > tolerance * 3) return null; // hard backstop - nothing wildly lopsided ever surfaces
+  const fairness = Math.max(0, 1 - gap / (tolerance * 2));
+
+  // Teams are reluctant to move a true difference-maker for value that just nets out even - if
+  // only one side's bundle has a star, the other side has to pay a real premium, not just parity.
+  const giveHasStar = bundleHasStar(give), getHasStar = bundleHasStar(get);
+  if (giveHasStar && !getHasStar && getValue < giveValue * (1 + STAR_PREMIUM)) return null;
+  if (getHasStar && !giveHasStar && giveValue < getValue * (1 + STAR_PREMIUM)) return null;
+
+  // Same position(s) for the same position(s), at a roughly fair value, is a wash - it doesn't
+  // diversify or upgrade either roster. A same-position trade with a real value gap (buy-low/
+  // sell-high) is still allowed through - it just competes on fairness like anything else.
+  if (sameComposition(give, get) && fairness >= 0.6) return null;
+
+  const impactYou = evaluateTradeImpact(yourRoster, yourBeforeTotals, give, get);
+  const impactThem = evaluateTradeImpact(partnerRoster, partnerBeforeTotals, get, give);
+
+  const weeklyStarterYou = impactYou.starterPtsDelta / weeksRemaining;
+  const weeklyStarterThem = impactThem.starterPtsDelta / weeksRemaining;
+  const weeklyBenchYou = impactYou.benchPtsDelta / weeksRemaining;
+  const weeklyBenchThem = impactThem.benchPtsDelta / weeksRemaining;
+
+  // Never suggest a trade that would clearly cost either side meaningful starting points per
+  // week, even after accounting for the best available waiver pickup at any emptied position.
+  if (weeklyStarterYou < -1.0 || weeklyStarterThem < -1.0) return null;
+
+  const startersScoreYou = pointsGainScore(weeklyStarterYou, 2.5);
+  const startersScoreThem = pointsGainScore(weeklyStarterThem, 2.5);
+  const benchScoreYou = pointsGainScore(weeklyBenchYou, 5);
+  const benchScoreThem = pointsGainScore(weeklyBenchThem, 5);
+
+  const totalScore = 0.3 * fairness
+    + 0.2 * startersScoreYou + 0.2 * startersScoreThem
+    + 0.1 * benchScoreYou + 0.1 * benchScoreThem;
+
+  const rankOverrides = {};
+  rankOverrides[yourManager] = impactYou.afterStarterPts;
+  rankOverrides[partnerManager] = impactThem.afterStarterPts;
+  const rankAfter = rankManagers({ ...powerRanking.startersPtsByManager, ...rankOverrides });
+
+  return {
+    fairness, totalScore, giveValue, getValue, gap, tolerance,
+    weeklyStarterYou, weeklyStarterThem, weeklyBenchYou, weeklyBenchThem,
+    rankYouBefore: powerRanking.rankByManager[yourManager], rankYouAfter: rankAfter[yourManager],
+    rankThemBefore: powerRanking.rankByManager[partnerManager], rankThemAfter: rankAfter[partnerManager],
+    emptiedForYou: impactYou.emptied, emptiedForThem: impactThem.emptied,
+    pickupsForYou: impactYou.pickups, pickupsForThem: impactThem.pickups,
+  };
+}
+
+// Pools are capped to each team's top 10 players by value before generating bundles - the bottom
+// of a 14-15 man roster is never a useful trade chip anyway. Package size caps at 3-for-3 when a
+// specific partner is picked (175 bundles/team, ~30k pairings - fast). Searching "Any" of the
+// other 11 teams multiplies that by 11, so it's capped at 2-for-2 there instead (55 bundles/team)
+// to keep the whole-league search responsive - pick a specific partner to see the full 3-for-3
+// range against just that team.
+const FINDER_POOL_CAP = 10;
+
+function findTrades(yourManager, wantPos, partnerManager) {
+  const maxBundle = partnerManager === 'ANY' ? 2 : 3;
+  const yourRoster = tradeablePlayers(yourManager);
+  const yourBeforeTotals = computeLineupTotals(yourRoster);
+  const yourPool = [...yourRoster].sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
+  const giveBundles = allBundles(yourPool, maxBundle);
+  const allManagers = rosters.teams.map(t => t.manager);
+  const partners = partnerManager === 'ANY' ? allManagers.filter(m => m !== yourManager) : [partnerManager];
+
+  let candidates = [];
+  for (const partner of partners) {
+    const partnerRoster = tradeablePlayers(partner);
+    const partnerBeforeTotals = computeLineupTotals(partnerRoster);
+    const partnerPool = [...partnerRoster].sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
+    const getBundlesAll = allBundles(partnerPool, maxBundle);
+    const getBundles = (wantPos && wantPos !== 'ANY')
+      ? getBundlesAll.filter(b => b.some(p => p.position === wantPos))
+      : getBundlesAll;
+    if (!getBundles.length) continue;
+
+    let partnerCandidates = [];
+    for (const give of giveBundles) {
+      for (const get of getBundles) {
+        const score = scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partner, partnerRoster, partnerBeforeTotals);
+        if (!score) continue;
+        partnerCandidates.push({ give, get, partner, ...score });
+      }
+    }
+    partnerCandidates.sort((a, b) => b.totalScore - a.totalScore);
+    const cap = partnerManager === 'ANY' ? 2 : 10;
+    candidates.push(...partnerCandidates.slice(0, cap));
+  }
+  candidates.sort((a, b) => b.totalScore - a.totalScore);
+  return candidates.slice(0, 10);
+}
+
+function needSentence(needScore, position, forWhom) {
+  if (needScore > 5) {
+    return `addresses a real weakness for ${forWhom} at ${position}`;
+  }
+  return `adds depth for ${forWhom} at ${position}, without being a pressing need`;
+}
+
+function bundleFitSentence(bundle, teamNeeds, forWhom) {
+  const byPos = {};
+  bundle.forEach(p => { byPos[p.position] = (byPos[p.position] || 0) + p.vbd_value; });
+  const sentences = Object.keys(byPos).map(pos => needSentence(teamNeeds[pos].needScore, pos, forWhom));
+  if (!sentences.length) return '';
+  return `This ${sentences.join(', and ')}.`;
+}
+
+// Line for a weekly points swing - the primary human-facing number this whole tool is built
+// around ("will this help me score more each week"), not an abstract value score.
+// "you" needs different grammar than a team name ("Your points go up" / "You move to #3", not
+// "You's points" / "You moves to #3") - these two helpers keep every sentence below grammatical
+// for both cases without duplicating the sentence logic itself.
+function possessiveOf(forWhom) { return forWhom === 'you' ? 'Your' : `${forWhom}'s`; }
+function subjectOf(forWhom) { return forWhom === 'you' ? 'You' : forWhom; }
+function verbFor(forWhom, base, thirdPerson) { return forWhom === 'you' ? base : thirdPerson; }
+
+function weeklyDeltaSentence(delta, forWhom, label) {
+  const dir = delta >= 0 ? 'up' : 'down';
+  const sign = delta >= 0 ? '+' : '';
+  return `${possessiveOf(forWhom)} projected ${label} go ${dir} ${sign}${delta.toFixed(1)} pts/week.`;
+}
+
+function rankMoveSentence(before, after, forWhom) {
+  const subj = subjectOf(forWhom);
+  if (before === after) return `${subj} ${verbFor(forWhom, 'stay', 'stays')} #${after} of 12 in the league power ranking.`;
+  const dir = after < before ? 'up to' : 'down to';
+  return `${subj} ${verbFor(forWhom, 'move', 'moves')} ${dir} #${after} of 12 in the league power ranking (was #${before}).`;
+}
+
+// Names the actual waiver pickup this trade's math assumes for any position it would leave
+// empty - not just a warning that a gap exists, but who to go add to fix it.
+function pickupSentence(pickups, forWhom) {
+  const positions = Object.keys(pickups);
+  if (!positions.length) return '';
+  const lines = positions.map(pos => {
+    const fa = pickups[pos];
+    return `<p style="color:var(--red); font-size:0.82rem; margin: 4px 0;">&#9888; This leaves ${forWhom} with no rostered ${pos} - pick up <strong>${fa.name}</strong> (${fa.nfl_team}) from waivers, the best available ${pos} right now, to fill the gap.</p>`;
+  });
+  return lines.join('');
+}
+
+function bundleLabel(bundle) {
+  return bundle.map(p => `${posTag(p.position)} <strong>${p.name}</strong>`).join(' + ');
+}
+
+function populateSelect(id, options, placeholder) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = (placeholder ? [`<option value="">${placeholder}</option>`] : [])
+    .concat(options.map(o => `<option value="${o.value}">${o.label}</option>`)).join('');
+}
+
+function renderFinderControls() {
+  const managerList = rosters.teams.map(t => t.manager).sort();
+  populateSelect('finderYourTeam', managerList.map(m => ({ value: m, label: m })), 'Select your team...');
+  populateSelect('finderPosition', [{ value: 'ANY', label: 'Any position' }, ...POSITIONS.map(p => ({ value: p, label: p }))]);
+  populateSelect('finderPartner', [{ value: 'ANY', label: 'Any team' }, ...managerList.map(m => ({ value: m, label: m }))]);
+
+  document.getElementById('finderMethodologyDetail').innerHTML = `
+    ${rosters.methodology.note}
+    <ul>
+      <li>Points per week (the core signal): each side's roster after the trade is re-slotted into its best possible starting lineup (same method as the position grades elsewhere on the site), and its total projected points - starters and bench, separately - are compared to before the trade, then divided by the ${weeksRemaining} weeks left in the regular season. This is a real "will I score more" number, not an abstract score.</li>
+      <li>League power ranking: all 12 teams are ranked by current best-lineup starter points per week. Each suggestion shows where you and your trade partner would land in that ranking afterward, holding every other team's roster fixed.</li>
+      <li>Waiver pickups: if a trade would leave a team with zero rostered players at a position, the math doesn't just assume a generic replacement - it looks up the actual best available free agent at that position (from a real, refreshed pool of everyone not rostered on any of the 12 teams) and names them as the suggested pickup, factored directly into the points-per-week numbers above.</li>
+      <li>Need/surplus (used only in the explanation text, not the score itself): whether a position is a real weakness or has real depth for a team, relative to the 12-team league average.</li>
+      <li>Fairness band (a secondary check, not the main signal): the traded players' value - adjusted for position scarcity so a QB and a TE are comparable - has to be within roughly &plusmn;25% of each other (an 8-point floor for smaller trades) or the trade is never suggested at all, regardless of how the points-per-week numbers look. This mostly rules out one-sided fleecing; trades within the band are ranked mainly on points-per-week, not on how close this number is.</li>
+      <li>Packages: searches 1-for-1 through 3-for-3 combinations (from each team's top 10 players by value - the bottom of a roster is never a useful trade chip), not just single-player swaps. Searching "Any" trade partner checks all 11 other teams at once, so it's capped at 2-for-2 to stay fast - pick a specific partner to see the full 3-for-3 range against just that team.</li>
+      <li>Same-position trades of roughly equal value are filtered out on purpose - swapping one RB for another RB of similar value doesn't diversify or upgrade either roster, so it's not "help," just a wash. A same-position trade with a real value gap (buy-low/sell-high) can still surface - it just has to earn it like anything else.</li>
+      <li>Star premium: a player valuable enough to be a real difference-maker (roughly early-round-pick caliber) doesn't move for value that merely nets out even - the side NOT giving up that player has to pay about 20% more, or the trade isn't suggested. Real managers are reluctant to part with a true difference-maker for "fair" alone.</li>
+      <li>This league trades QB and TE for less than general fantasy consensus would suggest - trade value (not the real points-per-week numbers above, which stay honest projections) is scaled down for both positions to match, since a startable replacement at either is usually one waiver claim away in this league's single-QB, single-TE format.</li>
+      <li>Scope: no 3-way trades. No bye-week/injury discount beyond what ESPN's own projection reflects. Head Coach isn't included (no comparable replacement pool to value it against skill positions).</li>
+    </ul>
+  `;
+  document.getElementById('calcMethodologyDetail').innerHTML = document.getElementById('finderMethodologyDetail').innerHTML;
+
+  ['finderYourTeam', 'finderPosition', 'finderPartner'].forEach(id => {
+    document.getElementById(id).addEventListener('change', runFinderSearch);
+  });
+}
+
+function runFinderSearch() {
+  const yourManager = document.getElementById('finderYourTeam').value;
+  const wantPos = document.getElementById('finderPosition').value || 'ANY';
+  const partnerManager = document.getElementById('finderPartner').value || 'ANY';
+  const el = document.getElementById('finderResults');
+  if (!yourManager) {
+    el.innerHTML = emptyState('Pick your team', 'Choose your team above to see suggested trades.');
+    return;
+  }
+  const candidates = findTrades(yourManager, wantPos, partnerManager);
+  if (!candidates.length) {
+    el.innerHTML = emptyState('No trade suggestions found', 'Try a different position filter or trade partner - nothing cleared the fairness bar for this combination.');
+    return;
+  }
+  el.innerHTML = candidates.map(c => `
+    <div class="grade-lead">
+      <div class="mgr-body">
+        <div class="mgr-sub" style="margin-bottom: 6px;">Trade with ${managerTag(managers, c.partner)} &middot; ${c.give.length} for ${c.get.length} &middot; you: ${c.weeklyStarterYou >= 0 ? '+' : ''}${c.weeklyStarterYou.toFixed(1)} pts/wk</div>
+        <div class="trade-side">${bundleLabel(c.give)}</div>
+        <div class="trade-arrow">&#8693;</div>
+        <div class="trade-side">${bundleLabel(c.get)}</div>
+      </div>
+      <span class="composite">Match ${Math.round(c.totalScore * 100)}</span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="grade-detail">
+      <div class="pos-grade-row">
+        <span class="pos-grade-chip"><span class="lbl">Fairness</span>${Math.round(c.fairness * 100)}</span>
+        <span class="pos-grade-chip"><span class="lbl">You/wk</span>${c.weeklyStarterYou >= 0 ? '+' : ''}${c.weeklyStarterYou.toFixed(1)}</span>
+        <span class="pos-grade-chip"><span class="lbl">Them/wk</span>${c.weeklyStarterThem >= 0 ? '+' : ''}${c.weeklyStarterThem.toFixed(1)}</span>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.85rem; margin: 0 0 6px;">
+        You give up ${c.give.map(p => p.name).join(', ')}, you receive ${c.get.map(p => p.name).join(', ')}.
+      </p>
+      <p style="color:var(--text-muted); font-size:0.85rem; margin: 0 0 4px;">
+        ${weeklyDeltaSentence(c.weeklyStarterYou, 'you', 'starting lineup points')} ${weeklyDeltaSentence(c.weeklyBenchYou, 'you', 'bench points')} ${rankMoveSentence(c.rankYouBefore, c.rankYouAfter, 'you')} ${bundleFitSentence(c.get, needs[yourManager], 'you')}
+      </p>
+      ${pickupSentence(c.pickupsForYou, 'you')}
+      <p style="color:var(--text-muted); font-size:0.85rem; margin: 0;">
+        ${weeklyDeltaSentence(c.weeklyStarterThem, managerTag(managers, c.partner), 'starting lineup points')} ${weeklyDeltaSentence(c.weeklyBenchThem, managerTag(managers, c.partner), 'bench points')} ${rankMoveSentence(c.rankThemBefore, c.rankThemAfter, managerTag(managers, c.partner))} ${bundleFitSentence(c.give, needs[c.partner], managerTag(managers, c.partner))}
+      </p>
+      ${pickupSentence(c.pickupsForThem, managerTag(managers, c.partner))}
+    </div>
+  `).join('');
+  wireExpandableRows(el);
+}
+
+// ---------- Trade Calculator ----------
+
+function renderCalcControls() {
+  const managerList = rosters.teams.map(t => t.manager).sort();
+  populateSelect('calcTeamA', managerList.map(m => ({ value: m, label: m })), 'Select Team A...');
+  populateSelect('calcTeamB', managerList.map(m => ({ value: m, label: m })), 'Select Team B...');
+  document.getElementById('calcTeamA').addEventListener('change', onCalcTeamChange);
+  document.getElementById('calcTeamB').addEventListener('change', onCalcTeamChange);
+}
+
+function onCalcTeamChange() {
+  calcTeamA = document.getElementById('calcTeamA').value || null;
+  calcTeamB = document.getElementById('calcTeamB').value || null;
+  calcSendsA = []; calcSendsB = [];
+  const warnEl = document.getElementById('calcWarning');
+  if (calcTeamA && calcTeamB && calcTeamA === calcTeamB) {
+    warnEl.innerHTML = `<p class="calc-warning">Pick two different teams to build a trade.</p>`;
+    document.getElementById('calcGrid').innerHTML = '';
+    document.getElementById('calcSummaryWrap').innerHTML = '';
+    return;
+  }
+  warnEl.innerHTML = '';
+  renderCalcRosters();
+  renderCalcSummary();
+}
+
+function rosterRowHTML(player, side, inSendsList) {
+  const btn = inSendsList
+    ? `<button class="tt-btn remove" onclick="calcRemove('${side}', ${player.espn_id})">Remove</button>`
+    : `<button class="tt-btn" onclick="calcAdd('${side}', ${player.espn_id})">Add</button>`;
+  return `
+    <div class="roster-row">
+      <div class="player-body">
+        ${posTag(player.position)} <strong>${player.name}</strong>
+        <div class="player-sub">${player.nfl_team || ''} &middot; ${player.slot === 'BEN' ? 'Bench' : player.slot}</div>
+      </div>
+      <span class="value-num">${player.vbd_value.toFixed(1)}</span>
+      ${btn}
+    </div>
+  `;
+}
+
+function renderCalcRosters() {
+  const grid = document.getElementById('calcGrid');
+  grid.innerHTML = `
+    <div class="calc-side" id="calcSideA">
+      <h3>${managerTag(managers, calcTeamA)}</h3>
+      <div class="mgr-sub" style="color:var(--text-muted); font-size:0.82rem;">Available roster</div>
+      <div class="roster-scroll" id="calcAvailableA"></div>
+      <h4>Sending</h4>
+      <div id="calcSendingA"></div>
+    </div>
+    <div class="calc-side" id="calcSideB">
+      <h3>${managerTag(managers, calcTeamB)}</h3>
+      <div class="mgr-sub" style="color:var(--text-muted); font-size:0.82rem;">Available roster</div>
+      <div class="roster-scroll" id="calcAvailableB"></div>
+      <h4>Sending</h4>
+      <div id="calcSendingB"></div>
+    </div>
+  `;
+  refreshCalcLists();
+}
+
+function refreshCalcLists() {
+  const poolA = tradeablePlayers(calcTeamA).filter(p => !calcSendsA.some(s => s.espn_id === p.espn_id));
+  const poolB = tradeablePlayers(calcTeamB).filter(p => !calcSendsB.some(s => s.espn_id === p.espn_id));
+  document.getElementById('calcAvailableA').innerHTML = poolA.sort((a, b) => b.vbd_value - a.vbd_value)
+    .map(p => rosterRowHTML(p, 'A', false)).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nothing left to add.</p>';
+  document.getElementById('calcAvailableB').innerHTML = poolB.sort((a, b) => b.vbd_value - a.vbd_value)
+    .map(p => rosterRowHTML(p, 'B', false)).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nothing left to add.</p>';
+  document.getElementById('calcSendingA').innerHTML = calcSendsA.length
+    ? calcSendsA.map(p => rosterRowHTML(p, 'A', true)).join('')
+    : '<p style="color:var(--text-muted); font-size:0.82rem;">Nothing yet.</p>';
+  document.getElementById('calcSendingB').innerHTML = calcSendsB.length
+    ? calcSendsB.map(p => rosterRowHTML(p, 'B', true)).join('')
+    : '<p style="color:var(--text-muted); font-size:0.82rem;">Nothing yet.</p>';
+}
+
+function calcAdd(side, espnId) {
+  const manager = side === 'A' ? calcTeamA : calcTeamB;
+  const list = side === 'A' ? calcSendsA : calcSendsB;
+  const player = tradeablePlayers(manager).find(p => p.espn_id === espnId);
+  if (player && !list.some(p => p.espn_id === espnId)) list.push(player);
+  refreshCalcLists();
+  renderCalcSummary();
+}
+
+function calcRemove(side, espnId) {
+  if (side === 'A') calcSendsA = calcSendsA.filter(p => p.espn_id !== espnId);
+  else calcSendsB = calcSendsB.filter(p => p.espn_id !== espnId);
+  refreshCalcLists();
+  renderCalcSummary();
+}
+
+// Same approach as the Finder's scoreBundleTrade: half raw value parity (VBD-based, catches one
+// side just being fleeced in total trade capital), half whether each side would actually score
+// more points per week - not just whether the traded players' value totals look even.
+function computeFairness(sideASends, sideBSends, teamA, teamB) {
+  const valueA = sideASends.reduce((s, p) => s + p.vbd_value, 0);
+  const valueB = sideBSends.reduce((s, p) => s + p.vbd_value, 0);
+  const totalValue = Math.abs(valueA) + Math.abs(valueB);
+  const delta = valueB - valueA; // positive = Team A is net-gaining raw value
+
+  const evenBand = Math.max(0.4 * totalValue, 15.0);
+  const evenness = Math.max(0, 1 - Math.abs(delta) / evenBand);
+
+  const rosterA = tradeablePlayers(teamA), rosterB = tradeablePlayers(teamB);
+  const totalsA = computeLineupTotals(rosterA), totalsB = computeLineupTotals(rosterB);
+  const impactA = evaluateTradeImpact(rosterA, totalsA, sideASends, sideBSends);
+  const impactB = evaluateTradeImpact(rosterB, totalsB, sideBSends, sideASends);
+
+  const weeklyStarterA = impactA.starterPtsDelta / weeksRemaining;
+  const weeklyStarterB = impactB.starterPtsDelta / weeksRemaining;
+  const weeklyBenchA = impactA.benchPtsDelta / weeksRemaining;
+  const weeklyBenchB = impactB.benchPtsDelta / weeksRemaining;
+
+  const fitA = pointsGainScore(weeklyStarterA, 2.5);
+  const fitB = pointsGainScore(weeklyStarterB, 2.5);
+
+  const rankOverrides = {};
+  rankOverrides[teamA] = impactA.afterStarterPts;
+  rankOverrides[teamB] = impactB.afterStarterPts;
+  const rankAfter = rankManagers({ ...powerRanking.startersPtsByManager, ...rankOverrides });
+
+  const scoreA = 0.5 * evenness + 0.5 * fitA;
+  const scoreB = 0.5 * evenness + 0.5 * fitB;
+
+  // Informational only here (the Calculator evaluates whatever the user actually builds, it
+  // doesn't hide anything) - flags whether one side is giving up a difference-maker without the
+  // real-world premium a manager would actually demand for it. See STAR_PREMIUM.
+  const aHasStar = bundleHasStar(sideASends), bHasStar = bundleHasStar(sideBSends);
+  let starWarningSide = null;
+  if (aHasStar && !bHasStar && valueB < valueA * (1 + STAR_PREMIUM)) starWarningSide = 'A';
+  else if (bHasStar && !aHasStar && valueA < valueB * (1 + STAR_PREMIUM)) starWarningSide = 'B';
+
+  return {
+    valueA, valueB, delta, evenness, starWarningSide,
+    weeklyStarterA, weeklyStarterB, weeklyBenchA, weeklyBenchB,
+    rankABefore: powerRanking.rankByManager[teamA], rankAAfter: rankAfter[teamA],
+    rankBBefore: powerRanking.rankByManager[teamB], rankBAfter: rankAfter[teamB],
+    pickupsA: impactA.pickups, pickupsB: impactB.pickups,
+    scoreA: Math.round(scoreA * 100), scoreB: Math.round(scoreB * 100),
+  };
+}
+
+function calcExplain(evenness, weeklyStarter, weeklyBench, rankBefore, rankAfter, forWhom) {
+  const parts = [];
+  parts.push(evenness < 0.5 ? `This deal is lopsided on raw value for ${forWhom}.` : `Roughly fair on raw value for ${forWhom}.`);
+  parts.push(weeklyDeltaSentence(weeklyStarter, forWhom, 'starting lineup points'));
+  parts.push(weeklyDeltaSentence(weeklyBench, forWhom, 'bench points'));
+  parts.push(rankMoveSentence(rankBefore, rankAfter, forWhom));
+  return parts.join(' ');
+}
+
+function renderCalcSummary() {
+  const el = document.getElementById('calcSummaryWrap');
+  if (!calcTeamA || !calcTeamB || calcTeamA === calcTeamB) { el.innerHTML = ''; return; }
+  if (!calcSendsA.length && !calcSendsB.length) {
+    el.innerHTML = emptyState('Build a trade', 'Add players from each roster above to see the fairness read.');
+    return;
+  }
+  const f = computeFairness(calcSendsA, calcSendsB, calcTeamA, calcTeamB);
+  el.innerHTML = `
+    <div style="display:flex; gap:24px; flex-wrap:wrap;">
+      <div class="calc-summary-side">
+        <div class="mgr-sub">${managerTag(managers, calcTeamA)} sends ${f.valueA.toFixed(1)} VBD pts, receives ${f.valueB.toFixed(1)} VBD pts</div>
+        <div style="margin: 8px 0;">${gradeBadge(fairnessGradeLetter(f.scoreA / 100))} <span class="composite">${f.scoreA}/100</span></div>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">${calcExplain(f.evenness, f.weeklyStarterA, f.weeklyBenchA, f.rankABefore, f.rankAAfter, 'Team A')}</p>
+        ${pickupSentence(f.pickupsA, 'Team A')}
+        ${f.starWarningSide === 'A' ? '<p style="color:var(--red); font-size:0.82rem; margin: 4px 0;">&#9888; Team A is trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</p>' : ''}
+      </div>
+      <div class="calc-summary-side">
+        <div class="mgr-sub">${managerTag(managers, calcTeamB)} sends ${f.valueB.toFixed(1)} VBD pts, receives ${f.valueA.toFixed(1)} VBD pts</div>
+        <div style="margin: 8px 0;">${gradeBadge(fairnessGradeLetter(f.scoreB / 100))} <span class="composite">${f.scoreB}/100</span></div>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin:0;">${calcExplain(f.evenness, f.weeklyStarterB, f.weeklyBenchB, f.rankBBefore, f.rankBAfter, 'Team B')}</p>
+        ${pickupSentence(f.pickupsB, 'Team B')}
+        ${f.starWarningSide === 'B' ? '<p style="color:var(--red); font-size:0.82rem; margin: 4px 0;">&#9888; Team B is trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</p>' : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Init ----------
+
+async function init() {
+  managers = await getManagers();
+  rosters = await loadDataSafe('season_2026/rosters', null);
+
+  if (!rosters || !rosters.teams || !rosters.teams.length) {
+    const msg = emptyState('No roster data yet', 'Run scripts/fetch_espn_rosters.py to pull current rosters and enable the Trade Finder and Calculator.');
+    document.getElementById('finderResults').innerHTML = msg;
+    document.getElementById('calcSummaryWrap').innerHTML = msg;
+  } else {
+    weeksRemaining = rosters.weeks_remaining || 1;
+    needs = computeTeamNeeds();
+    powerRanking = computePowerRanking();
+    renderFinderControls();
+    runFinderSearch();
+    renderCalcControls();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+renderNav('trade tools');
+init();
+</script>
+</body>
+</html>
