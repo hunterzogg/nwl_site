@@ -1,0 +1,58 @@
+name: Weekly ESPN Update
+
+# Pulls this week's NWL matchups/standings/projections from ESPN and commits the result so
+# GitHub Pages + Vercel pick it up automatically. See scripts/fetch_espn_week.py for the actual
+# pull logic and .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this
+# same workflow.
+#
+# Schedule is a handful of runs on real NFL game days (Thu/Sun/Mon) plus one daily catch-all on
+# the other four days (to pick up projection movement from injury news / waiver moves). All times
+# are UTC and approximate ET assuming EDT (UTC-4) - they'll land about an hour earlier on the
+# clock once daylight saving ends in November, which is fine for this purpose.
+on:
+  schedule:
+    - cron: '0 13 * * 2,3,5,6'  # Tue/Wed/Fri/Sat catch-all, ~9am ET
+    - cron: '0 16 * * 4'        # Thu pre-game, ~noon ET
+    - cron: '30 3 * * 5'        # Thu post-TNF (~11:30pm ET Thu = Fri 03:30 UTC)
+    - cron: '0 13 * * 0'        # Sun pre-game, ~9am ET
+    - cron: '15 20 * * 0'       # Sun after early window, ~4:15pm ET
+    - cron: '30 23 * * 0'       # Sun after late-afternoon window, ~7:30pm ET
+    - cron: '45 3 * * 1'        # Sun post-SNF (~11:45pm ET Sun = Mon 03:45 UTC)
+    - cron: '45 3 * * 2'        # Mon post-MNF (~11:45pm ET Mon = Tue 03:45 UTC)
+  workflow_dispatch: {}  # lets you trigger a manual run from the Actions tab any time
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install certifi
+
+      - name: Write ESPN credentials from secrets
+        run: |
+          cat > scripts/espn_credentials.json <<CREDS
+          {"espn_s2": "${{ secrets.ESPN_S2 }}", "swid": "${{ secrets.ESPN_SWID }}"}
+          CREDS
+
+      - name: Run weekly fetch
+        run: python3 scripts/fetch_espn_week.py
+
+      - name: Commit and push if data changed
+        run: |
+          git config user.name "nwl-site-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/season_2026/matchups.json data/season_2026/standings.json \
+                  data/season_2026/power_rankings.json data/season_2026/commentary.json
+          if git diff --cached --quiet; then
+            echo "No data changes this run."
+          else
+            git commit -m "Automated ESPN data pull ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
+            git push
+          fi
