@@ -1109,6 +1109,52 @@ stud-RB-for-QB trade is now correctly blocked), Calculator fairness scores diffe
 the same trade, and the scheduled Action's roster-fetch step via a real manual `workflow_dispatch`
 run.
 
+**Follow-up round, same session** - four more fixes per explicit feedback:
+
+1. **Bullet points, not paragraphs**: both tabs' trade breakdown used flowing `<p>` sentences,
+   hard to skim. Replaced with a `.trade-bullets` `<ul>` per side (Starters/Bench pts-per-week,
+   rank move, need/depth note, waiver-pickup call-out) - `buildSideBullets()` (Finder) and
+   `calcBullets()` (Calculator) build the list, `deltaBullet()`/`rankBullet()`/`needBullets()`/
+   `pickupBullets()` are the short-fragment helpers that replaced the old full-sentence versions
+   (`weeklyDeltaSentence`/`rankMoveSentence`/`needSentence`/`bundleFitSentence`/`pickupSentence`,
+   all removed).
+
+2. **QB/TE discount still was not enough - root cause was which value drove the score, not the
+   discount itself**: the 0.3x/0.75x weights from the previous fix only ever touched `vbd_value`
+   (the fairness/star-premium check). But the Finder's actual SUGGESTION ranking scored on raw
+   points-per-week (undiscounted, on purpose, so the displayed number stayed an honest
+   projection) - and an elite QB's raw point total dwarfs a replacement QB's by far more than an
+   elite RB/WR beats a replacement one, since passing stats accumulate faster than rushing/
+   receiving in this scoring format. So a QB upgrade could still look like a big lineup
+   improvement in the score even though it was not a good use of trade capital - exactly the
+   "comparison isn't significant enough to give up a premier asset" gap flagged. Fix:
+   `evaluateTradeImpact()` now also returns `starterVbdDelta`/`benchVbdDelta` (market-value-
+   adjusted, already carries the QB/TE discount) alongside the existing raw `starterPtsDelta`/
+   `benchPtsDelta`. `scoreBundleTrade()` and the Calculator's `computeFairness()` now score and
+   filter on the VBD deltas - raw points-per-week are still computed and still shown to the user
+   (honest projections), they just are not what decides whether a trade is good or gets
+   suggested. Verified with a real search across all 12 teams (3 runs each, 36 searches, ~360
+   suggested trades in total): zero of them had a team giving up a stud RB/WR (vbd_value > 45)
+   for a QB-only return.
+
+3. **Randomized variety**: re-running the Finder (or reopening the page) always produced the
+   exact same top-10 list, since the search itself is deterministic. Per explicit request, added
+   `shuffle()` (Fisher-Yates) - the search still ranks everything by score and gathers a wider
+   quality pool (top 25 candidates, all of which already cleared every fairness/star-premium/
+   lineup-impact filter), then randomly samples 10 from that pool instead of deterministically
+   taking the literal top 10. Verified: two consecutive `findTrades()` calls with identical
+   arguments returned different result sets.
+
+4. **Trade Calculator: no raw numbers next to players** - per explicit request, `rosterRowHTML()`
+   no longer shows a `vbd_value` next to each player in the pick lists (position/name/team/slot
+   only, plus the Add/Remove button) - the now-dead `.value-num` CSS rule was removed too. The
+   Calculator's summary panel still shows aggregate VBD totals ("sends X pts, receives Y pts") -
+   out of scope for this request, left as-is.
+
+All four verified live in-browser (fresh tab, no console errors): bullet rendering, the QB-for-
+stud block, two different Finder result sets from consecutive runs, and player rows with no
+trailing number in the Calculator.
+
 ---
 
 ## Known Bugs & Data Issues
