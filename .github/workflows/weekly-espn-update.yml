@@ -1,9 +1,9 @@
 name: Weekly ESPN Update
 
-# Pulls this week's NWL matchups/standings/projections from ESPN and commits the result so
-# GitHub Pages + Vercel pick it up automatically. See scripts/fetch_espn_week.py for the actual
-# pull logic and .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this
-# same workflow.
+# Pulls this week's NWL matchups/standings/projections AND current rosters/trade values from
+# ESPN, and commits the result so GitHub Pages + Vercel pick it up automatically. See
+# scripts/fetch_espn_week.py and scripts/fetch_espn_rosters.py for the actual pull logic and
+# .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this same workflow.
 #
 # Schedule is a handful of runs on real NFL game days (Thu/Sun/Mon) plus one daily catch-all on
 # the other four days (to pick up projection movement from injury news / waiver moves). All times
@@ -41,15 +41,19 @@ jobs:
           {"espn_s2": "${{ secrets.ESPN_S2 }}", "swid": "${{ secrets.ESPN_SWID }}"}
           CREDS
 
-      - name: Run weekly fetch
+      - name: Run weekly matchups/standings fetch
         run: python3 scripts/fetch_espn_week.py
+
+      - name: Run roster/trade-value fetch
+        run: python3 scripts/fetch_espn_rosters.py
 
       - name: Commit and push if data changed
         run: |
           git config user.name "nwl-site-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/season_2026/matchups.json data/season_2026/standings.json \
-                  data/season_2026/power_rankings.json data/season_2026/commentary.json
+                  data/season_2026/power_rankings.json data/season_2026/commentary.json \
+                  data/season_2026/rosters.json
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

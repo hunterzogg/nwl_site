@@ -1,13 +1,20 @@
 ---
 name: weekly-espn-update
-description: Pull this week's NWL fantasy football matchups, standings, and power rankings from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results. Use this whenever the user asks to update the site with this week's scores/matchups/standings, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site.
+description: Pull this week's NWL fantasy football matchups, standings, power rankings, and current rosters/trade values from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results. Use this whenever the user asks to update the site with this week's scores/matchups/standings/rosters, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub" or "refresh rosters", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site. Note: this same pull also runs automatically on a schedule via .github/workflows/weekly-espn-update.yml — this skill is for an on-demand/manual run (e.g. the user wants fresher data right now, or is troubleshooting).
 ---
 
 # Weekly ESPN update
 
 Runs the NWL site's weekly data pull from ESPN and walks through publishing it. This is a thin
-wrapper around `scripts/fetch_espn_week.py` — the script does the actual work; this skill's job
-is to run it correctly, help review what it produced, and not skip the manual publish step.
+wrapper around `scripts/fetch_espn_week.py` (matchups/standings/power rankings/commentary) and
+`scripts/fetch_espn_rosters.py` (current rosters + trade values, for Trade Tools) — the scripts do
+the actual work; this skill's job is to run them correctly, help review what they produced, and
+not skip the manual publish step for the editorial pieces. A scheduled GitHub Action
+(`.github/workflows/weekly-espn-update.yml`) already runs both scripts automatically several times
+a week during the season and auto-commits matchups/standings/rosters (the facts) while still
+leaving power rankings/commentary unpublished for review — use this skill when the user wants a
+fresher pull right now rather than waiting for the next scheduled run, or is troubleshooting a
+failed run.
 
 ## Before running
 
@@ -23,20 +30,26 @@ From the repo root:
 
 ```bash
 python3 scripts/fetch_espn_week.py
+python3 scripts/fetch_espn_rosters.py
 ```
 
-No `--week` needed in the normal case — the script auto-detects ESPN's current scoring period.
-Only pass `--week N` explicitly if the user asks for a specific past/future week (e.g. backfilling
-a missed week, or pre-loading a schedule week before it's played). It's safe to re-run for the
-same week any time — it overwrites that week's entry rather than duplicating it, so re-running
-later in the day to catch a score correction is fine.
+No `--week` needed in the normal case — `fetch_espn_week.py` auto-detects ESPN's current scoring
+period. Only pass `--week N` explicitly if the user asks for a specific past/future week (e.g.
+backfilling a missed week, or pre-loading a schedule week before it's played). Both scripts are
+safe to re-run any time — `fetch_espn_week.py` overwrites that week's entry rather than
+duplicating it (fine to re-run later in the day to catch a score correction), and
+`fetch_espn_rosters.py` just overwrites the whole file with a fresh snapshot every time (run it
+whenever the user wants current trade values, e.g. after a waiver period). Run
+`fetch_espn_week.py` first if both are needed — `fetch_espn_rosters.py` reads the just-written
+`standings.json` for each team's division.
 
-This writes/updates four files under `data/season_2026/`:
+This writes/updates five files under `data/season_2026/`:
 
 - `matchups.json` — that week's games and scores (factual, no review needed)
 - `standings.json` — current W-L/points standings (factual, no review needed)
 - `power_rankings.json` — a computed ranking draft for the week, `published: false`
 - `commentary.json` — a blank stub (`title`/`body` empty), `published: false`
+- `rosters.json` — current rosters + trade values for Trade Tools (factual, no review needed)
 
 ## After running — walk through publishing
 
@@ -61,7 +74,7 @@ treating the script's success as "done":
    the live site (GitHub Pages + Vercel) won't see any of it until it's committed and pushed:
    ```bash
    git add -A
-   git commit -m "Update week N data: matchups, standings, power rankings"
+   git commit -m "Update week N data: matchups, standings, power rankings, rosters"
    git push
    ```
    Per this project's standing rule, always ask before running `git push` — don't assume a prior
