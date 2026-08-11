@@ -204,9 +204,14 @@ API until "Submit Picks" is clicked, which saves every answered-but-unlocked que
 pass and switches the page to a read-only "saved" view (green "✓ Your picks are saved."
 confirmation, all not-yet-locked question cards visually greyed out/desaturated via a
 `.submitted` class). "Edit Picks" reopens it; changes require hitting Submit again to actually
-persist — nothing autosaves. A manager who already has saved picks lands in the saved view by
-default on login, not the editable one. Graded questions are excluded from the grey-out (the
-correct/incorrect coloring matters more there than the generic "submitted" look).
+persist — nothing autosaves. Graded questions are excluded from the grey-out (the
+correct/incorrect coloring matters more there than the generic "submitted" look). **Updated in a
+later session**: whether a manager lands in the saved view is now scoped to the *currently open*
+batch specifically, not their pick history overall (see `computePageMode()` in the "2026
+season-long Pick'em props" section's follow-ups below) — a fresh batch always starts open and
+editable even for a manager who's submitted picks before. The "This Week's Picks" single tab
+described here was also later split into per-batch tabs (This Week / Leaderboard / one archive
+tab per locked week) — see the same section below for the current tab structure.
 
 **Admin page (`pickem-admin.html`, bookmark-only — not in `NWL_PAGES`/nav, gated by a separate
 `ADMIN_PASSCODE`)** has four sections: New Question (all 3 types, options row hides itself for
