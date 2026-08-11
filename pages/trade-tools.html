@@ -143,7 +143,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=14"></script>
+<script src="../assets/js/shared.js?v=15"></script>
 <script>
 let managers = [];
 let rosters = null;
@@ -468,7 +468,6 @@ function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, 
   // upgrade look like a big lineup improvement even when it wasn't a good use of trade capital -
   // exactly the "not significant enough to give up a premier asset" gap this fixes.
   const starterVbdYou = impactYou.starterVbdDelta, starterVbdThem = impactThem.starterVbdDelta;
-  const benchVbdYou = impactYou.benchVbdDelta, benchVbdThem = impactThem.benchVbdDelta;
 
   // Never suggest a trade that would clearly cost either side real starting-lineup value, even
   // after accounting for the best available waiver pickup at any emptied position.
@@ -476,12 +475,15 @@ function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, 
 
   const startersScoreYou = pointsGainScore(starterVbdYou, 15);
   const startersScoreThem = pointsGainScore(starterVbdThem, 15);
-  const benchScoreYou = pointsGainScore(benchVbdYou, 20);
-  const benchScoreThem = pointsGainScore(benchVbdThem, 20);
 
-  const totalScore = 0.3 * fairness
-    + 0.2 * startersScoreYou + 0.2 * startersScoreThem
-    + 0.1 * benchScoreYou + 0.1 * benchScoreThem;
+  // Bench VBD delta is NOT part of the score (still computed/shown to the user as info, see
+  // impactYou.benchVbdDelta and the bench pts/week bullet). It's too noisy a signal to rank on:
+  // any multi-player trade reshuffles who's a starter vs. bench, which swings bench value by
+  // large, mostly-incidental amounts unrelated to whether the trade is actually good - real
+  // testing found a 99%-fair trade with a genuine +38 VBD starter upgrade scoring only 63/100
+  // because the OTHER side's bench happened to drop ~48 VBD points from the reshuffle. Starters
+  // are what actually score points each week; bench is depth insurance, not a ranking signal.
+  const totalScore = 0.4 * fairness + 0.3 * startersScoreYou + 0.3 * startersScoreThem;
 
   const rankOverrides = {};
   rankOverrides[yourManager] = impactYou.afterStarterPts;
@@ -621,7 +623,7 @@ function renderFinderControls() {
   document.getElementById('finderMethodologyDetail').innerHTML = `
     ${rosters.methodology.note}
     <ul>
-      <li>Roster comparison (the core signal): each side's roster after the trade - outgoing player(s) removed, incoming player(s) added, any emptied position auto-filled with the best available waiver pickup - is re-slotted into its best possible starting lineup (same method as the position grades elsewhere on the site) and compared to the roster before the trade. The scoring itself runs on market-value-adjusted points (VBD, already scaled for this league's real QB/TE value - see below), not raw point totals, specifically so a QB upgrade cannot look like a bigger lineup improvement than it really is just because passing stats rack up bigger raw numbers than rushing/receiving stats do. The points-per-week and bench-points numbers shown on every trade ARE real, honest point projections though - just not what decides whether a trade gets suggested.</li>
+      <li>Roster comparison (the core signal): each side's STARTING roster after the trade - outgoing player(s) removed, incoming player(s) added, any emptied position auto-filled with the best available waiver pickup - is re-slotted into its best possible starting lineup (same method as the position grades elsewhere on the site) and compared to the starting roster before the trade. The scoring itself runs on market-value-adjusted starter points (VBD, already scaled for this league's real QB/TE value - see below), not raw point totals, specifically so a QB upgrade cannot look like a bigger lineup improvement than it really is just because passing stats rack up bigger raw numbers than rushing/receiving stats do. Bench value is NOT part of the score - it's too noisy a signal, since any multi-player trade reshuffles who's a starter vs. bench and swings bench value by large amounts unrelated to whether the trade is actually good; only starters actually score points each week. The points-per-week and bench-points numbers shown on every trade ARE real, honest projections though - just informational, not what decides whether a trade gets suggested.</li>
       <li>League power ranking: all 12 teams are ranked by current best-lineup starter points per week. Each suggestion shows where you and your trade partner would land in that ranking afterward, holding every other team's roster fixed.</li>
       <li>Waiver pickups: if a trade would leave a team with zero rostered players at a position, the math doesn't just assume a generic replacement - it looks up the actual best available free agent at that position (from a real, refreshed pool of everyone not rostered on any of the 12 teams), names them as the suggested pickup, and factors them directly into the roster comparison above.</li>
       <li>Need/surplus (used only in the explanation text, not the score itself): whether a position is a real weakness or has real depth for a team, relative to the 12-team league average.</li>
