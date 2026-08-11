@@ -549,9 +549,11 @@ function findTrades(yourManager, wantPos, partnerManager) {
   // time, AND the 10 shown should be a genuine mix of package sizes, not just whichever shape
   // scores highest. pickDiverseMix round-robins across every shape present (each already
   // pre-sorted/shape-capped above, and shuffled within its shape for run-to-run variety) so the
-  // final list draws from as many different shapes as are actually available, instead of one
-  // shape crowding out the rest.
-  return pickDiverseMix(candidates, 10);
+  // final SET draws from as many different shapes as are actually available, instead of one
+  // shape crowding out the rest. That selection is shape-interleaved though, not score-ordered -
+  // re-sort the chosen 10 by score descending before returning, so the shape mix still displays
+  // best-to-worst rather than in round-robin order.
+  return pickDiverseMix(candidates, 10).sort((a, b) => b.totalScore - a.totalScore);
 }
 
 // {give.length}-for-{get.length}, e.g. "1-2" for a 1-for-2 trade.
