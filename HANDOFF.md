@@ -1155,6 +1155,33 @@ All four verified live in-browser (fresh tab, no console errors): bullet renderi
 stud block, two different Finder result sets from consecutive runs, and player rows with no
 trailing number in the Calculator.
 
+**Two more follow-up fixes, same session:**
+
+- **Scores clustering in the 60s regardless of quality**: bench VBD delta was 20% of the scoring
+  weight, but it's a noisy signal - any multi-player trade reshuffles who ends up starting vs.
+  benched, swinging bench value by large, mostly incidental amounts. Found a real case: a
+  99%-fair trade with a genuine +38 VBD starter upgrade for one side scored only 63/100 because
+  the other side's bench happened to drop ~48 VBD points from the reshuffle. Bench value is no
+  longer part of the score (still shown to the user as an informational points/week number -
+  only starters actually score points each week). Reweighted to 40% fairness / 30% starters per
+  side. Score distribution across all 12 teams went from a tight 59-66 cluster to a real 69-87
+  spread.
+- **Every suggestion was 2-for-2**: a flat top-N-by-score cutoff (both per-partner and for the
+  final list) always favored 2-for-2 purely because there are combinatorially far more 2-player
+  combinations than 1-player ones in the search space, so it dominated before any other shape got
+  a look in. `topPerShape()` now caps each distinct (give size, get size) shape separately when
+  gathering per-partner candidates, and `pickDiverseMix()` round-robins across every shape present
+  (shuffled within each shape) to build the final 10 - verified live: a fresh "Any team" search
+  now returns a real mix (1-for-1, 2-for-1, 1-for-2, 2-for-2), and a specific-partner search
+  returns all 9 possible shapes (1-for-1 through 3-for-3) in a single 10-result run. Also
+  re-confirmed the same-position wash filter still holds (rejects near-equal-value 1-for-1s,
+  fairness &ge; 0.6) while genuinely lopsided same-position value trades (fairness well under
+  0.6) still correctly surface.
+
+**Also unpublished from nav this session** while the scoring was still being tuned (same pattern
+as the archived Mock Draft link - `NWL_TRADE_TOOLS_PAGE` dropped from `NWL_IN_SEASON_PAGES` in
+`shared.js`, page/const left intact) - re-add it once satisfied with the results.
+
 ---
 
 ## Known Bugs & Data Issues

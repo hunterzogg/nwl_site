@@ -537,19 +537,56 @@ function findTrades(yourManager, wantPos, partnerManager) {
       }
     }
     partnerCandidates.sort((a, b) => b.totalScore - a.totalScore);
-    // Wider per-partner pool than the final display count - feeds the randomized sample below so
-    // results vary run to run instead of always showing the exact same trade for a given team.
-    const perPartnerPool = partnerManager === 'ANY' ? 5 : 25;
-    candidates.push(...partnerCandidates.slice(0, perPartnerPool));
+    // Keep the best few of EVERY package shape (1-for-1, 1-for-2, 2-for-3, etc.), not just a flat
+    // top-N by score - a flat cutoff always favored 2-for-2 (and generally the largest allowed
+    // size) purely because there are combinatorially far more 2-player combinations than 1-player
+    // ones, so it dominated the score-sorted list before any shape smaller or larger ever got a
+    // look in. `topPerShape` caps each distinct (give size, get size) shape separately instead.
+    candidates.push(...topPerShape(partnerCandidates, partnerManager === 'ANY' ? 2 : 6));
   }
   candidates.sort((a, b) => b.totalScore - a.totalScore);
   // Per explicit request: reopening/re-running the Finder shouldn't show the identical list every
-  // time. Take a genuinely good quality pool (top 25 by score) and randomly sample 10 from it,
-  // rather than deterministically always showing the literal top 10 - still every candidate here
-  // already cleared every fairness/star-premium/lineup-impact filter above, just not always the
-  // same 10 of them.
-  const qualityPool = candidates.slice(0, 25);
-  return shuffle(qualityPool).slice(0, 10);
+  // time, AND the 10 shown should be a genuine mix of package sizes, not just whichever shape
+  // scores highest. pickDiverseMix round-robins across every shape present (each already
+  // pre-sorted/shape-capped above, and shuffled within its shape for run-to-run variety) so the
+  // final list draws from as many different shapes as are actually available, instead of one
+  // shape crowding out the rest.
+  return pickDiverseMix(candidates, 10);
+}
+
+// {give.length}-for-{get.length}, e.g. "1-2" for a 1-for-2 trade.
+function shapeKey(c) { return `${c.give.length}-${c.get.length}`; }
+
+// Keeps the top `perShape` candidates of EACH distinct package shape from an already
+// score-sorted list, instead of a flat top-N that would just take whichever shape happens to
+// have the most/highest-scoring combinations.
+function topPerShape(sortedCandidates, perShape) {
+  const seen = {};
+  const out = [];
+  for (const c of sortedCandidates) {
+    const key = shapeKey(c);
+    seen[key] = seen[key] || 0;
+    if (seen[key] < perShape) { out.push(c); seen[key]++; }
+  }
+  return out;
+}
+
+// Round-robins across every distinct package shape present in `candidates` (shuffled within each
+// shape first, for run-to-run variety) until `count` results are picked - guarantees a genuine
+// mix of 1-for-1/1-for-2/2-for-3/etc. instead of one shape dominating the list.
+function pickDiverseMix(candidates, count) {
+  const groups = {};
+  candidates.forEach(c => { (groups[shapeKey(c)] = groups[shapeKey(c)] || []).push(c); });
+  const shapeKeys = shuffle(Object.keys(groups));
+  shapeKeys.forEach(k => { groups[k] = shuffle(groups[k]); });
+  const result = [];
+  let i = 0;
+  while (result.length < count && shapeKeys.some(k => groups[k].length)) {
+    const key = shapeKeys[i % shapeKeys.length];
+    if (groups[key].length) result.push(groups[key].shift());
+    i++;
+  }
+  return result;
 }
 
 function shuffle(arr) {
@@ -628,7 +665,7 @@ function renderFinderControls() {
       <li>Waiver pickups: if a trade would leave a team with zero rostered players at a position, the math doesn't just assume a generic replacement - it looks up the actual best available free agent at that position (from a real, refreshed pool of everyone not rostered on any of the 12 teams), names them as the suggested pickup, and factors them directly into the roster comparison above.</li>
       <li>Need/surplus (used only in the explanation text, not the score itself): whether a position is a real weakness or has real depth for a team, relative to the 12-team league average.</li>
       <li>Fairness band (a secondary check): the traded players' value - adjusted for position scarcity so a QB and a TE are comparable - has to be within roughly &plusmn;25% of each other (an 8-point floor for smaller trades) or the trade is never suggested at all. This mostly rules out one-sided fleecing on top of the roster-comparison check above.</li>
-      <li>Packages: searches 1-for-1 through 3-for-3 combinations (from each team's top 10 players by value - the bottom of a roster is never a useful trade chip), not just single-player swaps. Searching "Any" trade partner checks all 11 other teams at once, so it's capped at 2-for-2 to stay fast - pick a specific partner to see the full 3-for-3 range against just that team.</li>
+      <li>Packages: searches 1-for-1 through 3-for-3 combinations (from each team's top 10 players by value - the bottom of a roster is never a useful trade chip), not just single-player swaps. Searching "Any" trade partner checks all 11 other teams at once, so it's capped at 2-for-2 to stay fast - pick a specific partner to see the full 3-for-3 range against just that team. Results are also a genuine mix of package sizes, not just whichever shape happens to score best - the best few trades of every shape are kept and round-robined into the final list, so 1-for-1/1-for-2/2-for-3/etc. all get a fair shot at showing up, not just 2-for-2.</li>
       <li>Same-position trades of roughly equal value are filtered out on purpose - swapping one RB for another RB of similar value doesn't diversify or upgrade either roster, so it's not "help," just a wash. A same-position trade with a real value gap (buy-low/sell-high) can still surface - it just has to earn it like anything else.</li>
       <li>Star premium: a player valuable enough to be a real difference-maker (roughly early-round-pick caliber) doesn't move for value that merely nets out even - the side NOT giving up that player has to pay about 20% more, or the trade isn't suggested. Real managers are reluctant to part with a true difference-maker for "fair" alone.</li>
       <li>This league trades QB and TE for far less than general fantasy consensus would suggest - trade value (not the real points-per-week numbers shown, which stay honest projections) is scaled down hard for QB and moderately for TE, since a startable replacement at either is usually one waiver claim away in this league's single-QB, single-TE format. Even the best real QB in the league is worth a fraction of a true stud RB/WR in trade value.</li>
