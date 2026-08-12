@@ -110,6 +110,18 @@
 .hc-pill.bust { background: #E0524A22; color: #E0524A; border: 1px solid #E0524A55; }
 .hc-pill.pending { background: #7C879822; color: #7C8798; border: 1px solid #7C879855; }
 
+.hc-double-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 16px; }
+.hc-double-row { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.82rem; flex-wrap: wrap; }
+.hc-double-row:last-child { border-bottom: none; }
+.hc-double-yr { font-family: var(--font-mono); color: var(--blue-bright); flex-shrink: 0; width: 38px; }
+.hc-double-detail { color: var(--text-muted); flex: 1; min-width: 200px; }
+
+.hc-timing-row { display: grid; grid-template-columns: 130px 1fr 40px; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
+.hc-timing-row:last-child { border-bottom: none; }
+.hc-timing-track { height: 12px; border-radius: 3px; background: var(--surface-raised); overflow: hidden; }
+.hc-timing-fill { height: 100%; background: var(--blue-bright); }
+.hc-timing-pct { font-family: var(--font-mono); color: var(--text-muted); text-align: right; }
+
 .hc-callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .hc-callout { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; border-left: 3px solid #4FA876; }
 .hc-callout.bad { border-left-color: #E0524A; }
@@ -829,6 +841,88 @@ function handcuffLeaderboardHTML(events) {
   `).join('');
 }
 
+// A manager "doubling up" - drafting 2+ handcuff picks in the SAME draft (different teams,
+// otherwise they'd already be grouped as one team's picks) - is a distinct, rarer pattern from
+// the per-manager career totals in the leaderboard above, so it gets its own small section rather
+// than being buried in the full pick table.
+function handcuffDoubleUpHTML(events) {
+  const bySeasonMgr = {};
+  events.forEach(e => {
+    const key = `${e.season}|${e.manager}`;
+    (bySeasonMgr[key] = bySeasonMgr[key] || []).push(e);
+  });
+  const doubles = Object.values(bySeasonMgr).filter(list => list.length >= 2)
+    .sort((a, b) => b[0].season - a[0].season);
+  if (!doubles.length) return '';
+
+  return `
+    <div class="records-group-title">Doubling Up: 2+ Handcuffs in One Draft</div>
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">
+      Happened ${doubles.length} time${doubles.length === 1 ? '' : 's'} across ${new Set(events.map(e => e.season)).size} draft classes - no manager has ever drafted 3+ in the same year.
+    </p>
+    <div class="hc-double-box">
+      ${doubles.map(list => `
+        <div class="hc-double-row">
+          <span class="hc-double-yr">${list[0].season}</span>
+          <span>${managerTag(managers, list[0].manager)}</span>
+          <span class="hc-double-detail">${list.map(e => `${e.lead_rb}&rarr;${e.handcuff_rb}${e.tier === 'pending' ? ' (pending)' : ''}`).join(', ')}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Buckets rather than individual rounds - round-by-round sample sizes are too thin (some rounds
+// have n=1-2) to say anything meaningful, but grouped into early/mid/late the sample sizes are
+// large enough to actually compare hit rates.
+function handcuffRoundBucket(round) {
+  if (round <= 9) return 'Early (Rd 5-9)';
+  if (round <= 13) return 'Mid (Rd 10-13)';
+  return 'Late (Rd 14-18)';
+}
+const HANDCUFF_ROUND_BUCKET_ORDER = ['Early (Rd 5-9)', 'Mid (Rd 10-13)', 'Late (Rd 14-18)'];
+
+function handcuffTimingStats(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const avgRound = events.reduce((s, e) => s + e.handcuff_round, 0) / events.length;
+  const hits = graded.filter(e => e.tier === 'hit');
+  const avgHitRound = hits.length ? hits.reduce((s, e) => s + e.handcuff_round, 0) / hits.length : null;
+
+  const buckets = {};
+  graded.forEach(e => {
+    const b = handcuffRoundBucket(e.handcuff_round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0, pts: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+    buckets[b].pts += e.pts;
+  });
+  const bucketRows = HANDCUFF_ROUND_BUCKET_ORDER.filter(b => buckets[b]).map(b => ({
+    label: b, n: buckets[b].n, hitRate: buckets[b].hit / buckets[b].n, avgPts: buckets[b].pts / buckets[b].n,
+  }));
+  const best = bucketRows.reduce((a, b) => (b.hitRate > a.hitRate ? b : a));
+  return { avgRound, avgHitRound, bucketRows, best };
+}
+
+function handcuffTimingHTML(events) {
+  const t = handcuffTimingStats(events);
+  return `
+    <div class="records-group-title">When To Draft Your Handcuff</div>
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">
+      Handcuffs go in Round ${t.avgRound.toFixed(1)} on average${t.avgHitRound !== null ? `; the ones that ended up scoring meaningfully were taken in Round ${t.avgHitRound.toFixed(1)} on average` : ''} - not meaningfully earlier or later, in other words. Grouped into ranges (individual rounds have too few picks each to compare on their own), <strong style="color:var(--text);">${t.best.label}</strong> has the best hit rate.
+    </p>
+    <div class="hc-double-box">
+      ${t.bucketRows.map(b => `
+        <div class="hc-timing-row">
+          <span>${b.label}</span>
+          <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;"></div></div>
+          <span class="hc-timing-pct">${Math.round(b.hitRate * 100)}%</span>
+        </div>
+      `).join('')}
+    </div>
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Hit rate = share scoring meaningfully (100+ pts). Sample sizes per range: ${t.bucketRows.map(b => `${b.label.split(' ')[0]} n=${b.n}`).join(', ')} - small enough that this is a lean, not a rule.</p>
+  `;
+}
+
 function handcuffTableHTML(events) {
   const rowHTML = (e) => `
     <td class="num">${e.season}</td>
@@ -886,13 +980,14 @@ function renderHandcuffs() {
 
   const mgrList = [...new Set(handcuffEvents.map(e => e.manager))].sort();
   const yearList = [...new Set(handcuffEvents.map(e => e.season))].sort((a, b) => b - a);
+  const timing = handcuffTimingStats(handcuffEvents);
 
   document.getElementById('handcuffsContent').innerHTML = `
     <div class="stat-strip">
       <div class="stat"><div class="n">${handcuffEvents.length}</div><div class="l">Handcuff picks, all-time${pendingCount ? ` (${pendingCount} pending)` : ''}</div></div>
       <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length}</span></div><div class="l">Scored meaningfully (100+ pts)</div></div>
-      <div class="stat"><div class="n">${best.pts.toFixed(1)}<span class="unit">pts</span></div><div class="l">Best: ${best.handcuff_rb}, ${best.season}</div></div>
-      <div class="stat"><div class="n">${worst.pts.toFixed(1)}<span class="unit">pts</span></div><div class="l">Worst: ${worst.handcuff_rb}, ${worst.season}</div></div>
+      <div class="stat"><div class="n">${timing.avgRound.toFixed(1)}</div><div class="l">Avg round drafted</div></div>
+      <div class="stat"><div class="n">${Math.round(timing.best.hitRate * 100)}<span class="unit">%</span></div><div class="l">Best hit rate: ${timing.best.label}</div></div>
     </div>
 
     <div class="hc-callouts" style="margin-bottom:24px;">
@@ -908,6 +1003,8 @@ function renderHandcuffs() {
       </div>
     </div>
 
+    ${handcuffTimingHTML(handcuffEvents)}
+
     <div class="records-group-title">By Manager</div>
     <div class="hc-legend">
       <span><i class="hc-swatch hit"></i>Meaningful (100+ pts)</span>
@@ -916,6 +1013,8 @@ function renderHandcuffs() {
       ${pendingCount ? `<span><i class="hc-swatch pending"></i>Pending (${draftGrades2026.season} season not started)</span>` : ''}
     </div>
     ${handcuffLeaderboardHTML(handcuffEvents)}
+
+    ${handcuffDoubleUpHTML(handcuffEvents)}
 
     <div class="records-group-title">Every Handcuff Pick</div>
     <div class="controls-row">
