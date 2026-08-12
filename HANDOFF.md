@@ -204,6 +204,52 @@ filter isolates the 5 pending 2026 picks, manager filter shows Goetz's 7 histori
 in one list, leaderboard segment widths sum correctly per manager, all other Draft History tabs
 still work, no console errors.
 
+**Doubling Up, round-timing analysis, and a real data-error fix (same session, follow-up)** —
+- **"Doubling Up: 2+ Handcuffs in One Draft"** — a manager drafting 2 handcuff picks (different NFL
+  teams) in the same draft is a distinct, rarer pattern from the career totals in the leaderboard,
+  so it gets its own small section (`handcuffDoubleUpHTML()`). Happened 3 times ever: 2016 Goetz,
+  2020 Palaia, 2026 Conlin (pending). No manager has ever done it 3+ times in one draft. Initially
+  built as three large padded callout cards; per explicit follow-up feedback ("takes up too much
+  page space") compacted into one bordered box with dense single-line rows instead - same
+  information, far less vertical space.
+- **Real bug caught while building this**: analyzing "what round do handcuffs get drafted"
+  surfaced a Rod Smith (2018, Larson, behind Ezekiel Elliott) pick tagged round 5 - but his
+  `overall_pick` of 172 only makes sense as a round 15 pick in a 12-team draft
+  ((172-1)/12 = round 15, not round 5). Flagged to Hunter, who confirmed and fixed it in the
+  source workbook's Player Draft History sheet; patched `data/draft_picks.json` and
+  `data/draft_grades.json` to match (round field only - overall_pick and every derived stat were
+  already correct). No other data file references this pick. Everything on this tab (and Round 1-3
+  Strategy / Draft Slot Analysis / Draft Grades) computes live client-side from these two files, so
+  the fix propagated automatically with no other code changes needed.
+- **"When To Draft Your Handcuff"** (`handcuffTimingHTML()`/`handcuffTimingStats()`) - a
+  hit-rate-by-round-range breakdown (average round drafted overall lives in the stat strip's "Avg
+  Round Drafted" tile instead, not repeated here). Individual rounds have too few picks each to
+  compare (some rounds have n=1), so rounds are bucketed. After the Rod Smith fix, no handcuff has
+  ever gone before round 7, so buckets are **Early (Rd 7-9)**, **Rd 10-11**, **Rd 12-13**, **Late
+  (Rd 14-18)** - re-grouped from an initial 3-bucket Early/Mid/Late split per explicit feedback,
+  since the flat "Mid (Rd 10-13)" bucket held 66% of all picks and was averaging away real
+  variation: split apart, Rd 10-11 hits 20% of the time vs. Rd 12-13's 55% - a genuinely different
+  signal the merged bucket was hiding. Each bucket row shows its own `n=` count directly, and a
+  header row labels the columns "Hit Rate"/"N" so the % is unambiguous - both added per explicit
+  feedback that the original version buried sample sizes in a small caveat sentence and never
+  labeled what the % actually meant. The section originally opened with an explanatory paragraph
+  (avg round, best-bucket callout, hit-rate definition) - removed per explicit follow-up feedback
+  once the header row/column labels already conveyed the same thing, so it was just repeating
+  what the chart itself now shows. Current numbers: Early n=6 (33%), Rd 10-11 n=15 (20%), Rd 12-13
+  n=11 (55%, the best range), Late n=10 (10%).
+- **Stat-strip decluttered**: the Best/Worst point tiles were dropped (duplicated the green/red
+  callout cards below, which already name the same picks with more context) and replaced with Avg
+  Round Drafted and Best Hit Rate Range, so the freed grid slots show new information instead of
+  sitting empty.
+
+Verified live in-browser throughout: Rod Smith round updates from 5 to 15 and correctly reclassifies
+from the Early to Late bucket, all bucket math/stat-strip numbers match a manual recompute, Doubling
+Up renders as one compact box, no regressions on the other four Draft History tabs, no console
+errors. (Caught one non-issue while testing: the dev-server browser tab cached the pre-fix JSON
+after editing the file on disk - confirmed via `curl` and a `cache:'reload'` fetch that the file and
+server were correct; a real page load/deploy is unaffected, this was purely a local testing
+artifact.)
+
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
 Three tabs:
