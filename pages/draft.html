@@ -116,10 +116,14 @@
 .hc-double-yr { font-family: var(--font-mono); color: var(--blue-bright); flex-shrink: 0; width: 38px; }
 .hc-double-detail { color: var(--text-muted); flex: 1; min-width: 200px; }
 
-.hc-timing-row { display: grid; grid-template-columns: 130px 1fr 40px; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
+.hc-timing-row { display: grid; grid-template-columns: 100px 1fr 48px; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
 .hc-timing-row:last-child { border-bottom: none; }
-.hc-timing-track { height: 12px; border-radius: 3px; background: var(--surface-raised); overflow: hidden; }
+.hc-timing-row.hc-timing-head { padding-bottom: 4px; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+.hc-timing-row.hc-timing-head .hc-timing-pct { font-family: var(--font-body); }
+.hc-timing-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.hc-timing-track { flex: 1; height: 12px; border-radius: 3px; background: var(--surface-raised); overflow: hidden; }
 .hc-timing-fill { height: 100%; background: var(--blue-bright); }
+.hc-timing-pct-inline { font-family: var(--font-mono); color: var(--text); font-size: 0.8rem; width: 34px; flex-shrink: 0; }
 .hc-timing-pct { font-family: var(--font-mono); color: var(--text-muted); text-align: right; }
 
 .hc-callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -873,14 +877,18 @@ function handcuffDoubleUpHTML(events) {
 }
 
 // Buckets rather than individual rounds - round-by-round sample sizes are too thin (some rounds
-// have n=1-2) to say anything meaningful, but grouped into early/mid/late the sample sizes are
-// large enough to actually compare hit rates.
+// have n=1-2) to say anything meaningful. No handcuff has ever gone before round 7 (a real
+// pattern, not a gap in the buckets - round 5/6 handcuffs looked like they existed before a data
+// error was corrected, see the Rod Smith 2018 fix), so "early" starts there. The old flat
+// "Rd 10-13" mid bucket (66% of all picks) was hiding real variation - splitting it into 10-11
+// and 12-13 revealed a genuinely different hit rate between the two.
 function handcuffRoundBucket(round) {
-  if (round <= 9) return 'Early (Rd 5-9)';
-  if (round <= 13) return 'Mid (Rd 10-13)';
+  if (round <= 9) return 'Early (Rd 7-9)';
+  if (round <= 11) return 'Rd 10-11';
+  if (round <= 13) return 'Rd 12-13';
   return 'Late (Rd 14-18)';
 }
-const HANDCUFF_ROUND_BUCKET_ORDER = ['Early (Rd 5-9)', 'Mid (Rd 10-13)', 'Late (Rd 14-18)'];
+const HANDCUFF_ROUND_BUCKET_ORDER = ['Early (Rd 7-9)', 'Rd 10-11', 'Rd 12-13', 'Late (Rd 14-18)'];
 
 function handcuffTimingStats(events) {
   const graded = events.filter(e => e.tier !== 'pending');
@@ -908,18 +916,26 @@ function handcuffTimingHTML(events) {
   return `
     <div class="records-group-title">When To Draft Your Handcuff</div>
     <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">
-      Handcuffs go in Round ${t.avgRound.toFixed(1)} on average${t.avgHitRound !== null ? `; the ones that ended up scoring meaningfully were taken in Round ${t.avgHitRound.toFixed(1)} on average` : ''} - not meaningfully earlier or later, in other words. Grouped into ranges (individual rounds have too few picks each to compare on their own), <strong style="color:var(--text);">${t.best.label}</strong> has the best hit rate.
+      Handcuffs go in Round ${t.avgRound.toFixed(1)} on average${t.avgHitRound !== null ? `; the ones that ended up scoring meaningfully were taken in Round ${t.avgHitRound.toFixed(1)} on average` : ''} - not meaningfully earlier or later, in other words. Grouped into ranges (individual rounds have too few picks each to compare on their own), <strong style="color:var(--text);">${t.best.label}</strong> has the best hit rate. Bars below show <strong style="color:var(--text);">hit rate</strong> - the share of picks in that range that scored meaningfully (100+ pts) - not raw pick volume.
     </p>
     <div class="hc-double-box">
+      <div class="hc-timing-row hc-timing-head">
+        <span></span>
+        <span>Hit rate</span>
+        <span class="hc-timing-pct">n</span>
+      </div>
       ${t.bucketRows.map(b => `
         <div class="hc-timing-row">
           <span>${b.label}</span>
-          <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;"></div></div>
-          <span class="hc-timing-pct">${Math.round(b.hitRate * 100)}%</span>
+          <div class="hc-timing-bar-wrap">
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;"></div></div>
+            <span class="hc-timing-pct-inline">${Math.round(b.hitRate * 100)}%</span>
+          </div>
+          <span class="hc-timing-pct">n=${b.n}</span>
         </div>
       `).join('')}
     </div>
-    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Hit rate = share scoring meaningfully (100+ pts). Sample sizes per range: ${t.bucketRows.map(b => `${b.label.split(' ')[0]} n=${b.n}`).join(', ')} - small enough that this is a lean, not a rule.</p>
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Sample sizes are small enough per range that this is a lean, not a rule.</p>
   `;
 }
 
