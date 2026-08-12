@@ -893,8 +893,6 @@ const HANDCUFF_ROUND_BUCKET_ORDER = ['Early (Rd 7-9)', 'Rd 10-11', 'Rd 12-13', '
 function handcuffTimingStats(events) {
   const graded = events.filter(e => e.tier !== 'pending');
   const avgRound = events.reduce((s, e) => s + e.handcuff_round, 0) / events.length;
-  const hits = graded.filter(e => e.tier === 'hit');
-  const avgHitRound = hits.length ? hits.reduce((s, e) => s + e.handcuff_round, 0) / hits.length : null;
 
   const buckets = {};
   graded.forEach(e => {
@@ -908,16 +906,13 @@ function handcuffTimingStats(events) {
     label: b, n: buckets[b].n, hitRate: buckets[b].hit / buckets[b].n, avgPts: buckets[b].pts / buckets[b].n,
   }));
   const best = bucketRows.reduce((a, b) => (b.hitRate > a.hitRate ? b : a));
-  return { avgRound, avgHitRound, bucketRows, best };
+  return { avgRound, bucketRows, best };
 }
 
 function handcuffTimingHTML(events) {
   const t = handcuffTimingStats(events);
   return `
     <div class="records-group-title">When To Draft Your Handcuff</div>
-    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">
-      Handcuffs go in Round ${t.avgRound.toFixed(1)} on average${t.avgHitRound !== null ? `; the ones that ended up scoring meaningfully were taken in Round ${t.avgHitRound.toFixed(1)} on average` : ''} - not meaningfully earlier or later, in other words. Grouped into ranges (individual rounds have too few picks each to compare on their own), <strong style="color:var(--text);">${t.best.label}</strong> has the best hit rate. Bars below show <strong style="color:var(--text);">hit rate</strong> - the share of picks in that range that scored meaningfully (100+ pts) - not raw pick volume.
-    </p>
     <div class="hc-double-box">
       <div class="hc-timing-row hc-timing-head">
         <span></span>
