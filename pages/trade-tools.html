@@ -102,7 +102,6 @@
   height: 4px; border-radius: 2px; background: var(--line); margin-top: 4px; overflow: hidden; max-width: 160px;
 }
 .player-value-fill { height: 100%; background: var(--blue-bright); border-radius: 2px; }
-.player-value-fill.neg { background: var(--red); }
 .player-value-num { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); margin-left: 6px; }
 
 .value-gauge-wrap { margin-bottom: 18px; }
@@ -182,10 +181,11 @@ const POSITIONS = ['QB', 'RB', 'WR', 'TE'];
 let calcTeamA = null, calcTeamB = null;
 let calcSendsA = [], calcSendsB = [];
 let calcSearchA = '', calcSearchB = '';
-// Scaling reference for the FantasyCalc-style per-player value bars - the single highest
-// vbd_value on any of the 12 rosters, so every bar across the whole page is on the same scale
-// (a bar's length means the same thing whether you're looking at Team A's list or Team B's).
+// Scaling reference for the FantasyCalc-style per-player value bars - the highest and lowest
+// vbd_value on any of the 12 rosters, so every bar/number across the whole page is on the same
+// scale (a bar's length or a displayed number means the same thing wherever it's shown).
 let leagueMaxVbd = 1;
+let leagueMinVbd = 0;
 
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
@@ -221,10 +221,22 @@ function fairnessGradeLetter(pct) {
 // it's shown on the page. This is a raw market-value visualization only, same number that drives
 // the fairness gauge below - it does NOT reflect roster fit/need (see the separate grade badge
 // for that read).
+// vbd_value is points-over-replacement, so it's designed to cross zero (below-replacement bench
+// players are NEGATIVE by construction) - correct for the scoring math, but reads as alarming or
+// broken to someone just scanning a roster list where almost every player shows a negative or
+// tiny number. This is a purely COSMETIC rescale for display: shift the whole league's range so
+// the single worst rostered player reads as 0 and everyone else is a normal-looking positive
+// integer, scaled the same way everywhere on the page. Nothing that actually decides trade
+// quality (fairness, star thresholds, consolidation gates, etc.) uses this - they all keep using
+// the real vbd_value exactly as before.
+function displayTradeValue(vbd) {
+  return Math.round(vbd - leagueMinVbd);
+}
+
 function playerValueBarHTML(player) {
-  const pct = Math.max(2, Math.min(100, (Math.max(0, player.vbd_value) / leagueMaxVbd) * 100));
-  const negClass = player.vbd_value < 0 ? ' neg' : '';
-  return `<div class="player-value-track"><div class="player-value-fill${negClass}" style="width:${pct}%;"></div></div>`;
+  const range = leagueMaxVbd - leagueMinVbd || 1;
+  const pct = Math.max(2, Math.min(100, (displayTradeValue(player.vbd_value) / range) * 100));
+  return `<div class="player-value-track"><div class="player-value-fill" style="width:${pct}%;"></div></div>`;
 }
 
 // How close the two sides are on pure market value (vbd_value sums), FantasyCalc-calculator
@@ -1042,7 +1054,7 @@ function rosterRowHTML(player, side, inSendsList) {
         <div class="player-sub">${player.nfl_team || ''} &middot; ${player.slot === 'BEN' ? 'Bench' : player.slot}</div>
         ${playerValueBarHTML(player)}
       </div>
-      <span class="player-value-num">${player.vbd_value.toFixed(1)}</span>
+      <span class="player-value-num">${displayTradeValue(player.vbd_value)}</span>
       ${btn}
     </div>
   `;
@@ -1233,7 +1245,9 @@ async function init() {
     weeksRemaining = rosters.weeks_remaining || 1;
     needs = computeTeamNeeds();
     powerRanking = computePowerRanking();
-    leagueMaxVbd = Math.max(1, ...rosters.teams.flatMap(t => t.players.filter(p => p.position !== 'HC').map(p => p.vbd_value)));
+    const allVbd = rosters.teams.flatMap(t => t.players.filter(p => p.position !== 'HC').map(p => p.vbd_value));
+    leagueMaxVbd = Math.max(1, ...allVbd);
+    leagueMinVbd = Math.min(0, ...allVbd);
     renderFinderControls();
     runFinderSearch();
     renderCalcControls();
