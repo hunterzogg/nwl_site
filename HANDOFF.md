@@ -250,6 +250,15 @@ after editing the file on disk - confirmed via `curl` and a `cache:'reload'` fet
 server were correct; a real page load/deploy is unaffected, this was purely a local testing
 artifact.)
 
+**Explanatory paragraph removed + Round column added (same session, follow-up)** — the "When To
+Draft Your Handcuff" section originally opened with a paragraph restating avg round/best-bucket/
+hit-rate-definition; removed per explicit feedback once the header row's "Hit Rate"/"N" column
+labels already conveyed the same thing (the now-unused `avgHitRound` computation was dropped from
+`handcuffTimingStats()` too). Separately, "Every Handcuff Pick" gained a dedicated **Round** column
+(desktop table) / "Drafted Round X" line (mobile cards) showing when the handcuff itself was
+drafted - previously only a small inline superscript next to its name on desktop, missing entirely
+on mobile.
+
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
 Three tabs:
