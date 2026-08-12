@@ -147,12 +147,42 @@ SVG scatter grid of every unique winning × losing score combo in league history
 Per-team-season rankings (not career averages). Regular season and playoffs in separate tabs. Three sort toggles: Adjusted PPG, Raw PPG, and Opponent PPG (Regular Season tab only — no opponent-PPG source data for playoffs). Each row shows only the PPG metric currently being sorted by (not all of Adj/Raw/Opp at once — switch the sort to see a different one), plus rank/manager/season; the Games-played column was removed entirely as of this session (it wasn't part of any ranking anyway). Playoffs tab has a "Reg. Rank − Playoff Rank" column (fixed rank, unaffected by the current filter/sort) — green when the playoff rank beat the regular-season rank, red when it didn't. Manager filter + season filter on each tab. Rank column always shows the manager-season's true rank against the full unfiltered population, not a re-rank of the filtered subset. Both tables switch to stacked cards on mobile (see Design System → Responsive tables).
 
 ### draft.html ✅
-All four tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
-Four tabs:
+All five tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
+Five tabs:
 - **Draft Board**: filterable by season, manager, position, NFL team, player name search. NFL teams capitalized. Positions color-coded.
 - **Round 1-3 Strategy**: filterable by manager and year (defaults to most recent). Shows finish column for each season. Summary table of strategy effectiveness (uses, avg finish, championships, sackos). Position combos shown as e.g. `RB/RB/WR` (not `RB - RB - WR`) so they fit on one line.
 - **Draft Slot Analysis**: avg PPG, avg finish, championships, sackos by draft position. Sourced from Mgr Summary A84 (authoritative). Best avg PPG highlighted green, worst highlighted red.
 - **Draft Grades**: every QB/RB/WR/TE pick since 2013 graded — see `scripts/build_draft_grades.py` docstring for the raw-data half of the methodology (nflverse half-PPR sourcing, name-matching, position draft rank vs. finish rank). The letter grade itself blends two equally-weighted, z-scored signals computed client-side in `draft.html`: **value** (normalized diff between position draft rank and position finish rank — e.g. the 3rd WR taken in our draft is WR3, compared against where that player actually finished league-wide that season by half-PPR points) and **production** (that player's raw finish percentile at the position that season, regardless of draft slot — added so a pick like "drafted RB1, finished RB3" grades well instead of mediocre just because of a small negative rank diff; a top-3 RB season is exactly what an RB1 pick is for). Both signals are z-scored across all picks before blending so they carry comparable weight, then the blended composite is curved into a percentile-based letter grade (A+ through F) — a "Value Score" (0–100, the percentile) is shown instead of the raw composite since the raw number is systematically negative for everyone (our draft pool is much smaller than the full NFL positional pool, a scale artifact, not a bug). The methodology box on the page is collapsed to a two-sentence summary by default with a "Show full methodology" `<details>` toggle for the rest. Manager Draft Rankings leaderboard at the top, ranked by overall Value Score, each row expandable (click) to show that manager's season-by-season grades with a grade-distribution chip row (e.g. `5A 4B 3C 1D`) explaining how the seasons rolled up — each season row is itself expandable inline to a "how you got this grade" line (picks graded → grade mix → Value Score → letter grade) plus the full pick-by-pick table. "Every Draft, Graded" below is a flat table of the same manager-seasons (no manager filter — the leaderboard above already serves that), defaults to the most recent season, sorted descending by Value Score; clicking a row expands the identical pick-by-pick breakdown inline directly beneath that row (not in a separate section). About 1.4% of picks had no matching stat line that season (real season-ending injuries/suspensions/holdouts, verified by hand) and are correctly scored as full busts.
+- **Handcuffs** (added new session, see below).
+
+**Handcuffs tab (added new session)** — started as a one-off analysis requested outside the site
+(published as a standalone Artifact first, then explicitly asked to be added as a live tab). Shows
+every time a manager drafted a 2nd RB from the same NFL team as an RB already on their board, in the
+same draft, and how often that handcuff pick actually paid off. Lives on `draft.html` rather than
+`draft-analysis.html` because it's a historical, all-years analysis (2013-2025) — `draft-analysis.html`
+is scoped to the current 2026 draft only.
+
+Reuses `picks` and `draftGrades`, both already loaded client-side for the Draft Board/Draft Grades
+tabs — no new data fetch or script. `computeHandcuffEvents()`: groups each manager's RB picks per
+season by `player_nfl_team`; for any team with 2+ RBs drafted, the earliest by `overall_pick` is
+"the lead back" and every later one is a handcuff pick, joined to `draftGrades` on
+`(season, manager, player)` for that season's `half_ppr_points`/`position_finish_rank`. Outcome
+tiers are a plain points cutoff, not a value-over-ADP grade: **Meaningful** (100+ half-PPR points,
+roughly flex-caliber across a season), **Marginal** (50–99), **Bust** (under 50). 42 handcuff picks
+found across all 13 draft classes, 12 scored meaningfully; all 42 matched a grade record (no
+unmatched-pick gap like Draft Grades' ~1.4%, since a handcuff and its lead back are always drafted
+in the same class as an already-graded season).
+
+Layout: a 4-tile stat strip (total picks, meaningful hit rate, best/worst single pick by points),
+two full callout cards below it naming the actual best/worst pick (manager, season, round, which
+lead RB it was drafted behind — added in a same-session follow-up since the stat strip alone named
+the player/points but not which manager made the pick), a stacked-bar leaderboard by manager (green/
+amber/red segments for hit/marginal/bust, sorted by total handcuff picks), the full 42-pick table
+(newest season first, same `table-wide`/`table-cards` responsive pattern as the other tabs), and a
+collapsed-by-default methodology box. Colors reuse the site's existing green/amber/red convention
+(same hexes as the A/D/F draft-grade colors) rather than introducing a new palette. Verified live
+in-browser: correct totals (42 total / 12 meaningful / best=Bucky Irving 220.9 pts RB14 / worst=
+Jeremy McNichols 0.0 pts RB160), all other Draft History tabs still work, no console errors.
 
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
