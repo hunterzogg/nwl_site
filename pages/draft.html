@@ -940,7 +940,8 @@ function handcuffTableHTML(events) {
     <td>${managerTag(managers, e.manager)}</td>
     <td>${e.nfl_team}</td>
     <td>${e.lead_rb} <span style="color:var(--text-muted);font-size:0.78rem;">R${e.lead_round}</span></td>
-    <td>${e.handcuff_rb} <span style="color:var(--text-muted);font-size:0.78rem;">R${e.handcuff_round}</span></td>
+    <td>${e.handcuff_rb}</td>
+    <td class="num">Rd ${e.handcuff_round}</td>
     <td class="num">${e.pts !== null ? e.pts.toFixed(1) : '&mdash;'}</td>
     <td class="num">${e.rank !== null ? 'RB' + e.rank : '&mdash;'}</td>
     <td><span class="hc-pill ${e.tier}">${HANDCUFF_TIER_LABEL[e.tier]}</span></td>
@@ -949,7 +950,7 @@ function handcuffTableHTML(events) {
   return `
     <div class="table-wide" style="overflow-x:auto;">
     <table>
-      <thead><tr><th class="num">Yr</th><th>Manager</th><th>NFL</th><th>Lead RB</th><th>Handcuff RB</th><th class="num">Pts</th><th class="num">Finish</th><th>Outcome</th></tr></thead>
+      <thead><tr><th class="num">Yr</th><th>Manager</th><th>NFL</th><th>Lead RB</th><th>Handcuff RB</th><th class="num">Round</th><th class="num">Pts</th><th class="num">Finish</th><th>Outcome</th></tr></thead>
       <tbody>${events.map(e => `<tr>${rowHTML(e)}</tr>`).join('')}</tbody>
     </table>
     </div>
@@ -961,7 +962,7 @@ function handcuffTableHTML(events) {
             <span class="hc-pill ${e.tier}">${HANDCUFF_TIER_LABEL[e.tier]}</span>
           </div>
           <div class="table-card-sub">${e.season} &middot; ${managerTag(managers, e.manager)} &middot; behind ${e.lead_rb} (${e.nfl_team})</div>
-          <div class="table-card-sub">${e.pts !== null ? e.pts.toFixed(1) + ' pts' : 'Season not started'} ${e.rank !== null ? '&middot; finished RB' + e.rank : ''}</div>
+          <div class="table-card-sub">Drafted Round ${e.handcuff_round} &middot; ${e.pts !== null ? e.pts.toFixed(1) + ' pts' : 'Season not started'} ${e.rank !== null ? '&middot; finished RB' + e.rank : ''}</div>
         </div>
       `).join('')}
     </div>
