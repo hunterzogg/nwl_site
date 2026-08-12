@@ -90,6 +90,36 @@
 .calc-summary-side { flex: 1; min-width: 240px; }
 .calc-summary-side .mgr-sub { font-size: 0.82rem; color: var(--text-muted); }
 .calc-warning { color: var(--red); font-size: 0.85rem; margin-bottom: 12px; }
+
+.calc-search {
+  width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 7px 10px;
+  background: var(--surface-raised, var(--surface)); border: 1px solid var(--line); border-radius: 4px;
+  color: var(--text); font-family: var(--font-body); font-size: 0.84rem;
+}
+.calc-search::placeholder { color: var(--text-muted); }
+
+.player-value-track {
+  height: 4px; border-radius: 2px; background: var(--line); margin-top: 4px; overflow: hidden; max-width: 160px;
+}
+.player-value-fill { height: 100%; background: var(--blue-bright); border-radius: 2px; }
+.player-value-fill.neg { background: var(--red); }
+.player-value-num { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); margin-left: 6px; }
+
+.value-gauge-wrap { margin-bottom: 18px; }
+.value-gauge-labels { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
+.value-gauge-labels .side-a { color: var(--blue-bright); }
+.value-gauge-labels .side-b { color: var(--text-muted); }
+.value-gauge-track {
+  display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--surface);
+  border: 1px solid var(--line);
+}
+.value-gauge-seg-a { background: var(--blue-bright); }
+.value-gauge-seg-b { background: var(--text-muted); }
+.value-gauge-verdict { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
+
+.value-gauge-mini { margin: 8px 0; }
+.value-gauge-mini .value-gauge-track { height: 8px; border-radius: 4px; }
+.value-gauge-mini .value-gauge-labels { font-size: 0.74rem; margin-bottom: 3px; }
 </style>
 </head>
 <body>
@@ -114,7 +144,7 @@
       <details>
         <summary>Show methodology</summary>
         <div style="margin-top: 8px;">
-          <strong>How suggestions are scored:</strong> mostly whether each side's roster is actually better as a whole - starters and bench compared before vs. after the trade, market-value adjusted so a QB upgrade cannot look like a bigger deal than it really is. The points/week and rank numbers shown are real projections, not the score itself. If a trade would leave a lineup spot empty, it names exactly who to pick up from waivers to fill it.
+          <strong>How suggestions are scored:</strong> mostly whether each side's roster is actually better as a whole - starters and bench compared before vs. after the trade, market-value adjusted so a QB upgrade cannot look like a bigger deal than it really is. The points/week and rank numbers shown are real projections, not the score itself. If a trade would leave a lineup spot empty, it names exactly who to pick up from waivers to fill it. Each trade's expanded view also shows a plain market-value bar (like a FantasyCalc-style trade value comparison) - a separate, simpler "is this even on paper" check shown alongside the smarter roster-fit read the Trade Score itself is based on.
           <div id="finderMethodologyDetail" style="margin-top: 8px;"></div>
         </div>
       </details>
@@ -134,7 +164,7 @@
       <details>
         <summary>Show methodology</summary>
         <div style="margin-top: 8px;">
-          <strong>How Fairness is scored:</strong> half raw value parity, half whether each side's roster is actually better as a whole (market-value adjusted, same as the Finder) - the points/week and rank numbers shown are real projections, not the score itself, plus who to add from waivers if it leaves a lineup spot empty.
+          <strong>How Fairness is scored:</strong> half raw value parity, half whether each side's roster is actually better as a whole (market-value adjusted, same as the Finder) - the points/week and rank numbers shown are real projections, not the score itself, plus who to add from waivers if it leaves a lineup spot empty. The bar above the grades is a separate, plain market-value comparison (FantasyCalc-style: just each side's total trade value, no roster context) - a quick sanity check alongside the smarter grade below it, not a replacement for it. Search each roster to add players instead of scrolling the full list.
           <div id="calcMethodologyDetail" style="margin-top: 8px;"></div>
         </div>
       </details>
@@ -155,6 +185,11 @@ const POSITIONS = ['QB', 'RB', 'WR', 'TE'];
 
 let calcTeamA = null, calcTeamB = null;
 let calcSendsA = [], calcSendsB = [];
+let calcSearchA = '', calcSearchB = '';
+// Scaling reference for the FantasyCalc-style per-player value bars - the single highest
+// vbd_value on any of the 12 rosters, so every bar across the whole page is on the same scale
+// (a bar's length means the same thing whether you're looking at Team A's list or Team B's).
+let leagueMaxVbd = 1;
 
 function emptyState(headline, sub) {
   return `<div class="empty-state"><div class="headline">${headline}</div><p style="margin:0;">${sub}</p></div>`;
@@ -183,6 +218,62 @@ function fairnessGradeLetter(pct) {
   if (pct >= 0.22) return 'D+';
   if (pct >= 0.14) return 'D';
   return 'F';
+}
+
+// FantasyCalc-style per-player value bar: a small horizontal bar sized relative to the highest
+// vbd_value on any of the 12 rosters (leagueMaxVbd), so bar length means the same thing wherever
+// it's shown on the page. This is a raw market-value visualization only, same number that drives
+// the fairness gauge below - it does NOT reflect roster fit/need (see the separate grade badge
+// for that read).
+function playerValueBarHTML(player) {
+  const pct = Math.max(2, Math.min(100, (Math.max(0, player.vbd_value) / leagueMaxVbd) * 100));
+  const negClass = player.vbd_value < 0 ? ' neg' : '';
+  return `<div class="player-value-track"><div class="player-value-fill${negClass}" style="width:${pct}%;"></div></div>`;
+}
+
+// How close the two sides are on pure market value (vbd_value sums), FantasyCalc-calculator
+// style: no roster-fit/need adjustment at all, just "how much is each pile of players worth."
+// 100 = dead even, lower = more lopsided. Deliberately kept separate from this page's blended
+// need-aware score - showing both together (this + the roster-fit grade) gives a market-value
+// sanity check alongside the site's own smarter read, rather than replacing one with the other.
+function marketValuePct(valueA, valueB) {
+  const shift = Math.min(0, valueA, valueB);
+  const a = valueA - shift, b = valueB - shift;
+  if (a === 0 && b === 0) return 100;
+  return Math.round((Math.min(a, b) / Math.max(a, b)) * 100);
+}
+
+// The prominent two-segment value bar (full-size on the Calculator, a smaller `mini` version on
+// each Finder result card) - shows each side's raw market value as a proportion of the combined
+// total, plus a one-line verdict naming which side the raw value favors and by how much.
+function valueGaugeHTML(labelA, valueA, labelB, valueB, mini) {
+  // Shift both onto a non-negative scale by the more-negative side rather than clamping to 0 -
+  // clamping made two near-equal negative bundles (e.g. -16.3 vs -15.5, a couple bench scrubs)
+  // render as a misleading 0%/100% split instead of the roughly-even split they actually are.
+  const shift = Math.min(0, valueA, valueB);
+  const a = valueA - shift, b = valueB - shift;
+  const total = a + b || 1;
+  const pctA = (a / total) * 100;
+  const pctB = 100 - pctA;
+  const fairPct = marketValuePct(valueA, valueB);
+  const diff = Math.abs(valueA - valueB);
+  const favored = valueA > valueB ? labelA : (valueB > valueA ? labelB : null);
+  const verdict = favored
+    ? `Market value favors ${favored} by ${diff.toFixed(1)} pts &middot; ${fairPct}% even`
+    : `Perfectly even on market value`;
+  return `
+    <div class="value-gauge-wrap${mini ? ' value-gauge-mini' : ''}">
+      <div class="value-gauge-labels">
+        <span class="side-a">${labelA} ${valueA.toFixed(1)}</span>
+        <span class="side-b">${labelB} ${valueB.toFixed(1)}</span>
+      </div>
+      <div class="value-gauge-track">
+        <div class="value-gauge-seg-a" style="width:${pctA}%;"></div>
+        <div class="value-gauge-seg-b" style="width:${pctB}%;"></div>
+      </div>
+      ${mini ? '' : `<div class="value-gauge-verdict">${verdict}</div>`}
+    </div>
+  `;
 }
 
 function wireExpandableRows(container) {
@@ -896,6 +987,7 @@ function runFinderSearch() {
       <span class="chevron">&#9660;</span>
     </div>
     <div class="grade-detail">
+      ${valueGaugeHTML('You', c.giveValue, managerTag(managers, c.partner), c.getValue, true)}
       <div class="pos-grade-row">
         <span class="pos-grade-chip"><span class="lbl">Fairness</span>${Math.round(c.fairness * 100)}</span>
         <span class="pos-grade-chip"><span class="lbl">You/wk</span>${c.weeklyStarterYou >= 0 ? '+' : ''}${c.weeklyStarterYou.toFixed(1)}</span>
@@ -930,6 +1022,7 @@ function onCalcTeamChange() {
   calcTeamA = document.getElementById('calcTeamA').value || null;
   calcTeamB = document.getElementById('calcTeamB').value || null;
   calcSendsA = []; calcSendsB = [];
+  calcSearchA = ''; calcSearchB = '';
   const warnEl = document.getElementById('calcWarning');
   if (calcTeamA && calcTeamB && calcTeamA === calcTeamB) {
     warnEl.innerHTML = `<p class="calc-warning">Pick two different teams to build a trade.</p>`;
@@ -951,7 +1044,9 @@ function rosterRowHTML(player, side, inSendsList) {
       <div class="player-body">
         ${posTag(player.position)} <strong>${player.name}</strong>
         <div class="player-sub">${player.nfl_team || ''} &middot; ${player.slot === 'BEN' ? 'Bench' : player.slot}</div>
+        ${playerValueBarHTML(player)}
       </div>
+      <span class="player-value-num">${player.vbd_value.toFixed(1)}</span>
       ${btn}
     </div>
   `;
@@ -963,6 +1058,7 @@ function renderCalcRosters() {
     <div class="calc-side" id="calcSideA">
       <h3>${managerTag(managers, calcTeamA)}</h3>
       <div class="mgr-sub" style="color:var(--text-muted); font-size:0.82rem;">Available roster</div>
+      <input type="text" class="calc-search" id="calcSearchInputA" placeholder="Search players to add..." oninput="onCalcSearch('A', this.value)">
       <div class="roster-scroll" id="calcAvailableA"></div>
       <h4>Sending</h4>
       <div id="calcSendingA"></div>
@@ -970,6 +1066,7 @@ function renderCalcRosters() {
     <div class="calc-side" id="calcSideB">
       <h3>${managerTag(managers, calcTeamB)}</h3>
       <div class="mgr-sub" style="color:var(--text-muted); font-size:0.82rem;">Available roster</div>
+      <input type="text" class="calc-search" id="calcSearchInputB" placeholder="Search players to add..." oninput="onCalcSearch('B', this.value)">
       <div class="roster-scroll" id="calcAvailableB"></div>
       <h4>Sending</h4>
       <div id="calcSendingB"></div>
@@ -978,13 +1075,19 @@ function renderCalcRosters() {
   refreshCalcLists();
 }
 
+function onCalcSearch(side, query) {
+  if (side === 'A') calcSearchA = query; else calcSearchB = query;
+  refreshCalcLists();
+}
+
 function refreshCalcLists() {
-  const poolA = tradeablePlayers(calcTeamA).filter(p => !calcSendsA.some(s => s.espn_id === p.espn_id));
-  const poolB = tradeablePlayers(calcTeamB).filter(p => !calcSendsB.some(s => s.espn_id === p.espn_id));
+  const matches = (p, query) => !query || p.name.toLowerCase().includes(query.trim().toLowerCase());
+  const poolA = tradeablePlayers(calcTeamA).filter(p => !calcSendsA.some(s => s.espn_id === p.espn_id) && matches(p, calcSearchA));
+  const poolB = tradeablePlayers(calcTeamB).filter(p => !calcSendsB.some(s => s.espn_id === p.espn_id) && matches(p, calcSearchB));
   document.getElementById('calcAvailableA').innerHTML = poolA.sort((a, b) => b.vbd_value - a.vbd_value)
-    .map(p => rosterRowHTML(p, 'A', false)).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nothing left to add.</p>';
+    .map(p => rosterRowHTML(p, 'A', false)).join('') || `<p style="color:var(--text-muted); font-size:0.85rem;">${calcSearchA ? 'No matching players.' : 'Nothing left to add.'}</p>`;
   document.getElementById('calcAvailableB').innerHTML = poolB.sort((a, b) => b.vbd_value - a.vbd_value)
-    .map(p => rosterRowHTML(p, 'B', false)).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nothing left to add.</p>';
+    .map(p => rosterRowHTML(p, 'B', false)).join('') || `<p style="color:var(--text-muted); font-size:0.85rem;">${calcSearchB ? 'No matching players.' : 'Nothing left to add.'}</p>`;
   document.getElementById('calcSendingA').innerHTML = calcSendsA.length
     ? calcSendsA.map(p => rosterRowHTML(p, 'A', true)).join('')
     : '<p style="color:var(--text-muted); font-size:0.82rem;">Nothing yet.</p>';
@@ -1096,6 +1199,7 @@ function renderCalcSummary() {
   }
   const f = computeFairness(calcSendsA, calcSendsB, calcTeamA, calcTeamB);
   el.innerHTML = `
+    ${valueGaugeHTML(managerTag(managers, calcTeamA), f.valueA, managerTag(managers, calcTeamB), f.valueB, false)}
     <div style="display:flex; gap:24px; flex-wrap:wrap;">
       <div class="calc-summary-side">
         <div class="mgr-sub">${managerTag(managers, calcTeamA)}</div>
@@ -1133,6 +1237,7 @@ async function init() {
     weeksRemaining = rosters.weeks_remaining || 1;
     needs = computeTeamNeeds();
     powerRanking = computePowerRanking();
+    leagueMaxVbd = Math.max(1, ...rosters.teams.flatMap(t => t.players.filter(p => p.position !== 'HC').map(p => p.vbd_value)));
     renderFinderControls();
     runFinderSearch();
     renderCalcControls();
