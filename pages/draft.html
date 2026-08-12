@@ -106,6 +106,15 @@
 .hc-pill.hit { background: #4FA87622; color: #4FA876; border: 1px solid #4FA87655; }
 .hc-pill.marginal { background: #D9B23C22; color: #D9B23C; border: 1px solid #D9B23C55; }
 .hc-pill.bust { background: #E0524A22; color: #E0524A; border: 1px solid #E0524A55; }
+
+.hc-callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hc-callout { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; border-left: 3px solid #4FA876; }
+.hc-callout.bad { border-left-color: #E0524A; }
+.hc-callout .hc-callout-tag { font-family: var(--font-display); text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.05em; color: #4FA876; font-weight: 700; margin-bottom: 6px; }
+.hc-callout.bad .hc-callout-tag { color: #E0524A; }
+.hc-callout p { margin: 0; font-size: 0.9rem; }
+.hc-callout .hc-callout-sub { color: var(--text-muted); font-size: 0.82rem; margin-top: 4px; }
+@media (max-width: 640px) { .hc-callouts { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -837,6 +846,19 @@ function renderHandcuffs() {
       <div class="stat"><div class="n">${hits}<span class="unit">/ ${events.length}</span></div><div class="l">Scored meaningfully (100+ pts)</div></div>
       <div class="stat"><div class="n">${best.pts.toFixed(1)}<span class="unit">pts</span></div><div class="l">Best: ${best.handcuff_rb}, ${best.season}</div></div>
       <div class="stat"><div class="n">${worst.pts.toFixed(1)}<span class="unit">pts</span></div><div class="l">Worst: ${worst.handcuff_rb}, ${worst.season}</div></div>
+    </div>
+
+    <div class="hc-callouts" style="margin-bottom:24px;">
+      <div class="hc-callout">
+        <div class="hc-callout-tag">Best handcuff pick</div>
+        <p><strong>${best.handcuff_rb}</strong> &mdash; ${managerTag(managers, best.manager)}, ${best.season}, Round ${best.handcuff_round} (behind ${best.lead_rb}, R${best.lead_round})</p>
+        <p class="hc-callout-sub">${best.pts.toFixed(1)} pts, finished RB${best.rank} overall.</p>
+      </div>
+      <div class="hc-callout bad">
+        <div class="hc-callout-tag">Worst handcuff pick</div>
+        <p><strong>${worst.handcuff_rb}</strong> &mdash; ${managerTag(managers, worst.manager)}, ${worst.season}, Round ${worst.handcuff_round} (behind ${worst.lead_rb}, R${worst.lead_round})</p>
+        <p class="hc-callout-sub">${worst.pts.toFixed(1)} pts, finished RB${worst.rank} overall.</p>
+      </div>
     </div>
 
     <div class="records-group-title">By Manager</div>
