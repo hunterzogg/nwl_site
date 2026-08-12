@@ -1185,7 +1185,43 @@ trailing number in the Calculator.
 
 **Also unpublished from nav this session** while the scoring was still being tuned (same pattern
 as the archived Mock Draft link - `NWL_TRADE_TOOLS_PAGE` dropped from `NWL_IN_SEASON_PAGES` in
-`shared.js`, page/const left intact) - re-add it once satisfied with the results.
+`shared.js`, page/const left intact) - **re-published later the same session** once the fixes
+below were verified; `NWL_TRADE_TOOLS_PAGE` is back in `NWL_IN_SEASON_PAGES`, live in nav again.
+
+**Three more follow-up fixes, same session, in order:**
+
+1. **Results were not ordered by score**: `pickDiverseMix()` (the shape-diversity fix above)
+   returns a round-robin-interleaved selection, not a score-sorted one, so cards displayed in
+   shape order rather than best-to-worst. Fixed by re-sorting the chosen 10 by `totalScore`
+   descending after `pickDiverseMix` picks them - keeps the diverse shape mix, fixes the display
+   order. Verified live: card scores now read strictly descending (e.g. 78, 77, 70, 68...48).
+
+2. **Roster-impact math missed flex-slot depth shortages** (a real bug, caught via a specific
+   user-reported trade): the "would this trade leave a gap" check only ever looked at whether a
+   position's raw rostered COUNT hit zero. That missed a real case - a team can still have "some"
+   WRs and not have enough left to cover both WR slots *and* the WR/TE flex, once a couple of
+   starting-caliber WRs leave in the same trade. Concrete repro: Zogg trades CeeDee Lamb + Rome
+   Odunze to Ainsworth for Breece Hall + David Montgomery - the tool showed 93 fairness (the
+   *traded players'* VBD really was nearly even, 54.3 vs 52.5) and a roster-improvement score, but
+   Zogg's real weekly points showed a 12.4 pt/week LOSS. Root cause: losing Odunze left the WR/TE
+   flex slot with nobody left eligible to fill it - it went to zero instead of his real ~183
+   points, and that loss was invisible to both the old gap check (Zogg still technically had 2
+   WRs) and to VBD (an empty slot just silently contributes 0, no penalty registered).
+   Fix: replaced the position-count check with `emptyStarterSlots()`, which checks every actual
+   starting slot after re-assigning the full roster (`REQUIRED_STARTER_SLOTS` - QB, both RB, both
+   WR, TE, the WR/TE flex, the RB/WR/TE flex; `SLOT_ELIGIBLE_POSITIONS` maps each to which
+   positions can actually fill it) rather than just raw position totals. Any slot left empty gets
+   auto-filled with the best real waiver free agent eligible for that specific slot (not just
+   position), same auto-fill mechanism as before, now correctly triggered. `bestFreeAgent()` grew
+   an `exclude` param so two different empty slots in the same trade never both grab the same free
+   agent. Verified against the exact reported trade: now correctly flags the WR/TE flex as empty,
+   suggests picking up Juwan Johnson (TE), and the weekly points swing corrects from -12.4 to a
+   realistic -2.2. Swept all 12 teams' Finder results (120 candidates total): 52 of them (43%)
+   trigger this slot-gap fill - confirms this was a widespread, previously-silent gap in the math,
+   not a one-off edge case.
+
+All three verified live in-browser (fresh tab, no console errors), plus a fresh 12-team sweep with
+no crashes.
 
 ---
 
