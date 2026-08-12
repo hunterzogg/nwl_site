@@ -147,13 +147,14 @@ SVG scatter grid of every unique winning × losing score combo in league history
 Per-team-season rankings (not career averages). Regular season and playoffs in separate tabs. Three sort toggles: Adjusted PPG, Raw PPG, and Opponent PPG (Regular Season tab only — no opponent-PPG source data for playoffs). Each row shows only the PPG metric currently being sorted by (not all of Adj/Raw/Opp at once — switch the sort to see a different one), plus rank/manager/season; the Games-played column was removed entirely as of this session (it wasn't part of any ranking anyway). Playoffs tab has a "Reg. Rank − Playoff Rank" column (fixed rank, unaffected by the current filter/sort) — green when the playoff rank beat the regular-season rank, red when it didn't. Manager filter + season filter on each tab. Rank column always shows the manager-season's true rank against the full unfiltered population, not a re-rank of the filtered subset. Both tables switch to stacked cards on mobile (see Design System → Responsive tables).
 
 ### draft.html ✅
-All five tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
-Five tabs:
+All six tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
+Six tabs:
 - **Draft Board**: filterable by season, manager, position, NFL team, player name search. NFL teams capitalized. Positions color-coded.
 - **Round 1-3 Strategy**: filterable by manager and year (defaults to most recent). Shows finish column for each season. Summary table of strategy effectiveness (uses, avg finish, championships, sackos). Position combos shown as e.g. `RB/RB/WR` (not `RB - RB - WR`) so they fit on one line.
 - **Draft Slot Analysis**: avg PPG, avg finish, championships, sackos by draft position. Sourced from Mgr Summary A84 (authoritative). Best avg PPG highlighted green, worst highlighted red.
 - **Draft Grades**: every QB/RB/WR/TE pick since 2013 graded — see `scripts/build_draft_grades.py` docstring for the raw-data half of the methodology (nflverse half-PPR sourcing, name-matching, position draft rank vs. finish rank). The letter grade itself blends two equally-weighted, z-scored signals computed client-side in `draft.html`: **value** (normalized diff between position draft rank and position finish rank — e.g. the 3rd WR taken in our draft is WR3, compared against where that player actually finished league-wide that season by half-PPR points) and **production** (that player's raw finish percentile at the position that season, regardless of draft slot — added so a pick like "drafted RB1, finished RB3" grades well instead of mediocre just because of a small negative rank diff; a top-3 RB season is exactly what an RB1 pick is for). Both signals are z-scored across all picks before blending so they carry comparable weight, then the blended composite is curved into a percentile-based letter grade (A+ through F) — a "Value Score" (0–100, the percentile) is shown instead of the raw composite since the raw number is systematically negative for everyone (our draft pool is much smaller than the full NFL positional pool, a scale artifact, not a bug). The methodology box on the page is collapsed to a two-sentence summary by default with a "Show full methodology" `<details>` toggle for the rest. Manager Draft Rankings leaderboard at the top, ranked by overall Value Score, each row expandable (click) to show that manager's season-by-season grades with a grade-distribution chip row (e.g. `5A 4B 3C 1D`) explaining how the seasons rolled up — each season row is itself expandable inline to a "how you got this grade" line (picks graded → grade mix → Value Score → letter grade) plus the full pick-by-pick table. "Every Draft, Graded" below is a flat table of the same manager-seasons (no manager filter — the leaderboard above already serves that), defaults to the most recent season, sorted descending by Value Score; clicking a row expands the identical pick-by-pick breakdown inline directly beneath that row (not in a separate section). About 1.4% of picks had no matching stat line that season (real season-ending injuries/suspensions/holdouts, verified by hand) and are correctly scored as full busts.
 - **Handcuffs** (added new session, see below).
+- **Mid/Late WRs** (added new session, see below).
 
 **Handcuffs tab (added new session)** — started as a one-off analysis requested outside the site
 (published as a standalone Artifact first, then explicitly asked to be added as a live tab). Shows
@@ -258,6 +259,46 @@ labels already conveyed the same thing (the now-unused `avgHitRound` computation
 (desktop table) / "Drafted Round X" line (mobile cards) showing when the handcuff itself was
 drafted - previously only a small inline superscript next to its name on desktop, missing entirely
 on mobile.
+
+**Mid/Late WRs tab (added new session)** — same origin story as Handcuffs: started as a one-off
+analysis published as a standalone Artifact first ("do some analysis on when in the draft WRs were
+drafted, similar to the handcuff analysis"), then added as a live tab. Shows every WR drafted
+**round 6 or later** since 2013 - round 1-5 WRs are excluded on purpose, since those are the true
+WR1/WR2 targets, a different question than "does a WR I got as depth/upside pan out." 557 graded
+picks (plus 43 pending 2026 picks, same Pending-tier treatment as Handcuffs - see below).
+
+Structurally a near-clone of the Handcuffs tab, reusing `picks`/`draftGrades`/`draftGrades2026`
+already loaded above (no new data fetch): a 4-tile stat strip, a hit-rate-by-round-range breakdown
+(`latewrTimingHTML()`), a by-manager leaderboard (`latewrLeaderboardHTML()`), and a collapsed
+methodology box - all reusing the Handcuffs tab's existing `hc-timing-*`/`hc-lb-*`/`hc-callouts`/
+`hc-double-box` CSS rather than duplicating it. One real difference: **outcome tiers are
+recalibrated for WR scoring specifically** (140+ = Meaningful, 70-139 = Marginal, under 70 = Bust),
+not reused from the Handcuffs tab's RB-based 100/50 cutoffs - WRs score meaningfully more than RBs
+at a comparable draft-relevance tier (a league-average WR36/flex-caliber finish is worth ~143
+half-PPR pts, vs. the RB equivalent's much lower bar). Round buckets are Rd 6-8 / Rd 9-11 / Rd 12-14
+/ Rd 15-18 (roughly even-sized, n=114 to n=193). Current numbers: Rd 6-8 has by far the best hit
+rate (48%, more than double every later range); rounds 9 onward are all roughly the same (~19-21%) -
+once you're past round 8 there's no real timing edge left to chase.
+
+The other real difference: **no full pick table**. At 557+ rows a table the size of Handcuffs' would
+dominate the page, so it's replaced with a **Best & Worst Picks** section (`latewrBestWorstHTML()`)
+- top 10 by points each way, in a new two-column `wr-pick-*` list style (no existing pattern on the
+page fit a dense ranked list like this). Best ever: Deebo Samuel Sr. (Goetz, 2021, Round 8, 300.5
+pts, finished WR2). Worst: John Ross (Glaser, 2017, Round 13, -0.8 pts, finished dead last of 214).
+
+**A real bug caught and fixed while building this**: the original standalone Artifact's timing bars
+used `hc-timing-*` classes copy-pasted from the live Handcuffs tab's markup, but that Artifact's own
+stylesheet only defined plain `timing-*` (no prefix) - so the bars silently rendered as nothing, no
+console error. Caught by the user testing the Artifact directly ("that is not displaying the gauge
+bar chart for me"). Fixed in both the Artifact (renamed its CSS to match) and this live tab (which
+never had the bug, since it correctly reuses `draft.html`'s own already-defined `hc-timing-*` rules).
+
+**Also this session**: both Handcuffs' and Mid/Late WRs' "Scored meaningfully" stat-strip tile now
+shows a percentage alongside the raw fraction (e.g. "165/557 (30%)"), not just the fraction alone.
+
+Verified live in-browser: 600 total WR picks (557 graded + 43 pending) matches a manual recompute,
+timing bars/leaderboard/best-worst list all render, no regressions on the other five Draft History
+tabs, no console errors.
 
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
