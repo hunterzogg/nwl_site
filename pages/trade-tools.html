@@ -317,6 +317,42 @@ function bestFreeAgent(pos, exclude) {
   return pool.find(p => !exclude || !exclude.has(p.espn_id)) || null;
 }
 
+// A player is only real trade capital if they're actually better than what's sitting free on
+// waivers at the same position - if not, a rational manager would just drop them and pick up the
+// free agent instead, so their true trade value is ~0, not their (possibly quite negative)
+// vbd_value. Without this, a bench player who's WORSE than the waiver-wire floor (e.g. a third-
+// string TE nobody would ever start) still counted as legitimate "compensation" in the fairness
+// math purely because his negative vbd_value happened to offset another negative-value throw-in
+// on the other side - producing trades like "you give a real bench piece, you get a player worse
+// than a free agent" that looked fair on paper but helped nobody. Used to filter what's even
+// eligible to be offered/received as a trade chip in the Finder, not to re-price existing bundles.
+function bestFreeAgentVbd(pos) {
+  const pool = (rosters.free_agents && rosters.free_agents[pos]) || [];
+  return pool.length ? pool[0].vbd_value : -Infinity;
+}
+function isRealTradeAsset(p) {
+  return p.vbd_value > bestFreeAgentVbd(p.position);
+}
+
+// Positions where a roster only ever plays one true starter (QB) or one dedicated starter plus a
+// shared flex (TE) - carrying a third one is never useful bench depth, just a wasted roster spot
+// that could hold a flex-relevant RB/WR instead, no matter how the raw value math nets out. VBD-
+// based need/surplus alone doesn't catch this: a mediocre backup QB's vbd_value is low almost by
+// definition (anyone startable is already the starter), so a team that already carries 2 QBs
+// doesn't necessarily show up as "QB surplus" by value - but a real manager still has zero use for
+// a 3rd.
+const MAX_USEFUL_ROSTER_COUNT = { QB: 2, TE: 2 };
+function positionCountAfter(rosterPlayers, removeBundle, addBundle, pos) {
+  const removeIds = new Set(removeBundle.map(p => p.espn_id));
+  const after = rosterPlayers.filter(p => !removeIds.has(p.espn_id)).concat(addBundle);
+  return after.filter(p => p.position === pos).length;
+}
+function causesRosterClog(rosterPlayers, removeBundle, addBundle) {
+  return Object.keys(MAX_USEFUL_ROSTER_COUNT).some(pos =>
+    positionCountAfter(rosterPlayers, removeBundle, addBundle, pos) > MAX_USEFUL_ROSTER_COUNT[pos]
+  );
+}
+
 // The full before/after picture of a hypothetical trade for one team: removes `removeBundle`,
 // adds `addBundle`, re-slots the resulting roster, and - this is the real fix here - checks
 // whether every STARTING SLOT can actually be filled, not just whether any position's raw count
@@ -376,6 +412,57 @@ function pointsGainScore(delta, halfScale) {
   return delta >= 0
     ? 0.5 + 0.5 * (delta / (delta + halfScale))
     : 0.5 - 0.5 * (-delta / (-delta + halfScale));
+}
+
+// How well a trade targets a team's actual roster shape, independent of raw points: does the
+// bundle it RECEIVES land at position(s) it's genuinely thin at (needScore > 0, i.e. below the
+// 12-team average starter value there), and does the bundle it SENDS AWAY come from position(s)
+// it has real extra depth at (surplusScore > 0, i.e. above-average bench value there)? Floors at
+// 0.5 (neutral - a trade that doesn't target need/surplus at all isn't penalized for it, just
+// doesn't get the bonus) and climbs to 1.0 as more of the traded value lines up with an actual
+// need/surplus, capped per-position at that position's need/surplus size so dumping value at an
+// already-addressed need stops earning extra credit. This is what lets a pure "trade a backup RB
+// for a backup WR to fill a bye-week hole" case score as a real win even when it barely moves
+// starter points - one of the three ways a trade is allowed to help a team (see file header ask:
+// starter points, bench depth, or filling a specific need).
+function needFitScore(receivedBundle, sentBundle, teamNeeds) {
+  const receivedByPos = {}, sentByPos = {};
+  receivedBundle.forEach(p => { receivedByPos[p.position] = (receivedByPos[p.position] || 0) + p.vbd_value; });
+  sentBundle.forEach(p => { sentByPos[p.position] = (sentByPos[p.position] || 0) + p.vbd_value; });
+  let credit = 0, total = 0;
+  Object.keys(receivedByPos).forEach(pos => {
+    const v = Math.max(0, receivedByPos[pos]);
+    total += v;
+    const need = Math.max(0, teamNeeds[pos].needScore);
+    credit += Math.min(v, need);
+  });
+  Object.keys(sentByPos).forEach(pos => {
+    const v = Math.max(0, sentByPos[pos]);
+    total += v;
+    const surplus = Math.max(0, teamNeeds[pos].surplusScore);
+    credit += Math.min(v, surplus);
+  });
+  if (total <= 0) return 0.5;
+  return 0.5 + 0.5 * (credit / total);
+}
+
+// One side's overall benefit from a trade, on the same 0..1 scale as fairness - combines the
+// three legitimate ways a trade can help a team (starting lineup points, bench depth, and
+// need/surplus fit), weighted heavily toward starters since that's what actually wins matchups.
+// Need/surplus fit is deliberately a MINOR tiebreaker (not a co-equal factor) - filling a need is
+// nice-to-have, not a reason to accept real starting-lineup value for pennies on the dollar just
+// to "even out" a position group. There's real strategic value in staying stacked at a strong
+// position (RB/WR) even at a weaker position's expense, rather than trading toward league-average
+// everywhere - the fit score should only nudge between otherwise-similar trades, never override a
+// value swing. Bench VBD delta is real signal (unlike the old all-or-nothing exclusion) but stays
+// damped (large halfScale, small weight) because any multi-player trade reshuffles who's a
+// starter vs. bench and swings bench value by amounts that are partly just reshuffling noise, not
+// real depth gained or lost.
+function sideBenefitScore(starterVbdDelta, benchVbdDelta, receivedBundle, sentBundle, teamNeeds) {
+  const startersScore = pointsGainScore(starterVbdDelta, 15);
+  const benchScore = pointsGainScore(benchVbdDelta, 35);
+  const fitScore = needFitScore(receivedBundle, sentBundle, teamNeeds);
+  return 0.75 * startersScore + 0.13 * benchScore + 0.12 * fitScore;
 }
 
 // League-wide power ranking by current best-lineup starter points (raw, not VBD - literally "who
@@ -460,7 +547,20 @@ function sameComposition(a, b) {
 // week, plus league rank movement, computed via evaluateTradeImpact (which also auto-fills any
 // position a trade would empty out with the best real waiver free agent, so "you'd need to
 // stream a replacement" is priced in with an actual player, not an assumed zero).
-function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partnerManager, partnerRoster, partnerBeforeTotals) {
+function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partnerManager, partnerRoster, partnerBeforeTotals, yourNeeds, partnerNeeds) {
+  // Never suggest a trade that leaves either side owning a 3rd QB or TE - see
+  // MAX_USEFUL_ROSTER_COUNT. No amount of "the value nets out" makes a dead roster spot useful.
+  if (causesRosterClog(yourRoster, give, get) || causesRosterClog(partnerRoster, get, give)) return null;
+
+  // A straight 1-for-1 swap of the same position never actually helps both teams - it's a pure
+  // value transfer along a single axis, so the best it can do is make one side marginally better
+  // and the other marginally worse (or, at real parity, change nothing but names). Unlike larger
+  // same-composition bundles (still allowed - see sameComposition below, where a real buy-low/
+  // sell-high value gap can plausibly serve both sides' actual needs), a 1-for-1 has no other
+  // moving part that could make it a genuine two-way win, so it's blocked outright regardless of
+  // fairness or value gap.
+  if (give.length === 1 && get.length === 1 && give[0].position === get[0].position) return null;
+
   const giveValue = bundleValue(give), getValue = bundleValue(get);
   const gap = Math.abs(getValue - giveValue);
   const tolerance = fairnessTolerance(giveValue, getValue);
@@ -497,20 +597,45 @@ function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, 
   const starterVbdYou = impactYou.starterVbdDelta, starterVbdThem = impactThem.starterVbdDelta;
 
   // Never suggest a trade that would clearly cost either side real starting-lineup value, even
-  // after accounting for the best available waiver pickup at any emptied position.
+  // after accounting for the best available waiver pickup at any emptied position - regardless of
+  // how well it fills a need or pads the bench, wrecking your starting lineup is never "better."
   if (starterVbdYou < -8 || starterVbdThem < -8) return null;
 
-  const startersScoreYou = pointsGainScore(starterVbdYou, 15);
-  const startersScoreThem = pointsGainScore(starterVbdThem, 15);
+  // A side that sends more players than it receives is consolidating - giving up an extra whole
+  // roster body (its own trade value, its own roster flexibility) to chase one bigger piece. That
+  // only makes sense if the starting lineup comes out CLEARLY ahead, not just "not a disaster" -
+  // e.g. giving up 2 real starters for 1 star can look "fair" on aggregate bundle value while the
+  // lineup reshuffle (losing the 2nd starter bumps everyone below it down a slot) actually nets out
+  // flat or negative once re-slotted - real managers don't give up a whole extra starter for a
+  // marginal or break-even upgrade. Requires a real, sizeable starter VBD gain per extra body given
+  // up, scaled by package size (a 2-for-1 needs less than a 3-for-1's total bar, since a single
+  // extra body is a smaller ask than two).
+  const CONSOLIDATION_MIN_GAIN_PER_EXTRA = 10;
+  const giveExtra = give.length - get.length;
+  const getExtra = get.length - give.length;
+  if (giveExtra > 0 && starterVbdYou < CONSOLIDATION_MIN_GAIN_PER_EXTRA * giveExtra) return null;
+  if (getExtra > 0 && starterVbdThem < CONSOLIDATION_MIN_GAIN_PER_EXTRA * getExtra) return null;
+  // Consolidating should never show up as a raw points/week LOSS for the side giving up the extra
+  // body, even when it clears on VBD (VBD's RB/WR-scarcity weighting can legitimately show a gain
+  // there while honest raw points still go down) - a suggestion that reads "give up an extra
+  // starter, score less" is never something to surface, whatever the position-adjusted math says.
+  if (giveExtra > 0 && impactYou.starterPtsDelta < 0) return null;
+  if (getExtra > 0 && impactThem.starterPtsDelta < 0) return null;
 
-  // Bench VBD delta is NOT part of the score (still computed/shown to the user as info, see
-  // impactYou.benchVbdDelta and the bench pts/week bullet). It's too noisy a signal to rank on:
-  // any multi-player trade reshuffles who's a starter vs. bench, which swings bench value by
-  // large, mostly-incidental amounts unrelated to whether the trade is actually good - real
-  // testing found a 99%-fair trade with a genuine +38 VBD starter upgrade scoring only 63/100
-  // because the OTHER side's bench happened to drop ~48 VBD points from the reshuffle. Starters
-  // are what actually score points each week; bench is depth insurance, not a ranking signal.
-  const totalScore = 0.4 * fairness + 0.3 * startersScoreYou + 0.3 * startersScoreThem;
+  // Each side's overall benefit - starters (dominant signal), bench/depth (real but damped, see
+  // sideBenefitScore), and need/surplus fit (does the incoming value land at a real weakness, does
+  // the outgoing value come from real extra depth) - so a trade can earn its spot on any of the
+  // three legitimate grounds the Finder is meant to support, not starter points alone.
+  const benefitYou = sideBenefitScore(starterVbdYou, impactYou.benchVbdDelta, get, give, yourNeeds);
+  const benefitThem = sideBenefitScore(starterVbdThem, impactThem.benchVbdDelta, give, get, partnerNeeds);
+
+  // A trade isn't "mutually beneficial" just because it's not a disaster - require BOTH sides to
+  // actually land at or above neutral on the combined benefit signal, not merely clear the
+  // starter-only floor above. This is what stops the Finder from surfacing pure fair-value
+  // parity swaps that don't leave either team any better off.
+  if (benefitYou < 0.47 || benefitThem < 0.47) return null;
+
+  const totalScore = 0.3 * fairness + 0.35 * benefitYou + 0.35 * benefitThem;
 
   const rankOverrides = {};
   rankOverrides[yourManager] = impactYou.afterStarterPts;
@@ -518,7 +643,7 @@ function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, 
   const rankAfter = rankManagers({ ...powerRanking.startersPtsByManager, ...rankOverrides });
 
   return {
-    fairness, totalScore, giveValue, getValue, gap, tolerance,
+    fairness, totalScore, benefitYou, benefitThem, giveValue, getValue, gap, tolerance,
     weeklyStarterYou, weeklyStarterThem, weeklyBenchYou, weeklyBenchThem,
     rankYouBefore: powerRanking.rankByManager[yourManager], rankYouAfter: rankAfter[yourManager],
     rankThemBefore: powerRanking.rankByManager[partnerManager], rankThemAfter: rankAfter[partnerManager],
@@ -539,7 +664,10 @@ function findTrades(yourManager, wantPos, partnerManager) {
   const maxBundle = partnerManager === 'ANY' ? 2 : 3;
   const yourRoster = tradeablePlayers(yourManager);
   const yourBeforeTotals = computeLineupTotals(yourRoster);
-  const yourPool = [...yourRoster].sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
+  // Below-waiver-floor players (see isRealTradeAsset) are excluded from the trade-chip pool - they
+  // aren't real trade capital, so they never get offered as filler and never get suggested as
+  // "return" either.
+  const yourPool = [...yourRoster].filter(isRealTradeAsset).sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
   const giveBundles = allBundles(yourPool, maxBundle);
   const allManagers = rosters.teams.map(t => t.manager);
   const partners = partnerManager === 'ANY' ? allManagers.filter(m => m !== yourManager) : [partnerManager];
@@ -548,7 +676,7 @@ function findTrades(yourManager, wantPos, partnerManager) {
   for (const partner of partners) {
     const partnerRoster = tradeablePlayers(partner);
     const partnerBeforeTotals = computeLineupTotals(partnerRoster);
-    const partnerPool = [...partnerRoster].sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
+    const partnerPool = [...partnerRoster].filter(isRealTradeAsset).sort((a, b) => b.vbd_value - a.vbd_value).slice(0, FINDER_POOL_CAP);
     const getBundlesAll = allBundles(partnerPool, maxBundle);
     const getBundles = (wantPos && wantPos !== 'ANY')
       ? getBundlesAll.filter(b => b.some(p => p.position === wantPos))
@@ -558,7 +686,7 @@ function findTrades(yourManager, wantPos, partnerManager) {
     let partnerCandidates = [];
     for (const give of giveBundles) {
       for (const get of getBundles) {
-        const score = scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partner, partnerRoster, partnerBeforeTotals);
+        const score = scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, partner, partnerRoster, partnerBeforeTotals, needs[yourManager], needs[partner]);
         if (!score) continue;
         partnerCandidates.push({ give, get, partner, ...score });
       }
@@ -690,13 +818,18 @@ function renderFinderControls() {
   document.getElementById('finderMethodologyDetail').innerHTML = `
     ${rosters.methodology.note}
     <ul>
-      <li>Roster comparison (the core signal): each side's STARTING roster after the trade - outgoing player(s) removed, incoming player(s) added, any emptied position auto-filled with the best available waiver pickup - is re-slotted into its best possible starting lineup (same method as the position grades elsewhere on the site) and compared to the starting roster before the trade. The scoring itself runs on market-value-adjusted starter points (VBD, already scaled for this league's real QB/TE value - see below), not raw point totals, specifically so a QB upgrade cannot look like a bigger lineup improvement than it really is just because passing stats rack up bigger raw numbers than rushing/receiving stats do. Bench value is NOT part of the score - it's too noisy a signal, since any multi-player trade reshuffles who's a starter vs. bench and swings bench value by large amounts unrelated to whether the trade is actually good; only starters actually score points each week. The points-per-week and bench-points numbers shown on every trade ARE real, honest projections though - just informational, not what decides whether a trade gets suggested.</li>
+      <li>Roster comparison (the core signal): each side's STARTING roster after the trade - outgoing player(s) removed, incoming player(s) added, any emptied position auto-filled with the best available waiver pickup - is re-slotted into its best possible starting lineup (same method as the position grades elsewhere on the site) and compared to the starting roster before the trade. Starter impact is scored on market-value-adjusted points (VBD, already scaled for this league's real QB/TE value - see below), not raw point totals, specifically so a QB upgrade cannot look like a bigger lineup improvement than it really is just because passing stats rack up bigger raw numbers than rushing/receiving stats do. The points-per-week numbers shown on every trade are real, honest projections.</li>
+      <li>What a side's benefit score is made of: mostly (1) starting-lineup VBD gain - by far the dominant factor, since that's what actually wins matchups, plus smaller contributions from (2) bench/depth VBD gain - real signal but intentionally damped, since any multi-player trade reshuffles who's a starter vs. bench and swings bench value by amounts that are partly just reshuffling noise, and (3) need/surplus fit - whether the incoming players land at a position the team is genuinely thin at, and the outgoing players come from a position it has real extra depth at. Need/surplus fit is a minor tiebreaker, not a co-equal factor - filling a need never justifies giving up real starting-lineup value just to "even out" a position group. There's real strategic value in staying stacked at a strong position (RB/WR) at a weaker position's expense rather than trading toward average everywhere, so fit only nudges between trades that are already close on value.</li>
+      <li>Mutual benefit is required, not just "not a disaster": both sides' combined benefit score has to clear a neutral bar, and neither side's starting lineup can lose real value (even after pricing in the best waiver pickup) - a trade that's fair on paper but doesn't actually leave either team better off in one of the three ways above is filtered out.</li>
       <li>League power ranking: all 12 teams are ranked by current best-lineup starter points per week. Each suggestion shows where you and your trade partner would land in that ranking afterward, holding every other team's roster fixed.</li>
       <li>Waiver pickups: after a trade, every starting slot (QB, both RB, both WR, TE, the WR/TE flex, the RB/WR/TE flex) is checked to see whether a real player is actually left to fill it - not just whether a position's raw count hit zero, which misses cases like still having 2 WRs but not enough left to also cover the WR/TE flex once a couple of starters leave in the same trade. Any slot that would go empty gets auto-filled with the actual best available free agent eligible for it (from a real, refreshed pool of everyone not rostered on any of the 12 teams), named as the suggested pickup and factored directly into the roster comparison above - not a silent zero.</li>
-      <li>Need/surplus (used only in the explanation text, not the score itself): whether a position is a real weakness or has real depth for a team, relative to the 12-team league average.</li>
-      <li>Fairness band (a secondary check): the traded players' value - adjusted for position scarcity so a QB and a TE are comparable - has to be within roughly &plusmn;25% of each other (an 8-point floor for smaller trades) or the trade is never suggested at all. This mostly rules out one-sided fleecing on top of the roster-comparison check above.</li>
+      <li>Need/surplus: whether a position is a real weakness (below-average starter value) or has real depth (above-average bench value) for a team, relative to the 12-team league average - factored directly into the benefit score above, and also shown in the explanation text for each trade.</li>
+      <li>Fairness band (a secondary check, not the whole story): the traded players' value - adjusted for position scarcity so a QB and a TE are comparable - has to be within roughly &plusmn;25% of each other (an 8-point floor for smaller trades) or the trade is never suggested at all. This mostly rules out one-sided fleecing on top of the benefit checks above.</li>
+      <li>No dead-weight trade chips: a player who's worse than the best available free agent at his own position is never eligible to be offered or received in a Finder suggestion - a rational manager would just drop him and pick up the free agent for free, so he isn't real trade capital and shouldn't be able to "balance" a deal's value on paper.</li>
+      <li>No roster clog: a suggestion is never made if it would leave either side with a 3rd rostered QB or TE - those positions only ever play one true starter (TE gets a shared flex spot too), so a 3rd is always a wasted roster spot regardless of how the trade's value nets out.</li>
+      <li>Consolidation premium: a side sending more players than it receives (2-for-1, 3-for-2, etc.) is giving up a whole extra roster body, not just its raw value - the bundle-value fairness check alone can't catch this, since it's easy for an aggregate value gap to look "fair" while the actual re-slotted lineup impact is flat or even negative once the extra departing starter's slot gets backfilled by a worse bench piece. So a consolidating side also has to clear a real, sizeable starting-lineup VBD gain (scaled to how many extra bodies it's giving up) - not just avoid a loss - or the trade is never suggested.</li>
       <li>Packages: searches 1-for-1 through 3-for-3 combinations (from each team's top 10 players by value - the bottom of a roster is never a useful trade chip), not just single-player swaps. Searching "Any" trade partner checks all 11 other teams at once, so it's capped at 2-for-2 to stay fast - pick a specific partner to see the full 3-for-3 range against just that team. Results are also a genuine mix of package sizes, not just whichever shape happens to score best - the best few trades of every shape are kept and round-robined into the final list, so 1-for-1/1-for-2/2-for-3/etc. all get a fair shot at showing up, not just 2-for-2.</li>
-      <li>Same-position trades of roughly equal value are filtered out on purpose - swapping one RB for another RB of similar value doesn't diversify or upgrade either roster, so it's not "help," just a wash. A same-position trade with a real value gap (buy-low/sell-high) can still surface - it just has to earn it like anything else.</li>
+      <li>No 1-for-1 same-position swaps, ever: trading one player straight across for another player at the same position is never suggested, regardless of value or fairness. With only one moving part on each side, a 1-for-1 same-position swap can at best make one team marginally better and the other marginally worse - it's a pure value transfer, not a trade that helps both sides. Larger same-position bundles (e.g. 2 RBs for 2 RBs) are still filtered when they're a roughly-fair wash, but can surface with a real value gap (buy-low/sell-high) since there's more than one moving part for the value to actually work for both teams.</li>
       <li>Star premium: a player valuable enough to be a real difference-maker (roughly early-round-pick caliber) doesn't move for value that merely nets out even - the side NOT giving up that player has to pay about 20% more, or the trade isn't suggested. Real managers are reluctant to part with a true difference-maker for "fair" alone.</li>
       <li>This league trades QB and TE for far less than general fantasy consensus would suggest - trade value (not the real points-per-week numbers shown, which stay honest projections) is scaled down hard for QB and moderately for TE, since a startable replacement at either is usually one waiver claim away in this league's single-QB, single-TE format. Even the best real QB in the league is worth a fraction of a true stud RB/WR in trade value.</li>
       <li>Results shuffle: reopening the Finder (or re-running a search) draws a fresh random 10 from a wider pool of trades that all already cleared every check above - so you will not see the exact same list every time, but everything shown is still a real, qualifying suggestion.</li>
@@ -873,16 +1006,19 @@ function computeFairness(sideASends, sideBSends, teamA, teamB) {
   const weeklyBenchA = impactA.benchPtsDelta / weeksRemaining;
   const weeklyBenchB = impactB.benchPtsDelta / weeksRemaining;
 
-  const fitA = pointsGainScore(impactA.starterVbdDelta, 15);
-  const fitB = pointsGainScore(impactB.starterVbdDelta, 15);
+  // Same combined benefit signal as the Finder (starters + damped bench/depth + need/surplus
+  // fit) - see sideBenefitScore - so the Calculator's grade reflects the same three legitimate
+  // ways a trade can help a team, not starter points alone.
+  const fitA = sideBenefitScore(impactA.starterVbdDelta, impactA.benchVbdDelta, sideBSends, sideASends, needs[teamA]);
+  const fitB = sideBenefitScore(impactB.starterVbdDelta, impactB.benchVbdDelta, sideASends, sideBSends, needs[teamB]);
 
   const rankOverrides = {};
   rankOverrides[teamA] = impactA.afterStarterPts;
   rankOverrides[teamB] = impactB.afterStarterPts;
   const rankAfter = rankManagers({ ...powerRanking.startersPtsByManager, ...rankOverrides });
 
-  const scoreA = 0.5 * evenness + 0.5 * fitA;
-  const scoreB = 0.5 * evenness + 0.5 * fitB;
+  const scoreA = 0.3 * evenness + 0.7 * fitA;
+  const scoreB = 0.3 * evenness + 0.7 * fitB;
 
   // Informational only here (the Calculator evaluates whatever the user actually builds, it
   // doesn't hide anything) - flags whether one side is giving up a difference-maker without the
@@ -892,8 +1028,17 @@ function computeFairness(sideASends, sideBSends, teamA, teamB) {
   if (aHasStar && !bHasStar && valueB < valueA * (1 + STAR_PREMIUM)) starWarningSide = 'A';
   else if (bHasStar && !aHasStar && valueA < valueB * (1 + STAR_PREMIUM)) starWarningSide = 'B';
 
+  // Also informational-only here - flags a player worse than the best free agent at his own
+  // position (see isRealTradeAsset) being sent as if it were real trade capital, and a side that
+  // would end up with a 3rd QB or TE (see MAX_USEFUL_ROSTER_COUNT), since the Calculator doesn't
+  // block anything the user manually builds, only the Finder's auto-suggestions do.
+  const deadWeightA = sideBSends.filter(p => !isRealTradeAsset(p));
+  const deadWeightB = sideASends.filter(p => !isRealTradeAsset(p));
+  const clogA = causesRosterClog(rosterA, sideASends, sideBSends);
+  const clogB = causesRosterClog(rosterB, sideBSends, sideASends);
+
   return {
-    valueA, valueB, delta, evenness, starWarningSide,
+    valueA, valueB, delta, evenness, starWarningSide, deadWeightA, deadWeightB, clogA, clogB,
     weeklyStarterA, weeklyStarterB, weeklyBenchA, weeklyBenchB,
     rankABefore: powerRanking.rankByManager[teamA], rankAAfter: rankAfter[teamA],
     rankBBefore: powerRanking.rankByManager[teamB], rankBAfter: rankAfter[teamB],
@@ -928,6 +1073,8 @@ function renderCalcSummary() {
         ${calcBullets(f.evenness, f.weeklyStarterA, f.weeklyBenchA, f.rankABefore, f.rankAAfter)}
         ${pickupBullets(f.pickupsA).map(b => `<div style="font-size:0.85rem; margin-top:4px;">${b}</div>`).join('')}
         ${f.starWarningSide === 'A' ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; Trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</div>' : ''}
+        ${f.deadWeightA.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightA.map(p => p.name).join(', ')} ${f.deadWeightA.length > 1 ? 'are' : 'is'} worse than the best free agent at ${f.deadWeightA.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
+        ${f.clogA ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; This leaves you with a 3rd QB or TE - a wasted roster spot no matter how the value nets out.</div>' : ''}
       </div>
       <div class="calc-summary-side">
         <div class="mgr-sub">${managerTag(managers, calcTeamB)}</div>
@@ -935,6 +1082,8 @@ function renderCalcSummary() {
         ${calcBullets(f.evenness, f.weeklyStarterB, f.weeklyBenchB, f.rankBBefore, f.rankBAfter)}
         ${pickupBullets(f.pickupsB).map(b => `<div style="font-size:0.85rem; margin-top:4px;">${b}</div>`).join('')}
         ${f.starWarningSide === 'B' ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; Trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</div>' : ''}
+        ${f.deadWeightB.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightB.map(p => p.name).join(', ')} ${f.deadWeightB.length > 1 ? 'are' : 'is'} worse than the best free agent at ${f.deadWeightB.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
+        ${f.clogB ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; This leaves you with a 3rd QB or TE - a wasted roster spot no matter how the value nets out.</div>' : ''}
       </div>
     </div>
   `;
