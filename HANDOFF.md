@@ -1225,6 +1225,114 @@ no crashes.
 
 ---
 
+## Trade Tools — major scoring rework + FantasyCalc-style Calculator UI (new session)
+
+Follow-up session, prompted by the user hand-testing real suggested trades and flagging several
+that clearly weren't "mutually beneficial" despite passing the existing fairness/floor checks. All
+fixes below were verified against the *specific* real trades the user pointed out (not just
+synthetic tests), by reproducing the exact scoring math against `data/season_2026/rosters.json`
+before writing each fix, then re-checking the same trade no longer surfaces after.
+
+**1. Bad-suggestion bug hunt, four root causes found and fixed:**
+
+- **Dead-weight throw-ins counted as real trade capital.** Example caught: Zogg gives Chase Brown +
+  Jaylen Waddle, gets Josh Jacobs + Hunter Henry - looked fine on aggregate VBD, but Henry
+  (vbd -25.7) was worse than the *best available free agent* at TE (-10.1). A rational manager
+  would just drop him and claim the free agent instead, so he's not real trade value - yet his
+  negative VBD was still letting the other side "get credit" for including him. Fix: `isRealTradeAsset()`
+  excludes any player worse than the best free agent at his position from ever being offered or
+  received as a trade chip in the Finder.
+- **Roster clog** - a suggestion could leave a team with a 3rd rostered QB or TE (single-starter
+  positions; TE gets a shared flex too), which is always a wasted roster spot regardless of the
+  value math. Hard-capped via `MAX_USEFUL_ROSTER_COUNT = { QB: 2, TE: 2 }` and `causesRosterClog()`.
+- **Bad consolidation trades** (2-for-1, etc.) - example caught: Zogg gives Chase Brown + DeVonta
+  Smith for De'Von Achane. Achane individually crushes Brown (+19.9 VBD), but re-slotting the full
+  roster after the trade showed a NET starter VBD LOSS of -2.7 - losing Smith (a real WR2 starter)
+  cascades everyone below him down a slot (Odunze bumps to WR2, Waddle bumps to flex, a bench RB
+  has to fill the now-open flex), and that cascade cost more than the RB upgrade was worth. The old
+  scoring only checked whether the *aggregate bundle value* was roughly balanced, not that
+  consolidating into fewer players is inherently a bigger ask (giving up a whole extra roster body).
+  Fix: a side sending more players than it receives must now clear a real, sizeable starter VBD
+  gain (`CONSOLIDATION_MIN_GAIN_PER_EXTRA = 10`, scaled by how many extra bodies given up) - and,
+  found while testing a second case (Lamb+Odunze for James Cook), can never show a **negative raw
+  points/week** headline for the consolidating side even when VBD's RB/WR-scarcity weighting
+  legitimately shows a gain there (raw points and VBD can disagree; a suggestion that reads "give
+  up an extra starter, score less" should never surface regardless).
+- **Star-premium check missed multi-star consolidation.** Example caught: CeeDee Lamb + Chase Brown
+  (both individually above the `STAR_VBD_THRESHOLD` of 45) for Jahmyr Gibbs. The old check only
+  asked "does one bundle have *any* star and the other *none*" - both bundles technically had a
+  star, so it never fired, even though Zogg was giving up TWO difference-makers for Gibbs's one.
+  Fix: replaced the has-star boolean with `starCount()` (counts stars per side), and the required
+  value premium now **compounds per net star given up** (`STAR_PREMIUM` raised 20% → 40%,
+  `Math.pow(1 + STAR_PREMIUM, starDiff)`) rather than a flat rate regardless of imbalance - trading
+  one star for a bigger one still just needs the standard premium; trading two stars for one now
+  needs a much steeper bar. Verified across all 12 teams: zero star-imbalanced trades survived
+  post-fix (several had before) while balanced trades (1 star + throw-in for 1 comparable star)
+  still surface normally. Same star-count logic applied to the Calculator's warning; the now-dead
+  `bundleHasStar()` helper was removed.
+
+**2. Need/surplus fit reintroduced as a real scoring input, but deliberately minor** -
+`computeTeamNeeds()`'s `needScore`/`surplusScore` per position existed already but were previously
+informational-only (explanation bullets, not the score). Added `needFitScore()` (rewards receiving
+value at a position of real need, sending value from a position of real surplus, floored at neutral
+0.5 so a trade that doesn't target need/surplus isn't penalized for it) and `sideBenefitScore()`
+(starters 75% / bench 13% / fit 12%, reduced from an initial 60/15/25 split per direct feedback:
+filling a need is a minor tiebreaker, not a reason to accept real starting-lineup value "for pennies
+on the dollar" just to even out a position group - there's real strategic value in staying stacked
+at a strong position like RB/WR at a weaker position's expense). Bench/depth VBD delta was also
+reintroduced as a damped signal (previously excluded entirely over reshuffle-noise concerns from
+the prior session - kept damped here, `halfScale=35`, small weight, for the same reason).
+
+**3. Hard fairness floor added** - the benefit-score gates above only check that *neither side ends
+up worse off*, not that the trade is remotely even; a side could still be massively overpaid while
+technically netting a small positive. Added `MIN_FAIRNESS = 0.35` (roughly ±33% of the larger
+side's value) as an unconditional reject, replacing the old 3x-tolerance backstop that let fairness
+sink to 0 before ever rejecting anything. Verified across all 12 teams: minimum observed fairness
+post-fix is 0.356, zero suggestions below the floor.
+
+**4. Refresh button** - `findTrades()` already drew a fresh random 10 on every call (confirmed
+across both repeated calls and full page reloads - no caching anywhere), but there was no way to
+get a new mix without changing a filter. Added a **Refresh** button next to the Finder's controls
+(disabled until a team is picked) that just re-runs the search.
+
+**5. FantasyCalc-style Trade Calculator UI overhaul** (explicit request: "utilize the logic of a
+site like fantasycalc.com" - scoped down via clarifying question to UI/UX + a new raw-value metric,
+*not* replacing the need-aware scoring above with FantasyCalc's context-free value-sum approach):
+- **Search-to-add player pickers** replace the plain scrollable roster list in the Calculator.
+- **Per-player value bars** next to every player in the roster/sending lists, scaled consistently
+  against the highest `vbd_value` in the league (`leagueMaxVbd`, computed once at init).
+- **A market-value gauge** (`valueGaugeHTML()`) - a two-segment bar with a verdict line ("Market
+  value favors X by N pts · Y% even"), full-size on the Calculator summary, a `mini` version on
+  each Finder result card. This is a deliberately **separate, simpler** "is this even on paper"
+  check (pure VBD-sum comparison, no roster context) shown *alongside* the existing need-aware
+  Trade Score/fairness grade, not instead of it. Bug caught while building it: clamping negative
+  `vbd_value` to 0 for the bar split made two similarly-bad bundles (e.g. two bench scrubs, -16.3
+  vs -15.5) render as a misleading 0%/100% split instead of the roughly-even split they actually
+  are - fixed by shifting both values onto a non-negative scale by whichever is more negative,
+  rather than clamping.
+- **Gauge/bar colors match each team's actual color** (`managerColor()`, same hex used for the
+  manager-dot everywhere else on the site) instead of a fixed blue/gray, per follow-up request.
+
+**6. Cosmetic-only VBD rescale for the Calculator's player list** - `vbd_value` is
+points-over-replacement, so it's designed to cross zero (any below-replacement bench player is
+negative by construction) - correct for the scoring math, but per feedback it read as broken/
+alarming that "almost every player has negligible or negative value" in a roster list meant for
+casual scanning. Added `displayTradeValue(vbd) = Math.round(vbd - leagueMinVbd)` - shifts the whole
+league's range so the single worst rostered player reads as 0 and everyone else is a normal-looking
+positive integer, used for both the numeric label and the value bar's fill width (which also fixed
+the bars being undifferentiated - previously every below-replacement player clamped to the same
+tiny 2% sliver; now the full range is visible, e.g. a bad bench RB at 43 vs. a good one at 145).
+This is purely cosmetic - confirmed the gauge's underlying totals/proportions and every actual
+scoring decision (fairness, star thresholds, consolidation gates) still use the real `vbd_value`
+unchanged.
+
+All fixes in this session verified live in-browser (fresh tabs/reloads, no console errors) against
+`data/season_2026/rosters.json`, generally by reproducing the specific reported trade's math by
+hand (Python) or via `scoreBundleTrade()`/`computeFairness()` called directly in the browser console
+before and after each fix, plus full 12-team sweeps to confirm no regressions in suggestion volume.
+
+---
+
 ## Known Bugs & Data Issues
 
 ### Active / Unresolved
