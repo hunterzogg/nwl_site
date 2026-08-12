@@ -134,6 +134,18 @@
 .hc-callout p { margin: 0; font-size: 0.9rem; }
 .hc-callout .hc-callout-sub { color: var(--text-muted); font-size: 0.82rem; margin-top: 4px; }
 @media (max-width: 640px) { .hc-callouts { grid-template-columns: 1fr; } }
+
+.wr-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.wr-pick-list { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 16px; }
+.wr-pick-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.wr-pick-row:last-child { border-bottom: none; }
+.wr-pick-body { flex: 1; min-width: 0; }
+.wr-pick-name { font-size: 0.86rem; font-weight: 600; }
+.wr-pick-sub { font-size: 0.76rem; color: var(--text-muted); margin-top: 1px; }
+.wr-pick-pts { font-family: var(--font-mono); font-weight: 700; font-size: 0.86rem; flex-shrink: 0; }
+.wr-pick-list.good .wr-pick-pts { color: #4FA876; }
+.wr-pick-list.bad .wr-pick-pts { color: #E0524A; }
+@media (max-width: 640px) { .wr-pick-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -148,6 +160,7 @@
     <button class="tab-btn" data-tab="slots">Draft Slot Analysis</button>
     <button class="tab-btn" data-tab="grades">Draft Grades</button>
     <button class="tab-btn" data-tab="handcuffs">Handcuffs</button>
+    <button class="tab-btn" data-tab="latewr">Mid/Late WRs</button>
   </div>
 
   <div class="panel active" id="panel-board">
@@ -230,6 +243,13 @@
       Every time a manager drafted a 2nd RB from the same NFL team as an RB already on their board, in the same draft - and how often the backup actually paid off.
     </p>
     <div id="handcuffsContent"></div>
+  </div>
+
+  <div class="panel" id="panel-latewr">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      Every WR drafted round 6 or later since 2013 - how often does a mid-to-late WR actually pay off, and is there a round range that does better than the rest?
+    </p>
+    <div id="latewrContent"></div>
   </div>
 </div>
 
@@ -997,7 +1017,7 @@ function renderHandcuffs() {
   document.getElementById('handcuffsContent').innerHTML = `
     <div class="stat-strip">
       <div class="stat"><div class="n">${handcuffEvents.length}</div><div class="l">Handcuff picks, all-time${pendingCount ? ` (${pendingCount} pending)` : ''}</div></div>
-      <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length}</span></div><div class="l">Scored meaningfully (100+ pts)</div></div>
+      <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length} (${Math.round(hits / graded.length * 100)}%)</span></div><div class="l">Scored meaningfully (100+ pts)</div></div>
       <div class="stat"><div class="n">${timing.avgRound.toFixed(1)}</div><div class="l">Avg round drafted</div></div>
       <div class="stat"><div class="n">${Math.round(timing.best.hitRate * 100)}<span class="unit">%</span></div><div class="l">Best hit rate: ${timing.best.label}</div></div>
     </div>
@@ -1052,6 +1072,201 @@ function renderHandcuffs() {
   renderHandcuffTable();
 }
 
+// ---------- Mid/Late WRs tab ----------
+// Every WR drafted round 6+ (the true WR1/WR2s go earlier - this is "does a WR I got as depth/
+// upside pan out" territory). Same shape as the Handcuffs tab: reuses `picks`/`draftGrades`
+// already loaded above, plus `draftGrades2026` for the current season's picks (shown as Pending,
+// same reasoning as Handcuffs - no stat line exists yet to grade them on). Outcome tiers are
+// calibrated to WR scoring specifically, not reused from the RB/handcuff analysis's 100/50 cutoffs
+// - WRs score meaningfully more than RBs at a comparable draft-relevance tier (a league-average
+// WR36/flex-caliber finish is worth ~143 half-PPR pts, vs. the RB equivalent's much lower bar).
+const LATEWR_MIN_ROUND = 6;
+function latewrTier(pts) {
+  if (pts >= 140) return 'hit';
+  if (pts >= 70) return 'marginal';
+  return 'bust';
+}
+function latewrRoundBucket(round) {
+  if (round <= 8) return 'Rd 6-8';
+  if (round <= 11) return 'Rd 9-11';
+  if (round <= 14) return 'Rd 12-14';
+  return 'Rd 15-18';
+}
+const LATEWR_BUCKET_ORDER = ['Rd 6-8', 'Rd 9-11', 'Rd 12-14', 'Rd 15-18'];
+
+function normalized2026WrPicks() {
+  if (!draftGrades2026 || !draftGrades2026.managers) return [];
+  const out = [];
+  draftGrades2026.managers.forEach(m => {
+    m.picks.forEach(p => {
+      if (p.position !== 'WR') return;
+      out.push({ season: draftGrades2026.season, manager: m.manager, player: p.player, round: p.round });
+    });
+  });
+  return out;
+}
+
+function computeLatewrEvents() {
+  const gradeIdx = {};
+  draftGrades.forEach(g => { gradeIdx[`${g.season}|${g.manager}|${g.player}`] = g; });
+  const currentSeason = draftGrades2026 ? draftGrades2026.season : null;
+
+  const wrPicks = picks.filter(p => p.position === 'WR' && p.round >= LATEWR_MIN_ROUND)
+    .concat(normalized2026WrPicks().filter(p => p.round >= LATEWR_MIN_ROUND));
+
+  const events = [];
+  wrPicks.forEach(p => {
+    const g = gradeIdx[`${p.season}|${p.manager}|${p.player}`];
+    if (!g && p.season !== currentSeason) return;
+    events.push({
+      season: p.season, manager: p.manager, player: p.player, round: p.round,
+      pts: g ? g.half_ppr_points : null, rank: g ? g.position_finish_rank : null,
+      tier: g ? latewrTier(g.half_ppr_points) : 'pending',
+    });
+  });
+  return events.sort((a, b) => b.season - a.season || a.manager.localeCompare(b.manager));
+}
+
+function latewrTimingHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const buckets = {};
+  graded.forEach(e => {
+    const b = latewrRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+  });
+  const rows = LATEWR_BUCKET_ORDER.filter(b => buckets[b]).map(b => ({
+    label: b, n: buckets[b].n, hitRate: buckets[b].hit / buckets[b].n,
+  }));
+  return `
+    <div class="hc-double-box">
+      <div class="hc-timing-row hc-timing-head">
+        <span></span>
+        <span>Hit rate</span>
+        <span class="hc-timing-pct">n</span>
+      </div>
+      ${rows.map(b => `
+        <div class="hc-timing-row">
+          <span>${b.label}</span>
+          <div class="hc-timing-bar-wrap">
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;"></div></div>
+            <span class="hc-timing-pct-inline">${Math.round(b.hitRate * 100)}%</span>
+          </div>
+          <span class="hc-timing-pct">n=${b.n}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function latewrLeaderboardHTML(events) {
+  const byMgr = {};
+  events.forEach(e => {
+    byMgr[e.manager] = byMgr[e.manager] || { hit: 0, marginal: 0, bust: 0, pending: 0, total: 0 };
+    byMgr[e.manager][e.tier]++;
+    byMgr[e.manager].total++;
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => b[1].total - a[1].total || b[1].hit - a[1].hit);
+  const maxTotal = Math.max(...rows.map(([, v]) => v.total));
+  return rows.map(([mgr, v]) => `
+    <div class="hc-lb-row">
+      <div>${managerTag(managers, mgr)}</div>
+      <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
+        <div class="hc-lb-track">
+          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" title="${mgr}: ${v.hit} meaningful"></div>
+          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" title="${mgr}: ${v.marginal} marginal"></div>
+          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" title="${mgr}: ${v.bust} bust"></div>
+          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" title="${mgr}: ${v.pending} pending"></div>
+        </div>
+      </div>
+      <div class="hc-lb-count">${v.total}</div>
+    </div>
+  `).join('');
+}
+
+function latewrPickRowHTML(e) {
+  return `
+    <div class="wr-pick-row">
+      <div class="wr-pick-body">
+        <div class="wr-pick-name">${e.player}</div>
+        <div class="wr-pick-sub">${managerTag(managers, e.manager)} &middot; ${e.season}, Round ${e.round} &middot; finished WR${e.rank}</div>
+      </div>
+      <div class="wr-pick-pts">${e.pts.toFixed(1)}</div>
+    </div>
+  `;
+}
+
+function latewrBestWorstHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const best = graded.slice().sort((a, b) => b.pts - a.pts).slice(0, 10);
+  const worst = graded.slice().sort((a, b) => a.pts - b.pts).slice(0, 10);
+  return `
+    <div class="wr-pick-grid">
+      <div class="wr-pick-list good">${best.map(latewrPickRowHTML).join('')}</div>
+      <div class="wr-pick-list bad">${worst.map(latewrPickRowHTML).join('')}</div>
+    </div>
+  `;
+}
+
+function renderLatewr() {
+  const events = computeLatewrEvents();
+  if (!events.length) {
+    document.getElementById('latewrContent').innerHTML = `<p style="color:var(--text-muted);">No mid/late WR picks found.</p>`;
+    return;
+  }
+  const graded = events.filter(e => e.tier !== 'pending');
+  const pendingCount = events.length - graded.length;
+  const hits = graded.filter(e => e.tier === 'hit').length;
+  const avgRound = events.reduce((s, e) => s + e.round, 0) / events.length;
+  const buckets = {};
+  graded.forEach(e => {
+    const b = latewrRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+  });
+  const bestBucket = LATEWR_BUCKET_ORDER.filter(b => buckets[b])
+    .map(b => ({ label: b, hitRate: buckets[b].hit / buckets[b].n }))
+    .reduce((a, b) => (b.hitRate > a.hitRate ? b : a));
+
+  document.getElementById('latewrContent').innerHTML = `
+    <div class="stat-strip">
+      <div class="stat"><div class="n">${events.length}</div><div class="l">Mid/late WR picks (Rd ${LATEWR_MIN_ROUND}+)${pendingCount ? ` (${pendingCount} pending)` : ''}</div></div>
+      <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length} (${Math.round(hits / graded.length * 100)}%)</span></div><div class="l">Scored meaningfully (140+ pts)</div></div>
+      <div class="stat"><div class="n">${avgRound.toFixed(1)}</div><div class="l">Avg round drafted</div></div>
+      <div class="stat"><div class="n">${Math.round(bestBucket.hitRate * 100)}<span class="unit">%</span></div><div class="l">Best hit rate: ${bestBucket.label}</div></div>
+    </div>
+
+    <div class="records-group-title">When To Draft Your Mid/Late WR</div>
+    ${latewrTimingHTML(events)}
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Hit rate = share scoring meaningfully (140+ pts), not raw pick volume. Sample sizes are small enough per range that this is a lean, not a rule.</p>
+
+    <div class="records-group-title">By Manager</div>
+    <div class="hc-legend">
+      <span><i class="hc-swatch hit"></i>Meaningful (140+ pts)</span>
+      <span><i class="hc-swatch marginal"></i>Marginal (70&ndash;139 pts)</span>
+      <span><i class="hc-swatch bust"></i>Bust (&lt;70 pts)</span>
+      ${pendingCount ? `<span><i class="hc-swatch pending"></i>Pending (${draftGrades2026.season} season not started)</span>` : ''}
+    </div>
+    ${latewrLeaderboardHTML(events)}
+
+    <div class="records-group-title">Best &amp; Worst Picks</div>
+    ${latewrBestWorstHTML(events)}
+
+    <div class="methodology" style="margin-top:20px;">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          <strong>Scope</strong> = every WR pick from round 6 through the end of the draft, 2013-2025 (plus this year's picks, shown as Pending). Round 1-5 WRs are excluded on purpose - those are the true WR1/WR2 targets, a different question than "does a WR I got as depth/upside pan out."
+          <strong>Points</strong> is half-PPR points scored that regular season, the same figure used for Draft Grades above. <strong>Outcome tiers</strong> are calibrated to WR scoring specifically, not reused from the Handcuffs tab's RB-based 100/50 cutoffs - WRs score meaningfully more than RBs at a comparable draft-relevance tier. Meaningful is 140+ points (roughly flex-caliber or better across a season), Marginal is 70-139, Bust is under 70 (effectively unusable).
+          <strong>Round buckets</strong> (Rd 6-8, Rd 9-11, Rd 12-14, Rd 15-18) are roughly even-sized groups so hit rates are actually comparable, rather than individual rounds where sample sizes get as thin as single digits late in the draft.
+        </div>
+      </details>
+    </div>
+  `;
+}
+
 async function init() {
   const [draftSlots, regSeasons] = await Promise.all([loadData('draft_slots'), loadData('team_seasons_regular')]);
   window._draftSlots = draftSlots;
@@ -1100,6 +1315,7 @@ async function init() {
 
   draftGrades2026 = await loadDataSafe('season_2026/draft_grades_2026', null);
   renderHandcuffs();
+  renderLatewr();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
