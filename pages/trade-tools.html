@@ -520,12 +520,19 @@ function bundleValue(bundle) {
 // fetch_espn_rosters.py) VBD points, so a QB/TE needs to be truly elite to clear it, matching how
 // this league actually negotiates rather than generic consensus.
 const STAR_VBD_THRESHOLD = 45;
-function bundleHasStar(bundle) {
-  return bundle.some(p => p.vbd_value > STAR_VBD_THRESHOLD);
+function starCount(bundle) {
+  return bundle.filter(p => p.vbd_value > STAR_VBD_THRESHOLD).length;
 }
-// Extra value the side NOT giving up a star must pay, when only one bundle contains one - teams
-// are reluctant to trade a difference-maker for value that merely nets out even.
-const STAR_PREMIUM = 0.20;
+// Extra value required per net star given up beyond what's coming back, compounding per extra
+// star. Originally this only checked whether one side had ANY star and the other had none - which
+// missed the case of giving up TWO stars for one even-bigger one (e.g. CeeDee Lamb + Chase Brown,
+// both individually star-caliber, for Jahmyr Gibbs): both bundles technically "have a star," so
+// the old binary check never fired, even though the giving side is down a whole extra
+// difference-maker - real teams don't hand over two of their best players for one, no matter how
+// good, without a real premium, since it concentrates injury/bye-week risk onto a single asset and
+// leaves no depth at either position given up. Compounding (not additive) because giving up a 2nd
+// and 3rd star each make the ask progressively worse, not linearly worse.
+const STAR_PREMIUM = 0.40;
 
 // {position: count} - used to detect a same-position "wash" trade (see sameComposition).
 function positionMultiset(bundle) {
@@ -576,11 +583,20 @@ function scoreBundleTrade(give, get, yourManager, yourRoster, yourBeforeTotals, 
   const MIN_FAIRNESS = 0.35;
   if (fairness < MIN_FAIRNESS) return null;
 
-  // Teams are reluctant to move a true difference-maker for value that just nets out even - if
-  // only one side's bundle has a star, the other side has to pay a real premium, not just parity.
-  const giveHasStar = bundleHasStar(give), getHasStar = bundleHasStar(get);
-  if (giveHasStar && !getHasStar && getValue < giveValue * (1 + STAR_PREMIUM)) return null;
-  if (getHasStar && !giveHasStar && giveValue < getValue * (1 + STAR_PREMIUM)) return null;
+  // Teams are reluctant to move a true difference-maker for value that just nets out even - and
+  // giving up MORE stars than you get back requires a real, compounding premium, not just a fixed
+  // 20% regardless of how many. Net star deficit of 1 (e.g. 1 star + throw-ins for 1 bigger star)
+  // still only needs the standard premium; giving up 2 stars for 1 needs a steeper one, 3 for 1
+  // steeper still - each additional star given up without one coming back is a progressively worse
+  // ask, not a linearly worse one.
+  const giveStars = starCount(give), getStars = starCount(get);
+  if (giveStars > getStars) {
+    const requiredMultiple = Math.pow(1 + STAR_PREMIUM, giveStars - getStars);
+    if (getValue < giveValue * requiredMultiple) return null;
+  } else if (getStars > giveStars) {
+    const requiredMultiple = Math.pow(1 + STAR_PREMIUM, getStars - giveStars);
+    if (giveValue < getValue * requiredMultiple) return null;
+  }
 
   // Same position(s) for the same position(s), at a roughly fair value, is a wash - it doesn't
   // diversify or upgrade either roster. A same-position trade with a real value gap (buy-low/
@@ -839,7 +855,7 @@ function renderFinderControls() {
       <li>Consolidation premium: a side sending more players than it receives (2-for-1, 3-for-2, etc.) is giving up a whole extra roster body, not just its raw value - the bundle-value fairness check alone can't catch this, since it's easy for an aggregate value gap to look "fair" while the actual re-slotted lineup impact is flat or even negative once the extra departing starter's slot gets backfilled by a worse bench piece. So a consolidating side also has to clear a real, sizeable starting-lineup VBD gain (scaled to how many extra bodies it's giving up) - not just avoid a loss - or the trade is never suggested.</li>
       <li>Packages: searches 1-for-1 through 3-for-3 combinations (from each team's top 10 players by value - the bottom of a roster is never a useful trade chip), not just single-player swaps. Searching "Any" trade partner checks all 11 other teams at once, so it's capped at 2-for-2 to stay fast - pick a specific partner to see the full 3-for-3 range against just that team. Results are also a genuine mix of package sizes, not just whichever shape happens to score best - the best few trades of every shape are kept and round-robined into the final list, so 1-for-1/1-for-2/2-for-3/etc. all get a fair shot at showing up, not just 2-for-2.</li>
       <li>No 1-for-1 same-position swaps, ever: trading one player straight across for another player at the same position is never suggested, regardless of value or fairness. With only one moving part on each side, a 1-for-1 same-position swap can at best make one team marginally better and the other marginally worse - it's a pure value transfer, not a trade that helps both sides. Larger same-position bundles (e.g. 2 RBs for 2 RBs) are still filtered when they're a roughly-fair wash, but can surface with a real value gap (buy-low/sell-high) since there's more than one moving part for the value to actually work for both teams.</li>
-      <li>Star premium: a player valuable enough to be a real difference-maker (roughly early-round-pick caliber) doesn't move for value that merely nets out even - the side NOT giving up that player has to pay about 20% more, or the trade isn't suggested. Real managers are reluctant to part with a true difference-maker for "fair" alone.</li>
+      <li>Star premium: a player valuable enough to be a real difference-maker (roughly early-round-pick caliber) doesn't move for value that merely nets out even - a side giving up more stars than it gets back has to pay a real premium (about 40% per net star), or the trade isn't suggested. This compounds for each extra star given up without one coming back, so giving up two difference-makers for one needs a much bigger gap than giving up one for one bigger one - real managers are reluctant to concentrate that much value/risk into a single asset, no matter how good.</li>
       <li>This league trades QB and TE for far less than general fantasy consensus would suggest - trade value (not the real points-per-week numbers shown, which stay honest projections) is scaled down hard for QB and moderately for TE, since a startable replacement at either is usually one waiver claim away in this league's single-QB, single-TE format. Even the best real QB in the league is worth a fraction of a true stud RB/WR in trade value.</li>
       <li>Results shuffle: reopening the Finder (or re-running a search) draws a fresh random 10 from a wider pool of trades that all already cleared every check above - so you will not see the exact same list every time, but everything shown is still a real, qualifying suggestion.</li>
       <li>Scope: no 3-way trades. No bye-week/injury discount beyond what ESPN's own projection reflects. Head Coach isn't included (no comparable replacement pool to value it against skill positions).</li>
@@ -1032,12 +1048,15 @@ function computeFairness(sideASends, sideBSends, teamA, teamB) {
   const scoreB = 0.3 * evenness + 0.7 * fitB;
 
   // Informational only here (the Calculator evaluates whatever the user actually builds, it
-  // doesn't hide anything) - flags whether one side is giving up a difference-maker without the
-  // real-world premium a manager would actually demand for it. See STAR_PREMIUM.
-  const aHasStar = bundleHasStar(sideASends), bHasStar = bundleHasStar(sideBSends);
+  // doesn't hide anything) - flags whether one side is giving up more difference-makers than it's
+  // getting back without the compounding real-world premium a manager would actually demand for
+  // it. See STAR_PREMIUM/starCount - counts stars on each side rather than just checking presence,
+  // so giving up two stars for one (even a bigger one) still warns even though both sides
+  // technically "have a star."
+  const aStars = starCount(sideASends), bStars = starCount(sideBSends);
   let starWarningSide = null;
-  if (aHasStar && !bHasStar && valueB < valueA * (1 + STAR_PREMIUM)) starWarningSide = 'A';
-  else if (bHasStar && !aHasStar && valueA < valueB * (1 + STAR_PREMIUM)) starWarningSide = 'B';
+  if (aStars > bStars && valueB < valueA * Math.pow(1 + STAR_PREMIUM, aStars - bStars)) starWarningSide = 'A';
+  else if (bStars > aStars && valueA < valueB * Math.pow(1 + STAR_PREMIUM, bStars - aStars)) starWarningSide = 'B';
 
   // Also informational-only here - flags a player worse than the best free agent at his own
   // position (see isRealTradeAsset) being sent as if it were real trade capital, and a side that
