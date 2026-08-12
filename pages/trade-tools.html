@@ -108,6 +108,7 @@
       <select id="finderYourTeam"></select>
       <select id="finderPosition"></select>
       <select id="finderPartner"></select>
+      <button class="tt-btn" id="finderRefresh" disabled>Refresh</button>
     </div>
     <div class="methodology">
       <details>
@@ -849,6 +850,7 @@ function renderFinderControls() {
   ['finderYourTeam', 'finderPosition', 'finderPartner'].forEach(id => {
     document.getElementById(id).addEventListener('change', runFinderSearch);
   });
+  document.getElementById('finderRefresh').addEventListener('click', runFinderSearch);
 }
 
 function runFinderSearch() {
@@ -856,6 +858,7 @@ function runFinderSearch() {
   const wantPos = document.getElementById('finderPosition').value || 'ANY';
   const partnerManager = document.getElementById('finderPartner').value || 'ANY';
   const el = document.getElementById('finderResults');
+  document.getElementById('finderRefresh').disabled = !yourManager;
   if (!yourManager) {
     el.innerHTML = emptyState('Pick your team', 'Choose your team above to see suggested trades.');
     return;
