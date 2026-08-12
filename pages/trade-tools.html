@@ -107,14 +107,10 @@
 
 .value-gauge-wrap { margin-bottom: 18px; }
 .value-gauge-labels { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
-.value-gauge-labels .side-a { color: var(--blue-bright); }
-.value-gauge-labels .side-b { color: var(--text-muted); }
 .value-gauge-track {
   display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--surface);
   border: 1px solid var(--line);
 }
-.value-gauge-seg-a { background: var(--blue-bright); }
-.value-gauge-seg-b { background: var(--text-muted); }
 .value-gauge-verdict { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
 
 .value-gauge-mini { margin: 8px 0; }
@@ -246,7 +242,7 @@ function marketValuePct(valueA, valueB) {
 // The prominent two-segment value bar (full-size on the Calculator, a smaller `mini` version on
 // each Finder result card) - shows each side's raw market value as a proportion of the combined
 // total, plus a one-line verdict naming which side the raw value favors and by how much.
-function valueGaugeHTML(labelA, valueA, labelB, valueB, mini) {
+function valueGaugeHTML(labelA, valueA, colorA, labelB, valueB, colorB, mini) {
   // Shift both onto a non-negative scale by the more-negative side rather than clamping to 0 -
   // clamping made two near-equal negative bundles (e.g. -16.3 vs -15.5, a couple bench scrubs)
   // render as a misleading 0%/100% split instead of the roughly-even split they actually are.
@@ -264,12 +260,12 @@ function valueGaugeHTML(labelA, valueA, labelB, valueB, mini) {
   return `
     <div class="value-gauge-wrap${mini ? ' value-gauge-mini' : ''}">
       <div class="value-gauge-labels">
-        <span class="side-a">${labelA} ${valueA.toFixed(1)}</span>
-        <span class="side-b">${labelB} ${valueB.toFixed(1)}</span>
+        <span style="color:${colorA};">${labelA} ${valueA.toFixed(1)}</span>
+        <span style="color:${colorB};">${labelB} ${valueB.toFixed(1)}</span>
       </div>
       <div class="value-gauge-track">
-        <div class="value-gauge-seg-a" style="width:${pctA}%;"></div>
-        <div class="value-gauge-seg-b" style="width:${pctB}%;"></div>
+        <div class="value-gauge-seg-a" style="width:${pctA}%; background:${colorA};"></div>
+        <div class="value-gauge-seg-b" style="width:${pctB}%; background:${colorB};"></div>
       </div>
       ${mini ? '' : `<div class="value-gauge-verdict">${verdict}</div>`}
     </div>
@@ -987,7 +983,7 @@ function runFinderSearch() {
       <span class="chevron">&#9660;</span>
     </div>
     <div class="grade-detail">
-      ${valueGaugeHTML('You', c.giveValue, managerTag(managers, c.partner), c.getValue, true)}
+      ${valueGaugeHTML('You', c.giveValue, managerColor(managers, yourManager), managerTag(managers, c.partner), c.getValue, managerColor(managers, c.partner), true)}
       <div class="pos-grade-row">
         <span class="pos-grade-chip"><span class="lbl">Fairness</span>${Math.round(c.fairness * 100)}</span>
         <span class="pos-grade-chip"><span class="lbl">You/wk</span>${c.weeklyStarterYou >= 0 ? '+' : ''}${c.weeklyStarterYou.toFixed(1)}</span>
@@ -1199,7 +1195,7 @@ function renderCalcSummary() {
   }
   const f = computeFairness(calcSendsA, calcSendsB, calcTeamA, calcTeamB);
   el.innerHTML = `
-    ${valueGaugeHTML(managerTag(managers, calcTeamA), f.valueA, managerTag(managers, calcTeamB), f.valueB, false)}
+    ${valueGaugeHTML(managerTag(managers, calcTeamA), f.valueA, managerColor(managers, calcTeamA), managerTag(managers, calcTeamB), f.valueB, managerColor(managers, calcTeamB), false)}
     <div style="display:flex; gap:24px; flex-wrap:wrap;">
       <div class="calc-summary-side">
         <div class="mgr-sub">${managerTag(managers, calcTeamA)}</div>
