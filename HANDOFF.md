@@ -163,26 +163,46 @@ same draft, and how often that handcuff pick actually paid off. Lives on `draft.
 is scoped to the current 2026 draft only.
 
 Reuses `picks` and `draftGrades`, both already loaded client-side for the Draft Board/Draft Grades
-tabs — no new data fetch or script. `computeHandcuffEvents()`: groups each manager's RB picks per
-season by `player_nfl_team`; for any team with 2+ RBs drafted, the earliest by `overall_pick` is
-"the lead back" and every later one is a handcuff pick, joined to `draftGrades` on
-`(season, manager, player)` for that season's `half_ppr_points`/`position_finish_rank`. Outcome
+tabs — no new data fetch or script for the historical side. `computeHandcuffEvents()`: groups each
+manager's RB picks per season by `player_nfl_team`; for any team with 2+ RBs drafted, the earliest
+by `overall_pick` is "the lead back" and every later one is a handcuff pick, joined to `draftGrades`
+on `(season, manager, player)` for that season's `half_ppr_points`/`position_finish_rank`. Outcome
 tiers are a plain points cutoff, not a value-over-ADP grade: **Meaningful** (100+ half-PPR points,
-roughly flex-caliber across a season), **Marginal** (50–99), **Bust** (under 50). 42 handcuff picks
-found across all 13 draft classes, 12 scored meaningfully; all 42 matched a grade record (no
-unmatched-pick gap like Draft Grades' ~1.4%, since a handcuff and its lead back are always drafted
-in the same class as an already-graded season).
+roughly flex-caliber across a season), **Marginal** (50–99), **Bust** (under 50).
 
-Layout: a 4-tile stat strip (total picks, meaningful hit rate, best/worst single pick by points),
-two full callout cards below it naming the actual best/worst pick (manager, season, round, which
-lead RB it was drafted behind — added in a same-session follow-up since the stat strip alone named
-the player/points but not which manager made the pick), a stacked-bar leaderboard by manager (green/
-amber/red segments for hit/marginal/bust, sorted by total handcuff picks), the full 42-pick table
-(newest season first, same `table-wide`/`table-cards` responsive pattern as the other tabs), and a
-collapsed-by-default methodology box. Colors reuse the site's existing green/amber/red convention
-(same hexes as the A/D/F draft-grade colors) rather than introducing a new palette. Verified live
-in-browser: correct totals (42 total / 12 meaningful / best=Bucky Irving 220.9 pts RB14 / worst=
-Jeremy McNichols 0.0 pts RB160), all other Draft History tabs still work, no console errors.
+Layout: a 4-tile stat strip (total picks, meaningful hit rate among graded picks, best/worst single
+pick by points), two full callout cards below it naming the actual best/worst pick (manager, season,
+round, which lead RB it was drafted behind — added in a same-session follow-up since the stat strip
+alone named the player/points but not which manager made the pick), a stacked-bar leaderboard by
+manager (sorted by total handcuff picks), manager/year filter dropdowns (matching the Round 1-3
+Strategy tab's `controls-row` pattern) above the full pick table (newest season first, same
+`table-wide`/`table-cards` responsive pattern as the other tabs), and a collapsed-by-default
+methodology box. Colors reuse the site's existing green/amber/red convention (same hexes as the
+A/D/F draft-grade colors) rather than introducing a new palette.
+
+**2026 picks (added same session, follow-up)** — the current season's draft lives in a differently-
+shaped file (`season_2026/draft_grades_2026.json`'s `managers[].picks[]`, fetched separately via
+`loadDataSafe` since `draft.html` otherwise only reads the historical `draft_picks.json`/
+`draft_grades.json`) and has no `half_ppr_points` yet since the season hasn't been played.
+`normalized2026RbPicks()` flattens that structure to the same shape as a historical `picks` row so
+it merges into the identical grouping/join logic. A handcuff pick with no matched grade record is
+only skipped when it's from a *past* season (real missing data, unchanged behavior); for the
+*current* season it's kept with `tier: 'pending'`, points/finish rendered as em-dashes and a "Season
+not started" note — it counts toward each manager's total in the stat strip and leaderboard (a 4th
+gray segment) but not toward the meaningful/marginal/bust rate, since there's no stat line yet to
+grade it on. 5 real 2026 handcuff pairs exist already (e.g. Goetz has both Jahmyr Gibbs and Isiah
+Pacheco, both DET) — all-time total is 47 (42 graded + 5 pending).
+
+**Manager/year filters (same follow-up)** — `handcuffEvents` is now a module-level array computed
+once by `renderHandcuffs()`; the two new filter selects call `renderHandcuffTable()` on change,
+which re-filters and re-renders only the `#handcuffTableWrap` table — the stat strip/callouts/
+leaderboard above it intentionally still reflect *all* picks regardless of the table's filter state.
+
+Verified live in-browser: totals (47 total, 5 pending / 12 of 42 graded scored meaningfully / best=
+Bucky Irving 220.9 pts RB14 / worst=Jeremy McNichols 0.0 pts RB160) match a manual data check, year
+filter isolates the 5 pending 2026 picks, manager filter shows Goetz's 7 historical + 1 pending pick
+in one list, leaderboard segment widths sum correctly per manager, all other Draft History tabs
+still work, no console errors.
 
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
