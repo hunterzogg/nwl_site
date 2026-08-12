@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-08-11T14:08:55.658273+00:00",
+    "updated_at": "2026-08-12T14:10:03.866555+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -79,12 +79,12 @@
         "home_projected": 100.8,
         "away_manager": "Prodahl",
         "away_score": 0.0,
-        "away_projected": 95.5,
+        "away_projected": 96.8,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Larson",
-          "spread": 5.5,
-          "over_under": 196.5
+          "spread": 4.0,
+          "over_under": 197.5
         }
       }
     ]

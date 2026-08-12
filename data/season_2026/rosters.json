@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-11T14:08:56.598004+00:00",
+  "updated_at": "2026-08-12T14:10:04.629414+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.8,
@@ -683,15 +683,15 @@
           "is_starter": false
         },
         {
-          "espn_id": 4432775,
-          "name": "Dont'e Thornton Jr.",
-          "position": "WR",
-          "nfl_team": "LV",
+          "espn_id": 4429501,
+          "name": "Ray Davis",
+          "position": "RB",
+          "nfl_team": "BUF",
           "lineup_slot_id": 20,
-          "projected_total": 26.3,
+          "projected_total": 34.2,
           "actual_so_far": 0.0,
-          "ros_value": 26.3,
-          "vbd_value": -159.3,
+          "ros_value": 34.2,
+          "vbd_value": -151.3,
           "slot": "BEN",
           "is_starter": false
         }
@@ -2220,7 +2220,7 @@
           "name": "Jordyn Tyson",
           "position": "WR",
           "nfl_team": "NO",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 154.7,
           "actual_so_far": 0.0,
           "ros_value": 154.7,
@@ -2233,7 +2233,7 @@
           "name": "Kyle Monangai",
           "position": "RB",
           "nfl_team": "CHI",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 163.6,
           "actual_so_far": 0.0,
           "ros_value": 163.6,
@@ -2311,7 +2311,7 @@
           "name": "Bills Coach",
           "position": "HC",
           "nfl_team": "BUF",
-          "lineup_slot_id": 19,
+          "lineup_slot_id": 20,
           "projected_total": 15.1,
           "actual_so_far": 0.0,
           "ros_value": 15.1,
