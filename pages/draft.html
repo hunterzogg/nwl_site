@@ -146,6 +146,58 @@
 .wr-pick-list.good .wr-pick-pts { color: #4FA876; }
 .wr-pick-list.bad .wr-pick-pts { color: #E0524A; }
 @media (max-width: 640px) { .wr-pick-grid { grid-template-columns: 1fr; } }
+
+/* ---------- TE dual-metric timing blocks (hit rate + bust rate side by side) ---------- */
+.te-timing-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.te-timing-block { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.te-timing-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.te-timing-label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 700; font-size: 0.82rem; }
+.te-timing-n { font-family: var(--font-mono); color: var(--text-muted); font-size: 0.76rem; }
+.te-timing-metric { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.te-timing-metric:last-child { margin-bottom: 0; }
+.te-timing-metric-lbl { font-size: 0.72rem; width: 52px; flex-shrink: 0; }
+.te-timing-metric-lbl.hit { color: #4FA876; }
+.te-timing-metric-lbl.bust { color: #E0524A; }
+.te-timing-metric-pct { font-family: var(--font-mono); font-weight: 700; width: 30px; flex-shrink: 0; text-align: right; font-size: 0.82rem; }
+.te-timing-metric-pct.hit { color: #4FA876; }
+.te-timing-metric-pct.bust { color: #E0524A; }
+@media (max-width: 720px) { .te-timing-box { grid-template-columns: 1fr; } }
+
+/* ---------- When-by-manager (Early/Mid/Late draft-round mix) ---------- */
+.wm-row { display: grid; grid-template-columns: 100px 1fr 54px; align-items: center; gap: 12px; padding: 8px 0 10px; border-bottom: 1px solid var(--line); }
+.wm-row:last-child { border-bottom: none; }
+.wm-track { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--surface-raised); }
+.wm-seg { height: 100%; }
+.wm-seg.early { background: var(--blue-bright); }
+.wm-seg.mid { background: #8B6FE8; }
+.wm-seg.late { background: #7C8798; }
+.wm-seg + .wm-seg { box-shadow: -2px 0 0 var(--surface); }
+.wm-avg { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); text-align: right; }
+
+/* ---------- Stacked-bar segment tooltips: hover (desktop) or tap (touch), shared by every
+   stacked bar on this page (hc-lb-seg, wm-seg) via [data-tip]. ---------- */
+[data-tip] { position: relative; cursor: default; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 5px 9px;
+  font-size: 0.74rem;
+  font-family: var(--font-body);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, transform 0.12s;
+  z-index: 20;
+}
+[data-tip]:hover::after, [data-tip].tip-open::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -161,6 +213,7 @@
     <button class="tab-btn" data-tab="grades">Draft Grades</button>
     <button class="tab-btn" data-tab="handcuffs">Handcuffs</button>
     <button class="tab-btn" data-tab="latewr">Mid/Late WRs</button>
+    <button class="tab-btn" data-tab="te">TEs</button>
   </div>
 
   <div class="panel active" id="panel-board">
@@ -250,6 +303,13 @@
       Every WR drafted round 6 or later since 2013 - how often does a mid-to-late WR actually pay off, and is there a round range that does better than the rest?
     </p>
     <div id="latewrContent"></div>
+  </div>
+
+  <div class="panel" id="panel-te">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      Every TE drafted since 2013, early round through late - how much does draft slot actually matter at the position everyone says to punt on?
+    </p>
+    <div id="teContent"></div>
   </div>
 </div>
 
@@ -854,10 +914,10 @@ function handcuffLeaderboardHTML(events) {
       <div>${managerTag(managers, mgr)}</div>
       <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
         <div class="hc-lb-track">
-          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" title="${mgr}: ${v.hit} meaningful"></div>
-          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" title="${mgr}: ${v.marginal} marginal"></div>
-          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" title="${mgr}: ${v.bust} bust"></div>
-          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" title="${mgr}: ${v.pending} pending"></div>
+          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" data-tip="${v.hit} meaningful"></div>
+          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" data-tip="${v.marginal} marginal"></div>
+          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" data-tip="${v.bust} bust"></div>
+          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" data-tip="${v.pending} pending"></div>
         </div>
       </div>
       <div class="hc-lb-count">${v.total}</div>
@@ -1174,10 +1234,10 @@ function latewrLeaderboardHTML(events) {
       <div>${managerTag(managers, mgr)}</div>
       <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
         <div class="hc-lb-track">
-          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" title="${mgr}: ${v.hit} meaningful"></div>
-          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" title="${mgr}: ${v.marginal} marginal"></div>
-          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" title="${mgr}: ${v.bust} bust"></div>
-          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" title="${mgr}: ${v.pending} pending"></div>
+          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" data-tip="${v.hit} meaningful"></div>
+          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" data-tip="${v.marginal} marginal"></div>
+          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" data-tip="${v.bust} bust"></div>
+          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" data-tip="${v.pending} pending"></div>
         </div>
       </div>
       <div class="hc-lb-count">${v.total}</div>
@@ -1267,6 +1327,242 @@ function renderLatewr() {
   `;
 }
 
+// ---------- TEs tab ----------
+// Every TE pick, all rounds - unlike Handcuffs/Mid-Late WRs (which filter to a slice of the
+// position), this one covers the whole position since the question is specifically early vs. mid
+// vs. late. Outcome tiers are calibrated to TE scoring (a TE12/startable finish averages ~119
+// half-PPR pts in this league's history - much lower than WR/RB's comparable tiers).
+function teTier(pts) {
+  if (pts >= 120) return 'hit';
+  if (pts >= 60) return 'marginal';
+  return 'bust';
+}
+function teRoundBucket(round) {
+  if (round <= 5) return 'Early (Rd 1-5)';
+  if (round <= 10) return 'Mid (Rd 6-10)';
+  return 'Late (Rd 11-17)';
+}
+const TE_BUCKET_ORDER = ['Early (Rd 1-5)', 'Mid (Rd 6-10)', 'Late (Rd 11-17)'];
+// Aaron Hernandez (2015, Prodahl, Rd16, 0 pts) never played that season for reasons unrelated to
+// football (a real 2013 legal case, not a fantasy bust) - his 0 pts still counts in every
+// aggregate stat below (an honest data point), but he's excluded from the worst-picks spotlight
+// list specifically, since a "worst pick" ranking is the wrong frame for that outcome.
+const TE_WORST_LIST_EXCLUDE = new Set(['Aaron Hernandez']);
+
+function normalized2026TePicks() {
+  if (!draftGrades2026 || !draftGrades2026.managers) return [];
+  const out = [];
+  draftGrades2026.managers.forEach(m => {
+    m.picks.forEach(p => {
+      if (p.position !== 'TE') return;
+      out.push({ season: draftGrades2026.season, manager: m.manager, player: p.player, round: p.round });
+    });
+  });
+  return out;
+}
+
+function computeTeEvents() {
+  const gradeIdx = {};
+  draftGrades.forEach(g => { gradeIdx[`${g.season}|${g.manager}|${g.player}`] = g; });
+  const currentSeason = draftGrades2026 ? draftGrades2026.season : null;
+
+  const tePicks = picks.filter(p => p.position === 'TE').concat(normalized2026TePicks());
+
+  const events = [];
+  tePicks.forEach(p => {
+    const g = gradeIdx[`${p.season}|${p.manager}|${p.player}`];
+    if (!g && p.season !== currentSeason) return;
+    events.push({
+      season: p.season, manager: p.manager, player: p.player, round: p.round,
+      pts: g ? g.half_ppr_points : null, rank: g ? g.position_finish_rank : null,
+      tier: g ? teTier(g.half_ppr_points) : 'pending',
+    });
+  });
+  return events.sort((a, b) => b.season - a.season || a.manager.localeCompare(b.manager));
+}
+
+function teTimingHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const buckets = {};
+  graded.forEach(e => {
+    const b = teRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0, bust: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+    if (e.tier === 'bust') buckets[b].bust++;
+  });
+  const rows = TE_BUCKET_ORDER.filter(b => buckets[b]).map(b => ({
+    label: b, n: buckets[b].n, hitRate: buckets[b].hit / buckets[b].n, bustRate: buckets[b].bust / buckets[b].n,
+  }));
+  return `
+    <div class="te-timing-box">
+      ${rows.map(b => `
+        <div class="te-timing-block">
+          <div class="te-timing-head">
+            <span class="te-timing-label">${b.label}</span>
+            <span class="te-timing-n">n=${b.n}</span>
+          </div>
+          <div class="te-timing-metric">
+            <span class="te-timing-metric-lbl hit">Hit rate</span>
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;background:#4FA876;"></div></div>
+            <span class="te-timing-metric-pct hit">${Math.round(b.hitRate * 100)}%</span>
+          </div>
+          <div class="te-timing-metric">
+            <span class="te-timing-metric-lbl bust">Bust rate</span>
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.bustRate * 100}%;background:#E0524A;"></div></div>
+            <span class="te-timing-metric-pct bust">${Math.round(b.bustRate * 100)}%</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function teLeaderboardHTML(events) {
+  const byMgr = {};
+  events.forEach(e => {
+    byMgr[e.manager] = byMgr[e.manager] || { hit: 0, marginal: 0, bust: 0, pending: 0, total: 0 };
+    byMgr[e.manager][e.tier]++;
+    byMgr[e.manager].total++;
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => b[1].total - a[1].total || b[1].hit - a[1].hit);
+  const maxTotal = Math.max(...rows.map(([, v]) => v.total));
+  return rows.map(([mgr, v]) => `
+    <div class="hc-lb-row">
+      <div>${managerTag(managers, mgr)}</div>
+      <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
+        <div class="hc-lb-track">
+          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" data-tip="${v.hit} meaningful"></div>
+          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" data-tip="${v.marginal} marginal"></div>
+          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" data-tip="${v.bust} bust"></div>
+          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" data-tip="${v.pending} pending"></div>
+        </div>
+      </div>
+      <div class="hc-lb-count">${v.total}</div>
+    </div>
+  `).join('');
+}
+
+function teWhenManagerHTML(events) {
+  const byMgr = {};
+  events.forEach(e => {
+    byMgr[e.manager] = byMgr[e.manager] || { early: 0, mid: 0, late: 0, total: 0, roundSum: 0 };
+    const b = teRoundBucket(e.round);
+    if (b.startsWith('Early')) byMgr[e.manager].early++;
+    else if (b.startsWith('Mid')) byMgr[e.manager].mid++;
+    else byMgr[e.manager].late++;
+    byMgr[e.manager].total++;
+    byMgr[e.manager].roundSum += e.round;
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => (a[1].roundSum / a[1].total) - (b[1].roundSum / b[1].total));
+  const maxTotal = Math.max(...rows.map(([, v]) => v.total));
+  return rows.map(([mgr, v]) => `
+    <div class="wm-row">
+      <div>${managerTag(managers, mgr)}</div>
+      <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
+        <div class="wm-track">
+          <div class="wm-seg early" style="width:${v.early / v.total * 100}%;" data-tip="${v.early} early (Rd 1-5)"></div>
+          <div class="wm-seg mid" style="width:${v.mid / v.total * 100}%;" data-tip="${v.mid} mid (Rd 6-10)"></div>
+          <div class="wm-seg late" style="width:${v.late / v.total * 100}%;" data-tip="${v.late} late (Rd 11-17)"></div>
+        </div>
+      </div>
+      <div class="wm-avg">Rd ${(v.roundSum / v.total).toFixed(1)}</div>
+    </div>
+  `).join('');
+}
+
+function tePickRowHTML(e) {
+  return `
+    <div class="wr-pick-row">
+      <div class="wr-pick-body">
+        <div class="wr-pick-name">${e.player}</div>
+        <div class="wr-pick-sub">${managerTag(managers, e.manager)} &middot; ${e.season}, Round ${e.round} &middot; finished TE${e.rank}</div>
+      </div>
+      <div class="wr-pick-pts">${e.pts.toFixed(1)}</div>
+    </div>
+  `;
+}
+
+function teBestWorstHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const best = graded.slice().sort((a, b) => b.pts - a.pts).slice(0, 10);
+  const worst = graded.filter(e => !TE_WORST_LIST_EXCLUDE.has(e.player)).sort((a, b) => a.pts - b.pts).slice(0, 10);
+  return `
+    <div class="wr-pick-grid">
+      <div class="wr-pick-list good">${best.map(tePickRowHTML).join('')}</div>
+      <div class="wr-pick-list bad">${worst.map(tePickRowHTML).join('')}</div>
+    </div>
+  `;
+}
+
+function renderTe() {
+  const events = computeTeEvents();
+  if (!events.length) {
+    document.getElementById('teContent').innerHTML = `<p style="color:var(--text-muted);">No TE picks found.</p>`;
+    return;
+  }
+  const graded = events.filter(e => e.tier !== 'pending');
+  const pendingCount = events.length - graded.length;
+  const hits = graded.filter(e => e.tier === 'hit').length;
+  const avgRound = events.reduce((s, e) => s + e.round, 0) / events.length;
+  const buckets = {};
+  graded.forEach(e => {
+    const b = teRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+  });
+  const bestBucket = TE_BUCKET_ORDER.filter(b => buckets[b])
+    .map(b => ({ label: b, hitRate: buckets[b].hit / buckets[b].n }))
+    .reduce((a, b) => (b.hitRate > a.hitRate ? b : a));
+
+  document.getElementById('teContent').innerHTML = `
+    <div class="stat-strip">
+      <div class="stat"><div class="n">${events.length}</div><div class="l">TE picks, all-time${pendingCount ? ` (${pendingCount} pending)` : ''}</div></div>
+      <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length} (${Math.round(hits / graded.length * 100)}%)</span></div><div class="l">Scored meaningfully (120+ pts)</div></div>
+      <div class="stat"><div class="n">${avgRound.toFixed(1)}</div><div class="l">Avg round drafted</div></div>
+      <div class="stat"><div class="n">${Math.round(bestBucket.hitRate * 100)}<span class="unit">%</span></div><div class="l">Best hit rate: ${bestBucket.label}</div></div>
+    </div>
+
+    <div class="records-group-title">Early vs. Mid vs. Late</div>
+    ${teTimingHTML(events)}
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Hit rate = share scoring meaningfully (120+ pts); bust rate = share scoring under 60 pts - both out of that range's picks. Unlike Handcuffs/Mid-Late WRs, TE decays on both ends the whole way down the draft with no recovery - there's no bargain round the way there is at RB or WR.</p>
+
+    <div class="records-group-title">By Manager</div>
+    <div class="hc-legend">
+      <span><i class="hc-swatch hit"></i>Meaningful (120+ pts)</span>
+      <span><i class="hc-swatch marginal"></i>Marginal (60&ndash;119 pts)</span>
+      <span><i class="hc-swatch bust"></i>Bust (&lt;60 pts)</span>
+      ${pendingCount ? `<span><i class="hc-swatch pending"></i>Pending (${draftGrades2026.season} season not started)</span>` : ''}
+    </div>
+    ${teLeaderboardHTML(events)}
+
+    <div class="records-group-title">When Each Manager Drafts Their TE</div>
+    <div class="hc-legend">
+      <span><i class="hc-swatch" style="background:var(--blue-bright);"></i>Early (Rd 1-5)</span>
+      <span><i class="hc-swatch" style="background:#8B6FE8;"></i>Mid (Rd 6-10)</span>
+      <span><i class="hc-swatch" style="background:#7C8798;"></i>Late (Rd 11-17)</span>
+    </div>
+    <div class="hc-double-box">
+      ${teWhenManagerHTML(events)}
+    </div>
+
+    <div class="records-group-title">Best &amp; Worst Picks</div>
+    ${teBestWorstHTML(events)}
+
+    <div class="methodology" style="margin-top:20px;">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          <strong>Scope</strong> = every TE pick, all rounds, 2013-2025 (plus this year's, shown as Pending). <strong>Points</strong> is half-PPR points scored that regular season. <strong>Outcome tiers</strong> are calibrated to TE scoring specifically - a TE12/startable finish averages ~119 half-PPR pts in this league's history, much lower than WR/RB's comparable tiers. Meaningful is 120+ points, Marginal is 60-119, Bust is under 60.
+          <strong>Round buckets</strong>: Early (Rd 1-5), Mid (Rd 6-10), Late (Rd 11-17) - the natural three-way split the position's real draft distribution falls into.
+          One pick is excluded from the worst-picks list: a 2015 16th-round TE who never played that season for reasons unrelated to football. His 0 points are still counted in every stat above (an honest data point), just not spotlighted in a "worst pick" ranking, which isn't the right frame for that outcome.
+        </div>
+      </details>
+    </div>
+  `;
+}
+
 async function init() {
   const [draftSlots, regSeasons] = await Promise.all([loadData('draft_slots'), loadData('team_seasons_regular')]);
   window._draftSlots = draftSlots;
@@ -1316,6 +1612,7 @@ async function init() {
   draftGrades2026 = await loadDataSafe('season_2026/draft_grades_2026', null);
   renderHandcuffs();
   renderLatewr();
+  renderTe();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1326,6 +1623,15 @@ async function init() {
     });
   });
 }
+
+// Stacked-bar segment tooltips (Handcuffs/Mid-Late WRs/TEs' [data-tip] elements) show on hover
+// via CSS alone, but hover doesn't exist on touch - this delegate makes tap-to-toggle work too,
+// closing any other open tooltip first so only one shows at a time.
+document.addEventListener('click', (e) => {
+  const seg = e.target.closest('[data-tip]');
+  document.querySelectorAll('.tip-open').forEach(el => { if (el !== seg) el.classList.remove('tip-open'); });
+  if (seg) seg.classList.toggle('tip-open');
+});
 
 renderNav('draft');
 init();
