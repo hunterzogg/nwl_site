@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-12T14:10:04.629414+00:00",
+  "updated_at": "2026-08-13T16:42:01.890489+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.8,
@@ -167,14 +167,6 @@
         "vbd_value": -80.7
       },
       {
-        "espn_id": 2977187,
-        "name": "Cooper Kupp",
-        "position": "WR",
-        "nfl_team": "SEA",
-        "ros_value": 101.5,
-        "vbd_value": -84.1
-      },
-      {
         "espn_id": 4870612,
         "name": "Zachariah Branch",
         "position": "WR",
@@ -205,6 +197,14 @@
         "nfl_team": "DAL",
         "ros_value": 89.5,
         "vbd_value": -96.1
+      },
+      {
+        "espn_id": 4040655,
+        "name": "Darnell Mooney",
+        "position": "WR",
+        "nfl_team": "NYG",
+        "ros_value": 88.1,
+        "vbd_value": -97.5
       }
     ],
     "TE": [
@@ -1495,19 +1495,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4040655,
-          "name": "Darnell Mooney",
-          "position": "WR",
-          "nfl_team": "NYG",
-          "lineup_slot_id": 20,
-          "projected_total": 73.3,
-          "actual_so_far": 0.0,
-          "ros_value": 73.3,
-          "vbd_value": -112.3,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14030,
           "name": "Jaguars Coach",
           "position": "HC",
@@ -1519,6 +1506,19 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
+        },
+        {
+          "espn_id": 2977187,
+          "name": "Cooper Kupp",
+          "position": "WR",
+          "nfl_team": "SEA",
+          "lineup_slot_id": 20,
+          "projected_total": 82.6,
+          "actual_so_far": 0.0,
+          "ros_value": 82.6,
+          "vbd_value": -103.0,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
@@ -2713,19 +2713,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4696044,
-          "name": "Kaelon Black",
-          "position": "RB",
-          "nfl_team": "SF",
-          "lineup_slot_id": 20,
-          "projected_total": 26.9,
-          "actual_so_far": 0.0,
-          "ros_value": 26.9,
-          "vbd_value": -158.6,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14024,
           "name": "Chargers Coach",
           "position": "HC",
@@ -2748,6 +2735,19 @@
           "actual_so_far": 0.0,
           "ros_value": 58.6,
           "vbd_value": -126.9,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4428850,
+          "name": "Dontayvion Wicks",
+          "position": "WR",
+          "nfl_team": "PHI",
+          "lineup_slot_id": 20,
+          "projected_total": 53.5,
+          "actual_so_far": 0.0,
+          "ros_value": 53.5,
+          "vbd_value": -132.1,
           "slot": "BEN",
           "is_starter": false
         }
