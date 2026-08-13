@@ -147,14 +147,16 @@ SVG scatter grid of every unique winning × losing score combo in league history
 Per-team-season rankings (not career averages). Regular season and playoffs in separate tabs. Three sort toggles: Adjusted PPG, Raw PPG, and Opponent PPG (Regular Season tab only — no opponent-PPG source data for playoffs). Each row shows only the PPG metric currently being sorted by (not all of Adj/Raw/Opp at once — switch the sort to see a different one), plus rank/manager/season; the Games-played column was removed entirely as of this session (it wasn't part of any ranking anyway). Playoffs tab has a "Reg. Rank − Playoff Rank" column (fixed rank, unaffected by the current filter/sort) — green when the playoff rank beat the regular-season rank, red when it didn't. Manager filter + season filter on each tab. Rank column always shows the manager-season's true rank against the full unfiltered population, not a re-rank of the filtered subset. Both tables switch to stacked cards on mobile (see Design System → Responsive tables).
 
 ### draft.html ✅
-All six tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
-Six tabs:
+All eight tabs' tables switch to stacked cards on mobile (see Design System → Responsive tables).
+Eight tabs:
 - **Draft Board**: filterable by season, manager, position, NFL team, player name search. NFL teams capitalized. Positions color-coded.
 - **Round 1-3 Strategy**: filterable by manager and year (defaults to most recent). Shows finish column for each season. Summary table of strategy effectiveness (uses, avg finish, championships, sackos). Position combos shown as e.g. `RB/RB/WR` (not `RB - RB - WR`) so they fit on one line.
 - **Draft Slot Analysis**: avg PPG, avg finish, championships, sackos by draft position. Sourced from Mgr Summary A84 (authoritative). Best avg PPG highlighted green, worst highlighted red.
 - **Draft Grades**: every QB/RB/WR/TE pick since 2013 graded — see `scripts/build_draft_grades.py` docstring for the raw-data half of the methodology (nflverse half-PPR sourcing, name-matching, position draft rank vs. finish rank). The letter grade itself blends two equally-weighted, z-scored signals computed client-side in `draft.html`: **value** (normalized diff between position draft rank and position finish rank — e.g. the 3rd WR taken in our draft is WR3, compared against where that player actually finished league-wide that season by half-PPR points) and **production** (that player's raw finish percentile at the position that season, regardless of draft slot — added so a pick like "drafted RB1, finished RB3" grades well instead of mediocre just because of a small negative rank diff; a top-3 RB season is exactly what an RB1 pick is for). Both signals are z-scored across all picks before blending so they carry comparable weight, then the blended composite is curved into a percentile-based letter grade (A+ through F) — a "Value Score" (0–100, the percentile) is shown instead of the raw composite since the raw number is systematically negative for everyone (our draft pool is much smaller than the full NFL positional pool, a scale artifact, not a bug). The methodology box on the page is collapsed to a two-sentence summary by default with a "Show full methodology" `<details>` toggle for the rest. Manager Draft Rankings leaderboard at the top, ranked by overall Value Score, each row expandable (click) to show that manager's season-by-season grades with a grade-distribution chip row (e.g. `5A 4B 3C 1D`) explaining how the seasons rolled up — each season row is itself expandable inline to a "how you got this grade" line (picks graded → grade mix → Value Score → letter grade) plus the full pick-by-pick table. "Every Draft, Graded" below is a flat table of the same manager-seasons (no manager filter — the leaderboard above already serves that), defaults to the most recent season, sorted descending by Value Score; clicking a row expands the identical pick-by-pick breakdown inline directly beneath that row (not in a separate section). About 1.4% of picks had no matching stat line that season (real season-ending injuries/suspensions/holdouts, verified by hand) and are correctly scored as full busts.
 - **Handcuffs** (added new session, see below).
 - **Mid/Late WRs** (added new session, see below).
+- **TE Analysis** (added new session, see below; tab originally shipped as "TEs", renamed per follow-up feedback).
+- **QB Analysis** (added new session, see below).
 
 **Handcuffs tab (added new session)** — started as a one-off analysis requested outside the site
 (published as a standalone Artifact first, then explicitly asked to be added as a live tab). Shows
@@ -299,6 +301,74 @@ shows a percentage alongside the raw fraction (e.g. "165/557 (30%)"), not just t
 Verified live in-browser: 600 total WR picks (557 graded + 43 pending) matches a manual recompute,
 timing bars/leaderboard/best-worst list all render, no regressions on the other five Draft History
 tabs, no console errors.
+
+**TE Analysis and QB Analysis tabs (added new session)** — same origin story again: each started as
+a standalone Artifact ("do some analysis on the entire tight end position... draw conclusions of
+when the best time to draft one is... break down by manager in the same way as the mid/late WRs and
+handcuff RB analyses"), then added as live tabs. Unlike Handcuffs/Mid-Late WRs (which filter to a
+slice of the position - handcuff picks only, round 6+ only), these two cover the **whole position,
+all rounds**, since the question is specifically early vs. mid vs. late.
+
+Structure (`computeTeEvents()`/`computeQbEvents()`, both following the same
+`normalized2026{Position}Picks()` + grade-join pattern as Handcuffs/Mid-Late WRs):
+- Stat strip (4 tiles, same pattern as the other tabs).
+- **"Early vs. Mid vs. Late"** - a new dual-metric layout (`te-timing-box`/`te-timing-block`, reused
+  identically for QB) showing BOTH hit rate and bust rate side by side per round range, added per
+  explicit feedback after an earlier single-hit-rate-only version - TE's hit rate declines steadily
+  with no recovery (70% → 36% → 30%) while bust rate climbs in lockstep (8% → 14% → 24%), a pattern
+  the single-metric version couldn't show. Round buckets are Early (Rd 1-5) / Mid (Rd 6-10) / Late
+  (Rd 11-17) for both positions, for direct comparability.
+- The usual outcome leaderboard by manager (`teLeaderboardHTML()`/`qbLeaderboardHTML()`, identical
+  shape to Handcuffs/Mid-Late WRs' - reuses `hc-lb-*` CSS).
+- **New: "When Each Manager Drafts Their {Position}"** (`teWhenManagerHTML()`/`qbWhenManagerHTML()`,
+  new `wm-*` CSS) - a *second* stacked bar per manager, this one showing the Early/Mid/Late mix of
+  *when* they draft the position (not outcome tiers), sorted by average round drafted. Added per
+  explicit follow-up request ("I also want to know when each manager drafts TEs by the range
+  buckets"). Real finding: Glaser has never once drafted an early TE in 13 years (0 of 21 picks in
+  Rd 1-5) - latest average round in the league (11.4) and a below-average hit rate to show for it.
+- Best & Worst Picks list (top 10 each way), same `wr-pick-*` CSS/shape as Mid-Late WRs.
+
+**Outcome tiers are calibrated per-position**, not shared with Handcuffs/Mid-Late WRs' cutoffs -
+each position scores on a genuinely different scale at a comparable draft-relevance tier: TE uses
+120/60 (a TE12/startable finish averages ~119 half-PPR pts historically), QB uses 270/150 (this is a
+**single-QB league**, so QB12 - literally every team's own starter - is the natural bar, averaging
+~272 pts, far higher than any other position). QB finding: Early (60% hit) and Mid (52%) are close
+with the same 12% bust rate - a real but not dramatic edge to going early; Late falls off on both
+ends (33% hit, 22% bust), closer to TE's pattern than the flatter Mid/Late-WR one.
+
+**A judgment call on TE's worst-picks list**: the actual statistical minimum is a 2015 16th-round
+TE (Aaron Hernandez) who never played that season for reasons unrelated to football - a real 2013
+legal case, not a fantasy bust. His 0 points still count in every aggregate stat (an honest data
+point, `TE_WORST_LIST_EXCLUDE` only filters the spotlight list), but he's excluded from the
+worst-picks ranking specifically, since a lighthearted "worst pick" frame is the wrong one for that
+outcome regardless of how neutrally it's worded. No equivalent exclusion was needed for QB - its
+statistical worst picks (Andrew Luck's 0-pt 2017 season, etc.) are all normal football outcomes
+(injuries, benchings) with no sensitivity concern.
+
+**A real bug found and fixed the same session: stacked-bar tooltips were invisible.** Every stacked
+bar on the page (`hc-lb-seg`, `wm-seg`) already carried a `title` attribute for a native hover
+tooltip; per explicit request ("introduce a hover/click functionality... to see what the quantity
+for each bar is") this was upgraded to a custom `[data-tip]` CSS pattern (hover shows it on desktop,
+a global `click` delegate toggles a `.tip-open` class for touch/tap) - added once, shared by every
+tab. The first pass shipped with the tooltip completely invisible: `.hc-lb-track`/`.wm-track` (the
+bar background) had `overflow: hidden`, needed to clip the colored fill segments to the track's
+rounded corners - but the tooltip's `::after` pops up *above* the segment, entirely outside the
+14-16px-tall track's box, so `overflow: hidden` clipped it to nothing regardless of hover/click
+state. The initial verification pass only checked computed style/CSS specificity in isolation,
+which doesn't account for ancestor clipping - the actual gap, caught when the user reported "the
+hover is not working" against the real page. Fixed by removing `overflow: hidden` from both tracks
+and replacing the rounded-corner effect with `:first-child`/`:last-child` `border-radius` on the
+segments themselves, so the corner styling survives without clipping content that intentionally
+renders outside the track. Re-verified visually this time (a real screenshot showing the tooltip
+rendered), not just computed-style checks.
+
+**Also renamed** per explicit request: the TE tab's label went from "TEs" to "TE Analysis" (the new
+QB tab shipped directly as "QB Analysis") - Handcuffs and Mid/Late WRs' labels were left as-is,
+only the two whole-position analysis tabs were renamed.
+
+Verified live in-browser: tooltip visibility confirmed via screenshot after the fix, 260 total TE
+picks (241 graded + 19 pending) and 265 total QB picks (248 graded + 17 pending) both match manual
+recomputes, correct tab labels, no regressions on the other six tabs, no console errors.
 
 ### transactions.html ✅
 Log, Trade Database, and Summary tables switch to stacked cards on mobile (see Design System → Responsive tables) — trade cards show both sides of the deal as separate lines since a trade doesn't compress to one line.
