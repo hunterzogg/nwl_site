@@ -95,13 +95,15 @@
 
 .hc-lb-row { display: grid; grid-template-columns: 110px 1fr 26px; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .hc-lb-row:last-child { border-bottom: none; }
-.hc-lb-track { display: flex; height: 14px; border-radius: 4px; overflow: hidden; background: var(--surface-raised); }
+.hc-lb-track { display: flex; height: 14px; border-radius: 4px; background: var(--surface-raised); }
 .hc-lb-seg { height: 100%; }
 .hc-lb-seg.hit { background: #4FA876; }
 .hc-lb-seg.marginal { background: #D9B23C; }
 .hc-lb-seg.bust { background: #E0524A; }
 .hc-lb-seg.pending { background: #7C8798; }
 .hc-lb-seg + .hc-lb-seg { box-shadow: -2px 0 0 var(--surface); }
+.hc-lb-seg:first-child { border-radius: 4px 0 0 4px; }
+.hc-lb-seg:last-child { border-radius: 0 4px 4px 0; }
 .hc-lb-count { font-family: var(--font-mono); font-size: 0.84rem; color: var(--text-muted); text-align: right; }
 
 .hc-pill { display: inline-flex; align-items: center; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.66rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
@@ -166,12 +168,14 @@
 /* ---------- When-by-manager (Early/Mid/Late draft-round mix) ---------- */
 .wm-row { display: grid; grid-template-columns: 100px 1fr 54px; align-items: center; gap: 12px; padding: 8px 0 10px; border-bottom: 1px solid var(--line); }
 .wm-row:last-child { border-bottom: none; }
-.wm-track { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--surface-raised); }
+.wm-track { display: flex; height: 16px; border-radius: 4px; background: var(--surface-raised); }
 .wm-seg { height: 100%; }
 .wm-seg.early { background: var(--blue-bright); }
 .wm-seg.mid { background: #8B6FE8; }
 .wm-seg.late { background: #7C8798; }
 .wm-seg + .wm-seg { box-shadow: -2px 0 0 var(--surface); }
+.wm-seg:first-child { border-radius: 4px 0 0 4px; }
+.wm-seg:last-child { border-radius: 0 4px 4px 0; }
 .wm-avg { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); text-align: right; }
 
 /* ---------- Stacked-bar segment tooltips: hover (desktop) or tap (touch), shared by every
@@ -213,7 +217,8 @@
     <button class="tab-btn" data-tab="grades">Draft Grades</button>
     <button class="tab-btn" data-tab="handcuffs">Handcuffs</button>
     <button class="tab-btn" data-tab="latewr">Mid/Late WRs</button>
-    <button class="tab-btn" data-tab="te">TEs</button>
+    <button class="tab-btn" data-tab="te">TE Analysis</button>
+    <button class="tab-btn" data-tab="qb">QB Analysis</button>
   </div>
 
   <div class="panel active" id="panel-board">
@@ -310,6 +315,13 @@
       Every TE drafted since 2013, early round through late - how much does draft slot actually matter at the position everyone says to punt on?
     </p>
     <div id="teContent"></div>
+  </div>
+
+  <div class="panel" id="panel-qb">
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      Every QB drafted since 2013, early round through late - in a single-QB league, is it worth reaching, or does waiting cost you nothing?
+    </p>
+    <div id="qbContent"></div>
   </div>
 </div>
 
@@ -1563,6 +1575,236 @@ function renderTe() {
   `;
 }
 
+// ---------- QB Analysis tab ----------
+// Every QB pick, all rounds - same shape as TE Analysis. Outcome tiers calibrated to QB scoring
+// (this league is single-QB, so QB12 is literally "every team's starter" - the natural
+// meaningful bar - and averages ~272 half-PPR pts in this league's history, far higher than any
+// other position's comparable tier).
+function qbTier(pts) {
+  if (pts >= 270) return 'hit';
+  if (pts >= 150) return 'marginal';
+  return 'bust';
+}
+function qbRoundBucket(round) {
+  if (round <= 5) return 'Early (Rd 1-5)';
+  if (round <= 10) return 'Mid (Rd 6-10)';
+  return 'Late (Rd 11-17)';
+}
+const QB_BUCKET_ORDER = ['Early (Rd 1-5)', 'Mid (Rd 6-10)', 'Late (Rd 11-17)'];
+
+function normalized2026QbPicks() {
+  if (!draftGrades2026 || !draftGrades2026.managers) return [];
+  const out = [];
+  draftGrades2026.managers.forEach(m => {
+    m.picks.forEach(p => {
+      if (p.position !== 'QB') return;
+      out.push({ season: draftGrades2026.season, manager: m.manager, player: p.player, round: p.round });
+    });
+  });
+  return out;
+}
+
+function computeQbEvents() {
+  const gradeIdx = {};
+  draftGrades.forEach(g => { gradeIdx[`${g.season}|${g.manager}|${g.player}`] = g; });
+  const currentSeason = draftGrades2026 ? draftGrades2026.season : null;
+
+  const qbPicks = picks.filter(p => p.position === 'QB').concat(normalized2026QbPicks());
+
+  const events = [];
+  qbPicks.forEach(p => {
+    const g = gradeIdx[`${p.season}|${p.manager}|${p.player}`];
+    if (!g && p.season !== currentSeason) return;
+    events.push({
+      season: p.season, manager: p.manager, player: p.player, round: p.round,
+      pts: g ? g.half_ppr_points : null, rank: g ? g.position_finish_rank : null,
+      tier: g ? qbTier(g.half_ppr_points) : 'pending',
+    });
+  });
+  return events.sort((a, b) => b.season - a.season || a.manager.localeCompare(b.manager));
+}
+
+function qbTimingHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const buckets = {};
+  graded.forEach(e => {
+    const b = qbRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0, bust: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+    if (e.tier === 'bust') buckets[b].bust++;
+  });
+  const rows = QB_BUCKET_ORDER.filter(b => buckets[b]).map(b => ({
+    label: b, n: buckets[b].n, hitRate: buckets[b].hit / buckets[b].n, bustRate: buckets[b].bust / buckets[b].n,
+  }));
+  return `
+    <div class="te-timing-box">
+      ${rows.map(b => `
+        <div class="te-timing-block">
+          <div class="te-timing-head">
+            <span class="te-timing-label">${b.label}</span>
+            <span class="te-timing-n">n=${b.n}</span>
+          </div>
+          <div class="te-timing-metric">
+            <span class="te-timing-metric-lbl hit">Hit rate</span>
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.hitRate * 100}%;background:#4FA876;"></div></div>
+            <span class="te-timing-metric-pct hit">${Math.round(b.hitRate * 100)}%</span>
+          </div>
+          <div class="te-timing-metric">
+            <span class="te-timing-metric-lbl bust">Bust rate</span>
+            <div class="hc-timing-track"><div class="hc-timing-fill" style="width:${b.bustRate * 100}%;background:#E0524A;"></div></div>
+            <span class="te-timing-metric-pct bust">${Math.round(b.bustRate * 100)}%</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function qbLeaderboardHTML(events) {
+  const byMgr = {};
+  events.forEach(e => {
+    byMgr[e.manager] = byMgr[e.manager] || { hit: 0, marginal: 0, bust: 0, pending: 0, total: 0 };
+    byMgr[e.manager][e.tier]++;
+    byMgr[e.manager].total++;
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => b[1].total - a[1].total || b[1].hit - a[1].hit);
+  const maxTotal = Math.max(...rows.map(([, v]) => v.total));
+  return rows.map(([mgr, v]) => `
+    <div class="hc-lb-row">
+      <div>${managerTag(managers, mgr)}</div>
+      <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
+        <div class="hc-lb-track">
+          <div class="hc-lb-seg hit" style="width:${v.hit / v.total * 100}%;" data-tip="${v.hit} meaningful"></div>
+          <div class="hc-lb-seg marginal" style="width:${v.marginal / v.total * 100}%;" data-tip="${v.marginal} marginal"></div>
+          <div class="hc-lb-seg bust" style="width:${v.bust / v.total * 100}%;" data-tip="${v.bust} bust"></div>
+          <div class="hc-lb-seg pending" style="width:${v.pending / v.total * 100}%;" data-tip="${v.pending} pending"></div>
+        </div>
+      </div>
+      <div class="hc-lb-count">${v.total}</div>
+    </div>
+  `).join('');
+}
+
+function qbWhenManagerHTML(events) {
+  const byMgr = {};
+  events.forEach(e => {
+    byMgr[e.manager] = byMgr[e.manager] || { early: 0, mid: 0, late: 0, total: 0, roundSum: 0 };
+    const b = qbRoundBucket(e.round);
+    if (b.startsWith('Early')) byMgr[e.manager].early++;
+    else if (b.startsWith('Mid')) byMgr[e.manager].mid++;
+    else byMgr[e.manager].late++;
+    byMgr[e.manager].total++;
+    byMgr[e.manager].roundSum += e.round;
+  });
+  const rows = Object.entries(byMgr).sort((a, b) => (a[1].roundSum / a[1].total) - (b[1].roundSum / b[1].total));
+  const maxTotal = Math.max(...rows.map(([, v]) => v.total));
+  return rows.map(([mgr, v]) => `
+    <div class="wm-row">
+      <div>${managerTag(managers, mgr)}</div>
+      <div style="width:${v.total / maxTotal * 100}%; min-width:60px;">
+        <div class="wm-track">
+          <div class="wm-seg early" style="width:${v.early / v.total * 100}%;" data-tip="${v.early} early (Rd 1-5)"></div>
+          <div class="wm-seg mid" style="width:${v.mid / v.total * 100}%;" data-tip="${v.mid} mid (Rd 6-10)"></div>
+          <div class="wm-seg late" style="width:${v.late / v.total * 100}%;" data-tip="${v.late} late (Rd 11-17)"></div>
+        </div>
+      </div>
+      <div class="wm-avg">Rd ${(v.roundSum / v.total).toFixed(1)}</div>
+    </div>
+  `).join('');
+}
+
+function qbPickRowHTML(e) {
+  return `
+    <div class="wr-pick-row">
+      <div class="wr-pick-body">
+        <div class="wr-pick-name">${e.player}</div>
+        <div class="wr-pick-sub">${managerTag(managers, e.manager)} &middot; ${e.season}, Round ${e.round} &middot; finished QB${e.rank}</div>
+      </div>
+      <div class="wr-pick-pts">${e.pts.toFixed(1)}</div>
+    </div>
+  `;
+}
+
+function qbBestWorstHTML(events) {
+  const graded = events.filter(e => e.tier !== 'pending');
+  const best = graded.slice().sort((a, b) => b.pts - a.pts).slice(0, 10);
+  const worst = graded.slice().sort((a, b) => a.pts - b.pts).slice(0, 10);
+  return `
+    <div class="wr-pick-grid">
+      <div class="wr-pick-list good">${best.map(qbPickRowHTML).join('')}</div>
+      <div class="wr-pick-list bad">${worst.map(qbPickRowHTML).join('')}</div>
+    </div>
+  `;
+}
+
+function renderQb() {
+  const events = computeQbEvents();
+  if (!events.length) {
+    document.getElementById('qbContent').innerHTML = `<p style="color:var(--text-muted);">No QB picks found.</p>`;
+    return;
+  }
+  const graded = events.filter(e => e.tier !== 'pending');
+  const pendingCount = events.length - graded.length;
+  const hits = graded.filter(e => e.tier === 'hit').length;
+  const avgRound = events.reduce((s, e) => s + e.round, 0) / events.length;
+  const buckets = {};
+  graded.forEach(e => {
+    const b = qbRoundBucket(e.round);
+    buckets[b] = buckets[b] || { n: 0, hit: 0 };
+    buckets[b].n++;
+    if (e.tier === 'hit') buckets[b].hit++;
+  });
+  const bestBucket = QB_BUCKET_ORDER.filter(b => buckets[b])
+    .map(b => ({ label: b, hitRate: buckets[b].hit / buckets[b].n }))
+    .reduce((a, b) => (b.hitRate > a.hitRate ? b : a));
+
+  document.getElementById('qbContent').innerHTML = `
+    <div class="stat-strip">
+      <div class="stat"><div class="n">${events.length}</div><div class="l">QB picks, all-time${pendingCount ? ` (${pendingCount} pending)` : ''}</div></div>
+      <div class="stat"><div class="n">${hits}<span class="unit">/ ${graded.length} (${Math.round(hits / graded.length * 100)}%)</span></div><div class="l">Scored meaningfully (270+ pts)</div></div>
+      <div class="stat"><div class="n">${avgRound.toFixed(1)}</div><div class="l">Avg round drafted</div></div>
+      <div class="stat"><div class="n">${Math.round(bestBucket.hitRate * 100)}<span class="unit">%</span></div><div class="l">Best hit rate: ${bestBucket.label}</div></div>
+    </div>
+
+    <div class="records-group-title">Early vs. Mid vs. Late</div>
+    ${qbTimingHTML(events)}
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:8px;">Hit rate = share scoring meaningfully (270+ pts, roughly a startable QB1 in this single-QB league); bust rate = share scoring under 150 pts - both out of that range's picks. Early and Mid are close (60% vs. 52% hit rate) with the same low bust rate (12%) - real edge exists in Rd 1-5, but it's not dramatic. Late falls off on both ends (33% hit, 22% bust) - closer to the TE pattern than the flatter Mid/Late-WR one.</p>
+
+    <div class="records-group-title">By Manager</div>
+    <div class="hc-legend">
+      <span><i class="hc-swatch hit"></i>Meaningful (270+ pts)</span>
+      <span><i class="hc-swatch marginal"></i>Marginal (150&ndash;269 pts)</span>
+      <span><i class="hc-swatch bust"></i>Bust (&lt;150 pts)</span>
+      ${pendingCount ? `<span><i class="hc-swatch pending"></i>Pending (${draftGrades2026.season} season not started)</span>` : ''}
+    </div>
+    ${qbLeaderboardHTML(events)}
+
+    <div class="records-group-title">When Each Manager Drafts Their QB</div>
+    <div class="hc-legend">
+      <span><i class="hc-swatch" style="background:var(--blue-bright);"></i>Early (Rd 1-5)</span>
+      <span><i class="hc-swatch" style="background:#8B6FE8;"></i>Mid (Rd 6-10)</span>
+      <span><i class="hc-swatch" style="background:#7C8798;"></i>Late (Rd 11-17)</span>
+    </div>
+    <div class="hc-double-box">
+      ${qbWhenManagerHTML(events)}
+    </div>
+
+    <div class="records-group-title">Best &amp; Worst Picks</div>
+    ${qbBestWorstHTML(events)}
+
+    <div class="methodology" style="margin-top:20px;">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top:8px;">
+          <strong>Scope</strong> = every QB pick, all rounds, 2013-2025 (plus this year's, shown as Pending). <strong>Points</strong> is half-PPR points scored that regular season. <strong>Outcome tiers</strong> are calibrated to QB scoring specifically - this is a single-QB league, so QB12 (literally every team's starter) is the natural meaningful bar, averaging ~272 half-PPR pts in this league's history - far higher than any other position's comparable tier. Meaningful is 270+ points, Marginal is 150-269, Bust is under 150.
+          <strong>Round buckets</strong>: Early (Rd 1-5), Mid (Rd 6-10), Late (Rd 11-17) - the same split used for TE Analysis, for comparability.
+        </div>
+      </details>
+    </div>
+  `;
+}
+
 async function init() {
   const [draftSlots, regSeasons] = await Promise.all([loadData('draft_slots'), loadData('team_seasons_regular')]);
   window._draftSlots = draftSlots;
@@ -1613,6 +1855,7 @@ async function init() {
   renderHandcuffs();
   renderLatewr();
   renderTe();
+  renderQb();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
