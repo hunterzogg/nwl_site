@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-08-18T04:18:54.368157+00:00",
+    "updated_at": "2026-08-18T13:33:36.993083+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -48,14 +48,14 @@
       {
         "home_manager": "Muenchow",
         "home_score": 0.0,
-        "home_projected": 105.0,
+        "home_projected": 105.1,
         "away_manager": "Pfaffinger",
         "away_score": 0.0,
         "away_projected": 101.8,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Muenchow",
-          "spread": 3.0,
+          "spread": 3.5,
           "over_under": 207.0
         }
       },
@@ -76,15 +76,15 @@
       {
         "home_manager": "Larson",
         "home_score": 0.0,
-        "home_projected": 100.4,
+        "home_projected": 99.6,
         "away_manager": "Prodahl",
         "away_score": 0.0,
         "away_projected": 96.0,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Larson",
-          "spread": 4.5,
-          "over_under": 196.5
+          "spread": 3.5,
+          "over_under": 195.5
         }
       }
     ]
