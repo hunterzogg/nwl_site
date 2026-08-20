@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-08-19T13:34:35.977106+00:00",
+    "updated_at": "2026-08-20T16:18:59.667365+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -9,11 +9,11 @@
         "home_projected": 101.2,
         "away_manager": "Stover",
         "away_score": 0.0,
-        "away_projected": 102.0,
+        "away_projected": 101.9,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Stover",
-          "spread": 1.0,
+          "spread": 0.5,
           "over_under": 203.0
         }
       },
@@ -23,11 +23,11 @@
         "home_projected": 96.2,
         "away_manager": "Glaser",
         "away_score": 0.0,
-        "away_projected": 101.5,
+        "away_projected": 101.3,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Glaser",
-          "spread": 5.5,
+          "spread": 5.0,
           "over_under": 197.5
         }
       },
@@ -79,12 +79,12 @@
         "home_projected": 99.6,
         "away_manager": "Prodahl",
         "away_score": 0.0,
-        "away_projected": 96.0,
+        "away_projected": 97.5,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Larson",
-          "spread": 3.5,
-          "over_under": 195.5
+          "spread": 2.0,
+          "over_under": 197.0
         }
       }
     ]
