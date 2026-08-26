@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-25T13:38:22.258484+00:00",
+  "updated_at": "2026-08-26T13:43:11.121689+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.8,
@@ -11,20 +11,20 @@
   "free_agents": {
     "QB": [
       {
-        "espn_id": 3046779,
-        "name": "Jared Goff",
-        "position": "QB",
-        "nfl_team": "DET",
-        "ros_value": 268.5,
-        "vbd_value": -5.5
-      },
-      {
         "espn_id": 3917792,
         "name": "Daniel Jones",
         "position": "QB",
         "nfl_team": "IND",
         "ros_value": 267.2,
         "vbd_value": -5.9
+      },
+      {
+        "espn_id": 4360689,
+        "name": "Tyler Shough",
+        "position": "QB",
+        "nfl_team": "NO",
+        "ros_value": 266.0,
+        "vbd_value": -6.2
       },
       {
         "espn_id": 3052587,
@@ -1901,19 +1901,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4360689,
-          "name": "Tyler Shough",
-          "position": "QB",
-          "nfl_team": "NO",
-          "lineup_slot_id": 20,
-          "projected_total": 266.0,
-          "actual_so_far": 0.0,
-          "ros_value": 266.0,
-          "vbd_value": -6.2,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14003,
           "name": "Bears Coach",
           "position": "HC",
@@ -1925,6 +1912,19 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
+        },
+        {
+          "espn_id": 3046779,
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "lineup_slot_id": 20,
+          "projected_total": 268.5,
+          "actual_so_far": 0.0,
+          "ros_value": 268.5,
+          "vbd_value": -5.5,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
