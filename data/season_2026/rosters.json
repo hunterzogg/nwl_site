@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-28T15:31:59.318143+00:00",
+  "updated_at": "2026-08-28T22:44:55.895459+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.9,
@@ -209,6 +209,14 @@
     ],
     "TE": [
       {
+        "espn_id": 4036133,
+        "name": "T.J. Hockenson",
+        "position": "TE",
+        "nfl_team": "MIN",
+        "ros_value": 158.2,
+        "vbd_value": 2.1
+      },
+      {
         "espn_id": 5083315,
         "name": "Kenyon Sadiq",
         "position": "TE",
@@ -239,14 +247,6 @@
         "nfl_team": "PIT",
         "ros_value": 136.4,
         "vbd_value": -14.2
-      },
-      {
-        "espn_id": 4570037,
-        "name": "Terrance Ferguson",
-        "position": "TE",
-        "nfl_team": "LAR",
-        "ros_value": 135.8,
-        "vbd_value": -14.7
       },
       {
         "espn_id": 4686728,
@@ -2104,19 +2104,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4036133,
-          "name": "T.J. Hockenson",
-          "position": "TE",
-          "nfl_team": "MIN",
-          "lineup_slot_id": 20,
-          "projected_total": 119.4,
-          "actual_so_far": 0.0,
-          "ros_value": 119.4,
-          "vbd_value": -27.0,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14012,
           "name": "Chiefs Coach",
           "position": "HC",
@@ -2128,6 +2115,19 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
+        },
+        {
+          "espn_id": 4570037,
+          "name": "Terrance Ferguson",
+          "position": "TE",
+          "nfl_team": "LAR",
+          "lineup_slot_id": 20,
+          "projected_total": 112.8,
+          "actual_so_far": 0.0,
+          "ros_value": 112.8,
+          "vbd_value": -32.0,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
