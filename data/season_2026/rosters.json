@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-28T22:44:55.895459+00:00",
+  "updated_at": "2026-08-29T16:53:49.922332+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.9,
@@ -1729,7 +1729,7 @@
       "manager": "Palaia",
       "division": "Silver",
       "espn_team_id": 7,
-      "roster_size": 15,
+      "roster_size": 16,
       "players": [
         {
           "espn_id": 4430807,
@@ -1866,7 +1866,7 @@
           "name": "Tyrone Tracy Jr.",
           "position": "RB",
           "nfl_team": "NYG",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 34.9,
           "actual_so_far": 0.0,
           "ros_value": 34.9,
@@ -1923,6 +1923,19 @@
           "actual_so_far": 0.0,
           "ros_value": 268.5,
           "vbd_value": -5.5,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4682648,
+          "name": "Malachi Fields",
+          "position": "WR",
+          "nfl_team": "NYG",
+          "lineup_slot_id": 20,
+          "projected_total": 55.4,
+          "actual_so_far": 0.0,
+          "ros_value": 55.4,
+          "vbd_value": -126.6,
           "slot": "BEN",
           "is_starter": false
         }
