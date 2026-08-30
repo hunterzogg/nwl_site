@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-30T17:13:38.190533+00:00",
+  "updated_at": "2026-08-30T22:42:33.795741+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.9,
@@ -151,14 +151,6 @@
         "vbd_value": -46.6
       },
       {
-        "espn_id": 4569559,
-        "name": "Devaughn Vele",
-        "position": "WR",
-        "nfl_team": "NO",
-        "ros_value": 123.8,
-        "vbd_value": -58.2
-      },
-      {
         "espn_id": 4360939,
         "name": "Rashod Bateman",
         "position": "WR",
@@ -171,6 +163,14 @@
         "name": "Caleb Douglas",
         "position": "WR",
         "nfl_team": "MIA",
+        "ros_value": 114.6,
+        "vbd_value": -67.4
+      },
+      {
+        "espn_id": 3886598,
+        "name": "Jauan Jennings",
+        "position": "WR",
+        "nfl_team": "MIN",
         "ros_value": 114.6,
         "vbd_value": -67.4
       },
@@ -191,20 +191,20 @@
         "vbd_value": -78.3
       },
       {
+        "espn_id": 2977187,
+        "name": "Cooper Kupp",
+        "position": "WR",
+        "nfl_team": "SEA",
+        "ros_value": 101.5,
+        "vbd_value": -80.5
+      },
+      {
         "espn_id": 4430034,
         "name": "Xavier Legette",
         "position": "WR",
         "nfl_team": "CAR",
         "ros_value": 94.1,
         "vbd_value": -87.9
-      },
-      {
-        "espn_id": 4361409,
-        "name": "Jahan Dotson",
-        "position": "WR",
-        "nfl_team": "ATL",
-        "ros_value": 92.8,
-        "vbd_value": -89.2
       }
     ],
     "TE": [
@@ -1482,19 +1482,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 3886598,
-          "name": "Jauan Jennings",
-          "position": "WR",
-          "nfl_team": "MIN",
-          "lineup_slot_id": 20,
-          "projected_total": 91.4,
-          "actual_so_far": 0.0,
-          "ros_value": 91.4,
-          "vbd_value": -90.6,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14030,
           "name": "Jaguars Coach",
           "position": "HC",
@@ -1508,15 +1495,28 @@
           "is_starter": true
         },
         {
-          "espn_id": 2977187,
-          "name": "Cooper Kupp",
-          "position": "WR",
-          "nfl_team": "SEA",
+          "espn_id": 4819231,
+          "name": "Kaleb Johnson",
+          "position": "RB",
+          "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 82.6,
+          "projected_total": 4.8,
           "actual_so_far": 0.0,
-          "ros_value": 82.6,
-          "vbd_value": -99.4,
+          "ros_value": 4.8,
+          "vbd_value": -173.0,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4569559,
+          "name": "Devaughn Vele",
+          "position": "WR",
+          "nfl_team": "NO",
+          "lineup_slot_id": 20,
+          "projected_total": 99.0,
+          "actual_so_far": 0.0,
+          "ros_value": 99.0,
+          "vbd_value": -83.0,
           "slot": "BEN",
           "is_starter": false
         }
@@ -2233,7 +2233,7 @@
           "name": "Jordyn Tyson",
           "position": "WR",
           "nfl_team": "NO",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 82.0,
           "actual_so_far": 0.0,
           "ros_value": 82.0,
@@ -2285,7 +2285,7 @@
           "name": "George Kittle",
           "position": "TE",
           "nfl_team": "SF",
-          "lineup_slot_id": 21,
+          "lineup_slot_id": 20,
           "projected_total": 151.7,
           "actual_so_far": 0.0,
           "ros_value": 151.7,
