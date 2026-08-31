@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-30T22:42:33.795741+00:00",
+  "updated_at": "2026-08-31T01:31:49.128658+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.9,
@@ -112,7 +112,7 @@
         "espn_id": 4362478,
         "name": "Emari Demercado",
         "position": "RB",
-        "nfl_team": "KC",
+        "nfl_team": "",
         "ros_value": 63.9,
         "vbd_value": -113.9
       },
@@ -120,7 +120,7 @@
         "espn_id": 4685279,
         "name": "Jaydon Blue",
         "position": "RB",
-        "nfl_team": "DAL",
+        "nfl_team": "",
         "ros_value": 55.0,
         "vbd_value": -122.8
       },
@@ -2384,7 +2384,7 @@
           "name": "Josh Jacobs",
           "position": "RB",
           "nfl_team": "GB",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 241.1,
           "actual_so_far": 0.0,
           "ros_value": 241.1,
@@ -2501,7 +2501,7 @@
           "name": "Woody Marks",
           "position": "RB",
           "nfl_team": "HOU",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 2,
           "projected_total": 115.6,
           "actual_so_far": 0.0,
           "ros_value": 115.6,
