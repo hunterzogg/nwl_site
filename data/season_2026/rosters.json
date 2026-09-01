@@ -1,10 +1,10 @@
 {
   "season": 2026,
-  "updated_at": "2026-08-31T10:04:16.363774+00:00",
+  "updated_at": "2026-09-01T08:54:05.880464+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
-    "QB": 286.0,
-    "RB": 184.4,
+    "QB": 286.1,
+    "RB": 178.0,
     "WR": 181.9,
     "TE": 155.1
   },
@@ -23,7 +23,7 @@
         "name": "Tyler Shough",
         "position": "QB",
         "nfl_team": "NO",
-        "ros_value": 265.5,
+        "ros_value": 265.6,
         "vbd_value": -6.1
       },
       {
@@ -39,8 +39,8 @@
         "name": "Jordan Love",
         "position": "QB",
         "nfl_team": "GB",
-        "ros_value": 260.3,
-        "vbd_value": -7.7
+        "ros_value": 263.4,
+        "vbd_value": -6.8
       },
       {
         "espn_id": 4432577,
@@ -56,7 +56,7 @@
         "position": "QB",
         "nfl_team": "SEA",
         "ros_value": 242.5,
-        "vbd_value": -13.0
+        "vbd_value": -13.1
       },
       {
         "espn_id": 4242512,
@@ -82,15 +82,15 @@
         "position": "RB",
         "nfl_team": "BAL",
         "ros_value": 120.1,
-        "vbd_value": -64.3
+        "vbd_value": -57.9
       },
       {
         "espn_id": 3116389,
         "name": "Samaje Perine",
         "position": "RB",
         "nfl_team": "CIN",
-        "ros_value": 100.4,
-        "vbd_value": -84.0
+        "ros_value": 100.3,
+        "vbd_value": -77.7
       },
       {
         "espn_id": 3915411,
@@ -98,15 +98,7 @@
         "position": "RB",
         "nfl_team": "BUF",
         "ros_value": 84.9,
-        "vbd_value": -99.5
-      },
-      {
-        "espn_id": 4240603,
-        "name": "Malik Davis",
-        "position": "RB",
-        "nfl_team": "DAL",
-        "ros_value": 82.2,
-        "vbd_value": -102.2
+        "vbd_value": -93.1
       },
       {
         "espn_id": 4241457,
@@ -114,7 +106,15 @@
         "position": "RB",
         "nfl_team": "NYG",
         "ros_value": 78.5,
-        "vbd_value": -105.9
+        "vbd_value": -99.5
+      },
+      {
+        "espn_id": 3149687,
+        "name": "Chris Brooks",
+        "position": "RB",
+        "nfl_team": "GB",
+        "ros_value": 70.8,
+        "vbd_value": -107.2
       },
       {
         "espn_id": 4596602,
@@ -122,15 +122,15 @@
         "position": "RB",
         "nfl_team": "KC",
         "ros_value": 59.7,
-        "vbd_value": -124.7
+        "vbd_value": -118.3
       },
       {
-        "espn_id": 3149687,
-        "name": "Chris Brooks",
+        "espn_id": 4240603,
+        "name": "Malik Davis",
         "position": "RB",
-        "nfl_team": "GB",
-        "ros_value": 57.4,
-        "vbd_value": -127.0
+        "nfl_team": "DAL",
+        "ros_value": 57.6,
+        "vbd_value": -120.4
       },
       {
         "espn_id": 4832955,
@@ -138,7 +138,7 @@
         "position": "RB",
         "nfl_team": "KC",
         "ros_value": 53.9,
-        "vbd_value": -130.5
+        "vbd_value": -124.1
       }
     ],
     "WR": [
@@ -155,8 +155,8 @@
         "name": "Calvin Ridley",
         "position": "WR",
         "nfl_team": "TEN",
-        "ros_value": 135.3,
-        "vbd_value": -46.6
+        "ros_value": 135.2,
+        "vbd_value": -46.7
       },
       {
         "espn_id": 4586312,
@@ -187,8 +187,8 @@
         "name": "Caleb Douglas",
         "position": "WR",
         "nfl_team": "MIA",
-        "ros_value": 113.5,
-        "vbd_value": -68.4
+        "ros_value": 113.4,
+        "vbd_value": -68.5
       },
       {
         "espn_id": 2977187,
@@ -217,20 +217,20 @@
         "vbd_value": 2.9
       },
       {
-        "espn_id": 5083315,
-        "name": "Kenyon Sadiq",
-        "position": "TE",
-        "nfl_team": "NYJ",
-        "ros_value": 148.2,
-        "vbd_value": -5.2
-      },
-      {
         "espn_id": 3929645,
         "name": "Juwan Johnson",
         "position": "TE",
         "nfl_team": "NO",
-        "ros_value": 143.3,
-        "vbd_value": -8.8
+        "ros_value": 146.9,
+        "vbd_value": -6.1
+      },
+      {
+        "espn_id": 5083315,
+        "name": "Kenyon Sadiq",
+        "position": "TE",
+        "nfl_team": "NYJ",
+        "ros_value": 146.1,
+        "vbd_value": -6.8
       },
       {
         "espn_id": 4430539,
@@ -261,8 +261,8 @@
         "name": "Chig Okonkwo",
         "position": "TE",
         "nfl_team": "WSH",
-        "ros_value": 121.1,
-        "vbd_value": -25.5
+        "ros_value": 120.9,
+        "vbd_value": -25.6
       },
       {
         "espn_id": 2576925,
@@ -306,7 +306,7 @@
           "projected_total": 248.9,
           "actual_so_far": 0.0,
           "ros_value": 248.9,
-          "vbd_value": 64.5,
+          "vbd_value": 70.9,
           "slot": "RB1",
           "is_starter": true
         },
@@ -329,10 +329,10 @@
           "position": "RB",
           "nfl_team": "NYJ",
           "lineup_slot_id": 2,
-          "projected_total": 248.6,
+          "projected_total": 248.3,
           "actual_so_far": 0.0,
-          "ros_value": 248.6,
-          "vbd_value": 64.2,
+          "ros_value": 248.3,
+          "vbd_value": 70.3,
           "slot": "RB2",
           "is_starter": true
         },
@@ -345,7 +345,7 @@
           "projected_total": 183.9,
           "actual_so_far": 0.0,
           "ros_value": 183.9,
-          "vbd_value": -0.5,
+          "vbd_value": 5.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -358,7 +358,7 @@
           "projected_total": 195.1,
           "actual_so_far": 0.0,
           "ros_value": 195.1,
-          "vbd_value": 10.7,
+          "vbd_value": 17.1,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -397,7 +397,7 @@
           "projected_total": 283.6,
           "actual_so_far": 0.0,
           "ros_value": 283.6,
-          "vbd_value": -0.7,
+          "vbd_value": -0.8,
           "slot": "QB",
           "is_starter": true
         },
@@ -493,10 +493,10 @@
           "position": "RB",
           "nfl_team": "BUF",
           "lineup_slot_id": 2,
-          "projected_total": 262.3,
+          "projected_total": 262.4,
           "actual_so_far": 0.0,
-          "ros_value": 262.3,
-          "vbd_value": 77.9,
+          "ros_value": 262.4,
+          "vbd_value": 84.4,
           "slot": "RB1",
           "is_starter": true
         },
@@ -506,10 +506,10 @@
           "position": "RB",
           "nfl_team": "LV",
           "lineup_slot_id": 2,
-          "projected_total": 248.2,
+          "projected_total": 246.6,
           "actual_so_far": 0.0,
-          "ros_value": 248.2,
-          "vbd_value": 63.8,
+          "ros_value": 246.6,
+          "vbd_value": 68.6,
           "slot": "RB2",
           "is_starter": true
         },
@@ -519,10 +519,10 @@
           "position": "QB",
           "nfl_team": "BUF",
           "lineup_slot_id": 0,
-          "projected_total": 370.6,
+          "projected_total": 370.5,
           "actual_so_far": 0.0,
-          "ros_value": 370.6,
-          "vbd_value": 25.4,
+          "ros_value": 370.5,
+          "vbd_value": 25.3,
           "slot": "QB",
           "is_starter": true
         },
@@ -561,7 +561,7 @@
           "projected_total": 180.5,
           "actual_so_far": 0.0,
           "ros_value": 180.5,
-          "vbd_value": -3.9,
+          "vbd_value": 2.5,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -626,7 +626,7 @@
           "projected_total": 89.6,
           "actual_so_far": 0.0,
           "ros_value": 89.6,
-          "vbd_value": -94.8,
+          "vbd_value": -88.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -649,10 +649,10 @@
           "position": "RB",
           "nfl_team": "LV",
           "lineup_slot_id": 20,
-          "projected_total": 61.0,
+          "projected_total": 62.6,
           "actual_so_far": 0.0,
-          "ros_value": 61.0,
-          "vbd_value": -123.4,
+          "ros_value": 62.6,
+          "vbd_value": -115.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -675,10 +675,10 @@
           "position": "WR",
           "nfl_team": "MIA",
           "lineup_slot_id": 21,
-          "projected_total": 71.4,
+          "projected_total": 71.3,
           "actual_so_far": 0.0,
-          "ros_value": 71.4,
-          "vbd_value": -110.5,
+          "ros_value": 71.3,
+          "vbd_value": -110.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -691,7 +691,7 @@
           "projected_total": 34.3,
           "actual_so_far": 0.0,
           "ros_value": 34.3,
-          "vbd_value": -150.1,
+          "vbd_value": -143.7,
           "slot": "BEN",
           "is_starter": false
         }
@@ -725,7 +725,7 @@
           "projected_total": 267.1,
           "actual_so_far": 0.0,
           "ros_value": 267.1,
-          "vbd_value": 82.7,
+          "vbd_value": 89.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -751,7 +751,7 @@
           "projected_total": 205.1,
           "actual_so_far": 0.0,
           "ros_value": 205.1,
-          "vbd_value": 20.7,
+          "vbd_value": 27.1,
           "slot": "RB2",
           "is_starter": true
         },
@@ -761,10 +761,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 5,
-          "projected_total": 158.7,
+          "projected_total": 160.8,
           "actual_so_far": 0.0,
-          "ros_value": 158.7,
-          "vbd_value": -23.2,
+          "ros_value": 160.8,
+          "vbd_value": -21.1,
           "slot": "W/T",
           "is_starter": true
         },
@@ -777,7 +777,7 @@
           "projected_total": 166.1,
           "actual_so_far": 0.0,
           "ros_value": 166.1,
-          "vbd_value": -18.3,
+          "vbd_value": -11.9,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -790,7 +790,7 @@
           "projected_total": 289.5,
           "actual_so_far": 0.0,
           "ros_value": 289.5,
-          "vbd_value": 1.1,
+          "vbd_value": 1.0,
           "slot": "QB",
           "is_starter": true
         },
@@ -803,7 +803,7 @@
           "projected_total": 150.9,
           "actual_so_far": 0.0,
           "ros_value": 150.9,
-          "vbd_value": -33.5,
+          "vbd_value": -27.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -813,10 +813,10 @@
           "position": "WR",
           "nfl_team": "WSH",
           "lineup_slot_id": 20,
-          "projected_total": 128.2,
+          "projected_total": 135.7,
           "actual_so_far": 0.0,
-          "ros_value": 128.2,
-          "vbd_value": -53.7,
+          "ros_value": 135.7,
+          "vbd_value": -46.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -852,10 +852,10 @@
           "position": "TE",
           "nfl_team": "MIA",
           "lineup_slot_id": 20,
-          "projected_total": 93.3,
+          "projected_total": 93.2,
           "actual_so_far": 0.0,
-          "ros_value": 93.3,
-          "vbd_value": -46.3,
+          "ros_value": 93.2,
+          "vbd_value": -46.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -865,9 +865,9 @@
           "position": "HC",
           "nfl_team": "PHI",
           "lineup_slot_id": 19,
-          "projected_total": 25.1,
+          "projected_total": 25.0,
           "actual_so_far": 0.0,
-          "ros_value": 25.1,
+          "ros_value": 25.0,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -912,10 +912,10 @@
           "position": "RB",
           "nfl_team": "DET",
           "lineup_slot_id": 2,
-          "projected_total": 331.0,
+          "projected_total": 331.1,
           "actual_so_far": 0.0,
-          "ros_value": 331.0,
-          "vbd_value": 146.6,
+          "ros_value": 331.1,
+          "vbd_value": 153.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -925,10 +925,10 @@
           "position": "WR",
           "nfl_team": "DAL",
           "lineup_slot_id": 4,
-          "projected_total": 198.7,
+          "projected_total": 199.3,
           "actual_so_far": 0.0,
-          "ros_value": 198.7,
-          "vbd_value": 16.8,
+          "ros_value": 199.3,
+          "vbd_value": 17.4,
           "slot": "WR2",
           "is_starter": true
         },
@@ -938,10 +938,10 @@
           "position": "WR",
           "nfl_team": "NYG",
           "lineup_slot_id": 4,
-          "projected_total": 202.2,
+          "projected_total": 201.3,
           "actual_so_far": 0.0,
-          "ros_value": 202.2,
-          "vbd_value": 20.3,
+          "ros_value": 201.3,
+          "vbd_value": 19.4,
           "slot": "WR1",
           "is_starter": true
         },
@@ -993,7 +993,7 @@
           "projected_total": 155.3,
           "actual_so_far": 0.0,
           "ros_value": 155.3,
-          "vbd_value": -29.1,
+          "vbd_value": -22.7,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1032,7 +1032,7 @@
           "projected_total": 94.7,
           "actual_so_far": 0.0,
           "ros_value": 94.7,
-          "vbd_value": -89.7,
+          "vbd_value": -83.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1045,7 +1045,7 @@
           "projected_total": 129.5,
           "actual_so_far": 0.0,
           "ros_value": 129.5,
-          "vbd_value": -54.9,
+          "vbd_value": -48.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1058,7 +1058,7 @@
           "projected_total": 62.3,
           "actual_so_far": 0.0,
           "ros_value": 62.3,
-          "vbd_value": -122.1,
+          "vbd_value": -115.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1118,7 +1118,7 @@
           "projected_total": 302.4,
           "actual_so_far": 0.0,
           "ros_value": 302.4,
-          "vbd_value": 118.0,
+          "vbd_value": 124.4,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1131,7 +1131,7 @@
           "projected_total": 251.7,
           "actual_so_far": 0.0,
           "ros_value": 251.7,
-          "vbd_value": 67.3,
+          "vbd_value": 73.7,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1206,10 +1206,10 @@
           "position": "WR",
           "nfl_team": "PHI",
           "lineup_slot_id": 23,
-          "projected_total": 130.1,
+          "projected_total": 129.1,
           "actual_so_far": 0.0,
-          "ros_value": 130.1,
-          "vbd_value": -51.8,
+          "ros_value": 129.1,
+          "vbd_value": -52.8,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1222,7 +1222,7 @@
           "projected_total": 125.0,
           "actual_so_far": 0.0,
           "ros_value": 125.0,
-          "vbd_value": -59.4,
+          "vbd_value": -53.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1232,10 +1232,10 @@
           "position": "WR",
           "nfl_team": "TB",
           "lineup_slot_id": 20,
-          "projected_total": 127.1,
+          "projected_total": 127.2,
           "actual_so_far": 0.0,
-          "ros_value": 127.1,
-          "vbd_value": -54.8,
+          "ros_value": 127.2,
+          "vbd_value": -54.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1300,7 +1300,7 @@
           "projected_total": 56.3,
           "actual_so_far": 0.0,
           "ros_value": 56.3,
-          "vbd_value": -128.1,
+          "vbd_value": -121.7,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1321,7 +1321,7 @@
           "projected_total": 291.1,
           "actual_so_far": 0.0,
           "ros_value": 291.1,
-          "vbd_value": 106.7,
+          "vbd_value": 113.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1331,10 +1331,10 @@
           "position": "RB",
           "nfl_team": "ARI",
           "lineup_slot_id": 2,
-          "projected_total": 245.5,
+          "projected_total": 244.1,
           "actual_so_far": 0.0,
-          "ros_value": 245.5,
-          "vbd_value": 61.1,
+          "ros_value": 244.1,
+          "vbd_value": 66.1,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1344,10 +1344,10 @@
           "position": "RB",
           "nfl_team": "DAL",
           "lineup_slot_id": 23,
-          "projected_total": 240.5,
+          "projected_total": 241.0,
           "actual_so_far": 0.0,
-          "ros_value": 240.5,
-          "vbd_value": 56.1,
+          "ros_value": 241.0,
+          "vbd_value": 63.0,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1357,10 +1357,10 @@
           "position": "WR",
           "nfl_team": "WSH",
           "lineup_slot_id": 4,
-          "projected_total": 179.9,
+          "projected_total": 179.8,
           "actual_so_far": 0.0,
-          "ros_value": 179.9,
-          "vbd_value": -2.0,
+          "ros_value": 179.8,
+          "vbd_value": -2.1,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1383,10 +1383,10 @@
           "position": "WR",
           "nfl_team": "IND",
           "lineup_slot_id": 5,
-          "projected_total": 156.4,
+          "projected_total": 155.5,
           "actual_so_far": 0.0,
-          "ros_value": 156.4,
-          "vbd_value": -25.5,
+          "ros_value": 155.5,
+          "vbd_value": -26.4,
           "slot": "W/T",
           "is_starter": true
         },
@@ -1409,10 +1409,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 152.7,
+          "projected_total": 154.9,
           "actual_so_far": 0.0,
-          "ros_value": 152.7,
-          "vbd_value": -29.2,
+          "ros_value": 154.9,
+          "vbd_value": -27.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1425,7 +1425,7 @@
           "projected_total": 151.8,
           "actual_so_far": 0.0,
           "ros_value": 151.8,
-          "vbd_value": -32.6,
+          "vbd_value": -26.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1464,7 +1464,7 @@
           "projected_total": 123.8,
           "actual_so_far": 0.0,
           "ros_value": 123.8,
-          "vbd_value": -60.6,
+          "vbd_value": -54.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1474,10 +1474,10 @@
           "position": "RB",
           "nfl_team": "ARI",
           "lineup_slot_id": 20,
-          "projected_total": 82.1,
+          "projected_total": 83.4,
           "actual_so_far": 0.0,
-          "ros_value": 82.1,
-          "vbd_value": -102.3,
+          "ros_value": 83.4,
+          "vbd_value": -94.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1500,10 +1500,10 @@
           "position": "RB",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 4.8,
+          "projected_total": 7.2,
           "actual_so_far": 0.0,
-          "ros_value": 4.8,
-          "vbd_value": -179.6,
+          "ros_value": 7.2,
+          "vbd_value": -170.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1513,10 +1513,10 @@
           "position": "WR",
           "nfl_team": "NO",
           "lineup_slot_id": 20,
-          "projected_total": 98.8,
+          "projected_total": 98.7,
           "actual_so_far": 0.0,
-          "ros_value": 98.8,
-          "vbd_value": -83.1,
+          "ros_value": 98.7,
+          "vbd_value": -83.2,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1550,7 +1550,7 @@
           "projected_total": 261.3,
           "actual_so_far": 0.0,
           "ros_value": 261.3,
-          "vbd_value": 76.9,
+          "vbd_value": 83.3,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1560,10 +1560,10 @@
           "position": "WR",
           "nfl_team": "NYJ",
           "lineup_slot_id": 4,
-          "projected_total": 199.8,
+          "projected_total": 200.1,
           "actual_so_far": 0.0,
-          "ros_value": 199.8,
-          "vbd_value": 17.9,
+          "ros_value": 200.1,
+          "vbd_value": 18.2,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1576,7 +1576,7 @@
           "projected_total": 215.3,
           "actual_so_far": 0.0,
           "ros_value": 215.3,
-          "vbd_value": 30.9,
+          "vbd_value": 37.3,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1602,7 +1602,7 @@
           "projected_total": 170.9,
           "actual_so_far": 0.0,
           "ros_value": 170.9,
-          "vbd_value": -13.5,
+          "vbd_value": -7.1,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1612,10 +1612,10 @@
           "position": "WR",
           "nfl_team": "SF",
           "lineup_slot_id": 5,
-          "projected_total": 150.8,
+          "projected_total": 151.8,
           "actual_so_far": 0.0,
-          "ros_value": 150.8,
-          "vbd_value": -31.1,
+          "ros_value": 151.8,
+          "vbd_value": -30.1,
           "slot": "W/T",
           "is_starter": true
         },
@@ -1628,7 +1628,7 @@
           "projected_total": 281.9,
           "actual_so_far": 0.0,
           "ros_value": 281.9,
-          "vbd_value": -1.2,
+          "vbd_value": -1.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1654,7 +1654,7 @@
           "projected_total": 145.0,
           "actual_so_far": 0.0,
           "ros_value": 145.0,
-          "vbd_value": -39.4,
+          "vbd_value": -33.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1703,10 +1703,10 @@
           "position": "QB",
           "nfl_team": "LAR",
           "lineup_slot_id": 0,
-          "projected_total": 292.9,
+          "projected_total": 292.8,
           "actual_so_far": 0.0,
-          "ros_value": 292.9,
-          "vbd_value": 2.1,
+          "ros_value": 292.8,
+          "vbd_value": 2.0,
           "slot": "QB",
           "is_starter": true
         },
@@ -1740,7 +1740,7 @@
           "projected_total": 314.9,
           "actual_so_far": 0.0,
           "ros_value": 314.9,
-          "vbd_value": 130.5,
+          "vbd_value": 136.9,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1750,10 +1750,10 @@
           "position": "WR",
           "nfl_team": "NE",
           "lineup_slot_id": 4,
-          "projected_total": 206.3,
+          "projected_total": 206.7,
           "actual_so_far": 0.0,
-          "ros_value": 206.3,
-          "vbd_value": 24.4,
+          "ros_value": 206.7,
+          "vbd_value": 24.8,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1776,10 +1776,10 @@
           "position": "WR",
           "nfl_team": "CIN",
           "lineup_slot_id": 4,
-          "projected_total": 182.6,
+          "projected_total": 182.3,
           "actual_so_far": 0.0,
-          "ros_value": 182.6,
-          "vbd_value": 0.7,
+          "ros_value": 182.3,
+          "vbd_value": 0.4,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1789,10 +1789,10 @@
           "position": "WR",
           "nfl_team": "BUF",
           "lineup_slot_id": 5,
-          "projected_total": 176.2,
+          "projected_total": 176.1,
           "actual_so_far": 0.0,
-          "ros_value": 176.2,
-          "vbd_value": -5.7,
+          "ros_value": 176.1,
+          "vbd_value": -5.8,
           "slot": "W/T",
           "is_starter": true
         },
@@ -1805,7 +1805,7 @@
           "projected_total": 164.1,
           "actual_so_far": 0.0,
           "ros_value": 164.1,
-          "vbd_value": -20.3,
+          "vbd_value": -13.9,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1828,10 +1828,10 @@
           "position": "WR",
           "nfl_team": "SF",
           "lineup_slot_id": 23,
-          "projected_total": 124.7,
+          "projected_total": 125.8,
           "actual_so_far": 0.0,
-          "ros_value": 124.7,
-          "vbd_value": -57.2,
+          "ros_value": 125.8,
+          "vbd_value": -56.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1841,10 +1841,10 @@
           "position": "RB",
           "nfl_team": "WSH",
           "lineup_slot_id": 20,
-          "projected_total": 144.2,
+          "projected_total": 144.1,
           "actual_so_far": 0.0,
-          "ros_value": 144.2,
-          "vbd_value": -40.2,
+          "ros_value": 144.1,
+          "vbd_value": -33.9,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1854,10 +1854,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 139.5,
+          "projected_total": 141.4,
           "actual_so_far": 0.0,
-          "ros_value": 139.5,
-          "vbd_value": -42.4,
+          "ros_value": 141.4,
+          "vbd_value": -40.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1870,7 +1870,7 @@
           "projected_total": 34.9,
           "actual_so_far": 0.0,
           "ros_value": 34.9,
-          "vbd_value": -149.5,
+          "vbd_value": -143.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1880,10 +1880,10 @@
           "position": "WR",
           "nfl_team": "MIA",
           "lineup_slot_id": 20,
-          "projected_total": 91.8,
+          "projected_total": 91.7,
           "actual_so_far": 0.0,
-          "ros_value": 91.8,
-          "vbd_value": -90.1,
+          "ros_value": 91.7,
+          "vbd_value": -90.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1896,7 +1896,7 @@
           "projected_total": 27.1,
           "actual_so_far": 0.0,
           "ros_value": 27.1,
-          "vbd_value": -157.3,
+          "vbd_value": -150.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1906,7 +1906,7 @@
           "position": "HC",
           "nfl_team": "CHI",
           "lineup_slot_id": 19,
-          "projected_total": -0.8,
+          "projected_total": -0.7,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
           "vbd_value": null,
@@ -1932,10 +1932,10 @@
           "position": "WR",
           "nfl_team": "NYG",
           "lineup_slot_id": 20,
-          "projected_total": 69.5,
+          "projected_total": 69.9,
           "actual_so_far": 0.0,
-          "ros_value": 69.5,
-          "vbd_value": -112.4,
+          "ros_value": 69.9,
+          "vbd_value": -112.0,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1956,7 +1956,7 @@
           "projected_total": 235.9,
           "actual_so_far": 0.0,
           "ros_value": 235.9,
-          "vbd_value": 51.5,
+          "vbd_value": 57.9,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1995,7 +1995,7 @@
           "projected_total": 210.7,
           "actual_so_far": 0.0,
           "ros_value": 210.7,
-          "vbd_value": 26.3,
+          "vbd_value": 32.7,
           "slot": "RB2",
           "is_starter": true
         },
@@ -2021,7 +2021,7 @@
           "projected_total": 188.7,
           "actual_so_far": 0.0,
           "ros_value": 188.7,
-          "vbd_value": 4.3,
+          "vbd_value": 10.7,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -2086,7 +2086,7 @@
           "projected_total": 98.1,
           "actual_so_far": 0.0,
           "ros_value": 98.1,
-          "vbd_value": -86.3,
+          "vbd_value": -79.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2096,10 +2096,10 @@
           "position": "WR",
           "nfl_team": "SF",
           "lineup_slot_id": 20,
-          "projected_total": 133.0,
+          "projected_total": 134.1,
           "actual_so_far": 0.0,
-          "ros_value": 133.0,
-          "vbd_value": -48.9,
+          "ros_value": 134.1,
+          "vbd_value": -47.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2112,7 +2112,7 @@
           "projected_total": 83.9,
           "actual_so_far": 0.0,
           "ros_value": 83.9,
-          "vbd_value": -100.5,
+          "vbd_value": -94.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2122,9 +2122,9 @@
           "position": "HC",
           "nfl_team": "KC",
           "lineup_slot_id": 19,
-          "projected_total": 14.9,
+          "projected_total": 15.0,
           "actual_so_far": 0.0,
-          "ros_value": 14.9,
+          "ros_value": 15.0,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2156,10 +2156,10 @@
           "position": "WR",
           "nfl_team": "CIN",
           "lineup_slot_id": 4,
-          "projected_total": 277.6,
+          "projected_total": 277.0,
           "actual_so_far": 0.0,
-          "ros_value": 277.6,
-          "vbd_value": 95.7,
+          "ros_value": 277.0,
+          "vbd_value": 95.1,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2195,10 +2195,10 @@
           "position": "RB",
           "nfl_team": "NO",
           "lineup_slot_id": 2,
-          "projected_total": 224.2,
+          "projected_total": 224.1,
           "actual_so_far": 0.0,
-          "ros_value": 224.2,
-          "vbd_value": 39.8,
+          "ros_value": 224.1,
+          "vbd_value": 46.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2211,7 +2211,7 @@
           "projected_total": 178.5,
           "actual_so_far": 0.0,
           "ros_value": 178.5,
-          "vbd_value": -5.9,
+          "vbd_value": 0.5,
           "slot": "RB2",
           "is_starter": true
         },
@@ -2224,7 +2224,7 @@
           "projected_total": 320.2,
           "actual_so_far": 0.0,
           "ros_value": 320.2,
-          "vbd_value": 10.3,
+          "vbd_value": 10.2,
           "slot": "QB",
           "is_starter": true
         },
@@ -2250,7 +2250,7 @@
           "projected_total": 162.2,
           "actual_so_far": 0.0,
           "ros_value": 162.2,
-          "vbd_value": -22.2,
+          "vbd_value": -15.8,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -2260,10 +2260,10 @@
           "position": "TE",
           "nfl_team": "GB",
           "lineup_slot_id": 6,
-          "projected_total": 138.1,
+          "projected_total": 138.2,
           "actual_so_far": 0.0,
-          "ros_value": 138.1,
-          "vbd_value": -12.8,
+          "ros_value": 138.2,
+          "vbd_value": -12.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2276,7 +2276,7 @@
           "projected_total": 154.4,
           "actual_so_far": 0.0,
           "ros_value": 154.4,
-          "vbd_value": -30.0,
+          "vbd_value": -23.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2286,10 +2286,10 @@
           "position": "TE",
           "nfl_team": "SF",
           "lineup_slot_id": 20,
-          "projected_total": 160.2,
+          "projected_total": 155.2,
           "actual_so_far": 0.0,
-          "ros_value": 160.2,
-          "vbd_value": 3.8,
+          "ros_value": 155.2,
+          "vbd_value": 0.1,
           "slot": "TE",
           "is_starter": true
         },
@@ -2299,10 +2299,10 @@
           "position": "WR",
           "nfl_team": "NYJ",
           "lineup_slot_id": 20,
-          "projected_total": 106.7,
+          "projected_total": 106.9,
           "actual_so_far": 0.0,
-          "ros_value": 106.7,
-          "vbd_value": -75.2,
+          "ros_value": 106.9,
+          "vbd_value": -75.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2312,10 +2312,10 @@
           "position": "RB",
           "nfl_team": "NYJ",
           "lineup_slot_id": 20,
-          "projected_total": 70.5,
+          "projected_total": 70.4,
           "actual_so_far": 0.0,
-          "ros_value": 70.5,
-          "vbd_value": -113.9,
+          "ros_value": 70.4,
+          "vbd_value": -107.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2325,9 +2325,9 @@
           "position": "HC",
           "nfl_team": "BUF",
           "lineup_slot_id": 20,
-          "projected_total": 15.9,
+          "projected_total": 16.1,
           "actual_so_far": 0.0,
-          "ros_value": 15.9,
+          "ros_value": 16.1,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2341,7 +2341,7 @@
           "projected_total": 65.7,
           "actual_so_far": 0.0,
           "ros_value": 65.7,
-          "vbd_value": -118.7,
+          "vbd_value": -112.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2385,11 +2385,11 @@
           "position": "RB",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 184.6,
+          "projected_total": 152.5,
           "actual_so_far": 0.0,
-          "ros_value": 184.6,
-          "vbd_value": 0.2,
-          "slot": "RB2",
+          "ros_value": 152.5,
+          "vbd_value": -25.5,
+          "slot": "FLEX",
           "is_starter": true
         },
         {
@@ -2398,10 +2398,10 @@
           "position": "WR",
           "nfl_team": "NO",
           "lineup_slot_id": 4,
-          "projected_total": 204.5,
+          "projected_total": 204.2,
           "actual_so_far": 0.0,
-          "ros_value": 204.5,
-          "vbd_value": 22.6,
+          "ros_value": 204.2,
+          "vbd_value": 22.3,
           "slot": "WR2",
           "is_starter": true
         },
@@ -2414,7 +2414,7 @@
           "projected_total": 188.7,
           "actual_so_far": 0.0,
           "ros_value": 188.7,
-          "vbd_value": 4.3,
+          "vbd_value": 10.7,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2440,8 +2440,8 @@
           "projected_total": 170.7,
           "actual_so_far": 0.0,
           "ros_value": 170.7,
-          "vbd_value": -13.7,
-          "slot": "FLEX",
+          "vbd_value": -7.3,
+          "slot": "RB2",
           "is_starter": true
         },
         {
@@ -2476,10 +2476,10 @@
           "position": "WR",
           "nfl_team": "TEN",
           "lineup_slot_id": 20,
-          "projected_total": 135.5,
+          "projected_total": 135.4,
           "actual_so_far": 0.0,
-          "ros_value": 135.5,
-          "vbd_value": -46.4,
+          "ros_value": 135.4,
+          "vbd_value": -46.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2505,7 +2505,7 @@
           "projected_total": 119.7,
           "actual_so_far": 0.0,
           "ros_value": 119.7,
-          "vbd_value": -64.7,
+          "vbd_value": -58.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2544,7 +2544,7 @@
           "projected_total": 73.2,
           "actual_so_far": 0.0,
           "ros_value": 73.2,
-          "vbd_value": -111.2,
+          "vbd_value": -104.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2575,10 +2575,10 @@
           "position": "WR",
           "nfl_team": "DAL",
           "lineup_slot_id": 4,
-          "projected_total": 241.8,
+          "projected_total": 241.9,
           "actual_so_far": 0.0,
-          "ros_value": 241.8,
-          "vbd_value": 59.9,
+          "ros_value": 241.9,
+          "vbd_value": 60.0,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2588,10 +2588,10 @@
           "position": "RB",
           "nfl_team": "CIN",
           "lineup_slot_id": 2,
-          "projected_total": 239.6,
+          "projected_total": 239.4,
           "actual_so_far": 0.0,
-          "ros_value": 239.6,
-          "vbd_value": 55.2,
+          "ros_value": 239.4,
+          "vbd_value": 61.4,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2656,7 +2656,7 @@
           "projected_total": 173.7,
           "actual_so_far": 0.0,
           "ros_value": 173.7,
-          "vbd_value": -10.7,
+          "vbd_value": -4.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2669,7 +2669,7 @@
           "projected_total": 182.1,
           "actual_so_far": 0.0,
           "ros_value": 182.1,
-          "vbd_value": -2.3,
+          "vbd_value": 4.1,
           "slot": "RB2",
           "is_starter": true
         },
@@ -2679,10 +2679,10 @@
           "position": "RB",
           "nfl_team": "WSH",
           "lineup_slot_id": 20,
-          "projected_total": 151.1,
+          "projected_total": 151.0,
           "actual_so_far": 0.0,
-          "ros_value": 151.1,
-          "vbd_value": -33.3,
+          "ros_value": 151.0,
+          "vbd_value": -27.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2695,7 +2695,7 @@
           "projected_total": 69.5,
           "actual_so_far": 0.0,
           "ros_value": 69.5,
-          "vbd_value": -114.9,
+          "vbd_value": -108.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2705,9 +2705,9 @@
           "position": "QB",
           "nfl_team": "DAL",
           "lineup_slot_id": 0,
-          "projected_total": 286.0,
+          "projected_total": 286.1,
           "actual_so_far": 0.0,
-          "ros_value": 286.0,
+          "ros_value": 286.1,
           "vbd_value": 0.0,
           "slot": "QB",
           "is_starter": true
@@ -2731,9 +2731,9 @@
           "position": "HC",
           "nfl_team": "LAC",
           "lineup_slot_id": 19,
-          "projected_total": 9.9,
+          "projected_total": 10.0,
           "actual_so_far": 0.0,
-          "ros_value": 9.9,
+          "ros_value": 10.0,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2744,10 +2744,10 @@
           "position": "RB",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 111.5,
+          "projected_total": 124.4,
           "actual_so_far": 0.0,
-          "ros_value": 111.5,
-          "vbd_value": -72.9,
+          "ros_value": 124.4,
+          "vbd_value": -53.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2757,10 +2757,10 @@
           "position": "WR",
           "nfl_team": "PHI",
           "lineup_slot_id": 20,
-          "projected_total": 88.4,
+          "projected_total": 88.8,
           "actual_so_far": 0.0,
-          "ros_value": 88.4,
-          "vbd_value": -93.5,
+          "ros_value": 88.8,
+          "vbd_value": -93.1,
           "slot": "BEN",
           "is_starter": false
         }
