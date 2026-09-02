@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-01T17:00:23.743444+00:00",
+    "updated_at": "2026-09-02T16:53:24.998536+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -34,15 +34,15 @@
       {
         "home_manager": "Hagan",
         "home_score": 0.0,
-        "home_projected": 106.0,
+        "home_projected": 96.6,
         "away_manager": "Conlin",
         "away_score": 0.0,
         "away_projected": 101.9,
         "winner": "UNDECIDED",
         "line": {
-          "favorite": "Hagan",
-          "spread": 4.0,
-          "over_under": 208.0
+          "favorite": "Conlin",
+          "spread": 5.5,
+          "over_under": 198.5
         }
       },
       {
@@ -62,14 +62,14 @@
       {
         "home_manager": "Zogg",
         "home_score": 0.0,
-        "home_projected": 101.9,
+        "home_projected": 102.3,
         "away_manager": "Ainsworth",
         "away_score": 0.0,
         "away_projected": 104.4,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Ainsworth",
-          "spread": 2.5,
+          "spread": 2.0,
           "over_under": 206.5
         }
       },

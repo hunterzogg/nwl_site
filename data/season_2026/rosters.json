@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-01T17:00:24.604758+00:00",
+  "updated_at": "2026-09-02T16:53:25.593388+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.1,
@@ -143,14 +143,6 @@
     ],
     "WR": [
       {
-        "espn_id": 4429022,
-        "name": "Kayshon Boutte",
-        "position": "WR",
-        "nfl_team": "HOU",
-        "ros_value": 139.0,
-        "vbd_value": -42.9
-      },
-      {
         "espn_id": 3925357,
         "name": "Calvin Ridley",
         "position": "WR",
@@ -205,6 +197,14 @@
         "nfl_team": "CAR",
         "ros_value": 94.0,
         "vbd_value": -87.9
+      },
+      {
+        "espn_id": 4361409,
+        "name": "Jahan Dotson",
+        "position": "WR",
+        "nfl_team": "ATL",
+        "ros_value": 92.8,
+        "vbd_value": -89.1
       }
     ],
     "TE": [
@@ -215,14 +215,6 @@
         "nfl_team": "MIN",
         "ros_value": 158.9,
         "vbd_value": 2.9
-      },
-      {
-        "espn_id": 3929645,
-        "name": "Juwan Johnson",
-        "position": "TE",
-        "nfl_team": "NO",
-        "ros_value": 146.9,
-        "vbd_value": -6.1
       },
       {
         "espn_id": 5083315,
@@ -271,6 +263,14 @@
         "nfl_team": "CAR",
         "ros_value": 114.5,
         "vbd_value": -30.4
+      },
+      {
+        "espn_id": 4576297,
+        "name": "AJ Barner",
+        "position": "TE",
+        "nfl_team": "SEA",
+        "ros_value": 113.8,
+        "vbd_value": -31.0
       }
     ]
   },
@@ -701,7 +701,7 @@
       "manager": "Glaser",
       "division": "Silver",
       "espn_team_id": 5,
-      "roster_size": 15,
+      "roster_size": 16,
       "players": [
         {
           "espn_id": 4430878,
@@ -838,7 +838,7 @@
           "name": "Tank Dell",
           "position": "WR",
           "nfl_team": "HOU",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 0.0,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
@@ -895,6 +895,19 @@
           "actual_so_far": 0.0,
           "ros_value": 103.1,
           "vbd_value": -39.0,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 3929645,
+          "name": "Juwan Johnson",
+          "position": "TE",
+          "nfl_team": "NO",
+          "lineup_slot_id": 20,
+          "projected_total": 114.6,
+          "actual_so_far": 0.0,
+          "ros_value": 114.6,
+          "vbd_value": -30.4,
           "slot": "TE",
           "is_starter": true
         }
@@ -904,7 +917,7 @@
       "manager": "Goetz",
       "division": "Bronze",
       "espn_team_id": 1,
-      "roster_size": 15,
+      "roster_size": 16,
       "players": [
         {
           "espn_id": 4429795,
@@ -1028,7 +1041,7 @@
           "name": "Isiah Pacheco",
           "position": "RB",
           "nfl_team": "DET",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 94.7,
           "actual_so_far": 0.0,
           "ros_value": 94.7,
@@ -1100,6 +1113,19 @@
           "vbd_value": -138.8,
           "slot": "BEN",
           "is_starter": false
+        },
+        {
+          "espn_id": 4429022,
+          "name": "Kayshon Boutte",
+          "position": "WR",
+          "nfl_team": "HOU",
+          "lineup_slot_id": 20,
+          "projected_total": 113.5,
+          "actual_so_far": 0.0,
+          "ros_value": 113.5,
+          "vbd_value": -68.4,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
@@ -1127,7 +1153,7 @@
           "name": "Saquon Barkley",
           "position": "RB",
           "nfl_team": "PHI",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 251.7,
           "actual_so_far": 0.0,
           "ros_value": 251.7,
@@ -1218,7 +1244,7 @@
           "name": "RJ Harvey",
           "position": "RB",
           "nfl_team": "DEN",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 2,
           "projected_total": 125.0,
           "actual_so_far": 0.0,
           "ros_value": 125.0,
@@ -2652,7 +2678,7 @@
           "name": "Rico Dowdle",
           "position": "RB",
           "nfl_team": "PIT",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 173.7,
           "actual_so_far": 0.0,
           "ros_value": 173.7,
@@ -2743,7 +2769,7 @@
           "name": "MarShawn Lloyd",
           "position": "RB",
           "nfl_team": "GB",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 2,
           "projected_total": 124.4,
           "actual_so_far": 0.0,
           "ros_value": 124.4,
