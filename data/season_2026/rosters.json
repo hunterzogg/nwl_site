@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-03T18:55:56.443935+00:00",
+  "updated_at": "2026-09-04T08:06:31.351049+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.1,
@@ -77,20 +77,20 @@
     ],
     "RB": [
       {
-        "espn_id": 4038441,
-        "name": "Justice Hill",
-        "position": "RB",
-        "nfl_team": "BAL",
-        "ros_value": 120.1,
-        "vbd_value": -59.8
-      },
-      {
         "espn_id": 3116389,
         "name": "Samaje Perine",
         "position": "RB",
         "nfl_team": "CIN",
         "ros_value": 100.3,
         "vbd_value": -79.6
+      },
+      {
+        "espn_id": 5081397,
+        "name": "Dylan Sampson",
+        "position": "RB",
+        "nfl_team": "CLE",
+        "ros_value": 88.2,
+        "vbd_value": -91.7
       },
       {
         "espn_id": 3915411,
@@ -2462,7 +2462,7 @@
           "name": "Tony Pollard",
           "position": "RB",
           "nfl_team": "TEN",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 2,
           "projected_total": 170.7,
           "actual_so_far": 0.0,
           "ros_value": 170.7,
@@ -2501,7 +2501,7 @@
           "name": "Wan'Dale Robinson",
           "position": "WR",
           "nfl_team": "TEN",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 135.4,
           "actual_so_far": 0.0,
           "ros_value": 135.4,
@@ -2527,7 +2527,7 @@
           "name": "Woody Marks",
           "position": "RB",
           "nfl_team": "HOU",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 119.7,
           "actual_so_far": 0.0,
           "ros_value": 119.7,
@@ -2562,19 +2562,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 5081397,
-          "name": "Dylan Sampson",
-          "position": "RB",
-          "nfl_team": "CLE",
-          "lineup_slot_id": 20,
-          "projected_total": 73.2,
-          "actual_so_far": 0.0,
-          "ros_value": 73.2,
-          "vbd_value": -106.7,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14025,
           "name": "49ers Coach",
           "position": "HC",
@@ -2586,6 +2573,19 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
+        },
+        {
+          "espn_id": 4038441,
+          "name": "Justice Hill",
+          "position": "RB",
+          "nfl_team": "BAL",
+          "lineup_slot_id": 20,
+          "projected_total": 100.4,
+          "actual_so_far": 0.0,
+          "ros_value": 100.4,
+          "vbd_value": -79.5,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
