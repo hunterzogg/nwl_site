@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-05T15:40:01.971544+00:00",
+  "updated_at": "2026-09-06T16:00:14.122065+00:00",
   "weeks_remaining": 14,
   "vbd_baseline": {
     "QB": 286.1,
@@ -1801,7 +1801,7 @@
           "name": "Tee Higgins",
           "position": "WR",
           "nfl_team": "CIN",
-          "lineup_slot_id": 4,
+          "lineup_slot_id": 23,
           "projected_total": 182.3,
           "actual_so_far": 0.0,
           "ros_value": 182.3,
@@ -1853,7 +1853,7 @@
           "name": "Deebo Samuel Sr.",
           "position": "WR",
           "nfl_team": "SF",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 4,
           "projected_total": 125.8,
           "actual_so_far": 0.0,
           "ros_value": 125.8,
