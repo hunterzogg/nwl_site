@@ -1,20 +1,20 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-08T16:52:23.996856+00:00",
+    "updated_at": "2026-09-09T16:54:54.018248+00:00",
     "games": [
       {
         "home_manager": "Goetz",
         "home_score": 0.0,
-        "home_projected": 102.3,
+        "home_projected": 100.5,
         "away_manager": "Stover",
         "away_score": 0.0,
         "away_projected": 95.7,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Goetz",
-          "spread": 6.5,
-          "over_under": 198.0
+          "spread": 5.0,
+          "over_under": 196.0
         }
       },
       {
