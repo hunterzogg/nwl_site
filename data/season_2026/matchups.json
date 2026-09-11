@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-10T18:44:24.152545+00:00",
+    "updated_at": "2026-09-11T08:12:07.689619+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -20,15 +20,15 @@
       {
         "home_manager": "Palaia",
         "home_score": 0.0,
-        "home_projected": 82.5,
+        "home_projected": 89.9,
         "away_manager": "Glaser",
         "away_score": 0.0,
         "away_projected": 101.4,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Glaser",
-          "spread": 19.0,
-          "over_under": 184.0
+          "spread": 11.5,
+          "over_under": 191.5
         }
       },
       {
