@@ -1,34 +1,34 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-12T15:53:36.909196+00:00",
+    "updated_at": "2026-09-13T16:51:24.075527+00:00",
     "games": [
       {
         "home_manager": "Goetz",
         "home_score": 0.0,
-        "home_projected": 100.8,
+        "home_projected": 100.3,
         "away_manager": "Stover",
         "away_score": 0.0,
         "away_projected": 96.9,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Goetz",
-          "spread": 4.0,
-          "over_under": 197.5
+          "spread": 3.5,
+          "over_under": 197.0
         }
       },
       {
         "home_manager": "Palaia",
         "home_score": 0.0,
-        "home_projected": 89.7,
+        "home_projected": 89.6,
         "away_manager": "Glaser",
         "away_score": 0.0,
-        "away_projected": 101.4,
+        "away_projected": 101.0,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Glaser",
           "spread": 11.5,
-          "over_under": 191.0
+          "over_under": 190.5
         }
       },
       {
@@ -37,11 +37,11 @@
         "home_projected": 107.3,
         "away_manager": "Conlin",
         "away_score": 0.0,
-        "away_projected": 103.3,
+        "away_projected": 103.0,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Hagan",
-          "spread": 4.0,
+          "spread": 4.5,
           "over_under": 210.5
         }
       },
@@ -65,26 +65,26 @@
         "home_projected": 103.7,
         "away_manager": "Ainsworth",
         "away_score": 0.0,
-        "away_projected": 104.5,
+        "away_projected": 104.2,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Ainsworth",
-          "spread": 1.0,
+          "spread": 0.5,
           "over_under": 208.0
         }
       },
       {
         "home_manager": "Larson",
         "home_score": 0.0,
-        "home_projected": 96.2,
+        "home_projected": 96.4,
         "away_manager": "Prodahl",
         "away_score": 0.0,
-        "away_projected": 95.1,
+        "away_projected": 95.5,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Larson",
           "spread": 1.0,
-          "over_under": 191.5
+          "over_under": 192.0
         }
       }
     ]
