@@ -3,5 +3,83 @@
     "week": 1,
     "published": false,
     "rankings": []
+  },
+  {
+    "week": 2,
+    "published": false,
+    "rankings": [
+      {
+        "rank": 1,
+        "manager": "Ainsworth",
+        "trend": "same",
+        "blurb": "1-0 actual (1.0 expected wins) &middot; 165.6 PPG &middot; last 1: 1.0-0.0, 165.6 PPG"
+      },
+      {
+        "rank": 2,
+        "manager": "Glaser",
+        "trend": "same",
+        "blurb": "1-0 actual (0.9 expected wins) &middot; 152.9 PPG &middot; last 1: 1.0-0.0, 152.9 PPG"
+      },
+      {
+        "rank": 3,
+        "manager": "Muenchow",
+        "trend": "same",
+        "blurb": "1-0 actual (0.8 expected wins) &middot; 133.5 PPG &middot; last 1: 1.0-0.0, 133.5 PPG"
+      },
+      {
+        "rank": 4,
+        "manager": "Conlin",
+        "trend": "same",
+        "blurb": "1-0 actual (0.7 expected wins) &middot; 129.9 PPG &middot; last 1: 1.0-0.0, 129.9 PPG"
+      },
+      {
+        "rank": 5,
+        "manager": "Goetz",
+        "trend": "same",
+        "blurb": "1-0 actual (0.6 expected wins) &middot; 108.1 PPG &middot; last 1: 1.0-0.0, 108.1 PPG"
+      },
+      {
+        "rank": 6,
+        "manager": "Larson",
+        "trend": "same",
+        "blurb": "1-0 actual (0.5 expected wins) &middot; 101.9 PPG &middot; last 1: 1.0-0.0, 101.9 PPG"
+      },
+      {
+        "rank": 7,
+        "manager": "Palaia",
+        "trend": "same",
+        "blurb": "0-1 actual (0.5 expected wins) &middot; 104.8 PPG &middot; last 1: 0.0-1.0, 104.8 PPG"
+      },
+      {
+        "rank": 8,
+        "manager": "Pfaffinger",
+        "trend": "same",
+        "blurb": "0-1 actual (0.4 expected wins) &middot; 95.3 PPG &middot; last 1: 0.0-1.0, 95.3 PPG"
+      },
+      {
+        "rank": 9,
+        "manager": "Prodahl",
+        "trend": "same",
+        "blurb": "0-1 actual (0.3 expected wins) &middot; 87.9 PPG &middot; last 1: 0.0-1.0, 87.9 PPG"
+      },
+      {
+        "rank": 10,
+        "manager": "Stover",
+        "trend": "same",
+        "blurb": "0-1 actual (0.2 expected wins) &middot; 85.5 PPG &middot; last 1: 0.0-1.0, 85.5 PPG"
+      },
+      {
+        "rank": 11,
+        "manager": "Hagan",
+        "trend": "same",
+        "blurb": "0-1 actual (0.1 expected wins) &middot; 78.0 PPG &middot; last 1: 0.0-1.0, 78.0 PPG"
+      },
+      {
+        "rank": 12,
+        "manager": "Zogg",
+        "trend": "same",
+        "blurb": "0-1 actual (0.0 expected wins) &middot; 68.5 PPG &middot; last 1: 0.0-1.0, 68.5 PPG"
+      }
+    ]
   }
 ]
