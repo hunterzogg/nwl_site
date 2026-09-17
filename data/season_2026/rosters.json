@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-16T17:19:23.747312+00:00",
+  "updated_at": "2026-09-17T19:20:47.103349+00:00",
   "weeks_remaining": 13,
   "vbd_baseline": {
     "QB": 295.5,
@@ -151,6 +151,14 @@
         "vbd_value": -46.6
       },
       {
+        "espn_id": 4382466,
+        "name": "Jalen Nailor",
+        "position": "WR",
+        "nfl_team": "LV",
+        "ros_value": 124.9,
+        "vbd_value": -57.0
+      },
+      {
         "espn_id": 2977187,
         "name": "Cooper Kupp",
         "position": "WR",
@@ -197,14 +205,6 @@
         "nfl_team": "PIT",
         "ros_value": 108.7,
         "vbd_value": -73.2
-      },
-      {
-        "espn_id": 4427095,
-        "name": "DeMario Douglas",
-        "position": "WR",
-        "nfl_team": "NE",
-        "ros_value": 103.6,
-        "vbd_value": -78.3
       }
     ],
     "TE": [
@@ -661,7 +661,7 @@
           "name": "Lions Coach",
           "position": "HC",
           "nfl_team": "DET",
-          "lineup_slot_id": 19,
+          "lineup_slot_id": 20,
           "projected_total": 35.6,
           "actual_so_far": 5.0,
           "ros_value": 30.6,
@@ -1076,19 +1076,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4382466,
-          "name": "Jalen Nailor",
-          "position": "WR",
-          "nfl_team": "LV",
-          "lineup_slot_id": 20,
-          "projected_total": 102.7,
-          "actual_so_far": 4.2,
-          "ros_value": 98.5,
-          "vbd_value": -83.4,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14026,
           "name": "Seahawks Coach",
           "position": "HC",
@@ -1124,6 +1111,19 @@
           "actual_so_far": 6.2,
           "ros_value": 67.7,
           "vbd_value": -114.2,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4832846,
+          "name": "Demond Claiborne",
+          "position": "RB",
+          "nfl_team": "MIN",
+          "lineup_slot_id": 20,
+          "projected_total": 0.0,
+          "actual_so_far": 0.0,
+          "ros_value": 0.0,
+          "vbd_value": -178.8,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1382,7 +1382,7 @@
           "name": "Terry McLaurin",
           "position": "WR",
           "nfl_team": "WSH",
-          "lineup_slot_id": 4,
+          "lineup_slot_id": 20,
           "projected_total": 179.0,
           "actual_so_far": 2.4,
           "ros_value": 176.6,
@@ -1421,7 +1421,7 @@
           "name": "Michael Wilson",
           "position": "WR",
           "nfl_team": "ARI",
-          "lineup_slot_id": 5,
+          "lineup_slot_id": 4,
           "projected_total": 141.5,
           "actual_so_far": 8.1,
           "ros_value": 133.4,
@@ -1525,7 +1525,7 @@
           "name": "Devaughn Vele",
           "position": "WR",
           "nfl_team": "NO",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 5,
           "projected_total": 98.6,
           "actual_so_far": 16.4,
           "ros_value": 82.2,
@@ -1552,7 +1552,7 @@
       "manager": "Muenchow",
       "division": "Silver",
       "espn_team_id": 2,
-      "roster_size": 15,
+      "roster_size": 16,
       "players": [
         {
           "espn_id": 4262921,
@@ -1676,7 +1676,7 @@
           "name": "Jordan Mason",
           "position": "RB",
           "nfl_team": "MIN",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 158.1,
           "actual_so_far": 11.9,
           "ros_value": 146.2,
@@ -1748,6 +1748,19 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
+        },
+        {
+          "espn_id": 4599739,
+          "name": "Kendre Miller",
+          "position": "RB",
+          "nfl_team": "NO",
+          "lineup_slot_id": 20,
+          "projected_total": 12.3,
+          "actual_so_far": 9.0,
+          "ros_value": 3.3,
+          "vbd_value": -175.5,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
@@ -2108,7 +2121,7 @@
           "name": "Alvin Kamara",
           "position": "RB",
           "nfl_team": "NO",
-          "lineup_slot_id": 21,
+          "lineup_slot_id": 20,
           "projected_total": 103.7,
           "actual_so_far": 0.0,
           "ros_value": 103.7,
@@ -2121,11 +2134,11 @@
           "name": "De'Zhaun Stribling",
           "position": "WR",
           "nfl_team": "SF",
-          "lineup_slot_id": 20,
-          "projected_total": 90.4,
+          "lineup_slot_id": 21,
+          "projected_total": 0.0,
           "actual_so_far": 0.0,
-          "ros_value": 90.4,
-          "vbd_value": -91.5,
+          "ros_value": 0.0,
+          "vbd_value": -181.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2246,7 +2259,7 @@
           "name": "TreVeyon Henderson",
           "position": "RB",
           "nfl_team": "NE",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 137.7,
           "actual_so_far": 0.0,
           "ros_value": 137.7,
@@ -2285,7 +2298,7 @@
           "name": "Kyle Monangai",
           "position": "RB",
           "nfl_team": "CHI",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 161.8,
           "actual_so_far": 19.4,
           "ros_value": 142.4,
