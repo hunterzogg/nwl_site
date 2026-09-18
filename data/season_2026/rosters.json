@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-18T08:23:34.150644+00:00",
+  "updated_at": "2026-09-18T16:45:28.620645+00:00",
   "weeks_remaining": 13,
   "vbd_baseline": {
     "QB": 295.5,
@@ -167,12 +167,12 @@
         "vbd_value": -57.5
       },
       {
-        "espn_id": 4429022,
-        "name": "Kayshon Boutte",
+        "espn_id": 4360939,
+        "name": "Rashod Bateman",
         "position": "WR",
-        "nfl_team": "HOU",
-        "ros_value": 122.1,
-        "vbd_value": -59.8
+        "nfl_team": "BAL",
+        "ros_value": 122.5,
+        "vbd_value": -59.4
       },
       {
         "espn_id": 3886598,
@@ -1966,15 +1966,15 @@
           "is_starter": true
         },
         {
-          "espn_id": 4360939,
-          "name": "Rashod Bateman",
+          "espn_id": 4429022,
+          "name": "Kayshon Boutte",
           "position": "WR",
-          "nfl_team": "BAL",
+          "nfl_team": "HOU",
           "lineup_slot_id": 23,
-          "projected_total": 103.7,
-          "actual_so_far": 0.0,
-          "ros_value": 103.7,
-          "vbd_value": -78.2,
+          "projected_total": 99.6,
+          "actual_so_far": 2.6,
+          "ros_value": 97.0,
+          "vbd_value": -84.9,
           "slot": "BEN",
           "is_starter": false
         }
@@ -2233,7 +2233,7 @@
           "name": "Nico Collins",
           "position": "WR",
           "nfl_team": "HOU",
-          "lineup_slot_id": 5,
+          "lineup_slot_id": 20,
           "projected_total": 205.6,
           "actual_so_far": 17.7,
           "ros_value": 187.9,
@@ -2350,7 +2350,7 @@
           "name": "Adonai Mitchell",
           "position": "WR",
           "nfl_team": "NYJ",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 5,
           "projected_total": 108.0,
           "actual_so_far": 7.5,
           "ros_value": 100.5,

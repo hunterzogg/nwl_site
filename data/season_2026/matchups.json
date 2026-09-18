@@ -91,7 +91,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-09-18T08:23:33.337569+00:00",
+    "updated_at": "2026-09-18T16:45:28.075346+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -169,12 +169,12 @@
         "home_projected": 100.4,
         "away_manager": "Prodahl",
         "away_score": 0.0,
-        "away_projected": 99.7,
+        "away_projected": 93.9,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Stover",
-          "spread": 0.5,
-          "over_under": 200.0
+          "spread": 6.5,
+          "over_under": 194.5
         }
       }
     ]
