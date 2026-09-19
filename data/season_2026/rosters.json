@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-18T16:45:28.620645+00:00",
+  "updated_at": "2026-09-19T16:07:29.533585+00:00",
   "weeks_remaining": 13,
   "vbd_baseline": {
     "QB": 295.5,
@@ -2403,10 +2403,10 @@
           "position": "WR",
           "nfl_team": "BAL",
           "lineup_slot_id": 20,
-          "projected_total": 93.1,
+          "projected_total": 0.0,
           "actual_so_far": 1.6,
-          "ros_value": 91.5,
-          "vbd_value": -90.4,
+          "ros_value": 0.0,
+          "vbd_value": -181.9,
           "slot": "BEN",
           "is_starter": false
         }
