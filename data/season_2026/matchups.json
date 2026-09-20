@@ -91,7 +91,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-09-20T16:42:05.829478+00:00",
+    "updated_at": "2026-09-20T22:24:24.714204+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -113,7 +113,7 @@
         "home_projected": 102.2,
         "away_manager": "Muenchow",
         "away_score": 0.0,
-        "away_projected": 108.7,
+        "away_projected": 108.9,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Muenchow",
@@ -141,12 +141,12 @@
         "home_projected": 97.6,
         "away_manager": "Hagan",
         "away_score": 0.0,
-        "away_projected": 109.1,
+        "away_projected": 110.6,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Hagan",
-          "spread": 11.5,
-          "over_under": 206.5
+          "spread": 13.0,
+          "over_under": 208.0
         }
       },
       {
@@ -166,15 +166,15 @@
       {
         "home_manager": "Stover",
         "home_score": 0.0,
-        "home_projected": 100.5,
+        "home_projected": 82.8,
         "away_manager": "Prodahl",
         "away_score": 0.0,
         "away_projected": 93.4,
         "winner": "UNDECIDED",
         "line": {
-          "favorite": "Stover",
-          "spread": 7.0,
-          "over_under": 194.0
+          "favorite": "Prodahl",
+          "spread": 10.5,
+          "over_under": 176.0
         }
       }
     ]
