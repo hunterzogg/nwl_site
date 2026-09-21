@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-21T01:27:54.351343+00:00",
+  "updated_at": "2026-09-21T09:16:54.426982+00:00",
   "weeks_remaining": 13,
   "vbd_baseline": {
     "QB": 264.2,
@@ -304,10 +304,10 @@
           "nfl_team": "KC",
           "lineup_slot_id": 2,
           "projected_total": 235.9,
-          "actual_so_far": 39.2,
-          "ros_value": 196.7,
-          "vbd_value": 34.8,
-          "slot": "RB1",
+          "actual_so_far": 53.4,
+          "ros_value": 182.5,
+          "vbd_value": 20.6,
+          "slot": "RB2",
           "is_starter": true
         },
         {
@@ -333,7 +333,7 @@
           "actual_so_far": 30.5,
           "ros_value": 190.9,
           "vbd_value": 29.0,
-          "slot": "RB2",
+          "slot": "RB1",
           "is_starter": true
         },
         {
@@ -408,9 +408,9 @@
           "nfl_team": "KC",
           "lineup_slot_id": 6,
           "projected_total": 123.9,
-          "actual_so_far": 19.0,
-          "ros_value": 104.9,
-          "vbd_value": -26.6,
+          "actual_so_far": 29.2,
+          "ros_value": 94.7,
+          "vbd_value": -34.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -585,9 +585,9 @@
           "nfl_team": "IND",
           "lineup_slot_id": 4,
           "projected_total": 112.4,
-          "actual_so_far": 8.2,
-          "ros_value": 104.2,
-          "vbd_value": -61.7,
+          "actual_so_far": 15.4,
+          "ros_value": 97.0,
+          "vbd_value": -68.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -866,9 +866,9 @@
           "nfl_team": "IND",
           "lineup_slot_id": 20,
           "projected_total": 103.1,
-          "actual_so_far": 6.2,
-          "ros_value": 96.9,
-          "vbd_value": -69.0,
+          "actual_so_far": 7.2,
+          "ros_value": 95.9,
+          "vbd_value": -70.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1345,9 +1345,9 @@
           "nfl_team": "IND",
           "lineup_slot_id": 2,
           "projected_total": 273.1,
-          "actual_so_far": 28.6,
-          "ros_value": 244.5,
-          "vbd_value": 82.6,
+          "actual_so_far": 50.8,
+          "ros_value": 222.3,
+          "vbd_value": 60.4,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1462,9 +1462,9 @@
           "nfl_team": "KC",
           "lineup_slot_id": 0,
           "projected_total": 261.1,
-          "actual_so_far": 30.7,
-          "ros_value": 230.5,
-          "vbd_value": -10.1,
+          "actual_so_far": 50.6,
+          "ros_value": 210.5,
+          "vbd_value": -16.1,
           "slot": "QB",
           "is_starter": true
         },
@@ -1613,9 +1613,9 @@
           "nfl_team": "IND",
           "lineup_slot_id": 6,
           "projected_total": 138.3,
-          "actual_so_far": 17.8,
-          "ros_value": 120.5,
-          "vbd_value": -14.9,
+          "actual_so_far": 20.2,
+          "ros_value": 118.1,
+          "vbd_value": -16.7,
           "slot": "TE",
           "is_starter": true
         },
@@ -1642,8 +1642,8 @@
           "actual_so_far": 20.8,
           "ros_value": 126.4,
           "vbd_value": -39.5,
-          "slot": "BEN",
-          "is_starter": false
+          "slot": "W/T",
+          "is_starter": true
         },
         {
           "espn_id": 4431611,
@@ -1665,11 +1665,11 @@
           "nfl_team": "KC",
           "lineup_slot_id": 20,
           "projected_total": 136.4,
-          "actual_so_far": 6.5,
-          "ros_value": 129.9,
-          "vbd_value": -36.0,
-          "slot": "W/T",
-          "is_starter": true
+          "actual_so_far": 14.3,
+          "ros_value": 122.1,
+          "vbd_value": -43.8,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4360569,
@@ -1933,9 +1933,9 @@
           "nfl_team": "KC",
           "lineup_slot_id": 20,
           "projected_total": 83.2,
-          "actual_so_far": 7.8,
-          "ros_value": 75.4,
-          "vbd_value": -86.5,
+          "actual_so_far": 12.3,
+          "ros_value": 70.9,
+          "vbd_value": -91.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2006,9 +2006,9 @@
           "nfl_team": "KC",
           "lineup_slot_id": 4,
           "projected_total": 180.6,
-          "actual_so_far": 14.5,
-          "ros_value": 166.1,
-          "vbd_value": 0.2,
+          "actual_so_far": 19.2,
+          "ros_value": 161.4,
+          "vbd_value": -4.5,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2162,8 +2162,8 @@
           "nfl_team": "KC",
           "lineup_slot_id": 19,
           "projected_total": 15.8,
-          "actual_so_far": 5.0,
-          "ros_value": 10.8,
+          "actual_so_far": 10.0,
+          "ros_value": 5.8,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
