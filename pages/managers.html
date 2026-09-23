@@ -6,14 +6,17 @@
 <title>Managers — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=7">
+<link rel="stylesheet" href="../assets/css/style.css?v=8">
 <style>
 .mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
 .mgr-card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-  overflow: hidden; transition: border-color 0.15s;
+  overflow: hidden; transition: border-color 0.15s, transform 0.15s, background-color 0.15s;
 }
 .mgr-card.expanded { border-color: var(--blue-bright); }
+@media (hover: hover) {
+  .mgr-card:not(.expanded):hover { transform: translateY(-2px); border-color: var(--line-strong); background-color: var(--surface-raised); }
+}
 .mgr-card-header {
   display: flex; align-items: center; gap: 14px; padding: 16px 18px; cursor: pointer;
 }

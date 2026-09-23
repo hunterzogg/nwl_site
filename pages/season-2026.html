@@ -6,7 +6,7 @@
 <title>2026 Hub — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=7">
+<link rel="stylesheet" href="../assets/css/style.css?v=8">
 <style>
 .tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
 .tab-btn {
@@ -86,7 +86,7 @@
       <div class="season-banner-label"><span class="nav-live-dot"></span>2026 Hub</div>
       <h1>Weekly Hub</h1>
     </div>
-    <p style="color: var(--text-muted); margin: 0; max-width: 340px; font-size: 0.9rem;">
+    <p style="color: var(--text-muted); margin: 0; max-width: 300px; font-size: 0.82rem;">
       This week's matchups, standings, power rankings, and commentary. Updated by Hunter throughout the season — separate from the historical archive.
     </p>
   </div>
@@ -103,32 +103,49 @@
     <div class="controls-row">
       <select id="matchupsWeek"></select>
     </div>
-    <div id="matchupsContent"></div>
+    <div id="matchupsContent">
+      <div class="matchup-grid">
+        <div class="skeleton-block"></div><div class="skeleton-block"></div><div class="skeleton-block"></div>
+      </div>
+    </div>
   </div>
 
   <div class="panel" id="panel-standings">
-    <div id="standingsContent"></div>
+    <div id="standingsContent">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-power">
     <div class="controls-row">
       <select id="powerWeek"></select>
     </div>
-    <div id="powerContent"></div>
+    <div id="powerContent">
+      <div class="skeleton-block"></div><div class="skeleton-block"></div><div class="skeleton-block"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-commentary">
     <div class="controls-row">
       <select id="commentaryWeek"></select>
     </div>
-    <div id="commentaryContent"></div>
+    <div id="commentaryContent">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div><div class="skeleton-line"></div>
+    </div>
   </div>
 
   <div class="panel" id="panel-funfacts">
     <div class="controls-row">
       <select id="funFactsWeek"></select>
     </div>
-    <div id="funFactsContent"></div>
+    <div id="funFactsContent">
+      <div class="fact-grid">
+        <div class="skeleton-block"></div><div class="skeleton-block"></div>
+        <div class="skeleton-block"></div><div class="skeleton-block"></div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -184,7 +201,7 @@ function renderMatchups() {
         const homeWin = g.winner === 'HOME';
         const awayWin = g.winner === 'AWAY';
         return `
-        <div class="matchup-card">
+        <div class="matchup-card hover-lift">
           <div class="matchup-side ${homeWin ? 'winner' : ''}">
             ${managerTagWithDivision(managers, g.home_manager)}
             <span class="matchup-score">${g.home_score.toFixed(1)}</span>
@@ -270,7 +287,7 @@ function renderPower() {
     return;
   }
   document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
-    <div class="rank-card">
+    <div class="rank-card hover-lift">
       <div class="rank-num-big">${r.rank}</div>
       <div class="rank-trend ${r.trend}">${trendLabel(r)}</div>
       <div class="rank-body">
@@ -303,7 +320,7 @@ function renderFunFacts() {
   document.getElementById('funFactsContent').innerHTML = `
     <div class="fact-grid">
       ${entry.facts.map(f => `
-        <div class="fact-card ${f.tone || ''} ${f.wide ? 'wide' : ''}">
+        <div class="fact-card hover-lift ${f.tone || ''} ${f.wide ? 'wide' : ''}">
           <p class="fact-label">${f.label}</p>
           <p class="fact-headline">${f.headline.replace('{{num}}', `<span class="num">${f.num}</span>`)}</p>
           <p class="fact-sub">${f.sub}</p>
