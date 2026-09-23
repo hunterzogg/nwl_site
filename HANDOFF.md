@@ -188,6 +188,24 @@ renders it as `▲3`/`▼2`/`—`, and appends 🔥 for any swing bigger than +2
 exactly ±2 gets no emoji. Existing Week 1/2/3 `power_rankings.json` entries were recomputed to
 backfill the new field (Zogg's Week 1→2 jump was +6, the biggest swing so far).
 
+**Power rankings restyled as stacked bullet stats + strength-of-schedule rank added (later
+follow-up)**: per explicit request, the single `blurb` string (e.g. "2-0 actual (1.9 expected
+wins) · 141.9 PPG · last 2: 2.0-0.0, 141.9 PPG") was replaced with structured per-manager fields -
+`record_actual`, `expected_wins`, `ppg`, `recent_games`/`recent_record`/`recent_ppg`, and a new
+`sos_rank`/`sos_total` - rendered by `season-2026.html` as a `.rank-stats` `<ul>`, one stat per
+line, instead of one middot-separated line. Record strings use Python's `:g` format (not a fixed
+decimal count) so a clean record reads "2-0" while a tie-affected one still shows "1.5-0.5" rather
+than always forcing a decimal - this is also what fixed the earlier "2.0-0.0" recent-record
+formatting per explicit feedback. **Strength of schedule** is new: each manager's opponents' own
+season PPG (not that single game's score - their full-season scoring average), averaged and
+ranked 1 (toughest slate so far) to 12 (easiest) against the field - computed in
+`compute_power_rankings()` from a new `opponents` map built alongside the existing `results`/
+`by_week` tracking, display-only (doesn't feed the composite score). Real early finding: Larson's
+2-0 start ranks 12th/12 (easiest) strength of schedule, which is exactly why the power rankings
+already had them 3rd rather than 1st despite being unbeaten - the new field makes that visible
+instead of implicit in the composite math. `blurb` was removed entirely (all three
+weeks' entries recomputed to backfill the new fields) rather than kept alongside the new ones.
+
 **New tab: "Brian's Fun Facts" (added same session)** - a fifth tab next to Commentary, reading
 `data/season_2026/fun_facts.json`. Same review/publish pattern as commentary/power rankings
 (`published: false/true` per week) but a different shape - each week is a `facts` array of

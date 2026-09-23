@@ -152,12 +152,17 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
       - recent_form: win% + normalized PPG over the last ROLLING_WINDOW games (fewer early in
         the season), so a current hot streak can boost a team independent of their full-season
         record.
-    Returns a list of {rank, manager, trend, blurb}, sorted best to worst.
+    Also computes (for display only, not part of the composite score) a strength-of-schedule
+    rank: each manager's opponents' own season PPG, averaged and ranked 1 (toughest) to N
+    (easiest) against the field.
+    Returns a list of per-manager dicts (rank/manager/trend/delta plus the display stats used by
+    season-2026.html's stacked bullet list), sorted best to worst.
     """
     played = [m for m in schedule if m.get("matchupPeriodId", 0) <= week and m.get("winner") not in (None, "UNDECIDED")]
 
     by_week = {}  # week -> [(manager, score), ...]
     results = {}  # manager -> [(week, own_score, win_fraction), ...] in week order
+    opponents = {}  # manager -> [opponent_manager, ...] (byes excluded - no opponent to weigh)
     for m in played:
         wk = m["matchupPeriodId"]
         home, away = m.get("home", {}), m.get("away", {})
@@ -165,11 +170,13 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
         home_score = home.get("totalPoints", 0)
         by_week.setdefault(wk, []).append((home_mgr, home_score))
         results.setdefault(home_mgr, [])
+        opponents.setdefault(home_mgr, [])
         if away:
             away_mgr = resolve_manager(away.get("teamId"), team_map)
             away_score = away.get("totalPoints", 0)
             by_week.setdefault(wk, []).append((away_mgr, away_score))
             results.setdefault(away_mgr, [])
+            opponents.setdefault(away_mgr, [])
             if m["winner"] == "HOME":
                 home_win, away_win = 1, 0
             elif m["winner"] == "AWAY":
@@ -178,6 +185,8 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
                 home_win, away_win = 0.5, 0.5
             results[home_mgr].append((wk, home_score, home_win))
             results[away_mgr].append((wk, away_score, away_win))
+            opponents[home_mgr].append(away_mgr)
+            opponents[away_mgr].append(home_mgr)
         else:
             results[home_mgr].append((wk, home_score, 1))  # bye counts as a win, matches ESPN's own treatment
 
@@ -213,6 +222,14 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
     norm_recent_pts = _normalize({m: v["pts"] for m, v in recent_form_raw.items()})
     recent_form = {m: (recent_form_raw[m]["win"] + norm_recent_pts[m]) / 2 for m in managers}
 
+    # Strength of schedule: each manager's opponents' own season PPG, averaged - then ranked
+    # 1 (toughest slate) to N (easiest) against the field. Display-only, not part of composite.
+    sos_value = {}
+    for mgr in managers:
+        opp_list = opponents.get(mgr, [])
+        sos_value[mgr] = (sum(avg_points[o] for o in opp_list) / len(opp_list)) if opp_list else 0
+    sos_rank = {m: i + 1 for i, m in enumerate(sorted(managers, key=lambda m: sos_value[m], reverse=True))}
+
     composite = {}
     for mgr in managers:
         composite[mgr] = (
@@ -246,15 +263,26 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
 
         games_played = len(results[mgr])
         wins_actual = sum(w for _, _, w in results[mgr])
-        blurb = (
-            f"{wins_actual:g}-{games_played - wins_actual:g} actual "
-            f"({expected_win_pct[mgr] * games_played:.1f} expected wins) &middot; "
-            f"{avg_points[mgr]:.1f} PPG &middot; "
-            f"last {len(results[mgr][-ROLLING_WINDOW:])}: {recent_form_raw[mgr]['win'] * len(results[mgr][-ROLLING_WINDOW:]):.1f}-"
-            f"{(1 - recent_form_raw[mgr]['win']) * len(results[mgr][-ROLLING_WINDOW:]):.1f}, "
-            f"{recent_form_raw[mgr]['pts']:.1f} PPG"
-        )
-        output.append({"rank": rank, "manager": mgr, "trend": trend, "delta": delta, "blurb": blurb})
+        recent_n = len(results[mgr][-ROLLING_WINDOW:])
+        recent_wins = recent_form_raw[mgr]["win"] * recent_n
+
+        output.append({
+            "rank": rank,
+            "manager": mgr,
+            "trend": trend,
+            "delta": delta,
+            # Display stats for season-2026.html's stacked bullet list (see renderPower there) -
+            # record strings use :g (not a fixed decimal count) so a whole-number record reads
+            # "2-0" while a tie-affected one still shows "1.5-0.5" rather than hiding it.
+            "record_actual": f"{wins_actual:g}-{games_played - wins_actual:g}",
+            "expected_wins": round(expected_win_pct[mgr] * games_played, 1),
+            "ppg": round(avg_points[mgr], 1),
+            "recent_games": recent_n,
+            "recent_record": f"{recent_wins:g}-{recent_n - recent_wins:g}",
+            "recent_ppg": round(recent_form_raw[mgr]["pts"], 1),
+            "sos_rank": sos_rank[mgr],
+            "sos_total": len(managers),
+        })
 
     return output
 

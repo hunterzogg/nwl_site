@@ -52,7 +52,11 @@
 .rank-trend.down { color: #E0524A; }
 .rank-trend.same { color: var(--text-muted); }
 .rank-body { flex: 1; }
-.rank-blurb { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+.rank-stats {
+  list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px;
+}
+.rank-stats li { color: var(--text-muted); font-size: 0.82rem; }
+.rank-stats li b { color: var(--text); font-family: var(--font-mono); font-weight: 600; }
 .commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; white-space: pre-wrap; }
 .commentary-title { margin-bottom: 12px; }
 .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -292,7 +296,15 @@ function renderPower() {
       <div class="rank-trend ${r.trend}">${trendLabel(r)}</div>
       <div class="rank-body">
         ${managerTagWithDivision(managers, r.manager)}
-        ${r.blurb ? `<div class="rank-blurb">${r.blurb}</div>` : ''}
+        ${r.record_actual ? `
+          <ul class="rank-stats">
+            <li>Record: <b>${r.record_actual}</b> actual</li>
+            <li>Expected Wins: <b>${r.expected_wins}</b></li>
+            <li>PPG: <b>${r.ppg}</b></li>
+            <li>Last ${r.recent_games}: <b>${r.recent_record}</b>, ${r.recent_ppg} PPG</li>
+            <li>Strength of Schedule: <b>${ordinal(r.sos_rank)}</b> of ${r.sos_total}</li>
+          </ul>
+        ` : ''}
       </div>
     </div>
   `).join('');
@@ -307,6 +319,17 @@ function trendLabel(r) {
   const arrow = delta > 0 ? '&#9650;' : '&#9660;';
   const emoji = delta > 2 ? ' \u{1F525}' : delta < -2 ? ' ❄️' : '';
   return `${arrow}${Math.abs(delta)}${emoji}`;
+}
+
+function ordinal(n) {
+  const rem100 = n % 100;
+  if (rem100 >= 11 && rem100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1: return `${n}st`;
+    case 2: return `${n}nd`;
+    case 3: return `${n}rd`;
+    default: return `${n}th`;
+  }
 }
 
 function renderFunFacts() {
