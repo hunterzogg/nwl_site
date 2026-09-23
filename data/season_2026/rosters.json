@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-22T17:22:33.906420+00:00",
+  "updated_at": "2026-09-23T17:30:57.674895+00:00",
   "weeks_remaining": 12,
   "vbd_baseline": {
     "QB": 261.7,
@@ -11,30 +11,6 @@
   "free_agents": {
     "QB": [
       {
-        "espn_id": 3917315,
-        "name": "Kyler Murray",
-        "position": "QB",
-        "nfl_team": "MIN",
-        "ros_value": 277.8,
-        "vbd_value": 4.8
-      },
-      {
-        "espn_id": 4360689,
-        "name": "Tyler Shough",
-        "position": "QB",
-        "nfl_team": "NO",
-        "ros_value": 272.1,
-        "vbd_value": 3.1
-      },
-      {
-        "espn_id": 3046779,
-        "name": "Jared Goff",
-        "position": "QB",
-        "nfl_team": "DET",
-        "ros_value": 255.5,
-        "vbd_value": -1.9
-      },
-      {
         "espn_id": 3052587,
         "name": "Baker Mayfield",
         "position": "QB",
@@ -43,12 +19,12 @@
         "vbd_value": -4.0
       },
       {
-        "espn_id": 4036378,
-        "name": "Jordan Love",
+        "espn_id": 4038941,
+        "name": "Justin Herbert",
         "position": "QB",
-        "nfl_team": "GB",
-        "ros_value": 242.1,
-        "vbd_value": -5.9
+        "nfl_team": "LAC",
+        "ros_value": 237.3,
+        "vbd_value": -7.3
       },
       {
         "espn_id": 4432577,
@@ -73,9 +49,41 @@
         "nfl_team": "MIA",
         "ros_value": 221.4,
         "vbd_value": -12.1
+      },
+      {
+        "espn_id": 3917792,
+        "name": "Daniel Jones",
+        "position": "QB",
+        "nfl_team": "IND",
+        "ros_value": 221.3,
+        "vbd_value": -12.1
+      },
+      {
+        "espn_id": 15864,
+        "name": "Geno Smith",
+        "position": "QB",
+        "nfl_team": "NYJ",
+        "ros_value": 220.5,
+        "vbd_value": -12.4
+      },
+      {
+        "espn_id": 4360423,
+        "name": "Michael Penix Jr.",
+        "position": "QB",
+        "nfl_team": "ATL",
+        "ros_value": 215.7,
+        "vbd_value": -13.8
       }
     ],
     "RB": [
+      {
+        "espn_id": 4239934,
+        "name": "AJ Dillon",
+        "position": "RB",
+        "nfl_team": "CAR",
+        "ros_value": 82.7,
+        "vbd_value": -80.1
+      },
       {
         "espn_id": 3915411,
         "name": "Ty Johnson",
@@ -125,31 +133,15 @@
         "vbd_value": -103.0
       },
       {
-        "espn_id": 4241457,
-        "name": "Najee Harris",
+        "espn_id": 3149687,
+        "name": "Chris Brooks",
         "position": "RB",
-        "nfl_team": "NYG",
-        "ros_value": 41.7,
-        "vbd_value": -121.1
-      },
-      {
-        "espn_id": 4686468,
-        "name": "Seth McGowan",
-        "position": "RB",
-        "nfl_team": "IND",
-        "ros_value": 40.1,
-        "vbd_value": -122.7
+        "nfl_team": "GB",
+        "ros_value": 57.4,
+        "vbd_value": -105.4
       }
     ],
     "WR": [
-      {
-        "espn_id": 4569603,
-        "name": "Malik Washington",
-        "position": "WR",
-        "nfl_team": "MIA",
-        "ros_value": 145.9,
-        "vbd_value": -19.7
-      },
       {
         "espn_id": 5083754,
         "name": "Ryan Flournoy",
@@ -167,30 +159,6 @@
         "vbd_value": -53.3
       },
       {
-        "espn_id": 4686612,
-        "name": "Tre' Harris",
-        "position": "WR",
-        "nfl_team": "LAC",
-        "ros_value": 112.1,
-        "vbd_value": -53.5
-      },
-      {
-        "espn_id": 4360939,
-        "name": "Rashod Bateman",
-        "position": "WR",
-        "nfl_team": "BAL",
-        "ros_value": 111.6,
-        "vbd_value": -54.0
-      },
-      {
-        "espn_id": 4686422,
-        "name": "Xavier Hutchinson",
-        "position": "WR",
-        "nfl_team": "HOU",
-        "ros_value": 104.0,
-        "vbd_value": -61.6
-      },
-      {
         "espn_id": 4431492,
         "name": "Roman Wilson",
         "position": "WR",
@@ -203,27 +171,43 @@
         "name": "Isaiah Williams",
         "position": "WR",
         "nfl_team": "NYJ",
-        "ros_value": 103.1,
-        "vbd_value": -62.5
+        "ros_value": 103.0,
+        "vbd_value": -62.6
+      },
+      {
+        "espn_id": 3045523,
+        "name": "Kendrick Bourne",
+        "position": "WR",
+        "nfl_team": "ARI",
+        "ros_value": 101.1,
+        "vbd_value": -64.5
+      },
+      {
+        "espn_id": 4429022,
+        "name": "Kayshon Boutte",
+        "position": "WR",
+        "nfl_team": "HOU",
+        "ros_value": 99.7,
+        "vbd_value": -65.9
+      },
+      {
+        "espn_id": 3925357,
+        "name": "Calvin Ridley",
+        "position": "WR",
+        "nfl_team": "TEN",
+        "ros_value": 95.5,
+        "vbd_value": -70.1
+      },
+      {
+        "espn_id": 4361409,
+        "name": "Jahan Dotson",
+        "position": "WR",
+        "nfl_team": "ATL",
+        "ros_value": 94.5,
+        "vbd_value": -71.1
       }
     ],
     "TE": [
-      {
-        "espn_id": 4570037,
-        "name": "Terrance Ferguson",
-        "position": "TE",
-        "nfl_team": "LAR",
-        "ros_value": 125.1,
-        "vbd_value": -10.9
-      },
-      {
-        "espn_id": 4595342,
-        "name": "Oronde Gadsden",
-        "position": "TE",
-        "nfl_team": "LAC",
-        "ros_value": 123.4,
-        "vbd_value": -12.2
-      },
       {
         "espn_id": 4361411,
         "name": "Pat Freiermuth",
@@ -271,6 +255,22 @@
         "nfl_team": "WSH",
         "ros_value": 102.1,
         "vbd_value": -28.2
+      },
+      {
+        "espn_id": 4367209,
+        "name": "Greg Dulcich",
+        "position": "TE",
+        "nfl_team": "MIA",
+        "ros_value": 95.2,
+        "vbd_value": -33.4
+      },
+      {
+        "espn_id": 4576297,
+        "name": "AJ Barner",
+        "position": "TE",
+        "nfl_team": "SEA",
+        "ros_value": 94.6,
+        "vbd_value": -33.8
       }
     ]
   },
@@ -389,19 +389,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4038941,
-          "name": "Justin Herbert",
-          "position": "QB",
-          "nfl_team": "LAC",
-          "lineup_slot_id": 0,
-          "projected_total": 237.3,
-          "actual_so_far": 21.1,
-          "ros_value": 216.2,
-          "vbd_value": -13.7,
-          "slot": "QB",
-          "is_starter": true
-        },
-        {
           "espn_id": 15847,
           "name": "Travis Kelce",
           "position": "TE",
@@ -441,19 +428,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 5123663,
-          "name": "Isaac TeSlaa",
-          "position": "WR",
-          "nfl_team": "DET",
-          "lineup_slot_id": 20,
-          "projected_total": 67.8,
-          "actual_so_far": 3.6,
-          "ros_value": 64.2,
-          "vbd_value": -101.4,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14033,
           "name": "Ravens Coach",
           "position": "HC",
@@ -476,6 +450,32 @@
           "actual_so_far": 14.8,
           "ros_value": 92.5,
           "vbd_value": -73.1,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4360689,
+          "name": "Tyler Shough",
+          "position": "QB",
+          "nfl_team": "NO",
+          "lineup_slot_id": 0,
+          "projected_total": 272.1,
+          "actual_so_far": 45.6,
+          "ros_value": 226.5,
+          "vbd_value": -10.6,
+          "slot": "QB",
+          "is_starter": true
+        },
+        {
+          "espn_id": 4036378,
+          "name": "Jordan Love",
+          "position": "QB",
+          "nfl_team": "GB",
+          "lineup_slot_id": 20,
+          "projected_total": 242.2,
+          "actual_so_far": 33.3,
+          "ros_value": 208.9,
+          "vbd_value": -15.8,
           "slot": "BEN",
           "is_starter": false
         }
@@ -532,10 +532,10 @@
           "position": "WR",
           "nfl_team": "LAC",
           "lineup_slot_id": 4,
-          "projected_total": 155.3,
+          "projected_total": 155.5,
           "actual_so_far": 21.7,
-          "ros_value": 133.6,
-          "vbd_value": -32.0,
+          "ros_value": 133.8,
+          "vbd_value": -31.8,
           "slot": "WR1",
           "is_starter": true
         },
@@ -761,10 +761,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 5,
-          "projected_total": 175.9,
+          "projected_total": 176.3,
           "actual_so_far": 41.8,
-          "ros_value": 134.1,
-          "vbd_value": -31.5,
+          "ros_value": 134.5,
+          "vbd_value": -31.1,
           "slot": "W/T",
           "is_starter": true
         },
@@ -826,10 +826,10 @@
           "position": "WR",
           "nfl_team": "CAR",
           "lineup_slot_id": 23,
-          "projected_total": 170.8,
+          "projected_total": 170.2,
           "actual_so_far": 40.4,
-          "ros_value": 130.4,
-          "vbd_value": -35.2,
+          "ros_value": 129.8,
+          "vbd_value": -35.8,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -904,10 +904,10 @@
           "position": "TE",
           "nfl_team": "NYJ",
           "lineup_slot_id": 20,
-          "projected_total": 83.7,
+          "projected_total": 84.6,
           "actual_so_far": 12.6,
-          "ros_value": 71.1,
-          "vbd_value": -51.4,
+          "ros_value": 72.0,
+          "vbd_value": -50.8,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1003,10 +1003,10 @@
           "position": "RB",
           "nfl_team": "CAR",
           "lineup_slot_id": 2,
-          "projected_total": 183.7,
+          "projected_total": 190.0,
           "actual_so_far": 35.6,
-          "ros_value": 148.1,
-          "vbd_value": -14.7,
+          "ros_value": 154.4,
+          "vbd_value": -8.4,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1029,10 +1029,10 @@
           "position": "WR",
           "nfl_team": "LAC",
           "lineup_slot_id": 20,
-          "projected_total": 128.9,
+          "projected_total": 129.0,
           "actual_so_far": 4.6,
-          "ros_value": 124.3,
-          "vbd_value": -41.3,
+          "ros_value": 124.4,
+          "vbd_value": -41.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1089,41 +1089,41 @@
           "is_starter": true
         },
         {
-          "espn_id": 3149687,
-          "name": "Chris Brooks",
+          "espn_id": 4887558,
+          "name": "Emanuel Wilson",
+          "position": "RB",
+          "nfl_team": "SEA",
+          "lineup_slot_id": 20,
+          "projected_total": 29.6,
+          "actual_so_far": 9.5,
+          "ros_value": 20.1,
+          "vbd_value": -142.7,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4360939,
+          "name": "Rashod Bateman",
+          "position": "WR",
+          "nfl_team": "BAL",
+          "lineup_slot_id": 20,
+          "projected_total": 94.0,
+          "actual_so_far": 18.3,
+          "ros_value": 75.7,
+          "vbd_value": -89.9,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4819231,
+          "name": "Kaleb Johnson",
           "position": "RB",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 49.5,
-          "actual_so_far": 6.0,
-          "ros_value": 43.5,
-          "vbd_value": -119.3,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
-          "espn_id": 4600981,
-          "name": "Pat Bryant",
-          "position": "WR",
-          "nfl_team": "DEN",
-          "lineup_slot_id": 20,
-          "projected_total": 71.2,
-          "actual_so_far": 7.8,
-          "ros_value": 63.4,
-          "vbd_value": -102.2,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
-          "espn_id": 4832846,
-          "name": "Demond Claiborne",
-          "position": "RB",
-          "nfl_team": "MIN",
-          "lineup_slot_id": 20,
-          "projected_total": 3.5,
-          "actual_so_far": 0.7,
-          "ros_value": 2.8,
-          "vbd_value": -160.0,
+          "projected_total": 28.9,
+          "actual_so_far": 3.2,
+          "ros_value": 25.7,
+          "vbd_value": -137.1,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1192,7 +1192,7 @@
           "name": "Jalen Hurts",
           "position": "QB",
           "nfl_team": "PHI",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 0,
           "projected_total": 288.4,
           "actual_so_far": 40.9,
           "ros_value": 247.5,
@@ -1257,7 +1257,7 @@
           "name": "Chris Godwin Jr.",
           "position": "WR",
           "nfl_team": "TB",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 111.4,
           "actual_so_far": 13.6,
           "ros_value": 97.8,
@@ -1279,25 +1279,12 @@
           "is_starter": false
         },
         {
-          "espn_id": 4685415,
-          "name": "Travis Hunter",
-          "position": "WR",
-          "nfl_team": "JAX",
-          "lineup_slot_id": 20,
-          "projected_total": 43.3,
-          "actual_so_far": 1.6,
-          "ros_value": 41.7,
-          "vbd_value": -123.9,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": 4361741,
           "name": "Brock Purdy",
           "position": "QB",
           "nfl_team": "SF",
-          "lineup_slot_id": 0,
-          "projected_total": 283.5,
+          "lineup_slot_id": 20,
+          "projected_total": 283.4,
           "actual_so_far": 49.6,
           "ros_value": 233.9,
           "vbd_value": -8.3,
@@ -1322,11 +1309,24 @@
           "name": "Kaelon Black",
           "position": "RB",
           "nfl_team": "SF",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 95.8,
           "actual_so_far": 10.0,
           "ros_value": 85.8,
           "vbd_value": -77.0,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 2576925,
+          "name": "Darren Waller",
+          "position": "TE",
+          "nfl_team": "CAR",
+          "lineup_slot_id": 20,
+          "projected_total": 68.1,
+          "actual_so_far": 20.6,
+          "ros_value": 47.5,
+          "vbd_value": -69.1,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1435,10 +1435,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 4,
-          "projected_total": 136.8,
+          "projected_total": 137.2,
           "actual_so_far": 20.3,
-          "ros_value": 116.5,
-          "vbd_value": -49.1,
+          "ros_value": 116.9,
+          "vbd_value": -48.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1534,15 +1534,15 @@
           "is_starter": false
         },
         {
-          "espn_id": 4429835,
-          "name": "George Holani",
-          "position": "RB",
-          "nfl_team": "SEA",
+          "espn_id": 4686612,
+          "name": "Tre' Harris",
+          "position": "WR",
+          "nfl_team": "LAC",
           "lineup_slot_id": 20,
-          "projected_total": 8.1,
-          "actual_so_far": 4.9,
-          "ros_value": 3.2,
-          "vbd_value": -159.6,
+          "projected_total": 90.4,
+          "actual_so_far": 9.3,
+          "ros_value": 81.1,
+          "vbd_value": -84.5,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1651,7 +1651,7 @@
           "position": "QB",
           "nfl_team": "CHI",
           "lineup_slot_id": 20,
-          "projected_total": 239.9,
+          "projected_total": 239.8,
           "actual_so_far": 45.0,
           "ros_value": 194.9,
           "vbd_value": -20.0,
@@ -1681,19 +1681,6 @@
           "actual_so_far": 11.9,
           "ros_value": 103.5,
           "vbd_value": -59.3,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
-          "espn_id": 4430834,
-          "name": "Jalen McMillan",
-          "position": "WR",
-          "nfl_team": "TB",
-          "lineup_slot_id": 20,
-          "projected_total": 74.6,
-          "actual_so_far": 0.0,
-          "ros_value": 74.6,
-          "vbd_value": -91.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1737,19 +1724,6 @@
           "is_starter": true
         },
         {
-          "espn_id": -14027,
-          "name": "Buccaneers Coach",
-          "position": "HC",
-          "nfl_team": "TB",
-          "lineup_slot_id": 19,
-          "projected_total": -1.4,
-          "actual_so_far": -10.0,
-          "ros_value": 8.6,
-          "vbd_value": null,
-          "slot": "HC",
-          "is_starter": true
-        },
-        {
           "espn_id": 4599739,
           "name": "Kendre Miller",
           "position": "RB",
@@ -1761,6 +1735,32 @@
           "vbd_value": -162.8,
           "slot": "BEN",
           "is_starter": false
+        },
+        {
+          "espn_id": 4569603,
+          "name": "Malik Washington",
+          "position": "WR",
+          "nfl_team": "MIA",
+          "lineup_slot_id": 20,
+          "projected_total": 118.1,
+          "actual_so_far": 11.5,
+          "ros_value": 106.6,
+          "vbd_value": -59.0,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": -14009,
+          "name": "Packers Coach",
+          "position": "HC",
+          "nfl_team": "GB",
+          "lineup_slot_id": 19,
+          "projected_total": 1.6,
+          "actual_so_far": 0.0,
+          "ros_value": 1.6,
+          "vbd_value": null,
+          "slot": "HC",
+          "is_starter": true
         }
       ]
     },
@@ -1853,20 +1853,20 @@
           "name": "Jayden Daniels",
           "position": "QB",
           "nfl_team": "WSH",
-          "lineup_slot_id": 0,
+          "lineup_slot_id": 20,
           "projected_total": 211.8,
           "actual_so_far": 32.4,
           "ros_value": 179.4,
           "vbd_value": -24.7,
-          "slot": "QB",
-          "is_starter": true
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 3126486,
           "name": "Deebo Samuel Sr.",
           "position": "WR",
           "nfl_team": "SF",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 5,
           "projected_total": 147.7,
           "actual_so_far": 20.0,
           "ros_value": 127.7,
@@ -1893,10 +1893,10 @@
           "position": "WR",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 113.9,
+          "projected_total": 89.2,
           "actual_so_far": 4.4,
-          "ros_value": 109.5,
-          "vbd_value": -56.1,
+          "ros_value": 84.8,
+          "vbd_value": -80.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1914,19 +1914,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4429086,
-          "name": "Michael Mayer",
-          "position": "TE",
-          "nfl_team": "LV",
-          "lineup_slot_id": 20,
-          "projected_total": 69.2,
-          "actual_so_far": 10.0,
-          "ros_value": 59.2,
-          "vbd_value": -60.4,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": 4832955,
           "name": "Emmett Johnson",
           "position": "RB",
@@ -1940,24 +1927,11 @@
           "is_starter": false
         },
         {
-          "espn_id": 2991662,
-          "name": "Mack Hollins",
-          "position": "WR",
-          "nfl_team": "NE",
-          "lineup_slot_id": 20,
-          "projected_total": 69.6,
-          "actual_so_far": 9.9,
-          "ros_value": 59.7,
-          "vbd_value": -105.9,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14017,
           "name": "Patriots Coach",
           "position": "HC",
           "nfl_team": "NE",
-          "lineup_slot_id": 19,
+          "lineup_slot_id": 20,
           "projected_total": 15.2,
           "actual_so_far": 0.0,
           "ros_value": 15.2,
@@ -1966,15 +1940,41 @@
           "is_starter": true
         },
         {
-          "espn_id": 4429022,
-          "name": "Kayshon Boutte",
+          "espn_id": 3046779,
+          "name": "Jared Goff",
+          "position": "QB",
+          "nfl_team": "DET",
+          "lineup_slot_id": 0,
+          "projected_total": 255.5,
+          "actual_so_far": 46.2,
+          "ros_value": 209.3,
+          "vbd_value": -15.7,
+          "slot": "QB",
+          "is_starter": true
+        },
+        {
+          "espn_id": 4570037,
+          "name": "Terrance Ferguson",
+          "position": "TE",
+          "nfl_team": "LAR",
+          "lineup_slot_id": 20,
+          "projected_total": 102.9,
+          "actual_so_far": 14.4,
+          "ros_value": 88.5,
+          "vbd_value": -38.4,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4686422,
+          "name": "Xavier Hutchinson",
           "position": "WR",
           "nfl_team": "HOU",
-          "lineup_slot_id": 5,
-          "projected_total": 81.8,
-          "actual_so_far": 7.8,
-          "ros_value": 74.0,
-          "vbd_value": -91.6,
+          "lineup_slot_id": 23,
+          "projected_total": 85.7,
+          "actual_so_far": 9.9,
+          "ros_value": 75.8,
+          "vbd_value": -89.8,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1992,10 +1992,10 @@
           "position": "RB",
           "nfl_team": "LAC",
           "lineup_slot_id": 2,
-          "projected_total": 201.5,
+          "projected_total": 201.6,
           "actual_so_far": 24.8,
-          "ros_value": 176.7,
-          "vbd_value": 13.9,
+          "ros_value": 176.8,
+          "vbd_value": 14.0,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2018,10 +2018,10 @@
           "position": "WR",
           "nfl_team": "CAR",
           "lineup_slot_id": 4,
-          "projected_total": 183.0,
+          "projected_total": 182.3,
           "actual_so_far": 20.6,
-          "ros_value": 162.4,
-          "vbd_value": -3.2,
+          "ros_value": 161.7,
+          "vbd_value": -3.9,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2187,10 +2187,10 @@
           "position": "QB",
           "nfl_team": "CAR",
           "lineup_slot_id": 0,
-          "projected_total": 253.8,
+          "projected_total": 254.2,
           "actual_so_far": 55.5,
-          "ros_value": 198.3,
-          "vbd_value": -19.0,
+          "ros_value": 198.7,
+          "vbd_value": -18.9,
           "slot": "BEN",
           "is_starter": false
         }
@@ -2246,7 +2246,7 @@
           "name": "Travis Etienne Jr.",
           "position": "RB",
           "nfl_team": "NO",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 157.6,
           "actual_so_far": 17.4,
           "ros_value": 140.2,
@@ -2259,7 +2259,7 @@
           "name": "TreVeyon Henderson",
           "position": "RB",
           "nfl_team": "NE",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 2,
           "projected_total": 149.6,
           "actual_so_far": 13.6,
           "ros_value": 136.0,
@@ -2272,13 +2272,13 @@
           "name": "Drake Maye",
           "position": "QB",
           "nfl_team": "NE",
-          "lineup_slot_id": 0,
+          "lineup_slot_id": 20,
           "projected_total": 287.4,
           "actual_so_far": 17.8,
           "ros_value": 269.6,
           "vbd_value": 2.4,
-          "slot": "QB",
-          "is_starter": true
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4880281,
@@ -2312,10 +2312,10 @@
           "position": "TE",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 120.0,
+          "projected_total": 120.4,
           "actual_so_far": 10.5,
-          "ros_value": 109.5,
-          "vbd_value": -22.6,
+          "ros_value": 109.9,
+          "vbd_value": -22.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2350,7 +2350,7 @@
           "name": "Adonai Mitchell",
           "position": "WR",
           "nfl_team": "NYJ",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 132.3,
           "actual_so_far": 16.8,
           "ros_value": 115.5,
@@ -2398,17 +2398,17 @@
           "is_starter": false
         },
         {
-          "espn_id": 4870847,
-          "name": "Ja'Kobi Lane",
-          "position": "WR",
-          "nfl_team": "BAL",
-          "lineup_slot_id": 20,
-          "projected_total": 0.0,
-          "actual_so_far": 1.6,
-          "ros_value": 0.0,
-          "vbd_value": -165.6,
-          "slot": "BEN",
-          "is_starter": false
+          "espn_id": 3917315,
+          "name": "Kyler Murray",
+          "position": "QB",
+          "nfl_team": "MIN",
+          "lineup_slot_id": 0,
+          "projected_total": 277.7,
+          "actual_so_far": -0.4,
+          "ros_value": 278.1,
+          "vbd_value": 4.9,
+          "slot": "QB",
+          "is_starter": true
         }
       ]
     },
@@ -2502,7 +2502,7 @@
           "position": "QB",
           "nfl_team": "CIN",
           "lineup_slot_id": 0,
-          "projected_total": 273.6,
+          "projected_total": 273.5,
           "actual_so_far": 30.3,
           "ros_value": 243.2,
           "vbd_value": -5.5,
@@ -2691,7 +2691,7 @@
           "name": "Rome Odunze",
           "position": "WR",
           "nfl_team": "CHI",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 134.3,
           "actual_so_far": 12.0,
           "ros_value": 122.3,
@@ -2783,10 +2783,10 @@
           "position": "RB",
           "nfl_team": "GB",
           "lineup_slot_id": 20,
-          "projected_total": 72.3,
+          "projected_total": 73.0,
           "actual_so_far": 11.3,
-          "ros_value": 61.0,
-          "vbd_value": -101.8,
+          "ros_value": 61.7,
+          "vbd_value": -101.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2795,7 +2795,7 @@
           "name": "Dontayvion Wicks",
           "position": "WR",
           "nfl_team": "PHI",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 115.1,
           "actual_so_far": 24.2,
           "ros_value": 90.9,
@@ -2804,30 +2804,30 @@
           "is_starter": false
         },
         {
-          "espn_id": -14006,
-          "name": "Cowboys Coach",
+          "espn_id": 4595342,
+          "name": "Oronde Gadsden",
+          "position": "TE",
+          "nfl_team": "LAC",
+          "lineup_slot_id": 20,
+          "projected_total": 98.3,
+          "actual_so_far": 13.0,
+          "ros_value": 85.3,
+          "vbd_value": -40.8,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": -14004,
+          "name": "Bengals Coach",
           "position": "HC",
-          "nfl_team": "DAL",
+          "nfl_team": "CIN",
           "lineup_slot_id": 19,
-          "projected_total": 20.1,
-          "actual_so_far": 0.0,
-          "ros_value": 20.1,
+          "projected_total": 15.4,
+          "actual_so_far": 10.0,
+          "ros_value": 5.4,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
-        },
-        {
-          "espn_id": 5081432,
-          "name": "Antonio Williams",
-          "position": "WR",
-          "nfl_team": "WSH",
-          "lineup_slot_id": 20,
-          "projected_total": 64.5,
-          "actual_so_far": 18.3,
-          "ros_value": 46.2,
-          "vbd_value": -119.4,
-          "slot": "BEN",
-          "is_starter": false
         }
       ]
     }
