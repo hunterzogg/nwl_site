@@ -1,8 +1,9 @@
 name: Weekly ESPN Update
 
-# Pulls this week's NWL matchups/standings/projections AND current rosters/trade values from
-# ESPN, and commits the result so GitHub Pages + Vercel pick it up automatically. See
-# scripts/fetch_espn_week.py and scripts/fetch_espn_rosters.py for the actual pull logic and
+# Pulls this week's NWL matchups/standings/projections, current rosters/trade values, and free
+# agent/waiver acquisitions from ESPN, and commits the result so GitHub Pages + Vercel pick it up
+# automatically. See scripts/fetch_espn_week.py, scripts/fetch_espn_rosters.py, and
+# scripts/fetch_espn_transactions.py for the actual pull logic and
 # .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this same workflow.
 #
 # Schedule is a handful of runs on real NFL game days (Thu/Sun/Mon) plus one daily catch-all on
@@ -47,13 +48,16 @@ jobs:
       - name: Run roster/trade-value fetch
         run: python3 scripts/fetch_espn_rosters.py
 
+      - name: Run free agent/waiver transactions fetch
+        run: python3 scripts/fetch_espn_transactions.py
+
       - name: Commit and push if data changed
         run: |
           git config user.name "nwl-site-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/season_2026/matchups.json data/season_2026/standings.json \
                   data/season_2026/power_rankings.json data/season_2026/commentary.json \
-                  data/season_2026/rosters.json
+                  data/season_2026/rosters.json data/transactions_with_dates.json
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

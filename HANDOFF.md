@@ -134,6 +134,45 @@ Scorebug showing 3 stats (seasons, total points scored all-time, matchups), a di
 ### season-2026.html ✅
 The current-season hub — visually separate from the historical archive (see Phase 2 section below for the full design rationale). Four tabs: Matchups, Standings, Power Rankings, Commentary. Reads from `data/season_2026/*.json`, populated by `scripts/fetch_espn_week.py`. Empty states everywhere until the season starts.
 
+**Real bug found and fixed once the season actually started (Week 1/2 catch-up session)**:
+`cmd_fetch_week()` only ever built `matchups.json`'s entry for the single "current" week each run
+(`m.get("matchupPeriodId") != week: continue`) - so once ESPN's `scoringPeriodId` advanced past a
+week, that week's entry was frozen forever at whatever it looked like the last time it *was*
+current (in Week 1's case, literally 0-0/UNDECIDED, since that first run happened before kickoff).
+Meanwhile `standings.json` and the power-rankings computation were both already correct, since
+they read the live full-season `schedule` response directly rather than the frozen file - only
+matchups.json (i.e. the actual box scores shown on the Matchups tab) was stuck. Fixed by rebuilding
+every played-or-current week's entry from that same schedule response on every run (ESPN's
+`mMatchupScore` view already returns final scores for completed weeks in one call - the old code
+was just throwing that away by filtering to the current week only). Also skips fetching live
+projections for weeks that already have a real winner (moot once a week's decided). One-time manual
+fix needed too: Week 1's `power_rankings.json` entry had been permanently stuck at `rankings: []`
+(computed the one time it ran, pre-kickoff, before `_ensure_stub`'s "don't clobber an existing
+entry" guard locked it in) - recomputed by hand via `compute_power_rankings()` for weeks 1 and 2
+(week 2 needed a recompute too, since its `trend` arrows had been comparing against that empty
+Week 1 baseline the whole time). Week 3's already-existing entry didn't need touching - its
+`rank` values (the only thing a later week's trend calc actually reads from a prior entry) were
+never affected by the bug, only Week 1's were.
+
+**New script: `scripts/fetch_espn_transactions.py`** - free agent/waiver acquisitions weren't
+being pulled at all before this session (only draft picks and, from prior seasons, spreadsheet-
+extracted history). ESPN's `mTransactions2` view doesn't return the whole season in one call the
+way `mMatchupScore` does for matchups - passing `scoringPeriodId` returns a rolling window of
+transactions *around* that period, with real gaps if you only ever ask for the current week - so
+this script queries every `scoringPeriodId` from 0 through the current week and merges by
+transaction id for full coverage, then keeps only `status: EXECUTED` + `type: WAIVER/FREEAGENT`
+(actual successful pickups). Writes into `data/transactions_with_dates.json` under `season:
+"2026"` - the exact same file/schema the 2013-2025 archive already uses - so `pages/transactions.html`'s
+existing Transaction Log tab and season filter picked up 2026 data with zero site code changes.
+Head Coach picks resolve via ESPN's synthetic negative player IDs (`-(14000 + proTeamId)`,
+confirmed against the real HC entries already in `rosters.json`) rather than an API call. Now
+wired into `.github/workflows/weekly-espn-update.yml` alongside the other two pulls, so it stays
+current automatically going forward. **Important formatting note**: `transactions_with_dates.json`
+has always been stored as compact single-line JSON (unlike the pretty-printed `season_2026/*.json`
+files) - the script uses `separators=(", ", ": ")` on write specifically to match that, since a
+plain `indent=2` dump reformats all 1800+ existing historical rows and turns a 61-row append into
+a 19,000-line diff. Match this convention if this file is ever touched by another script.
+
 ### hall-of-fame.html ✅ (formerly lookup.html)
 Three tabs: League Records (single-game, season, streaks), Head-to-Head (pick 2 managers → full matchup history), Seasons (weekly scores + standings + a top-3/last-place header, per year). Career Stats tab removed — moved to Managers page. Seasons tab shows two weekly-score tables — Regular Season and Playoffs (playoff weeks/managers vary correctly by era) — and standings grouped by division, sorted by wins.
 
@@ -599,6 +638,27 @@ same `vercel dev` local preview, state injected directly rather than a real logi
 account-claiming reason as above): a manager with a Draft-only pick history now correctly gets
 `pageMode: 'editing'` for the open Preseason batch; a manager who's also picked something in the
 open batch correctly gets `'saved'` with the Edit bar on top.
+
+### Week 3 weekly props (added Week 1/2 catch-up session - first weekly props ever entered)
+
+Weekly props existed only as a design/description in the (no-longer-in-repo) league flier before
+this - never as real DB rows, unlike the draft-night batch (`week: 0`) and season-long batch
+(`week: -1`), which were both already live. Inserted via a new one-off script,
+`scripts/seed_pickem_week3_props.js` (same pattern as `seed_pickem_season_props.js`), as question
+IDs 29-35, `week = 3`, `points = 1` (the draft-day baseline - no weekly-tier value had been
+established yet; adjust in `pickem-admin.html` if Hunter wants weekly props worth more/less),
+`published = true` (live immediately, since these lock at Week 3's real Thursday-night kickoff -
+2026-09-25T00:15:00Z / 2026-09-24 8:15 PM ET, Falcons @ Packers, pulled from ESPN's public
+scoreboard API - and there wasn't time to wait for a review round before that).
+
+Grounded in real data rather than invented lines: this season's own Week 1/2 scoring pattern
+(highest scores 165.56/138.86, closest margins 13.94/11.94) and Week 3's own computed matchup
+lines already sitting in `matchups.json` (real ESPN starting-lineup projections, not a guess) -
+e.g. the "total combined points" prop's 1223.5 line is just the sum of that week's 6 game
+over/unders, and the spread-cover / game-total props reference the actual biggest spread
+(Ainsworth -25 over Stover) and biggest total (Goetz/Prodahl, 211.5) on the board that week. All
+7 are objectively gradable from `matchups.json` once Week 3 finishes - nothing here needs a
+subjective call the way a couple of the season-long props do.
 
 ### mock-draft.html ✅ (archived from nav - see "Trade Tools" section below)
 **Archived this session**: the real 2026 draft finished, so this tool no longer has a public entry

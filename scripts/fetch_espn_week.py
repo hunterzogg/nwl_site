@@ -305,57 +305,72 @@ def cmd_fetch_week(args, creds):
 
     data = fetch_league_raw(args.league_id, args.season, ["mMatchupScore", "mTeam", "mScoreboard", "mSettings"], creds)
 
-    week = args.week or data.get("scoringPeriodId")
+    current_week = data.get("scoringPeriodId")
+    week = args.week or current_week
     if not week:
         print("ERROR: could not auto-detect the current week, and none was given via --week.")
         sys.exit(1)
 
     teams_by_id = {t["id"]: t for t in data.get("teams", [])}
     division_by_id = {d["id"]: d["name"] for d in data.get("settings", {}).get("scheduleSettings", {}).get("divisions", [])}
-    projected_by_team = fetch_projected_points(args.league_id, args.season, week, creds)
+    # Live projections only make sense for the current week - past weeks are already decided, and
+    # future weeks haven't got games loaded yet, so don't waste a call fetching them.
+    projected_by_team = fetch_projected_points(args.league_id, args.season, current_week, creds) if current_week else {}
 
     # ---- Matchups ----
-    matchups = []
-    for m in data.get("schedule", []):
-        if m.get("matchupPeriodId") != week:
-            continue
-        home = m.get("home", {})
-        away = m.get("away", {})
-        home_proj = projected_by_team.get(home.get("teamId"))
-        away_proj = projected_by_team.get(away.get("teamId")) if away else None
-
-        line = None
-        if away and home_proj is not None and away_proj is not None:
-            diff = home_proj - away_proj
-            favorite = resolve_manager(home.get("teamId"), team_map) if diff >= 0 else resolve_manager(away.get("teamId"), team_map)
-            line = {
-                "favorite": favorite,
-                "spread": _round_half(abs(diff)),
-                "over_under": _round_half(home_proj + away_proj),
-            }
-
-        matchups.append({
-            "home_manager": resolve_manager(home.get("teamId"), team_map),
-            "home_score": home.get("totalPoints", 0),
-            "home_projected": home_proj,
-            "away_manager": resolve_manager(away.get("teamId"), team_map) if away else None,
-            "away_score": away.get("totalPoints", 0) if away else None,
-            "away_projected": away_proj,
-            "winner": m.get("winner"),  # HOME / AWAY / UNDECIDED / TIE
-            "line": line,
-        })
-
+    # Rebuild EVERY played-or-current week's entry from the schedule ESPN just returned, not just
+    # the "current" week - ESPN's mMatchupScore view returns the full season schedule (final
+    # scores included) in one response, so this is free. Only filtering to the current week here
+    # was the bug that froze past weeks at 0-0/UNDECIDED forever once ESPN's scoringPeriodId moved
+    # on: a week's matchups.json entry would only ever be written while that week was "current",
+    # so the win never landed for the earlier week's actual final score once the next week began.
     matchups_path = SITE_DIR / "data" / "season_2026" / "matchups.json"
     all_matchups = _load_json_list(matchups_path)
-    all_matchups = [w for w in all_matchups if w.get("week") != week]
-    all_matchups.append({
-        "week": week,
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "games": matchups,
-    })
+    periods = sorted(set(
+        m.get("matchupPeriodId") for m in data.get("schedule", [])
+        if m.get("matchupPeriodId") is not None and (not current_week or m["matchupPeriodId"] <= current_week)
+    ))
+    for wk in periods:
+        wk_matchups = []
+        for m in data.get("schedule", []):
+            if m.get("matchupPeriodId") != wk:
+                continue
+            home = m.get("home", {})
+            away = m.get("away", {})
+            is_current = (wk == current_week)
+            home_proj = projected_by_team.get(home.get("teamId")) if is_current else None
+            away_proj = projected_by_team.get(away.get("teamId")) if (away and is_current) else None
+
+            line = None
+            if away and home_proj is not None and away_proj is not None:
+                diff = home_proj - away_proj
+                favorite = resolve_manager(home.get("teamId"), team_map) if diff >= 0 else resolve_manager(away.get("teamId"), team_map)
+                line = {
+                    "favorite": favorite,
+                    "spread": _round_half(abs(diff)),
+                    "over_under": _round_half(home_proj + away_proj),
+                }
+
+            wk_matchups.append({
+                "home_manager": resolve_manager(home.get("teamId"), team_map),
+                "home_score": home.get("totalPoints", 0),
+                "home_projected": home_proj,
+                "away_manager": resolve_manager(away.get("teamId"), team_map) if away else None,
+                "away_score": away.get("totalPoints", 0) if away else None,
+                "away_projected": away_proj,
+                "winner": m.get("winner"),  # HOME / AWAY / UNDECIDED / TIE
+                "line": line,
+            })
+        all_matchups = [w for w in all_matchups if w.get("week") != wk]
+        all_matchups.append({
+            "week": wk,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "games": wk_matchups,
+        })
+
     all_matchups.sort(key=lambda w: w["week"])
     _write_json(matchups_path, all_matchups)
-    print(f"Wrote {len(matchups)} matchups for week {week} -> {matchups_path}")
+    print(f"Wrote matchups for weeks {periods} -> {matchups_path}")
 
     # ---- Standings ----
     standings = []
