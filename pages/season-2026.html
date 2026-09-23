@@ -47,7 +47,7 @@
 .division-Bronze { color: #A9784F; background: rgba(169, 120, 79, 0.14); }
 .rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
 .rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
-.rank-trend { width: 38px; flex-shrink: 0; text-align: center; font-size: 0.85rem; font-family: var(--font-mono); white-space: nowrap; }
+.rank-trend { width: 64px; flex-shrink: 0; text-align: center; font-size: 0.8rem; font-family: var(--font-mono); white-space: nowrap; }
 .rank-trend.up { color: #4FA876; }
 .rank-trend.down { color: #E0524A; }
 .rank-trend.same { color: var(--text-muted); }
@@ -315,7 +315,10 @@ function renderPower() {
 // renders the same as "no movement" - there's nothing to compare against yet either way.
 function trendLabel(r) {
   const delta = r.delta || 0;
-  if (delta === 0) return '&#8212;';
+  if (delta === 0) {
+    const weeks = r.rank_streak || 1;
+    return `&#8212; ${weeks} wk${weeks === 1 ? '' : 's'}`;
+  }
   const arrow = delta > 0 ? '&#9650;' : '&#9660;';
   const emoji = delta > 2 ? ' \u{1F525}' : delta < -2 ? ' ❄️' : '';
   return `${arrow}${Math.abs(delta)}${emoji}`;

@@ -242,9 +242,11 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
     ranked = sorted(managers, key=lambda m: composite[m], reverse=True)
 
     prev_rank_by_manager = {}
+    prev_streak_by_manager = {}
     if prev_rankings:
         for r in prev_rankings.get("rankings", []):
             prev_rank_by_manager[r["manager"]] = r["rank"]
+            prev_streak_by_manager[r["manager"]] = r.get("rank_streak", 1)
 
     output = []
     for i, mgr in enumerate(ranked):
@@ -261,6 +263,11 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
         else:
             trend = "same"
 
+        # rank_streak = consecutive published weeks (including this one) at this exact rank -
+        # carries forward from the prior week's own streak when the rank hasn't moved, resets to
+        # 1 the moment it does (or on a manager's first-ever ranked week).
+        rank_streak = prev_streak_by_manager.get(mgr, 0) + 1 if trend == "same" else 1
+
         games_played = len(results[mgr])
         wins_actual = sum(w for _, _, w in results[mgr])
         recent_n = len(results[mgr][-ROLLING_WINDOW:])
@@ -271,6 +278,7 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
             "manager": mgr,
             "trend": trend,
             "delta": delta,
+            "rank_streak": rank_streak,
             # Display stats for season-2026.html's stacked bullet list (see renderPower there) -
             # record strings use :g (not a fixed decimal count) so a whole-number record reads
             # "2-0" while a tie-affected one still shows "1.5-0.5" rather than hiding it.

@@ -220,6 +220,17 @@ already had them 3rd rather than 1st despite being unbeaten - the new field make
 instead of implicit in the composite math. `blurb` was removed entirely (all three
 weeks' entries recomputed to backfill the new fields) rather than kept alongside the new ones.
 
+**"Same" rank now shows how many weeks running (later follow-up)**: per explicit request, a
+manager whose rank hasn't moved shows how many consecutive published weeks they've held it (e.g.
+"— 2 wks") instead of just a bare dash. New `rank_streak` field in `compute_power_rankings()` -
+carries forward the prior week's own `rank_streak` (+1) when `trend == "same"`, resets to 1 the
+moment the rank actually moves (or on a manager's first-ever ranked week) - same carry-forward
+pattern as `delta`/`trend` already use against `prev_rankings`. `trendLabel()` in
+`season-2026.html` renders it only in the no-movement case; the ▲/▼ arrow cases are unchanged.
+`.rank-trend`'s fixed width bumped 38px -> 64px to fit "— N wks" without wrapping. All three
+weeks' entries recomputed again to backfill it (Ainsworth/Glaser have both held their spot for all
+3 weeks so far; Larson took over 3rd in Week 2 and has held it since).
+
 **New tab: "Brian's Fun Facts" (added same session)** - a fifth tab next to Commentary, reading
 `data/season_2026/fun_facts.json`. Same review/publish pattern as commentary/power rankings
 (`published: false/true` per week) but a different shape - each week is a `facts` array of
