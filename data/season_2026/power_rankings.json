@@ -7,72 +7,84 @@
         "rank": 1,
         "manager": "Ainsworth",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (1.0 expected wins) &middot; 165.6 PPG &middot; last 1: 1.0-0.0, 165.6 PPG"
       },
       {
         "rank": 2,
         "manager": "Glaser",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (0.9 expected wins) &middot; 152.9 PPG &middot; last 1: 1.0-0.0, 152.9 PPG"
       },
       {
         "rank": 3,
         "manager": "Muenchow",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (0.8 expected wins) &middot; 133.5 PPG &middot; last 1: 1.0-0.0, 133.5 PPG"
       },
       {
         "rank": 4,
         "manager": "Conlin",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (0.7 expected wins) &middot; 129.9 PPG &middot; last 1: 1.0-0.0, 129.9 PPG"
       },
       {
         "rank": 5,
         "manager": "Goetz",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (0.6 expected wins) &middot; 108.1 PPG &middot; last 1: 1.0-0.0, 108.1 PPG"
       },
       {
         "rank": 6,
         "manager": "Larson",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-0 actual (0.5 expected wins) &middot; 101.9 PPG &middot; last 1: 1.0-0.0, 101.9 PPG"
       },
       {
         "rank": 7,
         "manager": "Palaia",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.5 expected wins) &middot; 104.8 PPG &middot; last 1: 0.0-1.0, 104.8 PPG"
       },
       {
         "rank": 8,
         "manager": "Pfaffinger",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.4 expected wins) &middot; 95.3 PPG &middot; last 1: 0.0-1.0, 95.3 PPG"
       },
       {
         "rank": 9,
         "manager": "Prodahl",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.3 expected wins) &middot; 87.9 PPG &middot; last 1: 0.0-1.0, 87.9 PPG"
       },
       {
         "rank": 10,
         "manager": "Stover",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.2 expected wins) &middot; 85.5 PPG &middot; last 1: 0.0-1.0, 85.5 PPG"
       },
       {
         "rank": 11,
         "manager": "Hagan",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.1 expected wins) &middot; 78.0 PPG &middot; last 1: 0.0-1.0, 78.0 PPG"
       },
       {
         "rank": 12,
         "manager": "Zogg",
         "trend": "same",
+        "delta": 0,
         "blurb": "0-1 actual (0.0 expected wins) &middot; 68.5 PPG &middot; last 1: 0.0-1.0, 68.5 PPG"
       }
     ]
@@ -85,72 +97,84 @@
         "rank": 1,
         "manager": "Ainsworth",
         "trend": "same",
+        "delta": 0,
         "blurb": "2-0 actual (1.9 expected wins) &middot; 141.9 PPG &middot; last 2: 2.0-0.0, 141.9 PPG"
       },
       {
         "rank": 2,
         "manager": "Glaser",
         "trend": "same",
+        "delta": 0,
         "blurb": "2-0 actual (1.7 expected wins) &middot; 132.9 PPG &middot; last 2: 2.0-0.0, 132.9 PPG"
       },
       {
         "rank": 3,
         "manager": "Larson",
         "trend": "up",
+        "delta": 3,
         "blurb": "2-0 actual (1.1 expected wins) &middot; 101.8 PPG &middot; last 2: 2.0-0.0, 101.8 PPG"
       },
       {
         "rank": 4,
         "manager": "Conlin",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (1.3 expected wins) &middot; 112.7 PPG &middot; last 2: 1.0-1.0, 112.7 PPG"
       },
       {
         "rank": 5,
         "manager": "Muenchow",
         "trend": "down",
+        "delta": -2,
         "blurb": "1-1 actual (1.2 expected wins) &middot; 104.9 PPG &middot; last 2: 1.0-1.0, 104.9 PPG"
       },
       {
         "rank": 6,
         "manager": "Zogg",
         "trend": "up",
+        "delta": 6,
         "blurb": "1-1 actual (1.0 expected wins) &middot; 103.7 PPG &middot; last 2: 1.0-1.0, 103.7 PPG"
       },
       {
         "rank": 7,
         "manager": "Goetz",
         "trend": "down",
+        "delta": -2,
         "blurb": "1-1 actual (0.9 expected wins) &middot; 91.8 PPG &middot; last 2: 1.0-1.0, 91.8 PPG"
       },
       {
         "rank": 8,
         "manager": "Hagan",
         "trend": "up",
+        "delta": 3,
         "blurb": "1-1 actual (0.8 expected wins) &middot; 91.5 PPG &middot; last 2: 1.0-1.0, 91.5 PPG"
       },
       {
         "rank": 9,
         "manager": "Prodahl",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (0.7 expected wins) &middot; 86.4 PPG &middot; last 2: 1.0-1.0, 86.4 PPG"
       },
       {
         "rank": 10,
         "manager": "Palaia",
         "trend": "down",
+        "delta": -3,
         "blurb": "0-2 actual (0.5 expected wins) &middot; 81.8 PPG &middot; last 2: 0.0-2.0, 81.8 PPG"
       },
       {
         "rank": 11,
         "manager": "Pfaffinger",
         "trend": "down",
+        "delta": -3,
         "blurb": "0-2 actual (0.5 expected wins) &middot; 83.1 PPG &middot; last 2: 0.0-2.0, 83.1 PPG"
       },
       {
         "rank": 12,
         "manager": "Stover",
         "trend": "down",
+        "delta": -2,
         "blurb": "0-2 actual (0.4 expected wins) &middot; 79.2 PPG &middot; last 2: 0.0-2.0, 79.2 PPG"
       }
     ]
@@ -163,72 +187,84 @@
         "rank": 1,
         "manager": "Ainsworth",
         "trend": "same",
+        "delta": 0,
         "blurb": "2-0 actual (1.9 expected wins) &middot; 141.9 PPG &middot; last 2: 2.0-0.0, 141.9 PPG"
       },
       {
         "rank": 2,
         "manager": "Glaser",
         "trend": "same",
+        "delta": 0,
         "blurb": "2-0 actual (1.7 expected wins) &middot; 132.9 PPG &middot; last 2: 2.0-0.0, 132.9 PPG"
       },
       {
         "rank": 3,
         "manager": "Larson",
-        "trend": "up",
+        "trend": "same",
+        "delta": 0,
         "blurb": "2-0 actual (1.1 expected wins) &middot; 101.8 PPG &middot; last 2: 2.0-0.0, 101.8 PPG"
       },
       {
         "rank": 4,
         "manager": "Conlin",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (1.3 expected wins) &middot; 112.7 PPG &middot; last 2: 1.0-1.0, 112.7 PPG"
       },
       {
         "rank": 5,
         "manager": "Muenchow",
-        "trend": "down",
+        "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (1.2 expected wins) &middot; 104.9 PPG &middot; last 2: 1.0-1.0, 104.9 PPG"
       },
       {
         "rank": 6,
         "manager": "Zogg",
-        "trend": "up",
+        "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (1.0 expected wins) &middot; 103.7 PPG &middot; last 2: 1.0-1.0, 103.7 PPG"
       },
       {
         "rank": 7,
         "manager": "Goetz",
-        "trend": "down",
+        "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (0.9 expected wins) &middot; 91.8 PPG &middot; last 2: 1.0-1.0, 91.8 PPG"
       },
       {
         "rank": 8,
         "manager": "Hagan",
-        "trend": "up",
+        "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (0.8 expected wins) &middot; 91.5 PPG &middot; last 2: 1.0-1.0, 91.5 PPG"
       },
       {
         "rank": 9,
         "manager": "Prodahl",
         "trend": "same",
+        "delta": 0,
         "blurb": "1-1 actual (0.7 expected wins) &middot; 86.4 PPG &middot; last 2: 1.0-1.0, 86.4 PPG"
       },
       {
         "rank": 10,
         "manager": "Palaia",
-        "trend": "down",
+        "trend": "same",
+        "delta": 0,
         "blurb": "0-2 actual (0.5 expected wins) &middot; 81.8 PPG &middot; last 2: 0.0-2.0, 81.8 PPG"
       },
       {
         "rank": 11,
         "manager": "Pfaffinger",
-        "trend": "down",
+        "trend": "same",
+        "delta": 0,
         "blurb": "0-2 actual (0.5 expected wins) &middot; 83.1 PPG &middot; last 2: 0.0-2.0, 83.1 PPG"
       },
       {
         "rank": 12,
         "manager": "Stover",
-        "trend": "down",
+        "trend": "same",
+        "delta": 0,
         "blurb": "0-2 actual (0.4 expected wins) &middot; 79.2 PPG &middot; last 2: 0.0-2.0, 79.2 PPG"
       }
     ]

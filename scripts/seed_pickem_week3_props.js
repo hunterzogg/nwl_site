@@ -55,10 +55,16 @@ const QUESTIONS = [
     option_b: 'Under 211.5',
   },
   {
+    // Edited post-insert (question id 35) - Larson and Glaser are the only two 2-0 teams in the
+    // league and happen to play each other in Week 3, so this replaced the original underdog
+    // prop below to spotlight that matchup instead. Kept here so the script matches what's
+    // actually live; the original idea is preserved in a comment in case it's useful later:
+    //   prompt: 'Will any Week 3 underdog (by the projected line) pull off the upset?',
+    //   option_a: 'Yes', option_b: 'No',
     type: 'this_or_that',
-    prompt: 'Will any Week 3 underdog (by the projected line) pull off the upset?',
-    option_a: 'Yes',
-    option_b: 'No',
+    prompt: "Week 3's only unbeaten-vs-unbeaten matchup: who stays perfect?",
+    option_a: 'Larson',
+    option_b: 'Glaser',
   },
 ];
 

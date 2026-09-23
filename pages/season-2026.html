@@ -47,7 +47,7 @@
 .division-Bronze { color: #A9784F; background: rgba(169, 120, 79, 0.14); }
 .rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
 .rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
-.rank-trend { width: 22px; flex-shrink: 0; text-align: center; font-size: 0.9rem; }
+.rank-trend { width: 38px; flex-shrink: 0; text-align: center; font-size: 0.85rem; font-family: var(--font-mono); white-space: nowrap; }
 .rank-trend.up { color: #4FA876; }
 .rank-trend.down { color: #E0524A; }
 .rank-trend.same { color: var(--text-muted); }
@@ -55,6 +55,21 @@
 .rank-blurb { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
 .commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; white-space: pre-wrap; }
 .commentary-title { margin-bottom: 12px; }
+.fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 640px) { .fact-grid { grid-template-columns: 1fr; } }
+.fact-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+.fact-card.wide { grid-column: 1 / -1; }
+.fact-label {
+  font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.68rem; color: var(--text-muted); margin: 0 0 8px;
+}
+.fact-headline { font-size: 1.05rem; font-weight: 600; margin: 0 0 4px; line-height: 1.35; }
+.fact-headline .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.fact-card.hot .fact-headline .num { color: var(--live-bright); }
+.fact-card.cold .fact-headline .num { color: var(--blue-bright); }
+.fact-card.green .fact-headline .num { color: #4FA876; }
+.fact-card.red .fact-headline .num { color: var(--red); }
+.fact-sub { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
 .comments-section { margin-top: 28px; }
 .comments-title {
@@ -81,6 +96,7 @@
     <button class="tab-btn" data-tab="standings">Standings</button>
     <button class="tab-btn" data-tab="power">Power Rankings</button>
     <button class="tab-btn" data-tab="commentary">Commentary</button>
+    <button class="tab-btn" data-tab="funfacts">Brian's Fun Facts</button>
   </div>
 
   <div class="panel active" id="panel-matchups">
@@ -108,6 +124,13 @@
     <div id="commentaryContent"></div>
   </div>
 
+  <div class="panel" id="panel-funfacts">
+    <div class="controls-row">
+      <select id="funFactsWeek"></select>
+    </div>
+    <div id="funFactsContent"></div>
+  </div>
+
 </div>
 
 <footer>National Wayzata League &middot; est. 2013</footer>
@@ -115,7 +138,7 @@
 <script src="../assets/js/shared.js?v=16"></script>
 <script>
 let managers = [];
-let matchups = [], standings = null, powerRankings = [], commentary = [];
+let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];
 let managerDivision = {};
 const DIVISION_ORDER = ['Gold', 'Silver', 'Bronze'];
 
@@ -246,17 +269,48 @@ function renderPower() {
       'No power rankings published yet', 'Hunter reviews and publishes these weekly once the season is live.');
     return;
   }
-  const trendArrow = { up: '&#9650;', down: '&#9660;', same: '&#8212;' };
   document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
     <div class="rank-card">
       <div class="rank-num-big">${r.rank}</div>
-      <div class="rank-trend ${r.trend}">${trendArrow[r.trend] || ''}</div>
+      <div class="rank-trend ${r.trend}">${trendLabel(r)}</div>
       <div class="rank-body">
         ${managerTagWithDivision(managers, r.manager)}
         ${r.blurb ? `<div class="rank-blurb">${r.blurb}</div>` : ''}
       </div>
     </div>
   `).join('');
+}
+
+// Spots moved since the prior published week, with a fire/snowflake for a big swing (more than
+// 2 spots either way). delta is 0 (not null) for a manager's first-ever ranked week, which
+// renders the same as "no movement" - there's nothing to compare against yet either way.
+function trendLabel(r) {
+  const delta = r.delta || 0;
+  if (delta === 0) return '&#8212;';
+  const arrow = delta > 0 ? '&#9650;' : '&#9660;';
+  const emoji = delta > 2 ? ' \u{1F525}' : delta < -2 ? ' ❄️' : '';
+  return `${arrow}${Math.abs(delta)}${emoji}`;
+}
+
+function renderFunFacts() {
+  const week = document.getElementById('funFactsWeek').value;
+  const entry = funFacts.find(f => String(f.week) === String(week) && f.published);
+  if (!entry) {
+    document.getElementById('funFactsContent').innerHTML = emptyState(
+      'No fun facts published yet', "Brian's Fun Facts shows up here once Hunter publishes it.");
+    return;
+  }
+  document.getElementById('funFactsContent').innerHTML = `
+    <div class="fact-grid">
+      ${entry.facts.map(f => `
+        <div class="fact-card ${f.tone || ''} ${f.wide ? 'wide' : ''}">
+          <p class="fact-label">${f.label}</p>
+          <p class="fact-headline">${f.headline.replace('{{num}}', `<span class="num">${f.num}</span>`)}</p>
+          <p class="fact-sub">${f.sub}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 const GISCUS_REPO = 'hunterzogg/nwl_site';
@@ -304,11 +358,12 @@ function renderCommentary() {
 
 async function init() {
   managers = await getManagers();
-  [matchups, standings, powerRankings, commentary] = await Promise.all([
+  [matchups, standings, powerRankings, commentary, funFacts] = await Promise.all([
     loadDataSafe('season_2026/matchups', []),
     loadDataSafe('season_2026/standings', null),
     loadDataSafe('season_2026/power_rankings', []),
     loadDataSafe('season_2026/commentary', []),
+    loadDataSafe('season_2026/fun_facts', []),
   ]);
 
   managerDivision = {};
@@ -325,10 +380,14 @@ async function init() {
   const commentaryWeeks = commentary.filter(c => c.published).map(c => c.week);
   populateWeekSelect('commentaryWeek', commentaryWeeks, renderCommentary);
 
+  const funFactsWeeks = funFacts.filter(f => f.published).map(f => f.week);
+  populateWeekSelect('funFactsWeek', funFactsWeeks, renderFunFacts);
+
   renderMatchups();
   renderStandings();
   renderPower();
   renderCommentary();
+  renderFunFacts();
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {

@@ -233,11 +233,13 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
     for i, mgr in enumerate(ranked):
         rank = i + 1
         prev_rank = prev_rank_by_manager.get(mgr)
-        if prev_rank is None:
-            trend = "same"
-        elif rank < prev_rank:
+        # delta = spots moved, positive = up (e.g. prev_rank 5 -> rank 2 is +3). 0 (not None) when
+        # there's no prior week to compare against, so the front end can treat "no history" the
+        # same as "no movement" without a separate null check.
+        delta = (prev_rank - rank) if prev_rank is not None else 0
+        if delta > 0:
             trend = "up"
-        elif rank > prev_rank:
+        elif delta < 0:
             trend = "down"
         else:
             trend = "same"
@@ -252,7 +254,7 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
             f"{(1 - recent_form_raw[mgr]['win']) * len(results[mgr][-ROLLING_WINDOW:]):.1f}, "
             f"{recent_form_raw[mgr]['pts']:.1f} PPG"
         )
-        output.append({"rank": rank, "manager": mgr, "trend": trend, "blurb": blurb})
+        output.append({"rank": rank, "manager": mgr, "trend": trend, "delta": delta, "blurb": blurb})
 
     return output
 

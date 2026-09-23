@@ -1,0 +1,80 @@
+[
+  {
+    "week": 2,
+    "published": true,
+    "facts": [
+      {
+        "label": "Highest Score",
+        "headline": "{{num}} — Ainsworth",
+        "num": "165.56",
+        "sub": "Week 1, in a 97-point demolition of Zogg. The 2nd-highest Week 1-2 score in 13+ years of NWL history — trails only Muenchow's 172.30 in 2018.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "All-Time Record Blowout",
+        "headline": "Ainsworth by {{num}} 🔥",
+        "num": "97.06",
+        "sub": "The biggest Week 1-2 margin in league history, by a lot — the old record was Pfaffinger's 68-point win over Conlin in 2015. Ainsworth beat it by 29 points.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Lowest Score",
+        "headline": "{{num}} — Palaia",
+        "num": "58.84",
+        "sub": "Week 2 loss to Larson. The 5th-lowest Week 1-2 score since 2013 — and Palaia's also 0-2 with the league's worst points against (254.6).",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Scoring Era Check",
+        "headline": "{{num}}-highest scoring start since 2013",
+        "num": "5th",
+        "sub": "Of 14 seasons. 101.0 PPG through two weeks puts 2026 well above the 2023-2025 stretch (92-97 PPG), though still short of the 2018-2021 boom that averaged 109-116.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Larson's Rare Hot Start",
+        "headline": "Only the {{num}} time in 13 years",
+        "num": "3rd",
+        "sub": "Larson has started 2-0 just twice before (2013-2025). Glaser and Ainsworth — the other two current 2-0 teams — have each done it 3 times; Palaia and Conlin lead the league all-time with 6 apiece.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Does 2-0 Mean Anything?",
+        "headline": "Only {{num}} of 37 historical 2-0 starts won it all",
+        "num": "4",
+        "sub": "13 of those 37 teams still missed the playoffs entirely by season's end. A hot start is fun to have, but history says it's no guarantee of anything.",
+        "tone": "",
+        "wide": true
+      },
+      {
+        "label": "Nailbiter of the Season",
+        "headline": "Prodahl by {{num}}",
+        "num": "11.94",
+        "sub": "Edged Stover 84.92–72.98 in Week 2 — the closest game either week.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Riser of the Week",
+        "headline": "Zogg jumped {{num}} in the power rankings",
+        "num": "6 spots",
+        "sub": "From 12th (fresh off that record-setting Week 1 beating) to 6th, after answering with the Week 2 high score, 138.86. Biggest single-week move in the league so far.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "League-Wide Waiver Activity",
+        "headline": "{{num}} total pickups, $240 in FAAB spent",
+        "num": "61",
+        "sub": "37 came free off the wire with no bid at all — including 8 Head Coach swaps as managers chase a better bye-week matchup. Palaia leads the league with 14 moves, more than double the next-busiest manager (Goetz, 9).",
+        "tone": "",
+        "wide": true
+      }
+    ]
+  }
+]

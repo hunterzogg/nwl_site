@@ -173,6 +173,27 @@ files) - the script uses `separators=(", ", ": ")` on write specifically to matc
 plain `indent=2` dump reformats all 1800+ existing historical rows and turns a 61-row append into
 a 19,000-line diff. Match this convention if this file is ever touched by another script.
 
+**Power rankings trend now shows spots moved, not just up/down/same (added same-thread follow-up
+session)**: `compute_power_rankings()` in `fetch_espn_week.py` now returns a numeric `delta`
+alongside `trend` (positive = moved up that many spots since the last published week, 0 for a
+manager's first-ever ranked week - same as "no movement"). `season-2026.html`'s `trendLabel()`
+renders it as `▲3`/`▼2`/`—`, and appends 🔥 for any swing bigger than +2 or ❄️ for bigger than -2 -
+exactly ±2 gets no emoji. Existing Week 1/2/3 `power_rankings.json` entries were recomputed to
+backfill the new field (Zogg's Week 1→2 jump was +6, the biggest swing so far).
+
+**New tab: "Brian's Fun Facts" (added same session)** - a fifth tab next to Commentary, reading
+`data/season_2026/fun_facts.json`. Same review/publish pattern as commentary/power rankings
+(`published: false/true` per week) but a different shape - each week is a `facts` array of
+`{label, headline, num, sub, tone, wide}` cards rather than free-text title/body, rendered in a
+2-column grid (`.fact-grid`/`.fact-card`) that collapses to 1 column on mobile. `headline` is a
+template string with a literal `{{num}}` placeholder the JS replaces with a styled
+`<span class="num">` - lets one card highlight a number mid-sentence ("Ainsworth by 165.56")
+without embedding raw HTML in the JSON. `tone` (`hot`/`cold`/`green`/`red`/none) colors that
+number using the same palette as everywhere else on the site (`--live-bright` amber for hot,
+`--blue-bright` for cold, `--red`, and the same green literal `rank-trend.up` already uses).
+`wide: true` spans both grid columns for a card that needs more room. No script writes this file
+yet (unlike matchups/standings/rosters) - it's hand-authored per week, same as commentary.
+
 ### hall-of-fame.html ✅ (formerly lookup.html)
 Three tabs: League Records (single-game, season, streaks), Head-to-Head (pick 2 managers → full matchup history), Seasons (weekly scores + standings + a top-3/last-place header, per year). Career Stats tab removed — moved to Managers page. Seasons tab shows two weekly-score tables — Regular Season and Playoffs (playoff weeks/managers vary correctly by era) — and standings grouped by division, sorted by wins.
 
