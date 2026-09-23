@@ -25,6 +25,19 @@ for this league's custom HC category) of the form -(14000 + proTeamId) - confirm
 real HC entries already sitting in data/season_2026/rosters.json - so those resolve locally via
 PRO_TEAM_NICKNAME instead of an API call (kona_player_info doesn't carry them).
 
+Losing bids ("offers report"): ESPN doesn't expose a dedicated won/lost report the way its UI's
+waiver summary implies - what it actually returns is every individual claim transaction, win or
+lose, each tagged with its own status. A losing bid shows up as its own transaction with
+status FAILED_INVALIDPLAYERSOURCE or FAILED_PLAYERALREADYDROPPED (ESPN's two ways of saying "someone
+else got there first") and its real bidAmount intact - so the historical won-vs-lost pattern this
+site already tracks (see data/transactions_with_dates.json's 2013-2025 rows) is reconstructible:
+group every WAIVER-type transaction (any status) by the player being added, and for any player
+multiple different teams tried to claim, the EXECUTED one is the winner and every FAILED one
+(excluding FAILED_ROSTERLIMIT, which is a roster-mechanics failure unrelated to being outbid) from
+a losing team is a real competing bid. Zero-dollar FAILED entries are dropped - those are usually a
+stale PENDING claim resolving after someone else's free (uncontested) pickup already took the
+player, not a real dollar amount ever having been on the table.
+
 Setup: identical to fetch_espn_week.py - needs scripts/espn_credentials.json and
 scripts/espn_team_map.json already in place.
 """
@@ -133,6 +146,29 @@ def resolve_player(pid, player_lookup):
     return f"{nick} Coach", "HC"
 
 
+def find_losing_bids(all_tx):
+    """Real competing losing bids - see module docstring's 'Losing bids' section. Returns
+    (transaction, add_item) tuples, same shape cmd_fetch_transactions already works with."""
+    by_player = {}
+    for t in all_tx:
+        if t.get("type") != "WAIVER":
+            continue
+        add = next((i for i in t["items"] if i["type"] == "ADD"), None)
+        if add:
+            by_player.setdefault(add["playerId"], []).append((t, add))
+
+    losers = []
+    for pid, group in by_player.items():
+        teams = {t["teamId"] for t, _ in group}
+        if len(teams) < 2:
+            continue  # only one team ever went after this player - no competition to log
+        for t, add in group:
+            if (t["status"].startswith("FAILED") and t["status"] != "FAILED_ROSTERLIMIT"
+                    and (t.get("bidAmount") or 0) > 0):
+                losers.append((t, add))
+    return losers
+
+
 def cmd_fetch_transactions(args, creds):
     team_map = load_team_map()
     data = http_get(
@@ -145,34 +181,31 @@ def cmd_fetch_transactions(args, creds):
         sys.exit(1)
 
     all_tx = fetch_all_transactions(args.league_id, args.season, current_week, creds)
-    executed = [t for t in all_tx if t.get("status") == "EXECUTED" and t.get("type") in ("WAIVER", "FREEAGENT")]
+    executed = [(t, next((i for i in t["items"] if i["type"] == "ADD"), None))
+                for t in all_tx if t.get("status") == "EXECUTED" and t.get("type") in ("WAIVER", "FREEAGENT")]
+    executed = [(t, add) for t, add in executed if add]
+    losing_bids = find_losing_bids(all_tx)
 
-    player_ids = {i["playerId"] for t in executed for i in t["items"] if i["type"] == "ADD"}
+    player_ids = {add["playerId"] for _, add in executed} | {add["playerId"] for _, add in losing_bids}
     player_lookup = resolve_players(player_ids, args.season, creds)
 
-    rows = []
-    for t in executed:
-        add = next((i for i in t["items"] if i["type"] == "ADD"), None)
-        if not add:
-            continue
+    def build_row(t, add, bid_outcome):
         name, pos = resolve_player(add["playerId"], player_lookup)
         manager = team_map.get(str(t["teamId"]), f"UNMAPPED_TEAM_{t['teamId']}")
         ts = t.get("processDate") or t.get("proposedDate")
         date_str = datetime.fromtimestamp(ts / 1000, tz=timezone.utc).strftime("%Y-%m-%d") if ts else ""
-        if t["type"] == "FREEAGENT":
-            acq_type, bid_amount, bid_outcome = "free_agent", "", ""
+        if bid_outcome == "won" and t["type"] == "FREEAGENT":
+            acq_type, bid_amount = "free_agent", ""
         else:
-            acq_type, bid_amount, bid_outcome = "waiver", str(t.get("bidAmount", 0)), "won"
-        rows.append({
-            "season": str(args.season),
-            "player": name,
-            "position": pos,
-            "manager": manager,
-            "bid_amount": bid_amount,
-            "acquisition_type": acq_type,
-            "bid_outcome": bid_outcome,
+            acq_type, bid_amount = "waiver", str(t.get("bidAmount", 0))
+        return {
+            "season": str(args.season), "player": name, "position": pos, "manager": manager,
+            "bid_amount": bid_amount, "acquisition_type": acq_type, "bid_outcome": bid_outcome,
             "date": date_str,
-        })
+        }
+
+    rows = [build_row(t, add, "won") for t, add in executed]
+    rows += [build_row(t, add, "lost") for t, add in losing_bids]
 
     existing = json.loads(TRANSACTIONS_PATH.read_text()) if TRANSACTIONS_PATH.exists() else []
     existing = [r for r in existing if r.get("season") != str(args.season)]
@@ -181,7 +214,7 @@ def cmd_fetch_transactions(args, creds):
     # season_2026/*.json files, which are pretty-printed) - match that so a re-run's diff is just
     # the new rows, not a full reformat of 1800+ existing historical records.
     TRANSACTIONS_PATH.write_text(json.dumps(existing, separators=(", ", ": ")))
-    print(f"Wrote {len(rows)} {args.season} acquisitions (of {len(executed)} executed adds seen) -> {TRANSACTIONS_PATH}")
+    print(f"Wrote {len(rows)} {args.season} rows ({len(executed)} won, {len(losing_bids)} lost competing bids) -> {TRANSACTIONS_PATH}")
 
 
 def main():

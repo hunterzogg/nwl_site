@@ -174,7 +174,21 @@ existing Transaction Log tab and season filter picked up 2026 data with zero sit
 Head Coach picks resolve via ESPN's synthetic negative player IDs (`-(14000 + proTeamId)`,
 confirmed against the real HC entries already in `rosters.json`) rather than an API call. Now
 wired into `.github/workflows/weekly-espn-update.yml` alongside the other two pulls, so it stays
-current automatically going forward. **Important formatting note**: `transactions_with_dates.json`
+current automatically going forward.
+
+**Losing bids added (later follow-up, "the offers report")**: ESPN doesn't have a dedicated
+won/lost report - what it returns is every individual claim transaction, and a losing bid is its
+own transaction with a real `bidAmount` and a status of `FAILED_INVALIDPLAYERSOURCE` or
+`FAILED_PLAYERALREADYDROPPED` (ESPN's two ways of saying someone else got there first).
+`find_losing_bids()` in `fetch_espn_transactions.py` groups every `WAIVER`-type transaction (any
+status) by the player being added; where 2+ different teams went after the same player, the
+`EXECUTED` one is the winner and every non-zero-dollar `FAILED` one from a different team is a
+real competing bid, written with `bid_outcome: "lost"` - excludes `FAILED_ROSTERLIMIT` (a
+roster-mechanics failure, not a competition) and zero-dollar fails (stale claims, not real money on
+the table). `pages/transactions.html`'s existing losers-nest-under-winner-on-exact-date-match
+display logic (already built for the historical archive) picked this up with zero site changes -
+first real multi-bidder war surfaced was Tyler Shough (Ainsworth won at $56 over four other bids
+totaling $81 more). **Important formatting note**: `transactions_with_dates.json`
 has always been stored as compact single-line JSON (unlike the pretty-printed `season_2026/*.json`
 files) - the script uses `separators=(", ", ": ")` on write specifically to match that, since a
 plain `indent=2` dump reformats all 1800+ existing historical rows and turns a 61-row append into
