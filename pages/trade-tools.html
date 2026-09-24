@@ -241,31 +241,41 @@ function playerValueBarHTML(player) {
 
 // How close the two sides are on pure market value (vbd_value sums), FantasyCalc-calculator
 // style: no roster-fit/need adjustment at all, just "how much is each pile of players worth."
-// 100 = dead even, lower = more lopsided. Deliberately kept separate from this page's blended
-// need-aware score - showing both together (this + the roster-fit grade) gives a market-value
-// sanity check alongside the site's own smarter read, rather than replacing one with the other.
-function marketValuePct(valueA, valueB) {
-  const shift = Math.min(0, valueA, valueB);
-  const a = valueA - shift, b = valueB - shift;
-  if (a === 0 && b === 0) return 100;
-  return Math.round((Math.min(a, b) / Math.max(a, b)) * 100);
+// 1 = dead even, 0 = as lopsided as the tolerance band allows. Same "evenness" concept
+// computeFairness() uses for its own fairness score - a real value gap only reads as meaningfully
+// lopsided once it's a real fraction of the deal's own scale (evenBand), not in absolute terms,
+// so a $5 gap on a $10 trade and a $50 gap on a $100 trade read as equally (un)fair. Deliberately
+// kept separate from this page's blended need-aware score - showing both together (this + the
+// roster-fit grade) gives a market-value sanity check alongside the site's own smarter read,
+// rather than replacing one with the other.
+function marketValueEvenness(valueA, valueB) {
+  const delta = valueB - valueA; // positive => side A received more than it sent => A is favored
+  const totalValue = Math.abs(valueA) + Math.abs(valueB) || 1;
+  const evenBand = Math.max(0.4 * totalValue, 15.0);
+  const evenness = Math.max(0, Math.min(1, 1 - Math.abs(delta) / evenBand));
+  return { delta, evenness };
 }
 
 // The prominent two-segment value bar (full-size on the Calculator, a smaller `mini` version on
-// each Finder result card) - shows each side's raw market value as a proportion of the combined
-// total, plus a one-line verdict naming which side the raw value favors and by how much.
+// each Finder result card) - each side's segment width tracks how FAIR the trade is (via
+// marketValueEvenness above), not the raw absolute value each side sent. Plotting raw value
+// directly (the previous approach) made any trade involving a real star - which is normal, not a
+// bug, most trades worth looking at involve one - render as a ~95/5 near-solid-color bar
+// regardless of how fair the deal actually was, since one side's vbd_value naturally dwarfs the
+// other's even in a perfectly reasonable trade. A perfectly even trade now centers at 50/50 and
+// only skews toward the favored side as it actually gets more lopsided, capped at 90/10 so the
+// weaker side's color never fully disappears - it's meant to read as a range, never one color.
+// (This also fixes a real direction bug: "favors" previously pointed at whichever side SENT more
+// value, which is backwards - a side that gives up more than it receives is the one getting the
+// worse end of the deal, not the one the trade "favors.")
 function valueGaugeHTML(labelA, valueA, colorA, labelB, valueB, colorB, mini) {
-  // Shift both onto a non-negative scale by the more-negative side rather than clamping to 0 -
-  // clamping made two near-equal negative bundles (e.g. -16.3 vs -15.5, a couple bench scrubs)
-  // render as a misleading 0%/100% split instead of the roughly-even split they actually are.
-  const shift = Math.min(0, valueA, valueB);
-  const a = valueA - shift, b = valueB - shift;
-  const total = a + b || 1;
-  const pctA = (a / total) * 100;
+  const { delta, evenness } = marketValueEvenness(valueA, valueB);
+  const skew = (1 - evenness) * 40; // 0 (perfectly even) .. 40 (a 90/10 split, the visual floor)
+  const pctA = delta > 0 ? 50 + skew : delta < 0 ? 50 - skew : 50;
   const pctB = 100 - pctA;
-  const fairPct = marketValuePct(valueA, valueB);
+  const fairPct = Math.round(evenness * 100);
   const diff = Math.abs(valueA - valueB);
-  const favored = valueA > valueB ? labelA : (valueB > valueA ? labelB : null);
+  const favored = delta > 0 ? labelA : (delta < 0 ? labelB : null);
   const verdict = favored
     ? `Market value favors ${favored} by ${diff.toFixed(1)} pts &middot; ${fairPct}% even`
     : `Perfectly even on market value`;

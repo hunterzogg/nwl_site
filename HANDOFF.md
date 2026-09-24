@@ -1699,6 +1699,28 @@ scaled by `TRADE_VALUE_WEIGHT`) was already relative-to-position and needed no c
 now operates on a more accurate `ros_value` input. Verified live: Trade Finder/Calculator render
 real, sane values with no console errors post-fix.
 
+**Fairness bar fixed: was plotting raw value totals (and pointing the wrong direction) instead of
+an actual fairness read (later follow-up)** - per explicit report ("the bar... is always only one
+color... should indicate fairness like a range"), found two compounding bugs in
+`valueGaugeHTML()`/`marketValuePct()`: (1) the bar's two segments were sized by each side's raw
+absolute `vbd_value` sum, so any trade involving a real star (normal - most trades worth looking
+at involve one) rendered as a ~95/5 near-solid-color bar regardless of how fair the deal actually
+was, since one side's vbd naturally dwarfs a bench throw-in's even in a perfectly reasonable trade;
+(2) `favored = valueA > valueB ? labelA : ...` pointed at whichever side SENT more value - backwards,
+since giving up more than you receive is the worse end of the deal, not the side the trade "favors."
+Confirmed both live: Ainsworth sending Kenneth Walker (81.1 vbd) for Zogg's Chase Brown (68.6 vbd)
+previously showed "favors Ainsworth" (wrong - Ainsworth is out 12.5 pts of value) and a bar with no
+visible Zogg segment. Fixed by replacing `marketValuePct()` with `marketValueEvenness()` (same
+tolerance-band "evenness" concept `computeFairness()` already uses elsewhere on this page) and
+having the bar's split track that evenness score instead of raw value proportion - a perfectly
+even trade now centers at 50/50, skewing toward whichever side is actually favored (received more
+than it sent) as the deal gets more lopsided, capped at a 90/10 split so the weaker side's color
+never fully disappears. Re-verified the same Walker/Brown trade now reads "favors Zogg by 12.5 pts
+&middot; 79% even" with a legible ~42/58 bar, and a deliberately lopsided star-for-scrub trade
+(Walker for a -85.8 vbd bench player) reads "favors Zogg by 166.9 pts &middot; 0% even" at the
+90/10 floor - both directions and the always-visible-range behavior confirmed on the Calculator and
+the Finder's mini gauge cards (same shared function, both call sites fixed at once).
+
 ---
 
 ## Known Bugs & Data Issues
