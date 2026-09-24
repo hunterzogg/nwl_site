@@ -1,12 +1,12 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-23T22:30:39.680074+00:00",
+  "updated_at": "2026-09-24T13:25:37.920153+00:00",
   "weeks_remaining": 12,
   "vbd_baseline": {
-    "QB": 261.7,
-    "RB": 162.8,
-    "WR": 165.6,
-    "TE": 139.7
+    "QB": 279.9,
+    "RB": 171.3,
+    "WR": 176.4,
+    "TE": 146.3
   },
   "free_agents": {
     "QB": [
@@ -15,196 +15,196 @@
         "name": "Baker Mayfield",
         "position": "QB",
         "nfl_team": "TB",
-        "ros_value": 248.5,
-        "vbd_value": -4.0
-      },
-      {
-        "espn_id": 4038941,
-        "name": "Justin Herbert",
-        "position": "QB",
-        "nfl_team": "LAC",
-        "ros_value": 237.3,
-        "vbd_value": -7.3
+        "ros_value": 267.1,
+        "vbd_value": -3.8
       },
       {
         "espn_id": 4432577,
         "name": "C.J. Stroud",
         "position": "QB",
         "nfl_team": "HOU",
-        "ros_value": 234.2,
-        "vbd_value": -8.2
-      },
-      {
-        "espn_id": 3912547,
-        "name": "Sam Darnold",
-        "position": "QB",
-        "nfl_team": "SEA",
-        "ros_value": 223.2,
-        "vbd_value": -11.5
-      },
-      {
-        "espn_id": 4242512,
-        "name": "Malik Willis",
-        "position": "QB",
-        "nfl_team": "MIA",
-        "ros_value": 221.4,
-        "vbd_value": -12.1
+        "ros_value": 249.8,
+        "vbd_value": -9.0
       },
       {
         "espn_id": 3917792,
         "name": "Daniel Jones",
         "position": "QB",
         "nfl_team": "IND",
-        "ros_value": 221.3,
+        "ros_value": 239.6,
         "vbd_value": -12.1
+      },
+      {
+        "espn_id": 4242512,
+        "name": "Malik Willis",
+        "position": "QB",
+        "nfl_team": "MIA",
+        "ros_value": 236.4,
+        "vbd_value": -13.0
       },
       {
         "espn_id": 15864,
         "name": "Geno Smith",
         "position": "QB",
         "nfl_team": "NYJ",
-        "ros_value": 220.5,
-        "vbd_value": -12.4
+        "ros_value": 234.0,
+        "vbd_value": -13.8
+      },
+      {
+        "espn_id": 2578570,
+        "name": "Jacoby Brissett",
+        "position": "QB",
+        "nfl_team": "ARI",
+        "ros_value": 228.8,
+        "vbd_value": -15.3
+      },
+      {
+        "espn_id": 8439,
+        "name": "Aaron Rodgers",
+        "position": "QB",
+        "nfl_team": "PIT",
+        "ros_value": 218.1,
+        "vbd_value": -18.5
       },
       {
         "espn_id": 4360423,
         "name": "Michael Penix Jr.",
         "position": "QB",
         "nfl_team": "ATL",
-        "ros_value": 215.7,
-        "vbd_value": -13.8
+        "ros_value": 214.8,
+        "vbd_value": -19.5
       }
     ],
     "RB": [
-      {
-        "espn_id": 4239934,
-        "name": "AJ Dillon",
-        "position": "RB",
-        "nfl_team": "CAR",
-        "ros_value": 82.7,
-        "vbd_value": -80.1
-      },
-      {
-        "espn_id": 3915411,
-        "name": "Ty Johnson",
-        "position": "RB",
-        "nfl_team": "BUF",
-        "ros_value": 77.9,
-        "vbd_value": -84.9
-      },
       {
         "espn_id": 4040761,
         "name": "Devin Singletary",
         "position": "RB",
         "nfl_team": "NYG",
-        "ros_value": 76.4,
-        "vbd_value": -86.4
+        "ros_value": 112.5,
+        "vbd_value": -58.8
       },
       {
         "espn_id": 3116389,
         "name": "Samaje Perine",
         "position": "RB",
         "nfl_team": "CIN",
-        "ros_value": 73.6,
-        "vbd_value": -89.2
+        "ros_value": 96.5,
+        "vbd_value": -74.8
       },
       {
         "espn_id": 4912274,
         "name": "Sione Vaki",
         "position": "RB",
         "nfl_team": "DET",
-        "ros_value": 65.7,
-        "vbd_value": -97.1
+        "ros_value": 89.8,
+        "vbd_value": -81.5
       },
       {
-        "espn_id": 4601080,
-        "name": "Raheim Sanders",
+        "espn_id": 4239934,
+        "name": "AJ Dillon",
         "position": "RB",
-        "nfl_team": "CLE",
-        "ros_value": 65.3,
-        "vbd_value": -97.5
+        "nfl_team": "CAR",
+        "ros_value": 80.2,
+        "vbd_value": -91.1
       },
       {
         "espn_id": 4362478,
         "name": "Emari Demercado",
         "position": "RB",
         "nfl_team": "DAL",
-        "ros_value": 59.8,
-        "vbd_value": -103.0
+        "ros_value": 80.0,
+        "vbd_value": -91.3
+      },
+      {
+        "espn_id": 3915411,
+        "name": "Ty Johnson",
+        "position": "RB",
+        "nfl_team": "BUF",
+        "ros_value": 79.0,
+        "vbd_value": -92.3
       },
       {
         "espn_id": 3149687,
         "name": "Chris Brooks",
         "position": "RB",
         "nfl_team": "GB",
-        "ros_value": 57.4,
-        "vbd_value": -105.4
+        "ros_value": 73.4,
+        "vbd_value": -97.9
+      },
+      {
+        "espn_id": 4601080,
+        "name": "Raheim Sanders",
+        "position": "RB",
+        "nfl_team": "CLE",
+        "ros_value": 61.9,
+        "vbd_value": -109.4
       }
     ],
     "WR": [
-      {
-        "espn_id": 5083754,
-        "name": "Ryan Flournoy",
-        "position": "WR",
-        "nfl_team": "DAL",
-        "ros_value": 121.3,
-        "vbd_value": -44.3
-      },
-      {
-        "espn_id": 2973405,
-        "name": "Kalif Raymond",
-        "position": "WR",
-        "nfl_team": "CHI",
-        "ros_value": 112.0,
-        "vbd_value": -53.6
-      },
       {
         "espn_id": 4362249,
         "name": "Jayden Reed",
         "position": "WR",
         "nfl_team": "GB",
-        "ros_value": 109.6,
-        "vbd_value": -56.0
-      },
-      {
-        "espn_id": 4431492,
-        "name": "Roman Wilson",
-        "position": "WR",
-        "nfl_team": "PIT",
-        "ros_value": 104.0,
-        "vbd_value": -61.6
-      },
-      {
-        "espn_id": 4569371,
-        "name": "Isaiah Williams",
-        "position": "WR",
-        "nfl_team": "NYJ",
-        "ros_value": 103.0,
-        "vbd_value": -62.6
-      },
-      {
-        "espn_id": 3045523,
-        "name": "Kendrick Bourne",
-        "position": "WR",
-        "nfl_team": "ARI",
-        "ros_value": 101.1,
-        "vbd_value": -64.5
+        "ros_value": 163.1,
+        "vbd_value": -13.3
       },
       {
         "espn_id": 4429022,
         "name": "Kayshon Boutte",
         "position": "WR",
         "nfl_team": "HOU",
-        "ros_value": 99.7,
-        "vbd_value": -65.9
+        "ros_value": 118.1,
+        "vbd_value": -58.3
       },
       {
-        "espn_id": 3925357,
-        "name": "Calvin Ridley",
+        "espn_id": 2977187,
+        "name": "Cooper Kupp",
         "position": "WR",
-        "nfl_team": "TEN",
-        "ros_value": 95.5,
-        "vbd_value": -70.1
+        "nfl_team": "SEA",
+        "ros_value": 116.2,
+        "vbd_value": -60.2
+      },
+      {
+        "espn_id": 4430834,
+        "name": "Jalen McMillan",
+        "position": "WR",
+        "nfl_team": "TB",
+        "ros_value": 114.5,
+        "vbd_value": -61.9
+      },
+      {
+        "espn_id": 4600981,
+        "name": "Pat Bryant",
+        "position": "WR",
+        "nfl_team": "DEN",
+        "ros_value": 113.1,
+        "vbd_value": -63.3
+      },
+      {
+        "espn_id": 4382466,
+        "name": "Jalen Nailor",
+        "position": "WR",
+        "nfl_team": "LV",
+        "ros_value": 111.5,
+        "vbd_value": -64.9
+      },
+      {
+        "espn_id": 5083754,
+        "name": "Ryan Flournoy",
+        "position": "WR",
+        "nfl_team": "DAL",
+        "ros_value": 110.9,
+        "vbd_value": -65.5
+      },
+      {
+        "espn_id": 2576581,
+        "name": "Chris Moore",
+        "position": "WR",
+        "nfl_team": "BAL",
+        "ros_value": 110.9,
+        "vbd_value": -65.5
       }
     ],
     "TE": [
@@ -213,64 +213,64 @@
         "name": "Pat Freiermuth",
         "position": "TE",
         "nfl_team": "PIT",
-        "ros_value": 122.3,
-        "vbd_value": -13.0
+        "ros_value": 138.7,
+        "vbd_value": -5.7
       },
       {
         "espn_id": 4430539,
         "name": "Brenton Strange",
         "position": "TE",
         "nfl_team": "JAX",
-        "ros_value": 120.4,
-        "vbd_value": -14.5
+        "ros_value": 135.7,
+        "vbd_value": -8.0
       },
       {
         "espn_id": 4686728,
         "name": "Gunnar Helm",
         "position": "TE",
         "nfl_team": "TEN",
-        "ros_value": 118.0,
-        "vbd_value": -16.3
-      },
-      {
-        "espn_id": 4243331,
-        "name": "Cade Otton",
-        "position": "TE",
-        "nfl_team": "TB",
-        "ros_value": 116.9,
-        "vbd_value": -17.1
-      },
-      {
-        "espn_id": 3116164,
-        "name": "Mike Gesicki",
-        "position": "TE",
-        "nfl_team": "CIN",
-        "ros_value": 103.8,
-        "vbd_value": -26.9
+        "ros_value": 126.6,
+        "vbd_value": -14.8
       },
       {
         "espn_id": 4360635,
         "name": "Chig Okonkwo",
         "position": "TE",
         "nfl_team": "WSH",
-        "ros_value": 102.1,
-        "vbd_value": -28.2
+        "ros_value": 112.8,
+        "vbd_value": -25.1
+      },
+      {
+        "espn_id": 3051876,
+        "name": "Evan Engram",
+        "position": "TE",
+        "nfl_team": "DEN",
+        "ros_value": 110.9,
+        "vbd_value": -26.6
+      },
+      {
+        "espn_id": 3116164,
+        "name": "Mike Gesicki",
+        "position": "TE",
+        "nfl_team": "CIN",
+        "ros_value": 110.6,
+        "vbd_value": -26.8
+      },
+      {
+        "espn_id": 4242557,
+        "name": "Colby Parkinson",
+        "position": "TE",
+        "nfl_team": "LAR",
+        "ros_value": 110.6,
+        "vbd_value": -26.8
       },
       {
         "espn_id": 4367209,
         "name": "Greg Dulcich",
         "position": "TE",
         "nfl_team": "MIA",
-        "ros_value": 95.2,
-        "vbd_value": -33.4
-      },
-      {
-        "espn_id": 4576297,
-        "name": "AJ Barner",
-        "position": "TE",
-        "nfl_team": "SEA",
-        "ros_value": 94.6,
-        "vbd_value": -33.8
+        "ros_value": 109.4,
+        "vbd_value": -27.7
       }
     ]
   },
@@ -292,8 +292,8 @@
           "lineup_slot_id": 4,
           "projected_total": 249.0,
           "actual_so_far": 54.4,
-          "ros_value": 194.6,
-          "vbd_value": 29.0,
+          "ros_value": 253.5,
+          "vbd_value": 77.1,
           "slot": "WR1",
           "is_starter": true
         },
@@ -305,8 +305,8 @@
           "lineup_slot_id": 2,
           "projected_total": 268.2,
           "actual_so_far": 53.4,
-          "ros_value": 214.8,
-          "vbd_value": 52.0,
+          "ros_value": 252.4,
+          "vbd_value": 81.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -318,8 +318,8 @@
           "lineup_slot_id": 20,
           "projected_total": 191.6,
           "actual_so_far": 23.5,
-          "ros_value": 168.1,
-          "vbd_value": 2.5,
+          "ros_value": 189.6,
+          "vbd_value": 13.2,
           "slot": "WR2",
           "is_starter": true
         },
@@ -331,8 +331,8 @@
           "lineup_slot_id": 2,
           "projected_total": 216.2,
           "actual_so_far": 30.5,
-          "ros_value": 185.7,
-          "vbd_value": 22.9,
+          "ros_value": 223.9,
+          "vbd_value": 52.6,
           "slot": "RB2",
           "is_starter": true
         },
@@ -344,8 +344,8 @@
           "lineup_slot_id": 20,
           "projected_total": 163.6,
           "actual_so_far": 30.8,
-          "ros_value": 132.8,
-          "vbd_value": -30.0,
+          "ros_value": 194.8,
+          "vbd_value": 23.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -357,8 +357,8 @@
           "lineup_slot_id": 23,
           "projected_total": 180.9,
           "actual_so_far": 42.3,
-          "ros_value": 138.6,
-          "vbd_value": -24.2,
+          "ros_value": 200.3,
+          "vbd_value": 29.0,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -370,8 +370,8 @@
           "lineup_slot_id": 4,
           "projected_total": 188.6,
           "actual_so_far": 30.1,
-          "ros_value": 158.5,
-          "vbd_value": -7.1,
+          "ros_value": 172.4,
+          "vbd_value": -4.0,
           "slot": "W/T",
           "is_starter": true
         },
@@ -383,10 +383,10 @@
           "lineup_slot_id": 20,
           "projected_total": 118.4,
           "actual_so_far": 2.0,
-          "ros_value": 116.4,
-          "vbd_value": -17.5,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 138.4,
+          "vbd_value": -5.9,
+          "slot": "TE",
+          "is_starter": true
         },
         {
           "espn_id": 15847,
@@ -396,10 +396,10 @@
           "lineup_slot_id": 6,
           "projected_total": 147.4,
           "actual_so_far": 29.2,
-          "ros_value": 118.2,
-          "vbd_value": -16.1,
-          "slot": "TE",
-          "is_starter": true
+          "ros_value": 132.6,
+          "vbd_value": -10.3,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4361432,
@@ -409,8 +409,8 @@
           "lineup_slot_id": 20,
           "projected_total": 107.9,
           "actual_so_far": 11.1,
-          "ros_value": 96.8,
-          "vbd_value": -68.8,
+          "ros_value": 116.1,
+          "vbd_value": -60.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -422,8 +422,8 @@
           "lineup_slot_id": 5,
           "projected_total": 122.2,
           "actual_so_far": 14.8,
-          "ros_value": 107.4,
-          "vbd_value": -24.2,
+          "ros_value": 133.9,
+          "vbd_value": -9.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -435,7 +435,7 @@
           "lineup_slot_id": 19,
           "projected_total": 36.1,
           "actual_so_far": 0.0,
-          "ros_value": 36.1,
+          "ros_value": 34.3,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -448,8 +448,8 @@
           "lineup_slot_id": 20,
           "projected_total": 107.3,
           "actual_so_far": 14.8,
-          "ros_value": 92.5,
-          "vbd_value": -73.1,
+          "ros_value": 123.4,
+          "vbd_value": -53.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -461,8 +461,8 @@
           "lineup_slot_id": 0,
           "projected_total": 272.1,
           "actual_so_far": 45.6,
-          "ros_value": 226.5,
-          "vbd_value": -10.6,
+          "ros_value": 275.5,
+          "vbd_value": -1.3,
           "slot": "QB",
           "is_starter": true
         },
@@ -474,8 +474,8 @@
           "lineup_slot_id": 20,
           "projected_total": 242.2,
           "actual_so_far": 33.3,
-          "ros_value": 208.9,
-          "vbd_value": -15.8,
+          "ros_value": 265.4,
+          "vbd_value": -4.3,
           "slot": "BEN",
           "is_starter": false
         }
@@ -495,8 +495,8 @@
           "lineup_slot_id": 2,
           "projected_total": 235.6,
           "actual_so_far": 28.8,
-          "ros_value": 206.8,
-          "vbd_value": 44.0,
+          "ros_value": 250.8,
+          "vbd_value": 79.5,
           "slot": "RB1",
           "is_starter": true
         },
@@ -508,8 +508,8 @@
           "lineup_slot_id": 2,
           "projected_total": 238.5,
           "actual_so_far": 38.0,
-          "ros_value": 200.5,
-          "vbd_value": 37.7,
+          "ros_value": 240.5,
+          "vbd_value": 69.2,
           "slot": "RB2",
           "is_starter": true
         },
@@ -521,8 +521,8 @@
           "lineup_slot_id": 0,
           "projected_total": 343.4,
           "actual_so_far": 76.5,
-          "ros_value": 266.9,
-          "vbd_value": 1.6,
+          "ros_value": 362.0,
+          "vbd_value": 24.6,
           "slot": "QB",
           "is_starter": true
         },
@@ -534,8 +534,8 @@
           "lineup_slot_id": 4,
           "projected_total": 155.8,
           "actual_so_far": 21.7,
-          "ros_value": 134.1,
-          "vbd_value": -31.5,
+          "ros_value": 181.0,
+          "vbd_value": 4.6,
           "slot": "WR1",
           "is_starter": true
         },
@@ -547,10 +547,10 @@
           "lineup_slot_id": 20,
           "projected_total": 87.6,
           "actual_so_far": 3.8,
-          "ros_value": 83.8,
-          "vbd_value": -81.8,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 129.8,
+          "vbd_value": -46.6,
+          "slot": "W/T",
+          "is_starter": true
         },
         {
           "espn_id": 4685512,
@@ -560,8 +560,8 @@
           "lineup_slot_id": 23,
           "projected_total": 153.9,
           "actual_so_far": 11.3,
-          "ros_value": 142.6,
-          "vbd_value": -20.2,
+          "ros_value": 160.5,
+          "vbd_value": -10.8,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -573,8 +573,8 @@
           "lineup_slot_id": 20,
           "projected_total": 133.4,
           "actual_so_far": 3.1,
-          "ros_value": 130.3,
-          "vbd_value": -35.3,
+          "ros_value": 130.2,
+          "vbd_value": -46.2,
           "slot": "WR2",
           "is_starter": true
         },
@@ -586,8 +586,8 @@
           "lineup_slot_id": 4,
           "projected_total": 121.3,
           "actual_so_far": 15.4,
-          "ros_value": 105.9,
-          "vbd_value": -59.7,
+          "ros_value": 120.3,
+          "vbd_value": -56.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -599,10 +599,10 @@
           "lineup_slot_id": 20,
           "projected_total": 136.0,
           "actual_so_far": 6.3,
-          "ros_value": 129.7,
-          "vbd_value": -35.9,
-          "slot": "W/T",
-          "is_starter": true
+          "ros_value": 121.3,
+          "vbd_value": -55.1,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4361050,
@@ -612,8 +612,8 @@
           "lineup_slot_id": 6,
           "projected_total": 147.3,
           "actual_so_far": 29.6,
-          "ros_value": 117.7,
-          "vbd_value": -16.5,
+          "ros_value": 149.3,
+          "vbd_value": 2.2,
           "slot": "TE",
           "is_starter": true
         },
@@ -625,8 +625,8 @@
           "lineup_slot_id": 20,
           "projected_total": 83.9,
           "actual_so_far": 10.8,
-          "ros_value": 73.1,
-          "vbd_value": -89.7,
+          "ros_value": 87.3,
+          "vbd_value": -84.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -638,8 +638,8 @@
           "lineup_slot_id": 5,
           "projected_total": 132.2,
           "actual_so_far": 30.9,
-          "ros_value": 101.3,
-          "vbd_value": -64.3,
+          "ros_value": 128.9,
+          "vbd_value": -47.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -651,8 +651,8 @@
           "lineup_slot_id": 20,
           "projected_total": 49.8,
           "actual_so_far": 4.8,
-          "ros_value": 45.0,
-          "vbd_value": -117.8,
+          "ros_value": 54.6,
+          "vbd_value": -116.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -664,7 +664,7 @@
           "lineup_slot_id": 19,
           "projected_total": 25.5,
           "actual_so_far": 0.0,
-          "ros_value": 25.5,
+          "ros_value": 27.4,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -677,8 +677,8 @@
           "lineup_slot_id": 21,
           "projected_total": 70.3,
           "actual_so_far": 3.0,
-          "ros_value": 67.3,
-          "vbd_value": -98.3,
+          "ros_value": 91.1,
+          "vbd_value": -85.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -690,8 +690,8 @@
           "lineup_slot_id": 20,
           "projected_total": 19.3,
           "actual_so_far": 0.3,
-          "ros_value": 19.0,
-          "vbd_value": -143.8,
+          "ros_value": 33.8,
+          "vbd_value": -137.5,
           "slot": "BEN",
           "is_starter": false
         }
@@ -711,8 +711,8 @@
           "lineup_slot_id": 4,
           "projected_total": 250.6,
           "actual_so_far": 60.2,
-          "ros_value": 190.4,
-          "vbd_value": 24.8,
+          "ros_value": 253.0,
+          "vbd_value": 76.6,
           "slot": "WR1",
           "is_starter": true
         },
@@ -724,8 +724,8 @@
           "lineup_slot_id": 2,
           "projected_total": 256.7,
           "actual_so_far": 51.0,
-          "ros_value": 205.7,
-          "vbd_value": 42.9,
+          "ros_value": 258.4,
+          "vbd_value": 87.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -737,8 +737,8 @@
           "lineup_slot_id": 4,
           "projected_total": 164.0,
           "actual_so_far": 17.6,
-          "ros_value": 146.4,
-          "vbd_value": -19.2,
+          "ros_value": 190.9,
+          "vbd_value": 14.5,
           "slot": "WR2",
           "is_starter": true
         },
@@ -750,8 +750,8 @@
           "lineup_slot_id": 2,
           "projected_total": 184.9,
           "actual_so_far": 21.6,
-          "ros_value": 163.3,
-          "vbd_value": 0.5,
+          "ros_value": 210.5,
+          "vbd_value": 39.2,
           "slot": "RB2",
           "is_starter": true
         },
@@ -763,8 +763,8 @@
           "lineup_slot_id": 5,
           "projected_total": 176.3,
           "actual_so_far": 41.8,
-          "ros_value": 134.5,
-          "vbd_value": -31.1,
+          "ros_value": 175.5,
+          "vbd_value": -0.9,
           "slot": "W/T",
           "is_starter": true
         },
@@ -777,7 +777,7 @@
           "projected_total": 0.0,
           "actual_so_far": 8.3,
           "ros_value": 0.0,
-          "vbd_value": -162.8,
+          "vbd_value": -171.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -789,8 +789,8 @@
           "lineup_slot_id": 0,
           "projected_total": 266.4,
           "actual_so_far": 32.3,
-          "ros_value": 234.1,
-          "vbd_value": -8.3,
+          "ros_value": 291.3,
+          "vbd_value": 3.4,
           "slot": "QB",
           "is_starter": true
         },
@@ -802,8 +802,8 @@
           "lineup_slot_id": 20,
           "projected_total": 132.8,
           "actual_so_far": 15.1,
-          "ros_value": 117.7,
-          "vbd_value": -45.1,
+          "ros_value": 135.4,
+          "vbd_value": -35.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -815,8 +815,8 @@
           "lineup_slot_id": 20,
           "projected_total": 129.5,
           "actual_so_far": 32.7,
-          "ros_value": 96.8,
-          "vbd_value": -68.8,
+          "ros_value": 129.2,
+          "vbd_value": -47.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -828,8 +828,8 @@
           "lineup_slot_id": 23,
           "projected_total": 170.2,
           "actual_so_far": 40.4,
-          "ros_value": 129.8,
-          "vbd_value": -35.8,
+          "ros_value": 148.8,
+          "vbd_value": -27.6,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -842,7 +842,7 @@
           "projected_total": 0.0,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
-          "vbd_value": -165.6,
+          "vbd_value": -176.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -854,7 +854,7 @@
           "lineup_slot_id": 19,
           "projected_total": 27.4,
           "actual_so_far": 10.0,
-          "ros_value": 17.4,
+          "ros_value": 20.5,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -867,8 +867,8 @@
           "lineup_slot_id": 20,
           "projected_total": 106.0,
           "actual_so_far": 7.2,
-          "ros_value": 98.8,
-          "vbd_value": -66.8,
+          "ros_value": 110.3,
+          "vbd_value": -66.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -880,8 +880,8 @@
           "lineup_slot_id": 20,
           "projected_total": 108.4,
           "actual_so_far": 25.5,
-          "ros_value": 82.9,
-          "vbd_value": -42.6,
+          "ros_value": 96.7,
+          "vbd_value": -37.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -893,8 +893,8 @@
           "lineup_slot_id": 6,
           "projected_total": 110.0,
           "actual_so_far": 21.5,
-          "ros_value": 88.5,
-          "vbd_value": -38.4,
+          "ros_value": 112.9,
+          "vbd_value": -25.1,
           "slot": "TE",
           "is_starter": true
         },
@@ -906,8 +906,8 @@
           "lineup_slot_id": 20,
           "projected_total": 84.6,
           "actual_so_far": 12.6,
-          "ros_value": 72.0,
-          "vbd_value": -50.8,
+          "ros_value": 100.8,
+          "vbd_value": -34.1,
           "slot": "BEN",
           "is_starter": false
         }
@@ -927,8 +927,8 @@
           "lineup_slot_id": 2,
           "projected_total": 350.4,
           "actual_so_far": 51.4,
-          "ros_value": 299.0,
-          "vbd_value": 136.2,
+          "ros_value": 353.8,
+          "vbd_value": 182.5,
           "slot": "RB1",
           "is_starter": true
         },
@@ -940,8 +940,8 @@
           "lineup_slot_id": 4,
           "projected_total": 172.9,
           "actual_so_far": 11.3,
-          "ros_value": 161.6,
-          "vbd_value": -4.0,
+          "ros_value": 187.4,
+          "vbd_value": 11.0,
           "slot": "WR2",
           "is_starter": true
         },
@@ -953,8 +953,8 @@
           "lineup_slot_id": 4,
           "projected_total": 178.2,
           "actual_so_far": 10.5,
-          "ros_value": 167.7,
-          "vbd_value": 2.1,
+          "ros_value": 199.6,
+          "vbd_value": 23.2,
           "slot": "WR1",
           "is_starter": true
         },
@@ -966,8 +966,8 @@
           "lineup_slot_id": 23,
           "projected_total": 142.5,
           "actual_so_far": 11.7,
-          "ros_value": 130.8,
-          "vbd_value": -34.8,
+          "ros_value": 167.0,
+          "vbd_value": -9.4,
           "slot": "W/T",
           "is_starter": true
         },
@@ -979,8 +979,8 @@
           "lineup_slot_id": 0,
           "projected_total": 312.1,
           "actual_so_far": 39.8,
-          "ros_value": 272.4,
-          "vbd_value": 3.2,
+          "ros_value": 340.4,
+          "vbd_value": 18.1,
           "slot": "QB",
           "is_starter": true
         },
@@ -992,8 +992,8 @@
           "lineup_slot_id": 5,
           "projected_total": 135.8,
           "actual_so_far": 11.0,
-          "ros_value": 124.8,
-          "vbd_value": -40.8,
+          "ros_value": 139.3,
+          "vbd_value": -37.1,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1005,8 +1005,8 @@
           "lineup_slot_id": 2,
           "projected_total": 190.0,
           "actual_so_far": 35.6,
-          "ros_value": 154.4,
-          "vbd_value": -8.4,
+          "ros_value": 190.0,
+          "vbd_value": 18.7,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1018,8 +1018,8 @@
           "lineup_slot_id": 6,
           "projected_total": 110.5,
           "actual_so_far": 11.0,
-          "ros_value": 99.5,
-          "vbd_value": -30.1,
+          "ros_value": 130.7,
+          "vbd_value": -11.7,
           "slot": "TE",
           "is_starter": true
         },
@@ -1031,8 +1031,8 @@
           "lineup_slot_id": 20,
           "projected_total": 129.3,
           "actual_so_far": 4.6,
-          "ros_value": 124.7,
-          "vbd_value": -40.9,
+          "ros_value": 126.8,
+          "vbd_value": -49.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1045,7 +1045,7 @@
           "projected_total": 0.0,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
-          "vbd_value": -162.8,
+          "vbd_value": -171.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1057,8 +1057,8 @@
           "lineup_slot_id": 20,
           "projected_total": 121.0,
           "actual_so_far": 11.4,
-          "ros_value": 109.6,
-          "vbd_value": -53.2,
+          "ros_value": 123.1,
+          "vbd_value": -48.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1070,8 +1070,8 @@
           "lineup_slot_id": 20,
           "projected_total": 47.6,
           "actual_so_far": 11.1,
-          "ros_value": 36.5,
-          "vbd_value": -126.3,
+          "ros_value": 49.4,
+          "vbd_value": -121.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1083,7 +1083,7 @@
           "lineup_slot_id": 19,
           "projected_total": 27.0,
           "actual_so_far": 10.0,
-          "ros_value": 17.0,
+          "ros_value": 21.3,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -1096,8 +1096,8 @@
           "lineup_slot_id": 20,
           "projected_total": 29.6,
           "actual_so_far": 9.5,
-          "ros_value": 20.1,
-          "vbd_value": -142.7,
+          "ros_value": 8.6,
+          "vbd_value": -162.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1109,8 +1109,8 @@
           "lineup_slot_id": 20,
           "projected_total": 94.0,
           "actual_so_far": 18.3,
-          "ros_value": 75.7,
-          "vbd_value": -89.9,
+          "ros_value": 96.0,
+          "vbd_value": -80.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1122,8 +1122,8 @@
           "lineup_slot_id": 20,
           "projected_total": 28.9,
           "actual_so_far": 3.2,
-          "ros_value": 25.7,
-          "vbd_value": -137.1,
+          "ros_value": 0.4,
+          "vbd_value": -170.9,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1143,8 +1143,8 @@
           "lineup_slot_id": 2,
           "projected_total": 256.8,
           "actual_so_far": 31.9,
-          "ros_value": 224.9,
-          "vbd_value": 62.1,
+          "ros_value": 272.1,
+          "vbd_value": 100.8,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1156,8 +1156,8 @@
           "lineup_slot_id": 2,
           "projected_total": 234.4,
           "actual_so_far": 11.0,
-          "ros_value": 223.4,
-          "vbd_value": 60.6,
+          "ros_value": 251.1,
+          "vbd_value": 79.8,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1169,8 +1169,8 @@
           "lineup_slot_id": 6,
           "projected_total": 193.7,
           "actual_so_far": 34.1,
-          "ros_value": 159.6,
-          "vbd_value": 14.9,
+          "ros_value": 189.8,
+          "vbd_value": 32.6,
           "slot": "TE",
           "is_starter": true
         },
@@ -1182,8 +1182,8 @@
           "lineup_slot_id": 4,
           "projected_total": 184.4,
           "actual_so_far": 39.6,
-          "ros_value": 144.8,
-          "vbd_value": -20.8,
+          "ros_value": 184.1,
+          "vbd_value": 7.7,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1195,8 +1195,8 @@
           "lineup_slot_id": 0,
           "projected_total": 288.4,
           "actual_so_far": 40.9,
-          "ros_value": 247.5,
-          "vbd_value": -4.3,
+          "ros_value": 314.8,
+          "vbd_value": 10.5,
           "slot": "QB",
           "is_starter": true
         },
@@ -1208,8 +1208,8 @@
           "lineup_slot_id": 5,
           "projected_total": 138.4,
           "actual_so_far": 6.1,
-          "ros_value": 132.3,
-          "vbd_value": -33.3,
+          "ros_value": 156.2,
+          "vbd_value": -20.2,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1221,8 +1221,8 @@
           "lineup_slot_id": 4,
           "projected_total": 138.6,
           "actual_so_far": 10.7,
-          "ros_value": 127.9,
-          "vbd_value": -37.7,
+          "ros_value": 154.3,
+          "vbd_value": -22.1,
           "slot": "W/T",
           "is_starter": true
         },
@@ -1234,8 +1234,8 @@
           "lineup_slot_id": 20,
           "projected_total": 71.8,
           "actual_so_far": 2.4,
-          "ros_value": 69.4,
-          "vbd_value": -96.2,
+          "ros_value": 119.9,
+          "vbd_value": -56.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1247,10 +1247,10 @@
           "lineup_slot_id": 20,
           "projected_total": 123.2,
           "actual_so_far": 6.1,
-          "ros_value": 117.1,
-          "vbd_value": -45.7,
-          "slot": "FLEX",
-          "is_starter": true
+          "ros_value": 125.1,
+          "vbd_value": -46.2,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 3116165,
@@ -1260,10 +1260,10 @@
           "lineup_slot_id": 23,
           "projected_total": 111.4,
           "actual_so_far": 13.6,
-          "ros_value": 97.8,
-          "vbd_value": -67.8,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 132.2,
+          "vbd_value": -44.2,
+          "slot": "FLEX",
+          "is_starter": true
         },
         {
           "espn_id": 4241463,
@@ -1273,8 +1273,8 @@
           "lineup_slot_id": 20,
           "projected_total": 66.4,
           "actual_so_far": 3.6,
-          "ros_value": 62.8,
-          "vbd_value": -102.8,
+          "ros_value": 97.4,
+          "vbd_value": -79.0,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1286,8 +1286,8 @@
           "lineup_slot_id": 20,
           "projected_total": 283.4,
           "actual_so_far": 49.6,
-          "ros_value": 233.9,
-          "vbd_value": -8.3,
+          "ros_value": 292.6,
+          "vbd_value": 3.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1299,7 +1299,7 @@
           "lineup_slot_id": 19,
           "projected_total": 35.9,
           "actual_so_far": 0.0,
-          "ros_value": 35.9,
+          "ros_value": 30.7,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -1312,8 +1312,8 @@
           "lineup_slot_id": 20,
           "projected_total": 95.8,
           "actual_so_far": 10.0,
-          "ros_value": 85.8,
-          "vbd_value": -77.0,
+          "ros_value": 107.8,
+          "vbd_value": -63.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1325,8 +1325,8 @@
           "lineup_slot_id": 20,
           "projected_total": 68.1,
           "actual_so_far": 20.6,
-          "ros_value": 47.5,
-          "vbd_value": -69.1,
+          "ros_value": 75.6,
+          "vbd_value": -53.0,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1346,8 +1346,8 @@
           "lineup_slot_id": 2,
           "projected_total": 297.7,
           "actual_so_far": 50.8,
-          "ros_value": 246.9,
-          "vbd_value": 84.1,
+          "ros_value": 291.0,
+          "vbd_value": 119.7,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1359,8 +1359,8 @@
           "lineup_slot_id": 23,
           "projected_total": 177.4,
           "actual_so_far": 18.0,
-          "ros_value": 159.4,
-          "vbd_value": -3.4,
+          "ros_value": 193.4,
+          "vbd_value": 22.1,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -1372,8 +1372,8 @@
           "lineup_slot_id": 2,
           "projected_total": 217.5,
           "actual_so_far": 28.2,
-          "ros_value": 189.3,
-          "vbd_value": 26.5,
+          "ros_value": 219.9,
+          "vbd_value": 48.6,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1385,8 +1385,8 @@
           "lineup_slot_id": 20,
           "projected_total": 150.5,
           "actual_so_far": 8.4,
-          "ros_value": 142.1,
-          "vbd_value": -23.5,
+          "ros_value": 163.8,
+          "vbd_value": -12.6,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1398,8 +1398,8 @@
           "lineup_slot_id": 4,
           "projected_total": 144.1,
           "actual_so_far": 10.0,
-          "ros_value": 134.1,
-          "vbd_value": -31.5,
+          "ros_value": 155.0,
+          "vbd_value": -21.4,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1411,10 +1411,10 @@
           "lineup_slot_id": 20,
           "projected_total": 94.2,
           "actual_so_far": 9.7,
-          "ros_value": 84.5,
-          "vbd_value": -81.1,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 150.4,
+          "vbd_value": -26.0,
+          "slot": "W/T",
+          "is_starter": true
         },
         {
           "espn_id": 4360761,
@@ -1424,10 +1424,10 @@
           "lineup_slot_id": 20,
           "projected_total": 136.0,
           "actual_so_far": 10.9,
-          "ros_value": 125.1,
-          "vbd_value": -40.5,
-          "slot": "W/T",
-          "is_starter": true
+          "ros_value": 133.8,
+          "vbd_value": -42.6,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4701936,
@@ -1437,8 +1437,8 @@
           "lineup_slot_id": 4,
           "projected_total": 137.2,
           "actual_so_far": 20.3,
-          "ros_value": 116.9,
-          "vbd_value": -48.7,
+          "ros_value": 146.8,
+          "vbd_value": -29.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1450,8 +1450,8 @@
           "lineup_slot_id": 20,
           "projected_total": 100.8,
           "actual_so_far": 5.3,
-          "ros_value": 95.5,
-          "vbd_value": -67.3,
+          "ros_value": 130.9,
+          "vbd_value": -40.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1463,8 +1463,8 @@
           "lineup_slot_id": 0,
           "projected_total": 274.2,
           "actual_so_far": 50.6,
-          "ros_value": 223.5,
-          "vbd_value": -11.5,
+          "ros_value": 279.9,
+          "vbd_value": 0.0,
           "slot": "QB",
           "is_starter": true
         },
@@ -1476,8 +1476,8 @@
           "lineup_slot_id": 6,
           "projected_total": 102.8,
           "actual_so_far": 19.9,
-          "ros_value": 82.9,
-          "vbd_value": -42.6,
+          "ros_value": 114.3,
+          "vbd_value": -24.0,
           "slot": "TE",
           "is_starter": true
         },
@@ -1489,8 +1489,8 @@
           "lineup_slot_id": 21,
           "projected_total": 127.3,
           "actual_so_far": 0.0,
-          "ros_value": 127.3,
-          "vbd_value": -35.5,
+          "ros_value": 122.8,
+          "vbd_value": -48.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1502,8 +1502,8 @@
           "lineup_slot_id": 20,
           "projected_total": 107.3,
           "actual_so_far": 10.9,
-          "ros_value": 96.4,
-          "vbd_value": -66.4,
+          "ros_value": 111.8,
+          "vbd_value": -59.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1515,7 +1515,7 @@
           "lineup_slot_id": 19,
           "projected_total": 7.8,
           "actual_so_far": 0.0,
-          "ros_value": 7.8,
+          "ros_value": 4.6,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -1528,8 +1528,8 @@
           "lineup_slot_id": 5,
           "projected_total": 95.9,
           "actual_so_far": 25.3,
-          "ros_value": 70.6,
-          "vbd_value": -95.0,
+          "ros_value": 95.6,
+          "vbd_value": -80.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1541,8 +1541,8 @@
           "lineup_slot_id": 20,
           "projected_total": 90.6,
           "actual_so_far": 9.3,
-          "ros_value": 81.3,
-          "vbd_value": -84.3,
+          "ros_value": 78.0,
+          "vbd_value": -98.4,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1562,8 +1562,8 @@
           "lineup_slot_id": 4,
           "projected_total": 227.6,
           "actual_so_far": 34.2,
-          "ros_value": 193.4,
-          "vbd_value": 27.8,
+          "ros_value": 235.9,
+          "vbd_value": 59.5,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1575,8 +1575,8 @@
           "lineup_slot_id": 2,
           "projected_total": 260.4,
           "actual_so_far": 19.4,
-          "ros_value": 241.0,
-          "vbd_value": 78.2,
+          "ros_value": 252.4,
+          "vbd_value": 81.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1588,8 +1588,8 @@
           "lineup_slot_id": 4,
           "projected_total": 174.6,
           "actual_so_far": 25.1,
-          "ros_value": 149.5,
-          "vbd_value": -16.1,
+          "ros_value": 199.5,
+          "vbd_value": 23.1,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1601,9 +1601,9 @@
           "lineup_slot_id": 2,
           "projected_total": 185.7,
           "actual_so_far": 28.7,
-          "ros_value": 157.0,
-          "vbd_value": -5.8,
-          "slot": "FLEX",
+          "ros_value": 204.2,
+          "vbd_value": 32.9,
+          "slot": "RB2",
           "is_starter": true
         },
         {
@@ -1614,8 +1614,8 @@
           "lineup_slot_id": 6,
           "projected_total": 145.9,
           "actual_so_far": 20.2,
-          "ros_value": 125.7,
-          "vbd_value": -10.5,
+          "ros_value": 147.9,
+          "vbd_value": 1.2,
           "slot": "TE",
           "is_starter": true
         },
@@ -1627,9 +1627,9 @@
           "lineup_slot_id": 23,
           "projected_total": 174.1,
           "actual_so_far": 16.5,
-          "ros_value": 157.6,
-          "vbd_value": -5.2,
-          "slot": "RB2",
+          "ros_value": 172.8,
+          "vbd_value": 1.5,
+          "slot": "FLEX",
           "is_starter": true
         },
         {
@@ -1640,8 +1640,8 @@
           "lineup_slot_id": 5,
           "projected_total": 149.7,
           "actual_so_far": 20.8,
-          "ros_value": 128.9,
-          "vbd_value": -36.7,
+          "ros_value": 165.7,
+          "vbd_value": -10.7,
           "slot": "W/T",
           "is_starter": true
         },
@@ -1653,10 +1653,10 @@
           "lineup_slot_id": 20,
           "projected_total": 239.8,
           "actual_so_far": 45.0,
-          "ros_value": 194.9,
-          "vbd_value": -20.0,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 311.5,
+          "vbd_value": 9.5,
+          "slot": "QB",
+          "is_starter": true
         },
         {
           "espn_id": 4683062,
@@ -1666,8 +1666,8 @@
           "lineup_slot_id": 20,
           "projected_total": 139.2,
           "actual_so_far": 14.3,
-          "ros_value": 124.9,
-          "vbd_value": -40.7,
+          "ros_value": 146.0,
+          "vbd_value": -30.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1679,8 +1679,8 @@
           "lineup_slot_id": 21,
           "projected_total": 115.4,
           "actual_so_far": 11.9,
-          "ros_value": 103.5,
-          "vbd_value": -59.3,
+          "ros_value": 112.8,
+          "vbd_value": -58.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1692,8 +1692,8 @@
           "lineup_slot_id": 20,
           "projected_total": 115.3,
           "actual_so_far": 24.1,
-          "ros_value": 91.2,
-          "vbd_value": -74.4,
+          "ros_value": 108.7,
+          "vbd_value": -67.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1705,8 +1705,8 @@
           "lineup_slot_id": 20,
           "projected_total": 138.0,
           "actual_so_far": 34.5,
-          "ros_value": 103.5,
-          "vbd_value": -27.1,
+          "ros_value": 133.6,
+          "vbd_value": -9.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1718,10 +1718,10 @@
           "lineup_slot_id": 0,
           "projected_total": 265.0,
           "actual_so_far": 31.1,
-          "ros_value": 234.0,
-          "vbd_value": -8.3,
-          "slot": "QB",
-          "is_starter": true
+          "ros_value": 282.8,
+          "vbd_value": 0.9,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4599739,
@@ -1732,7 +1732,7 @@
           "projected_total": 0.0,
           "actual_so_far": 9.0,
           "ros_value": 0.0,
-          "vbd_value": -162.8,
+          "vbd_value": -171.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1744,8 +1744,8 @@
           "lineup_slot_id": 20,
           "projected_total": 118.1,
           "actual_so_far": 11.5,
-          "ros_value": 106.6,
-          "vbd_value": -59.0,
+          "ros_value": 97.9,
+          "vbd_value": -78.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1757,7 +1757,7 @@
           "lineup_slot_id": 19,
           "projected_total": 1.6,
           "actual_so_far": 0.0,
-          "ros_value": 1.6,
+          "ros_value": 2.2,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -1778,8 +1778,8 @@
           "lineup_slot_id": 2,
           "projected_total": 268.0,
           "actual_so_far": 36.9,
-          "ros_value": 231.1,
-          "vbd_value": 68.3,
+          "ros_value": 296.4,
+          "vbd_value": 125.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -1791,9 +1791,9 @@
           "lineup_slot_id": 21,
           "projected_total": 136.8,
           "actual_so_far": 4.1,
-          "ros_value": 132.7,
-          "vbd_value": -32.9,
-          "slot": "W/T",
+          "ros_value": 138.4,
+          "vbd_value": -38.0,
+          "slot": "FLEX",
           "is_starter": true
         },
         {
@@ -1804,8 +1804,8 @@
           "lineup_slot_id": 6,
           "projected_total": 160.9,
           "actual_so_far": 0.0,
-          "ros_value": 160.9,
-          "vbd_value": 15.9,
+          "ros_value": 162.3,
+          "vbd_value": 12.0,
           "slot": "TE",
           "is_starter": true
         },
@@ -1817,8 +1817,8 @@
           "lineup_slot_id": 4,
           "projected_total": 167.9,
           "actual_so_far": 19.4,
-          "ros_value": 148.5,
-          "vbd_value": -17.1,
+          "ros_value": 174.9,
+          "vbd_value": -1.5,
           "slot": "WR1",
           "is_starter": true
         },
@@ -1830,8 +1830,8 @@
           "lineup_slot_id": 4,
           "projected_total": 154.0,
           "actual_so_far": 18.4,
-          "ros_value": 135.6,
-          "vbd_value": -30.0,
+          "ros_value": 166.2,
+          "vbd_value": -10.2,
           "slot": "WR2",
           "is_starter": true
         },
@@ -1843,8 +1843,8 @@
           "lineup_slot_id": 2,
           "projected_total": 159.3,
           "actual_so_far": 7.2,
-          "ros_value": 152.1,
-          "vbd_value": -10.7,
+          "ros_value": 174.1,
+          "vbd_value": 2.8,
           "slot": "RB2",
           "is_starter": true
         },
@@ -1856,10 +1856,10 @@
           "lineup_slot_id": 20,
           "projected_total": 211.8,
           "actual_so_far": 32.4,
-          "ros_value": 179.4,
-          "vbd_value": -24.7,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 317.9,
+          "vbd_value": 11.4,
+          "slot": "QB",
+          "is_starter": true
         },
         {
           "espn_id": 3126486,
@@ -1869,9 +1869,9 @@
           "lineup_slot_id": 5,
           "projected_total": 147.7,
           "actual_so_far": 20.0,
-          "ros_value": 127.7,
-          "vbd_value": -37.9,
-          "slot": "FLEX",
+          "ros_value": 152.5,
+          "vbd_value": -23.9,
+          "slot": "W/T",
           "is_starter": true
         },
         {
@@ -1882,8 +1882,8 @@
           "lineup_slot_id": 20,
           "projected_total": 122.1,
           "actual_so_far": 15.0,
-          "ros_value": 107.1,
-          "vbd_value": -55.7,
+          "ros_value": 105.7,
+          "vbd_value": -65.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1895,8 +1895,8 @@
           "lineup_slot_id": 20,
           "projected_total": 101.1,
           "actual_so_far": 7.5,
-          "ros_value": 93.6,
-          "vbd_value": -72.0,
+          "ros_value": 81.6,
+          "vbd_value": -94.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1908,8 +1908,8 @@
           "lineup_slot_id": 20,
           "projected_total": 75.7,
           "actual_so_far": 12.3,
-          "ros_value": 63.4,
-          "vbd_value": -99.4,
+          "ros_value": 89.1,
+          "vbd_value": -82.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1921,7 +1921,7 @@
           "lineup_slot_id": 20,
           "projected_total": 15.2,
           "actual_so_far": 0.0,
-          "ros_value": 15.2,
+          "ros_value": 17.2,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -1934,10 +1934,10 @@
           "lineup_slot_id": 0,
           "projected_total": 255.5,
           "actual_so_far": 46.2,
-          "ros_value": 209.3,
-          "vbd_value": -15.7,
-          "slot": "QB",
-          "is_starter": true
+          "ros_value": 264.3,
+          "vbd_value": -4.7,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4570037,
@@ -1947,8 +1947,8 @@
           "lineup_slot_id": 20,
           "projected_total": 102.9,
           "actual_so_far": 14.4,
-          "ros_value": 88.5,
-          "vbd_value": -38.4,
+          "ros_value": 79.5,
+          "vbd_value": -50.1,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1960,8 +1960,8 @@
           "lineup_slot_id": 23,
           "projected_total": 85.7,
           "actual_so_far": 9.9,
-          "ros_value": 75.8,
-          "vbd_value": -89.8,
+          "ros_value": 92.5,
+          "vbd_value": -83.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -1974,7 +1974,7 @@
           "projected_total": 0.0,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
-          "vbd_value": -165.6,
+          "vbd_value": -176.4,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1994,8 +1994,8 @@
           "lineup_slot_id": 2,
           "projected_total": 201.6,
           "actual_so_far": 24.8,
-          "ros_value": 176.8,
-          "vbd_value": 14.0,
+          "ros_value": 204.5,
+          "vbd_value": 33.2,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2007,9 +2007,9 @@
           "lineup_slot_id": 4,
           "projected_total": 151.1,
           "actual_so_far": 19.2,
-          "ros_value": 131.9,
-          "vbd_value": -33.7,
-          "slot": "WR2",
+          "ros_value": 193.3,
+          "vbd_value": 16.9,
+          "slot": "WR1",
           "is_starter": true
         },
         {
@@ -2020,9 +2020,9 @@
           "lineup_slot_id": 4,
           "projected_total": 182.3,
           "actual_so_far": 20.6,
-          "ros_value": 161.7,
-          "vbd_value": -3.9,
-          "slot": "WR1",
+          "ros_value": 175.2,
+          "vbd_value": -1.2,
+          "slot": "WR2",
           "is_starter": true
         },
         {
@@ -2033,8 +2033,8 @@
           "lineup_slot_id": 2,
           "projected_total": 169.4,
           "actual_so_far": 13.3,
-          "ros_value": 156.1,
-          "vbd_value": -6.7,
+          "ros_value": 190.0,
+          "vbd_value": 18.7,
           "slot": "RB2",
           "is_starter": true
         },
@@ -2046,8 +2046,8 @@
           "lineup_slot_id": 5,
           "projected_total": 141.9,
           "actual_so_far": 10.8,
-          "ros_value": 131.1,
-          "vbd_value": -34.5,
+          "ros_value": 160.8,
+          "vbd_value": -15.6,
           "slot": "W/T",
           "is_starter": true
         },
@@ -2059,8 +2059,8 @@
           "lineup_slot_id": 23,
           "projected_total": 153.3,
           "actual_so_far": 22.5,
-          "ros_value": 130.8,
-          "vbd_value": -32.0,
+          "ros_value": 165.3,
+          "vbd_value": -6.0,
           "slot": "FLEX",
           "is_starter": true
         },
@@ -2072,21 +2072,8 @@
           "lineup_slot_id": 20,
           "projected_total": 129.4,
           "actual_so_far": 7.3,
-          "ros_value": 122.1,
-          "vbd_value": -43.5,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
-          "espn_id": 4689114,
-          "name": "Jaxson Dart",
-          "position": "QB",
-          "nfl_team": "NYG",
-          "lineup_slot_id": 20,
-          "projected_total": 0.0,
-          "actual_so_far": 27.4,
-          "ros_value": 0.0,
-          "vbd_value": -78.5,
+          "ros_value": 138.1,
+          "vbd_value": -38.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2098,8 +2085,8 @@
           "lineup_slot_id": 20,
           "projected_total": 112.9,
           "actual_so_far": 22.6,
-          "ros_value": 90.3,
-          "vbd_value": -37.0,
+          "ros_value": 138.5,
+          "vbd_value": -5.9,
           "slot": "TE",
           "is_starter": true
         },
@@ -2111,8 +2098,8 @@
           "lineup_slot_id": 20,
           "projected_total": 130.1,
           "actual_so_far": 11.0,
-          "ros_value": 119.1,
-          "vbd_value": -46.5,
+          "ros_value": 133.5,
+          "vbd_value": -42.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2124,8 +2111,8 @@
           "lineup_slot_id": 20,
           "projected_total": 125.3,
           "actual_so_far": 4.7,
-          "ros_value": 120.6,
-          "vbd_value": -42.2,
+          "ros_value": 102.7,
+          "vbd_value": -68.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2138,7 +2125,7 @@
           "projected_total": 0.0,
           "actual_so_far": 0.0,
           "ros_value": 0.0,
-          "vbd_value": -165.6,
+          "vbd_value": -176.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2150,8 +2137,8 @@
           "lineup_slot_id": 20,
           "projected_total": 64.4,
           "actual_so_far": 5.3,
-          "ros_value": 59.1,
-          "vbd_value": -103.7,
+          "ros_value": 102.9,
+          "vbd_value": -68.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2163,7 +2150,7 @@
           "lineup_slot_id": 19,
           "projected_total": 18.8,
           "actual_so_far": 10.0,
-          "ros_value": 8.8,
+          "ros_value": 15.1,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2176,8 +2163,8 @@
           "lineup_slot_id": 6,
           "projected_total": 106.2,
           "actual_so_far": 16.0,
-          "ros_value": 90.2,
-          "vbd_value": -37.1,
+          "ros_value": 115.3,
+          "vbd_value": -23.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2189,8 +2176,21 @@
           "lineup_slot_id": 0,
           "projected_total": 254.2,
           "actual_so_far": 55.5,
-          "ros_value": 198.7,
-          "vbd_value": -18.9,
+          "ros_value": 246.9,
+          "vbd_value": -9.9,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 4038941,
+          "name": "Justin Herbert",
+          "position": "QB",
+          "nfl_team": "LAC",
+          "lineup_slot_id": 20,
+          "projected_total": 237.3,
+          "actual_so_far": 21.1,
+          "ros_value": 276.1,
+          "vbd_value": -1.1,
           "slot": "QB",
           "is_starter": true
         }
@@ -2210,8 +2210,8 @@
           "lineup_slot_id": 4,
           "projected_total": 245.2,
           "actual_so_far": 25.2,
-          "ros_value": 220.0,
-          "vbd_value": 54.4,
+          "ros_value": 264.4,
+          "vbd_value": 88.0,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2223,8 +2223,8 @@
           "lineup_slot_id": 4,
           "projected_total": 189.1,
           "actual_so_far": 11.4,
-          "ros_value": 177.7,
-          "vbd_value": 12.1,
+          "ros_value": 193.8,
+          "vbd_value": 17.4,
           "slot": "WR2",
           "is_starter": true
         },
@@ -2236,8 +2236,8 @@
           "lineup_slot_id": 20,
           "projected_total": 190.8,
           "actual_so_far": 17.7,
-          "ros_value": 173.1,
-          "vbd_value": 7.5,
+          "ros_value": 190.7,
+          "vbd_value": 14.3,
           "slot": "W/T",
           "is_starter": true
         },
@@ -2249,8 +2249,8 @@
           "lineup_slot_id": 2,
           "projected_total": 157.6,
           "actual_so_far": 17.4,
-          "ros_value": 140.2,
-          "vbd_value": -22.6,
+          "ros_value": 205.3,
+          "vbd_value": 34.0,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2262,10 +2262,10 @@
           "lineup_slot_id": 2,
           "projected_total": 149.6,
           "actual_so_far": 13.6,
-          "ros_value": 136.0,
-          "vbd_value": -26.8,
-          "slot": "RB2",
-          "is_starter": true
+          "ros_value": 143.5,
+          "vbd_value": -27.8,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4431452,
@@ -2275,10 +2275,10 @@
           "lineup_slot_id": 20,
           "projected_total": 287.4,
           "actual_so_far": 17.8,
-          "ros_value": 269.6,
-          "vbd_value": 2.4,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 316.6,
+          "vbd_value": 11.0,
+          "slot": "QB",
+          "is_starter": true
         },
         {
           "espn_id": 4880281,
@@ -2288,8 +2288,8 @@
           "lineup_slot_id": 21,
           "projected_total": 84.8,
           "actual_so_far": 0.0,
-          "ros_value": 84.8,
-          "vbd_value": -80.8,
+          "ros_value": 87.2,
+          "vbd_value": -89.2,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2301,10 +2301,10 @@
           "lineup_slot_id": 20,
           "projected_total": 118.3,
           "actual_so_far": 26.2,
-          "ros_value": 92.1,
-          "vbd_value": -70.7,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 144.8,
+          "vbd_value": -26.5,
+          "slot": "FLEX",
+          "is_starter": true
         },
         {
           "espn_id": 4572680,
@@ -2314,8 +2314,8 @@
           "lineup_slot_id": 23,
           "projected_total": 120.4,
           "actual_so_far": 10.5,
-          "ros_value": 109.9,
-          "vbd_value": -22.3,
+          "ros_value": 133.4,
+          "vbd_value": -9.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2327,9 +2327,9 @@
           "lineup_slot_id": 20,
           "projected_total": 156.0,
           "actual_so_far": 20.5,
-          "ros_value": 135.5,
-          "vbd_value": -27.3,
-          "slot": "FLEX",
+          "ros_value": 172.0,
+          "vbd_value": 0.7,
+          "slot": "RB2",
           "is_starter": true
         },
         {
@@ -2340,8 +2340,8 @@
           "lineup_slot_id": 6,
           "projected_total": 150.5,
           "actual_so_far": 18.2,
-          "ros_value": 132.3,
-          "vbd_value": -5.5,
+          "ros_value": 148.2,
+          "vbd_value": 1.4,
           "slot": "TE",
           "is_starter": true
         },
@@ -2353,8 +2353,8 @@
           "lineup_slot_id": 5,
           "projected_total": 132.3,
           "actual_so_far": 16.8,
-          "ros_value": 115.5,
-          "vbd_value": -50.1,
+          "ros_value": 113.5,
+          "vbd_value": -62.9,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2366,8 +2366,8 @@
           "lineup_slot_id": 20,
           "projected_total": 89.1,
           "actual_so_far": 12.0,
-          "ros_value": 77.1,
-          "vbd_value": -85.7,
+          "ros_value": 109.0,
+          "vbd_value": -62.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2379,7 +2379,7 @@
           "lineup_slot_id": 19,
           "projected_total": 19.6,
           "actual_so_far": 10.0,
-          "ros_value": 9.6,
+          "ros_value": 16.5,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2392,8 +2392,8 @@
           "lineup_slot_id": 20,
           "projected_total": 22.5,
           "actual_so_far": 13.3,
-          "ros_value": 9.2,
-          "vbd_value": -153.6,
+          "ros_value": 22.7,
+          "vbd_value": -148.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2405,10 +2405,10 @@
           "lineup_slot_id": 0,
           "projected_total": 277.7,
           "actual_so_far": -0.4,
-          "ros_value": 278.1,
-          "vbd_value": 4.9,
-          "slot": "QB",
-          "is_starter": true
+          "ros_value": 276.2,
+          "vbd_value": -1.1,
+          "slot": "BEN",
+          "is_starter": false
         }
       ]
     },
@@ -2426,7 +2426,7 @@
           "lineup_slot_id": 4,
           "projected_total": 260.9,
           "actual_so_far": 9.9,
-          "ros_value": 251.0,
+          "ros_value": 261.8,
           "vbd_value": 85.4,
           "slot": "WR1",
           "is_starter": true
@@ -2439,9 +2439,9 @@
           "lineup_slot_id": 20,
           "projected_total": 155.1,
           "actual_so_far": 0.0,
-          "ros_value": 155.1,
-          "vbd_value": -7.7,
-          "slot": "RB2",
+          "ros_value": 153.1,
+          "vbd_value": -18.2,
+          "slot": "FLEX",
           "is_starter": true
         },
         {
@@ -2452,8 +2452,8 @@
           "lineup_slot_id": 4,
           "projected_total": 197.0,
           "actual_so_far": 41.8,
-          "ros_value": 155.2,
-          "vbd_value": -10.4,
+          "ros_value": 208.1,
+          "vbd_value": 31.7,
           "slot": "WR2",
           "is_starter": true
         },
@@ -2465,8 +2465,8 @@
           "lineup_slot_id": 2,
           "projected_total": 221.8,
           "actual_so_far": 27.8,
-          "ros_value": 194.0,
-          "vbd_value": 31.2,
+          "ros_value": 203.4,
+          "vbd_value": 32.1,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2478,8 +2478,8 @@
           "lineup_slot_id": 6,
           "projected_total": 119.8,
           "actual_so_far": 0.8,
-          "ros_value": 119.0,
-          "vbd_value": -15.5,
+          "ros_value": 152.3,
+          "vbd_value": 4.5,
           "slot": "TE",
           "is_starter": true
         },
@@ -2491,9 +2491,9 @@
           "lineup_slot_id": 2,
           "projected_total": 141.1,
           "actual_so_far": 10.9,
-          "ros_value": 130.2,
-          "vbd_value": -32.6,
-          "slot": "FLEX",
+          "ros_value": 174.4,
+          "vbd_value": 3.1,
+          "slot": "RB2",
           "is_starter": true
         },
         {
@@ -2504,8 +2504,8 @@
           "lineup_slot_id": 0,
           "projected_total": 273.5,
           "actual_so_far": 30.3,
-          "ros_value": 243.2,
-          "vbd_value": -5.5,
+          "ros_value": 300.1,
+          "vbd_value": 6.1,
           "slot": "QB",
           "is_starter": true
         },
@@ -2517,10 +2517,10 @@
           "lineup_slot_id": 5,
           "projected_total": 115.1,
           "actual_so_far": 14.5,
-          "ros_value": 100.6,
-          "vbd_value": -65.0,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 136.5,
+          "vbd_value": -39.9,
+          "slot": "W/T",
+          "is_starter": true
         },
         {
           "espn_id": 4569587,
@@ -2530,8 +2530,8 @@
           "lineup_slot_id": 20,
           "projected_total": 91.7,
           "actual_so_far": 7.7,
-          "ros_value": 84.0,
-          "vbd_value": -81.6,
+          "ros_value": 121.7,
+          "vbd_value": -54.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2543,10 +2543,10 @@
           "lineup_slot_id": 23,
           "projected_total": 122.1,
           "actual_so_far": 12.3,
-          "ros_value": 109.8,
-          "vbd_value": -55.8,
-          "slot": "W/T",
-          "is_starter": true
+          "ros_value": 130.8,
+          "vbd_value": -45.6,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4429059,
@@ -2556,8 +2556,8 @@
           "lineup_slot_id": 20,
           "projected_total": 112.2,
           "actual_so_far": 10.5,
-          "ros_value": 101.7,
-          "vbd_value": -61.1,
+          "ros_value": 97.0,
+          "vbd_value": -74.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2569,8 +2569,8 @@
           "lineup_slot_id": 20,
           "projected_total": 115.1,
           "actual_so_far": 9.6,
-          "ros_value": 105.5,
-          "vbd_value": -25.6,
+          "ros_value": 118.6,
+          "vbd_value": -20.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2582,8 +2582,8 @@
           "lineup_slot_id": 20,
           "projected_total": 261.7,
           "actual_so_far": 19.6,
-          "ros_value": 242.1,
-          "vbd_value": -5.9,
+          "ros_value": 290.9,
+          "vbd_value": 3.3,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2595,7 +2595,7 @@
           "lineup_slot_id": 19,
           "projected_total": 26.4,
           "actual_so_far": 10.0,
-          "ros_value": 16.4,
+          "ros_value": 19.2,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
@@ -2608,8 +2608,8 @@
           "lineup_slot_id": 20,
           "projected_total": 84.5,
           "actual_so_far": 6.1,
-          "ros_value": 78.4,
-          "vbd_value": -84.4,
+          "ros_value": 101.7,
+          "vbd_value": -69.6,
           "slot": "BEN",
           "is_starter": false
         }
@@ -2629,8 +2629,8 @@
           "lineup_slot_id": 4,
           "projected_total": 213.2,
           "actual_so_far": 44.2,
-          "ros_value": 169.0,
-          "vbd_value": 3.4,
+          "ros_value": 223.3,
+          "vbd_value": 46.9,
           "slot": "WR1",
           "is_starter": true
         },
@@ -2642,8 +2642,8 @@
           "lineup_slot_id": 2,
           "projected_total": 234.9,
           "actual_so_far": 26.0,
-          "ros_value": 208.9,
-          "vbd_value": 46.1,
+          "ros_value": 239.9,
+          "vbd_value": 68.6,
           "slot": "RB1",
           "is_starter": true
         },
@@ -2655,8 +2655,8 @@
           "lineup_slot_id": 4,
           "projected_total": 187.2,
           "actual_so_far": 29.5,
-          "ros_value": 157.7,
-          "vbd_value": -7.9,
+          "ros_value": 181.5,
+          "vbd_value": 5.1,
           "slot": "WR2",
           "is_starter": true
         },
@@ -2668,10 +2668,10 @@
           "lineup_slot_id": 5,
           "projected_total": 161.9,
           "actual_so_far": 18.5,
-          "ros_value": 143.4,
-          "vbd_value": -22.2,
-          "slot": "W/T",
-          "is_starter": true
+          "ros_value": 155.3,
+          "vbd_value": -21.1,
+          "slot": "BEN",
+          "is_starter": false
         },
         {
           "espn_id": 4431299,
@@ -2681,9 +2681,9 @@
           "lineup_slot_id": 20,
           "projected_total": 134.0,
           "actual_so_far": 12.0,
-          "ros_value": 122.0,
-          "vbd_value": -43.6,
-          "slot": "FLEX",
+          "ros_value": 172.8,
+          "vbd_value": -3.6,
+          "slot": "W/T",
           "is_starter": true
         },
         {
@@ -2694,8 +2694,8 @@
           "lineup_slot_id": 6,
           "projected_total": 138.2,
           "actual_so_far": 21.5,
-          "ros_value": 116.7,
-          "vbd_value": -17.2,
+          "ros_value": 138.1,
+          "vbd_value": -6.2,
           "slot": "TE",
           "is_starter": true
         },
@@ -2707,8 +2707,8 @@
           "lineup_slot_id": 20,
           "projected_total": 129.2,
           "actual_so_far": 8.5,
-          "ros_value": 120.7,
-          "vbd_value": -42.1,
+          "ros_value": 155.9,
+          "vbd_value": -15.4,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2720,8 +2720,8 @@
           "lineup_slot_id": 2,
           "projected_total": 164.2,
           "actual_so_far": 15.1,
-          "ros_value": 149.1,
-          "vbd_value": -13.7,
+          "ros_value": 199.4,
+          "vbd_value": 28.1,
           "slot": "RB2",
           "is_starter": true
         },
@@ -2733,10 +2733,10 @@
           "lineup_slot_id": 20,
           "projected_total": 133.3,
           "actual_so_far": 17.4,
-          "ros_value": 115.9,
-          "vbd_value": -46.9,
-          "slot": "BEN",
-          "is_starter": false
+          "ros_value": 159.9,
+          "vbd_value": -11.4,
+          "slot": "FLEX",
+          "is_starter": true
         },
         {
           "espn_id": 4362619,
@@ -2746,8 +2746,8 @@
           "lineup_slot_id": 20,
           "projected_total": 63.3,
           "actual_so_far": 3.6,
-          "ros_value": 59.7,
-          "vbd_value": -103.1,
+          "ros_value": 85.5,
+          "vbd_value": -85.8,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2759,8 +2759,8 @@
           "lineup_slot_id": 0,
           "projected_total": 267.7,
           "actual_so_far": 44.2,
-          "ros_value": 223.6,
-          "vbd_value": -11.4,
+          "ros_value": 284.2,
+          "vbd_value": 1.3,
           "slot": "QB",
           "is_starter": true
         },
@@ -2772,8 +2772,8 @@
           "lineup_slot_id": 20,
           "projected_total": 73.0,
           "actual_so_far": 11.3,
-          "ros_value": 61.7,
-          "vbd_value": -101.1,
+          "ros_value": 103.8,
+          "vbd_value": -67.5,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2785,8 +2785,8 @@
           "lineup_slot_id": 23,
           "projected_total": 115.1,
           "actual_so_far": 24.2,
-          "ros_value": 90.9,
-          "vbd_value": -74.7,
+          "ros_value": 114.8,
+          "vbd_value": -61.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2798,8 +2798,8 @@
           "lineup_slot_id": 20,
           "projected_total": 86.9,
           "actual_so_far": 13.0,
-          "ros_value": 73.9,
-          "vbd_value": -49.3,
+          "ros_value": 49.4,
+          "vbd_value": -72.7,
           "slot": "BEN",
           "is_starter": false
         },
@@ -2811,7 +2811,7 @@
           "lineup_slot_id": 19,
           "projected_total": 15.4,
           "actual_so_far": 10.0,
-          "ros_value": 5.4,
+          "ros_value": 16.9,
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true

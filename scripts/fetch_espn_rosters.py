@@ -25,9 +25,13 @@ Data pulled:
 
 Value methodology (deliberately reuses fetch_espn_draft.py's VBD approach, not a new metric -
 see that script for the original methodology and comments):
-  - ros_value (rest-of-season value) = max(season-long projected total - points already scored
-    this season, 0). This is a trade tool, not a preseason-projection tool, so what matters is
-    what's LEFT to play, not the whole season including points already banked.
+  - ros_value (rest-of-season value) = ESPN's own direct rest-of-season projection for that
+    player (statSourceId=1, statSplitTypeId=2 - a distinct stat entry from the plain season-long
+    total, confirmed by cross-checking real players: it is NOT the same as season-long total
+    minus points already scored, so it reflects ESPN's own updated outlook - current role,
+    opportunity, depth chart - not just a mechanical subtraction). Falls back to
+    max(season-long total - points scored so far, 0) only for the handful of rostered players
+    (injury-inactive types) ESPN hasn't bothered projecting a rest-of-season number for yet.
   - vbd_value = ros_value - vbd_baseline[position], where vbd_baseline uses the same
     VBD_REPLACEMENT_RANK convention as fetch_espn_draft.py (points-over-replacement, the site's
     established "value" signal). Head Coach gets vbd_value: null - there's no comparable
@@ -183,8 +187,8 @@ def fetch_wide_player_pool(season, creds):
         "players": {
             "limit": 800,
             "sortDraftRanks": {"sortPriority": 100, "sortAsc": True, "value": "STANDARD"},
-            "filterStatsForSourceIds": {"value": [1]},
-            "filterStatsForSplitTypeIds": {"value": [0]},
+            "filterStatsForSourceIds": {"value": [0, 1]},
+            "filterStatsForSplitTypeIds": {"value": [0, 2]},
         }
     })
     data = http_get(f"{API_HOST}{path}?view=kona_player_info", creds=creds, extra_headers={"x-fantasy-filter": filt})
@@ -194,14 +198,12 @@ def fetch_wide_player_pool(season, creds):
         pos = DEFAULT_POSITION_MAP.get(p.get("defaultPositionId"))
         if pos not in VBD_REPLACEMENT_RANK:
             continue  # only need QB/RB/WR/TE - HC isn't in this endpoint, D/ST and K aren't rostered in this league
-        projected_total = extract_stat(p.get("stats", []), season, statSourceId=1) or 0.0
-        actual_so_far = extract_stat(p.get("stats", []), season, statSourceId=0) or 0.0
         pool.append({
             "espn_id": p.get("id"),
             "name": p.get("fullName", "Unknown"),
             "position": pos,
             "nfl_team": PRO_TEAM_ABBREV.get(p.get("proTeamId"), ""),
-            "ros_value": round(max(projected_total - actual_so_far, 0.0), 1),
+            "ros_value": round(compute_ros_value(p.get("stats", []), season), 1),
         })
     print(f"Pulled a wide {len(pool)}-player pool (VBD baseline + free-agent pool source).")
     return pool
@@ -247,11 +249,25 @@ def build_free_agents(wide_pool, rostered_ids, vbd_baseline):
     return free_agents
 
 
-def extract_stat(stats, season, statSourceId):
+def extract_stat(stats, season, statSourceId, statSplitTypeId=0):
     for s in stats:
-        if s.get("seasonId") == season and s.get("statSourceId") == statSourceId and s.get("statSplitTypeId") == 0:
+        if (s.get("seasonId") == season and s.get("statSourceId") == statSourceId
+                and s.get("statSplitTypeId") == statSplitTypeId):
             return s.get("appliedTotal")
     return None
+
+
+def compute_ros_value(stats, season):
+    """ESPN's own rest-of-season projection (statSplitTypeId=2) where available - falls back to
+    season-total-minus-actual for the rare player ESPN hasn't projected a ROS number for yet
+    (confirmed: 3 of 176 rostered players this season, all injury-inactive). See this module's
+    docstring for why splitTypeId=2 is preferred over the subtraction."""
+    ros_direct = extract_stat(stats, season, statSourceId=1, statSplitTypeId=2)
+    if ros_direct is not None:
+        return max(ros_direct, 0.0)
+    projected_total = extract_stat(stats, season, statSourceId=1) or 0.0
+    actual_so_far = extract_stat(stats, season, statSourceId=0) or 0.0
+    return max(projected_total - actual_so_far, 0.0)
 
 
 def resolve_roster_player(entry, season):
@@ -259,7 +275,7 @@ def resolve_roster_player(entry, season):
     pos = DEFAULT_POSITION_MAP.get(p.get("defaultPositionId"), "UNK")
     projected_total = extract_stat(p.get("stats", []), season, statSourceId=1) or 0.0
     actual_so_far = extract_stat(p.get("stats", []), season, statSourceId=0) or 0.0
-    ros_value = max(projected_total - actual_so_far, 0.0)
+    ros_value = compute_ros_value(p.get("stats", []), season)
     return {
         "espn_id": p.get("id"),
         "name": p.get("fullName", "Unknown"),

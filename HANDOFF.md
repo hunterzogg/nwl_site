@@ -1678,6 +1678,27 @@ All fixes in this session verified live in-browser (fresh tabs/reloads, no conso
 hand (Python) or via `scoreBundleTrade()`/`computeFairness()` called directly in the browser console
 before and after each fix, plus full 12-team sweeps to confirm no regressions in suggestion volume.
 
+**`ros_value` switched from a derived subtraction to ESPN's own direct ROS projection (later
+follow-up session)** - per explicit correction ("should consider rest of season rankings... not
+just points scored so far"), `fetch_espn_rosters.py` previously computed rest-of-season value as
+`max(season-long projected total - points already scored, 0)`. Investigated ESPN's raw player stat
+array and found it already carries a *separate* rest-of-season projection ESPN maintains itself:
+`statSourceId=1, statSplitTypeId=2` (distinct from the plain season total's `statSplitTypeId=0`) -
+confirmed by spot-checking real players that this number is NOT algebraically equal to
+total-minus-actual (e.g. Kenneth Walker III: season total 268.2, actual-so-far 53.4, naive
+subtraction would be 214.8, but ESPN's own direct ROS number is 252.4 - a real, meaningfully
+different figure reflecting ESPN's updated outlook on his role/opportunity, not just a mechanical
+subtraction of banked points). New `compute_ros_value()` uses the direct number where available
+(173 of 176 rostered players this season) and falls back to the old subtraction only for the
+handful of players ESPN hasn't projected a ROS number for yet (confirmed: all injury-inactive
+types - Pacheco, Dell, Slayton at the time of this check). Required widening
+`fetch_wide_player_pool()`'s `x-fantasy-filter` to request `statSplitTypeId` `[0, 2]` (was just
+`[0]`) so the free-agent pool and VBD baseline get the same direct ROS number, not just rostered
+players. The existing VBD/positional-value layer (`vbd_value = ros_value - vbd_baseline[position]`,
+scaled by `TRADE_VALUE_WEIGHT`) was already relative-to-position and needed no change - it just
+now operates on a more accurate `ros_value` input. Verified live: Trade Finder/Calculator render
+real, sane values with no console errors post-fix.
+
 ---
 
 ## Known Bugs & Data Issues
