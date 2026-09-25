@@ -16,7 +16,7 @@ const { sql } = require('../api/lib/db');
 
 const SEASON = 2026;
 const WEEK = -2;
-const LOCK_AT = '2026-10-01T20:15:00-04:00'; // real Week 4 TNF kickoff (Steelers @ Browns)
+const LOCK_AT = '2026-09-27T13:00:00-04:00'; // per explicit request: this Sunday, 1 PM ET (not Week 4 kickoff)
 
 const QUESTIONS = [
   {
@@ -63,13 +63,21 @@ const QUESTIONS = [
   },
   {
     type: 'over_under',
-    prompt: 'Total league-wide FAAB spent this season - the pace so far is way down (only $240 spent through the Week 3 waiver run, vs. $597-$430 through the same point in each of the last 3 seasons), and full-season totals have run $1892-$2251 the last 3 years.',
-    option_a: 'Over 1099.5',
-    option_b: 'Under 1099.5',
+    prompt: 'Total league-wide FAAB spent this season - the last 3 full-season totals were $1892 (2025), $2251 (2024), and $2065 (2023), a 3-year average of about $2069.',
+    option_a: 'Over 2069.5',
+    option_b: 'Under 2069.5',
   },
   {
-    type: 'pick_manager',
-    prompt: 'Which manager ends up spending the most total FAAB dollars this season? (Different from "most transactions" - this is about dollars committed, not move count. Ainsworth leads early at $94.)',
+    // Originally a pick_manager "who spends the most FAAB" - changed per explicit correction: with
+    // a $200 per-manager cap, multiple managers hitting the ceiling (and therefore tying for
+    // "most") is a real, common outcome, not an edge case - confirmed against real history: 5
+    // managers hit/exceeded $200 in 2022, 5 in 2024, only 2 in 2023 and 2 in 2025. A single-winner
+    // pick doesn't work well against a field that often ties at the top, so this asks how many
+    // hit the cap instead, which the $200-average-of-4-seasons line (3.5) already accounts for.
+    type: 'over_under',
+    prompt: "How many managers will spend their full $200 FAAB budget (or more) by season's end? The cap gets hit more than you'd think - 5 managers hit it in 2022, 5 in 2024, but only 2 in 2023 and 2 in 2025.",
+    option_a: 'Over 3.5',
+    option_b: 'Under 3.5',
   },
   {
     type: 'this_or_that',

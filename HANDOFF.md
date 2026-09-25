@@ -738,12 +738,27 @@ locked at Week 1 kickoff before anyone had real data). Per explicit request ("si
 submitted season long picks, I need to create some new ones that include what we have learned"),
 added a second batch - `week: -2` (a new bucket, distinct from both Draft Day and the original
 season-long batch) via `scripts/seed_pickem_season_v2_props.js`, question IDs 36-45, `points = 3`
-(matching the original season-long tier), `published = true`, locking at the real Week 4 TNF
-kickoff (`2026-10-01T20:15:00-04:00`, Steelers @ Browns, pulled from ESPN's public scoreboard
-API). Displayed as tab label **"Season II"** - `weekLabel()`/`weekSortKey()` in `pickem.js` now
-handle `week === -2` (sorts chronologically between Week 3 and Week 4, since that's when it
-actually locks); bumped `pickem.js?v=7` on `pages/pickem.html` per the site's cache-busting
-convention.
+(matching the original season-long tier), `published = true`. Displayed as tab label **"Season
+II"** - `weekLabel()`/`weekSortKey()` in `pickem.js` now handle `week === -2` (sorts
+chronologically between Week 3 and Week 4); bumped `pickem.js?v=7` on `pages/pickem.html` per the
+site's cache-busting convention.
+
+**Two follow-up corrections, same session, both applied as direct DB updates (and synced back
+into the seed script so it matches what's actually live):**
+- **Lock time** moved from the original Week 4 TNF kickoff guess to the explicitly requested
+  `2026-09-27T13:00:00-04:00` (this Sunday, 1 PM ET) - all 10 rows updated in one `UPDATE ...
+  WHERE week = -2`.
+- **FAAB total-spend line (id 43) raised** - the original `Over/Under 1099.5` was anchored to
+  this year's unusually slow early pace, which per explicit feedback was "way too low" as a
+  full-season expectation. Corrected to `Over/Under 2069.5`, the actual 3-year full-season average
+  ($1892 in 2025, $2251 in 2024, $2065 in 2023).
+- **id 44 replaced entirely** - the original "which manager spends the most total FAAB" `pick_manager`
+  prop was flagged as broken by design: this league runs a $200 per-manager FAAB cap, and multiple
+  managers hitting that ceiling is a real, common outcome (confirmed against history: 5 managers
+  hit/exceeded $200 in 2022, 5 in 2024, only 2 in 2023 and 2 in 2025) - a single-winner pick
+  doesn't work against a field that often ties at the top. Replaced with an `over_under` asking how
+  many managers will hit the $200 cap this season, line `Over/Under 3.5` (the historical average
+  across those same four seasons).
 
 Every line is grounded in this session's real Week 1-2 findings rather than a blind guess -
 Ainsworth's record-pace start vs. the all-time single-season scoring record (1764.9, Goetz 2018),
@@ -751,10 +766,9 @@ whether one of the three real 2-0 starters (Ainsworth/Glaser/Larson) wins it all
 only 4 of 37 2-0 starts have), Ainsworth-vs-Glaser head to head, Larson's easiest-in-the-league
 strength of schedule, Zogg's record-blowout-loss-to-playoffs arc, the real QB waiver spending
 spike (37.5% of FAAB vs. a 12.4% historical share) and whether it holds, Tyler Shough's real
-5-bidder waiver war finishing top-12, a total-league-FAAB over/under line built off this year's
-actual (much slower) spending pace, most total FAAB $ spent (a pick_manager prop distinct from
-the original batch's "most transactions" - dollars, not move count), and whether an even bigger
-blowout than Ainsworth's Week 1 record beats it later this season. Verified via direct DB query
+5-bidder waiver war finishing top-12, the corrected total-league-FAAB line, the corrected
+$200-cap-hits line, and whether an even bigger blowout than Ainsworth's Week 1 record beats it
+later this season. Verified via direct DB query
 (same as every other pick'em change this session) rather than a live page load - `pages/pickem.html`
 needs the Vercel `/api/*` routes, which a plain `python3 -m http.server` can't serve, and no
 `vercel dev` instance was already running - confirmed all 10 rows exist with correct
