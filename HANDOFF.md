@@ -731,6 +731,35 @@ over/unders, and the spread-cover / game-total props reference the actual bigges
 7 are objectively gradable from `matchups.json` once Week 3 finishes - nothing here needs a
 subjective call the way a couple of the season-long props do.
 
+### "Season II" props (added later follow-up - a second season-long batch)
+
+Only 3 of 12 managers ever submitted picks for the original season-long batch (`week: -1`,
+locked at Week 1 kickoff before anyone had real data). Per explicit request ("since only 3 people
+submitted season long picks, I need to create some new ones that include what we have learned"),
+added a second batch - `week: -2` (a new bucket, distinct from both Draft Day and the original
+season-long batch) via `scripts/seed_pickem_season_v2_props.js`, question IDs 36-45, `points = 3`
+(matching the original season-long tier), `published = true`, locking at the real Week 4 TNF
+kickoff (`2026-10-01T20:15:00-04:00`, Steelers @ Browns, pulled from ESPN's public scoreboard
+API). Displayed as tab label **"Season II"** - `weekLabel()`/`weekSortKey()` in `pickem.js` now
+handle `week === -2` (sorts chronologically between Week 3 and Week 4, since that's when it
+actually locks); bumped `pickem.js?v=7` on `pages/pickem.html` per the site's cache-busting
+convention.
+
+Every line is grounded in this session's real Week 1-2 findings rather than a blind guess -
+Ainsworth's record-pace start vs. the all-time single-season scoring record (1764.9, Goetz 2018),
+whether one of the three real 2-0 starters (Ainsworth/Glaser/Larson) wins it all (historically
+only 4 of 37 2-0 starts have), Ainsworth-vs-Glaser head to head, Larson's easiest-in-the-league
+strength of schedule, Zogg's record-blowout-loss-to-playoffs arc, the real QB waiver spending
+spike (37.5% of FAAB vs. a 12.4% historical share) and whether it holds, Tyler Shough's real
+5-bidder waiver war finishing top-12, a total-league-FAAB over/under line built off this year's
+actual (much slower) spending pace, most total FAAB $ spent (a pick_manager prop distinct from
+the original batch's "most transactions" - dollars, not move count), and whether an even bigger
+blowout than Ainsworth's Week 1 record beats it later this season. Verified via direct DB query
+(same as every other pick'em change this session) rather than a live page load - `pages/pickem.html`
+needs the Vercel `/api/*` routes, which a plain `python3 -m http.server` can't serve, and no
+`vercel dev` instance was already running - confirmed all 10 rows exist with correct
+type/points/published/lock_at instead.
+
 ### mock-draft.html ✅ (archived from nav - see "Trade Tools" section below)
 **Archived this session**: the real 2026 draft finished, so this tool no longer has a public entry
 point — dropped from `NWL_IN_SEASON_PAGES` in `shared.js` and its homepage hero CTA
