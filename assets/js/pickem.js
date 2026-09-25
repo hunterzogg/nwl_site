@@ -7,14 +7,14 @@ let pageMode = 'editing'; // 'editing' (buttons live, Submit shown) | 'saved' (r
 let archivedWeeks = []; // week numbers whose questions are all locked, oldest-first - built once in buildTabs()
 
 // Every batch of questions gets a `week` bucket - 0 is Draft Day, -1 is the original season-long
-// "Preseason" props (locks after the draft but before Week 1), -2 is "Season II" (a second
+// "Season I" props (locks after the draft but before Week 1), -2 is "Season II" (a second
 // season-long batch added once real Week 1-3 results existed to inform better lines - locks
 // after Week 3, before Week 4), 1+ are real weekly props. Numeric week order doesn't match
 // chronological order (-1/-2 sort before 0, and -2 locks later than -1), so label/sort are
 // separate helpers rather than using the raw number directly.
 function weekLabel(week) {
   if (week === 0) return 'Draft';
-  if (week === -1) return 'Preseason';
+  if (week === -1) return 'Season I';
   if (week === -2) return 'Season II';
   return `Week ${week}`;
 }

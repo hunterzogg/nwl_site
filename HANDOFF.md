@@ -774,6 +774,12 @@ needs the Vercel `/api/*` routes, which a plain `python3 -m http.server` can't s
 `vercel dev` instance was already running - confirmed all 10 rows exist with correct
 type/points/published/lock_at instead.
 
+**Batch labels renamed (same-day follow-up)**: per explicit request, the original season-long
+batch's tab label changed from "Preseason" to **"Season I"** (pairing it visually with "Season
+II") - one-line change in `weekLabel()` in `pickem.js` (`week === -1` case), no other files
+referenced the old "Preseason" string. Bumped `pickem.js?v=8`. Final batch label set: Draft
+(week 0), Season I (week -1), Season II (week -2), Week N (1+).
+
 ### mock-draft.html ✅ (archived from nav - see "Trade Tools" section below)
 **Archived this session**: the real 2026 draft finished, so this tool no longer has a public entry
 point — dropped from `NWL_IN_SEASON_PAGES` in `shared.js` and its homepage hero CTA
