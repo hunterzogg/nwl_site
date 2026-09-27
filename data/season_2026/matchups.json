@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-27T17:33:40.679062+00:00",
+    "updated_at": "2026-09-27T23:00:39.203552+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-09-27T17:33:40.679105+00:00",
+    "updated_at": "2026-09-27T23:00:39.203585+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-09-27T17:33:40.679155+00:00",
+    "updated_at": "2026-09-27T23:00:39.203618+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -152,14 +152,14 @@
       {
         "home_manager": "Larson",
         "home_score": 0.0,
-        "home_projected": 99.4,
+        "home_projected": 99.5,
         "away_manager": "Glaser",
         "away_score": 0.0,
         "away_projected": 109.2,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Glaser",
-          "spread": 10.0,
+          "spread": 9.5,
           "over_under": 208.5
         }
       },
@@ -180,7 +180,7 @@
       {
         "home_manager": "Palaia",
         "home_score": 0.0,
-        "home_projected": 94.8,
+        "home_projected": 94.7,
         "away_manager": "Pfaffinger",
         "away_score": 0.0,
         "away_projected": 95.6,
