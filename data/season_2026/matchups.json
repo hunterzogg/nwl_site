@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-09-27T23:00:39.203552+00:00",
+    "updated_at": "2026-09-28T01:55:13.274279+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-09-27T23:00:39.203585+00:00",
+    "updated_at": "2026-09-28T01:55:13.274308+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-09-27T23:00:39.203618+00:00",
+    "updated_at": "2026-09-28T01:55:13.274334+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -166,15 +166,15 @@
       {
         "home_manager": "Stover",
         "home_score": 0.0,
-        "home_projected": 82.8,
+        "home_projected": 88.3,
         "away_manager": "Ainsworth",
         "away_score": 0.0,
         "away_projected": 111.6,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Ainsworth",
-          "spread": 29.0,
-          "over_under": 194.5
+          "spread": 23.5,
+          "over_under": 200.0
         }
       },
       {
