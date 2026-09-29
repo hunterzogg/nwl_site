@@ -1,12 +1,12 @@
 ---
 name: weekly-espn-update
-description: Pull this week's NWL fantasy football matchups, standings, power rankings, and current rosters/trade values from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results AND drafting next week's Pick'em props. Use this whenever the user asks to update the site with this week's scores/matchups/standings/rosters, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub" or "refresh rosters" or "update the weekly pick'em" or "create next week's props", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site. Note: the data-pull half also runs automatically on a schedule via .github/workflows/weekly-espn-update.yml — this skill is for an on-demand/manual run (e.g. the user wants fresher data right now, is troubleshooting, or wants that week's Pick'em props drafted, which the automated workflow never does).
+description: Pull this week's NWL fantasy football matchups, standings, power rankings, and current rosters/trade values from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results, grading last week's Pick'em props, and drafting next week's. Use this whenever the user asks to update the site with this week's scores/matchups/standings/rosters, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub" or "refresh rosters" or "update the weekly pick'em" or "grade last week's picks" or "create next week's props", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site. Note: the data-pull half also runs automatically on a schedule via .github/workflows/weekly-espn-update.yml — this skill is for an on-demand/manual run (e.g. the user wants fresher data right now, is troubleshooting, or wants Pick'em grading/props handled, which the automated workflow never does).
 ---
 
 # Weekly ESPN update
 
-Runs the NWL site's weekly data pull from ESPN and walks through publishing it, then drafts that
-week's Pick'em props for review. Two halves:
+Runs the NWL site's weekly data pull from ESPN and walks through publishing it, grading last
+week's Pick'em props, and drafting the next week's. Three parts:
 
 1. **Data pull** - a thin wrapper around `scripts/fetch_espn_week.py` (matchups/standings/power
    rankings/commentary) and `scripts/fetch_espn_rosters.py` (current rosters + trade values, for
@@ -16,12 +16,16 @@ week's Pick'em props for review. Two halves:
    automatically several times a week during the season and auto-commits matchups/standings/
    rosters (the facts) while still leaving power rankings/commentary unpublished for review - use
    this skill when the user wants a fresher pull right now rather than waiting for the next
-   scheduled run, is troubleshooting a failed run, or wants Pick'em props drafted (which the
-   automated workflow never does - see part 2).
-2. **Pick'em props** - once real data exists for the upcoming week's matchups, draft that week's
-   weekly Pick'em props grounded in it (see "Weekly Pick'em props" below). **Never publish these
-   without the user's explicit sign-off** - draft, insert unpublished, show the user, wait for a
-   real yes, only then flip live.
+   scheduled run, is troubleshooting a failed run, or wants Pick'em grading/props handled (which
+   the automated workflow never does - see parts 2 and 3).
+2. **Grade last week's props** - once that week's games are fully final, compute and write
+   `correct_option` for whatever's gradable from real site data (see "Grading last week's Pick'em
+   props" below). **Show the computed grades before writing them** - same sign-off requirement as
+   drafting, just because a grade is "objective" doesn't mean a misread stat can't happen.
+3. **Draft next week's props** - once real data exists for the upcoming week's matchups, draft
+   that week's weekly Pick'em props grounded in it (see "Weekly Pick'em props" below). **Never
+   publish these without the user's explicit sign-off** - draft, insert unpublished, show the
+   user, wait for a real yes, only then flip live.
 
 ## Before running
 
@@ -86,6 +90,58 @@ treating the script's success as "done":
    ```
    Per this project's standing rule, always ask before running `git push` — don't assume a prior
    approval carries forward to this week's push.
+
+## Grading last week's Pick'em props
+
+Once a week's games are all final (check `matchups.json` for that week - no game should still
+show `"winner": "UNDECIDED"`), grade whatever questions from that week are gradable from real site
+data. Same rule as everywhere else in Pick'em: Claude never types the `ADMIN_PASSCODE`, so grading
+is a direct Postgres write via `.env.local` + `node`, not a trip through `pickem-admin.html`.
+
+1. **Find what needs grading**:
+   ```bash
+   cd ~/Sites/nwl_site
+   export $(grep -v '^#' .env.local | xargs)
+   node -e "
+   const { sql } = require('./api/lib/db');
+   (async () => {
+     const q = await sql\`SELECT id, type, prompt, option_a, option_b FROM questions WHERE week = <N> AND correct_option IS NULL AND published = true\`;
+     console.log(JSON.stringify(q.rows, null, 2));
+     process.exit(0);
+   })();
+   "
+   ```
+2. **Compute the real answer for each, from `matchups.json`/`standings.json` for that week** - the
+   same data already on the site, not a fresh guess:
+   - `over_under`/`this_or_that` tied to a score, margin, or spread (e.g. "highest individual
+     score," "will X cover the spread") - read the actual final scores for that week and compare
+     against the line. `correct_option` is `'a'` or `'b'`.
+   - `pick_manager` (e.g. "most points this week") - whoever's real score/stat for that week wins;
+     `correct_option` is their manager name (not `'a'`/`'b'`).
+   - `number_guess` - `correct_option` is the real number; the leaderboard grades it correct within
+     ±2 automatically (see `CORRECT_CASE` in `api/leaderboard.js`), no special handling needed here.
+   - **Some props can't be graded from site data at all** - anything asking about a real-world
+     event the site doesn't track (e.g. a manager's own lineup decision, something off-platform).
+     Don't guess or leave these silently ungraded without saying so - flag them by name and ask the
+     user directly, since only they'd know the real answer.
+3. **Show the computed grades (with the numbers behind each one) before writing anything** - e.g.
+   "Highest score was Ainsworth's 142.3, over the 138.5 line → grading Over" - so the user can
+   catch a misread stat before it hits the leaderboard, not after. This is the same sign-off
+   requirement as drafting new props, not a lighter version of it - a wrong grade changes real
+   standings immediately, same live-leaderboard mechanism as every prior grading pass this season.
+4. **Only after sign-off**, write the grades:
+   ```bash
+   node -e "
+   const { sql } = require('./api/lib/db');
+   (async () => {
+     await sql\`UPDATE questions SET correct_option = 'a' WHERE id = <id>\`;
+     // one UPDATE per question, or batch with a CASE expression for several at once
+     process.exit(0);
+   })();
+   "
+   ```
+   Nothing else is needed after this - the leaderboard (`api/leaderboard.js`) computes standings
+   live from `correct_option`, there's no separate "publish the leaderboard" step.
 
 ## Weekly Pick'em props
 
