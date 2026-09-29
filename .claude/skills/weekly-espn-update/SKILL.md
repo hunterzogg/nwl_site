@@ -72,6 +72,16 @@ just having run the script is enough for those two files. Power rankings, commen
 Fun Facts are the editorial layer and are deliberately never auto-published, so always do the
 following instead of treating the script's success as "done":
 
+**Week-numbering convention (standardized from Week 4 on):** the regular update runs on
+**Tuesday**, after Monday night's games are final. Every editorial section (power rankings,
+commentary, Fun Facts) is labeled with the **upcoming** week number and **looks back** at the week
+just played. For example, the Tuesday before Week 4 publishes Week 4's power rankings, commentary,
+and Fun Facts, and all three recap Week 3's results, with an optional short preview of the Week 4
+matchups at the end. This lines up with the script: on a Tuesday, ESPN's current scoring period is
+already the upcoming week, so the `power_rankings.json` entry and the `commentary.json` stub it
+writes carry that number. Put the recap in that stub, not in the just-finished week's entry. Weeks
+1-2 were published before this convention and each recaps its own week; leave them as they are.
+
 1. **Show the user what changed.** Summarize the week's matchup results and standings movement
    briefly in chat so they don't have to open the JSON themselves.
 2. **Check `power_rankings.json` for EVERY unpublished entry, not just the current week's.** A
@@ -86,10 +96,21 @@ following instead of treating the script's success as "done":
    every unpublished week's rankings for review; if a week has too few played games to rank anyone
    yet (e.g. week 1 before kickoff), say so plainly rather than presenting an empty list as a
    problem.
-3. **Ask whether to write commentary** for the week — the `commentary.json` stub ships with empty
-   `title`/`body`. If the user wants a recap, draft it with them (or from the matchup data) and
-   fill in the stub; don't invent opinions or storylines that aren't grounded in the actual scores.
-4. **Ask whether to draft "Brian's Fun Facts" for the week** — unlike commentary, no script writes
+3. **Draft commentary** for the upcoming week's stub (recapping the week just played, per the
+   convention above). The `commentary.json` stub ships with empty `title`/`body`. Tone is a
+   **funny recap grounded in league history**: roast bad lineup calls, celebrate lucky wins, and tie
+   each storyline to a real historical comparison (e.g. "first back-to-back 3-0 start in NWL
+   history", "16 of 17 prior 3-0 teams made the playoffs"). For player-level detail (who scored
+   what, who was left on the bench), pull that week's box scores with a read-only ESPN call:
+   `view=mMatchupScore&view=mBoxscore&scoringPeriodId=<played week>`, using `fetch_league_raw`'s
+   cookie pattern in `scripts/fetch_espn_week.py`. Each team's
+   `rosterForCurrentScoringPeriod.entries[]` has `lineupSlotId` (20 = bench, 21 = IR) and
+   `playerPoolEntry.appliedStatTotal`. Bench-vs-starter swaps that would have flipped a result are
+   reliably the best material. The jokes can be opinionated, but every number and "first/most ever"
+   claim has to come from real data. Don't infer why a player scored 0.0 (bye vs. injury) without
+   checking. Use they/them for managers. Always draft it, show it, and leave it unpublished for
+   review.
+4. **Draft "Brian's Fun Facts"** for the upcoming week (same look-back convention). Unlike commentary, no script writes
    `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
    (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing
    week 2 entry for the shape). Each fact is `{label, headline, num, sub, tone, wide}` - `headline`
@@ -98,7 +119,20 @@ following instead of treating the script's success as "done":
    number), `wide: true` spans both grid columns. Ground every fact in real data the same way the
    Week 4 Pick'em props were (this week's matchups.json, recent-weeks trends, and real league
    history from the data files - see "Weekly Pick'em props" below for where that history lives) -
-   never invent a stat. 8-10 facts is a reasonable batch size (see the week 2 entry).
+   never invent a stat. 8-10 facts is a reasonable batch size (see the week 2 and week 4
+   entries; week 4 is the first under the look-back convention and shows the usual mix: high/low
+   score, nailbiter, costliest bench decision, historical-start odds, and a "Game of the Week" card
+   with the all-time head-to-head for the upcoming week). `matchup_results.json` was rebuilt from
+   ESPN's real schedules in late September 2026. It has exact decimal scores and correct pairings
+   for every season back to 2013, so records, streaks, "N-0 starts", points against, and
+   head-to-head can be computed from it directly. Before that rebuild, most pre-2023 pairings were
+   reconstructed, and a wrong one produced a false claim (Larson "3-0 in 2022"). If a history claim
+   ever looks surprising, spot-check it against ESPN:
+   `.../seasons/<year>/segments/0/leagues/39276?view=mMatchupScore&view=mTeam` works back to 2013.
+   Its team IDs changed hands over the years, so map them per season by matching scores against
+   `weekly_scores.json`. Watch out for ties: the 4 real ties (2013-14) are stored with the home team
+   as `winner`, so check `winning_score == losing_score` before calling one a win. Other history notes: "Made the playoffs" means `final_finish` ≤ 6 in
+   `team_seasons_regular.json`, and "current scoring era" means 2022 onward.
 5. **Flip `published: true`** on every power rankings, commentary, and Fun Facts entry the user
    has actually reviewed/approved (could be more than one week at once, per point 2 above) — never
    do this automatically as part of running the script. Edit the JSON directly (find the matching

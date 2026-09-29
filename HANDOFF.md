@@ -54,7 +54,7 @@ nwl_site/
 │   ├── managers.json             # 13 managers with colorblind-safe hex colors
 │   ├── manager_profiles.json     # 13 rows: favorite_nfl_team (empty) + team_names (filled in)
 │   ├── weekly_scores.json        # 2,570 rows: season/week/manager/score/game_type
-│   ├── matchup_results.json      # 1,272 rows: winner/loser/scores per matchup
+│   ├── matchup_results.json      # 1,273 rows: winner/loser/scores per matchup - rebuilt from ESPN's real schedules with exact decimal scores (see "Matchup history rebuilt from ESPN")
 │   ├── draft_picks.json          # 2,526 rows: every pick since 2013
 │   ├── draft_slots.json          # 154 rows: draft slot + finish + PPG per manager-season
 │   ├── transactions_with_dates.json  # 1,857 rows: all transactions; 2023-2025 100% exact-dated
@@ -243,6 +243,43 @@ number using the same palette as everywhere else on the site (`--live-bright` am
 `--blue-bright` for cold, `--red`, and the same green literal `rank-trend.up` already uses).
 `wide: true` spans both grid columns for a card that needs more room. No script writes this file
 yet (unlike matchups/standings/rosters) - it's hand-authored per week, same as commentary.
+
+**Week-numbering convention standardized (Week 4 onward)**: updates happen on Tuesdays, and power
+rankings, commentary, and Fun Facts are all labeled with the *upcoming* week while recapping the
+week just played. For example, the "Week 4" entries recap Week 3 and can end with a short Week 4
+preview. Power rankings already worked this way, since the script labels them with ESPN's current
+scoring period. Commentary and Fun Facts now match. Weeks 1-2 (published earlier, each recapping
+its own week) were left as they are. The unused empty Week 3 commentary stub was removed, so the
+Week 3 recap lives under Week 4. The commentary tone is a funny recap grounded in league history
+(see the weekly-espn-update skill's step 3 for the ESPN box-score call that supplies player-level
+detail).
+
+**Matchup history rebuilt from ESPN (same session)**: Hunter caught a Fun Facts claim that Larson
+started 2022 at 3-0. They actually started 2-1: ESPN has Larson losing Week 3 to Goetz,
+98.52-93.70. The root cause was that most 2013-2022 rows in `data/matchup_results.json` were
+`source: "inferred"`, meaning the scores were real but the opponent pairings were reconstructed,
+and 110 of those pairings (or winners) were wrong, plus one 2022 game was missing entirely. ESPN's
+API returns the real schedule for every season back to 2013:
+`/apis/v3/games/ffl/seasons/<year>/segments/0/leagues/39276?view=mMatchupScore&view=mTeam`, with
+the same cookie auth as `fetch_espn_week.py`. Team IDs changed hands over the years, so the
+rebuild mapped them to managers per season by matching scores against `weekly_scores.json`; all
+13 seasons mapped with no ambiguity.
+- `matchup_results.json` is now 1,273 rows, all `source: "espn"`, and stores **exact decimal
+  scores** (e.g. `"98.52"`) instead of the old truncated whole numbers, so close games and ties
+  are no longer distorted by rounding. The real ties (4 ever, all in 2013-14) list the home team
+  as `winner`, same as the prior convention of counting them as a W/L pair.
+- `weekly_scores.json`: 49 manager-weeks were aligned to ESPN's final scores. They were a mix of
+  workbook typos (e.g. 2019 Stover 110.5 vs. the real 100.5) and small late stat corrections.
+- `scorigami_combos.json` was regenerated with the same algorithm (whole-number bins, truncated),
+  which was verified to reproduce the old file exactly from the old data before being re-run.
+- `team_seasons_regular.json`'s `opp_ppg` already matched ESPN to within about 0.1 (it came from
+  the workbook, not the inferred pairings), so it was left untouched. The same goes for the
+  `ppg`/`total_points` aggregates, which differ only by the handful of corrected weekly scores.
+- `hall-of-fame.html`'s "Closest game" now skips exact ties, since with decimal scores the
+  closest game would otherwise always be one of the 4 real ties shown as "X over Y".
+- Published Week 1 commentary and Week 2 Fun Facts were corrected: the old Week 1-2 margin record
+  was Muenchow's 67.98-point win over Stover (2022), not Pfaffinger's over Conlin (2015), and
+  historical 2-0 starts were 39 (5 champions), not 37 (4 champions), with Palaia leading at 7.
 
 ### hall-of-fame.html ✅ (formerly lookup.html)
 Three tabs: League Records (single-game, season, streaks), Head-to-Head (pick 2 managers → full matchup history), Seasons (weekly scores + standings + a top-3/last-place header, per year). Career Stats tab removed — moved to Managers page. Seasons tab shows two weekly-score tables — Regular Season and Playoffs (playoff weeks/managers vary correctly by era) — and standings grouped by division, sorted by wins.

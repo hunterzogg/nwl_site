@@ -98,7 +98,7 @@ function buildRecords() {
   matchups.forEach(m => {
     const margin = parseFloat(m.winning_score) - parseFloat(m.losing_score);
     if (margin > biggestBlowout.margin) biggestBlowout = {...m, margin};
-    if (margin < closestGame.margin) closestGame = {...m, margin};
+    if (margin > 0 && margin < closestGame.margin) closestGame = {...m, margin};  // skip true ties (4 ever, all 2013-14)
   });
 
   const seasonTotals = {};

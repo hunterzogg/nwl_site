@@ -15,7 +15,7 @@
         "label": "Biggest Season-Opening Blowout Ever",
         "headline": "Ainsworth by {{num}} 🔥",
         "num": "97.06",
-        "sub": "The biggest Week 1-2 margin specifically in 13 years of NWL history — the old Week 1-2 mark was Pfaffinger's 68-point win over Conlin in 2015, beaten by 29 points. It's not the biggest blowout ever, though — that's still Conlin's 128-point demolition of Zogg (202-74) in Week 3, 2019.",
+        "sub": "The biggest Week 1-2 margin specifically in 13 years of NWL history — the old Week 1-2 mark was Muenchow's 67.98-point win over Stover in 2022, beaten by 29 points. It's not the biggest blowout ever, though — that's still Conlin's 127.6-point demolition of Zogg (202.4-74.8) in Week 3, 2019.",
         "tone": "red",
         "wide": false
       },
@@ -39,15 +39,15 @@
         "label": "Larson's Rare Hot Start",
         "headline": "Only the {{num}} time in 13 years",
         "num": "3rd",
-        "sub": "Larson has started 2-0 just twice before (2013-2025). Glaser and Ainsworth — the other two current 2-0 teams — have each done it 3 times; Palaia and Conlin lead the league all-time with 6 apiece.",
+        "sub": "Larson has started 2-0 just twice before (2013-2025). Glaser and Ainsworth — the other two current 2-0 teams — have each done it 3 times; Palaia leads the league all-time with 7, one ahead of Conlin's 6.",
         "tone": "green",
         "wide": true
       },
       {
         "label": "Does 2-0 Mean Anything?",
-        "headline": "Only {{num}} of 37 historical 2-0 starts won it all",
-        "num": "4",
-        "sub": "13 of those 37 teams still missed the playoffs entirely by season's end. A hot start is fun to have, but history says it's no guarantee of anything.",
+        "headline": "Only {{num}} of 39 historical 2-0 starts won it all",
+        "num": "5",
+        "sub": "13 of those 39 teams still missed the playoffs entirely by season's end. A hot start is fun to have, but history says it's no guarantee of anything.",
         "tone": "",
         "wide": true
       },
@@ -72,6 +72,92 @@
         "headline": "{{num}} total pickups, $240 in FAAB spent",
         "num": "61",
         "sub": "37 came free off the wire with no bid at all — including 8 Head Coach swaps as managers chase a better bye-week matchup. Palaia leads the league with 14 moves, more than double the next-busiest manager (Goetz, 9).",
+        "tone": "",
+        "wide": true
+      }
+    ]
+  },
+  {
+    "week": 4,
+    "published": true,
+    "facts": [
+      {
+        "label": "Glaser Does It Again",
+        "headline": "The first back-to-back {{num}} start in NWL history",
+        "num": "3-0",
+        "sub": "Glaser also opened 2025 at 3-0. 17 teams had started 3-0 from 2013-2025, and none of them did it two years running. Before last season, Glaser's best start was 2-1, and they'd opened 0-3 twice (2016, 2020).",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Does 3-0 Mean Anything?",
+        "headline": "{{num}} of 17 historical 3-0 starts made the playoffs",
+        "num": "16",
+        "sub": "Three of them won it all: Palaia (2013 and 2018) and Conlin (2020). The lone exception is Conlin's 2018 team, which started 3-0 and finished 7th.",
+        "tone": "",
+        "wide": true
+      },
+      {
+        "label": "Highest Score",
+        "headline": "{{num}} — Palaia",
+        "num": "132.16",
+        "sub": "Week 3's top score, powered by Bijan Robinson (34.3) and Brock Bowers (22.6). The 59.02-point win over Pfaffinger was also the week's biggest margin.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Lowest Score",
+        "headline": "{{num}} — Zogg",
+        "num": "68.84",
+        "sub": "Zogg's second sub-70 game in three weeks (68.50 in Week 1), with the Week 2 high score of 138.86 in between. That's 7 sub-70 regular-season games for Zogg since 2022, the start of the current scoring era.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Nailbiter of the Season",
+        "headline": "Stover by {{num}}",
+        "num": "2.18",
+        "sub": "101.28–99.10 over Ainsworth, the closest game of 2026 so far (the old mark was Prodahl's 11.94 in Week 2). Ainsworth's Ravens Head Coach scored +5 on the bench, enough to flip the result.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Benched: Most Points",
+        "headline": "{{num}} from Brock Purdy, on Hagan's bench",
+        "num": "31.3",
+        "sub": "The most points by any QB in the league in Week 3. Hagan started Jalen Hurts (12.6) instead and still beat Zogg 85.62–68.84. At 2-1, Hagan has scored less than they've allowed (268.7 PF vs. 269.6 PA).",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Benched: Most Costly",
+        "headline": "Larson lost by {{num}}",
+        "num": "6.80",
+        "sub": "Michael Wilson scored 20.4 on Larson's bench while Devaughn Vele scored 5.4 in the lineup. That one swap was worth 15.0 points, more than twice the margin, and Terry McLaurin (16.7) sat on the bench too.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "From 3-0 to 0-3",
+        "headline": "Pfaffinger's {{num}} 0-3 start",
+        "num": "3rd",
+        "sub": "Pfaffinger opened 2025 at 3-0. Their other 0-3 starts were 2020 and 2022, which ties Hagan, Goetz, and Larson for the most in league history. None of the 18 teams that started 0-3 from 2013-2025 won a title, and only 4 made the playoffs.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Worst Luck in the League",
+        "headline": "{{num}} points against",
+        "num": "370.7",
+        "sub": "Pfaffinger's points against lead the league by 42.5, the 9th-most through three weeks in NWL history. Pfaffinger has seen worse: their 2020 team faced 394.8 (2nd-most ever), started 0-3, and still finished 5th.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Week 4 Game of the Week",
+        "headline": "The all-time series is tied {{num}}",
+        "num": "12-12",
+        "sub": "#1 Glaser (3-0) vs. #2 Ainsworth (2-1, league-high 382.9 points for). ESPN has Glaser favored by 11. Their last meeting, Week 10 of 2025, went to Ainsworth 113.54–112.20.",
         "tone": "",
         "wide": true
       }
