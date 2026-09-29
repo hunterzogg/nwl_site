@@ -1799,6 +1799,33 @@ best free agent" to "below a typical available free agent" to match. Same functi
 Calculator/Finder's dead-weight warning text and the Finder's auto-suggestion trade-chip pool
 filter (`.filter(isRealTradeAsset)`, lines ~804/813), so this one fix corrects both surfaces.
 
+**First real run of the weekly-espn-update skill's new grading + props-drafting steps (later
+follow-up)** - graded Week 3's 7 weekly props (ids 29-35) from the now-final `matchups.json`
+(Palaia's 132.16 was the week's high; Stover's real 101.28-99.10 upset of Ainsworth means Q33
+"will Ainsworth cover the spread" graded No *and* doubled as the week's closest margin at 2.18;
+Glaser beat Larson to end Larson's unbeaten streak, grading Q35 "who stays perfect" as Glaser) -
+also checked all ungraded Season I/Season II props against the fresh 3-week data and confirmed
+none newly crossed their line (lowest winning score still 84.92 vs. a 72.5 line, biggest bid still
+$56 vs. 74.5, no sub-0.5-point matchup yet, zero trades).
+
+Drafted Week 4's 8 props interactively with Hunter (`scripts/seed_pickem_week4_props.js`, ids
+46-53) - iterated through several rounds of real feedback before inserting: first pass was grounded
+in real Week 4 matchup lines + recent scoring trends only; asked to add league-history context to
+a few and a "novelty" prop, which started as a Head Coach-scoring idea, corrected to "novelty
+should be a category, not specifically Head Coach" (examples given: all-time Week 4 record, will a
+trade happen, how many started Head Coaches win) - landed on a zero-trades-this-season prop after
+checking `data/trades.json` for real historical first-trade dates (as early as Aug 29 pre-season in
+2025, as late as Oct 7 in 2024) - that context was then cut as "too noisy" per explicit follow-up,
+keeping just the prop and the zero-trades fact. Also added real head-to-head history to the
+Glaser/Ainsworth prop after being asked "what's the most frequently played matchup between
+managers" - turned out to be a tie between Ainsworth/Glaser and Hagan/Larson at 27 meetings each,
+directly relevant since Glaser/Ainsworth were already that week's featured prop.
+
+First real end-to-end use of the skill's two-checkpoint publish rule: inserted all 8 with
+`published: false`, ran it, showed Hunter the actual row output, and only flipped to `published:
+true` after his explicit "yes, go ahead" on the final drafted list - not on the insert-succeeded
+message alone.
+
 ---
 
 ## Known Bugs & Data Issues
