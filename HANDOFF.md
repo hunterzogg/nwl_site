@@ -1770,6 +1770,35 @@ never fully disappears. Re-verified the same Walker/Brown trade now reads "favor
 90/10 floor - both directions and the always-visible-range behavior confirmed on the Calculator and
 the Finder's mini gauge cards (same shared function, both call sites fixed at once).
 
+**"Worse than a free agent" dead-weight flag fixed - was comparing to the wrong bar (later
+follow-up)** - per explicit report ("a lot of rostered players are worse than available free
+agents, which is not true at this point in the season"), `isRealTradeAsset()` was comparing each
+player's `vbd_value` against the SINGLE BEST free agent at that position
+(`rosters.free_agents[pos][0]`). First diagnosis attempt (compare to 0/replacement level instead)
+was tried, confirmed live to flag MORE players as dead weight (112 vs. the original 86 of 176
+rostered players) rather than fewer, and reverted - it broke worse specifically at QB, where ROS
+projections are tightly bunched this season (the wide pool's best free agent QB, Baker Mayfield at
+267.1, sits almost as high as the single best rostered QB, Mahomes at 279.9), pushing
+`vbd_baseline['QB']` up near the top of the position and making Mahomes himself read as exactly
+replacement-level (`vbd: 0`).
+
+Reverting to the original single-best-free-agent comparison then surfaced the REAL bug underneath,
+not a QB-only quirk: comparing to the single best available player at a position is fragile by
+construction - in a 12-team league there's almost always at least one unusually strong player
+sitting unrostered, and that one player alone sets a bar high enough to flag real, clearly-startable
+rostered starters as droppable. Confirmed live: 19 actual starters flagged this way league-wide,
+including A.J. Brown, DK Metcalf, Deebo Samuel, Jameson Williams, and Sam LaPorta - not deep bench
+players, real fantasy starters. Fixed by changing the floor to the AVERAGE `vbd_value` across the
+whole kept free-agent pool at that position (`FREE_AGENT_POOL_SIZE` = 8, see
+`build_free_agents()` in `fetch_espn_rosters.py`) instead of just the top one - the textbook
+definition of "replacement level" (a typical available option), not "waiver-wire ceiling" (the
+single best one). Re-verified live: flagged starters dropped from 19 to 2 (both real, defensible
+TE cases - Juwan Johnson and Jake Ferguson), while still correctly catching 35 genuinely
+below-replacement bench players league-wide. Updated the on-page warning copy from "worse than the
+best free agent" to "below a typical available free agent" to match. Same function feeds both the
+Calculator/Finder's dead-weight warning text and the Finder's auto-suggestion trade-chip pool
+filter (`.filter(isRealTradeAsset)`, lines ~804/813), so this one fix corrects both surfaces.
+
 ---
 
 ## Known Bugs & Data Issues

@@ -427,21 +427,34 @@ function bestFreeAgent(pos, exclude) {
   return pool.find(p => !exclude || !exclude.has(p.espn_id)) || null;
 }
 
-// A player is only real trade capital if they're actually better than what's sitting free on
-// waivers at the same position - if not, a rational manager would just drop them and pick up the
-// free agent instead, so their true trade value is ~0, not their (possibly quite negative)
-// vbd_value. Without this, a bench player who's WORSE than the waiver-wire floor (e.g. a third-
-// string TE nobody would ever start) still counted as legitimate "compensation" in the fairness
-// math purely because his negative vbd_value happened to offset another negative-value throw-in
-// on the other side - producing trades like "you give a real bench piece, you get a player worse
-// than a free agent" that looked fair on paper but helped nobody. Used to filter what's even
-// eligible to be offered/received as a trade chip in the Finder, not to re-price existing bundles.
-function bestFreeAgentVbd(pos) {
-  const pool = (rosters.free_agents && rosters.free_agents[pos]) || [];
-  return pool.length ? pool[0].vbd_value : -Infinity;
-}
+// A player is only real trade capital if they clear the waiver-wire floor at their position - if
+// not, a rational manager would just drop them and pick up a free agent instead, so their true
+// trade value is ~0, not their (possibly quite negative) vbd_value. Without this, a bench player
+// who's genuinely WORSE than anything available (e.g. a third-string TE nobody would ever start)
+// still counted as legitimate "compensation" in the fairness math purely because his negative
+// vbd_value happened to offset another negative-value throw-in on the other side - producing
+// trades like "you give a real bench piece, you get filler" that looked fair on paper but helped
+// nobody. Used to filter what's even eligible to be offered/received as a trade chip in the
+// Finder, not to re-price existing bundles.
+//
+// The floor is the AVERAGE vbd_value across the kept free-agent pool at that position (up to
+// FREE_AGENT_POOL_SIZE, currently the top 8 - see fetch_espn_rosters.py's build_free_agents), not
+// the single best free agent, which this used to compare against. That turned out to be a real
+// bug, not just a QB quirk: any one unusually strong player sitting unrostered - not uncommon in
+// only a 12-team league - set the bar high enough to flag real, clearly-startable rostered
+// players as "worse than a free agent, drop him." Confirmed live: with the single-best-FA version,
+// 19 actual starters were flagged this way, including A.J. Brown, DK Metcalf, Sam LaPorta, and
+// (worst case) Patrick Mahomes reading as exactly replacement-level - because QB ROS projections
+// are tightly bunched this season, so even the pool's best free agent QB (Baker Mayfield, 267.1)
+// sits almost as high as the single best rostered QB (Mahomes, 279.9). Averaging the realistic
+// pool of available options - the textbook definition of "replacement level," not "waiver wire
+// ceiling" - fixed it: only 2 starters get flagged now (both real, defensible TE cases), while
+// still catching 35 genuinely droppable bench players league-wide.
 function isRealTradeAsset(p) {
-  return p.vbd_value > bestFreeAgentVbd(p.position);
+  const pool = (rosters.free_agents && rosters.free_agents[p.position]) || [];
+  if (!pool.length) return true;
+  const avgFaVbd = pool.reduce((sum, fa) => sum + fa.vbd_value, 0) / pool.length;
+  return p.vbd_value > avgFaVbd;
 }
 
 // Positions where a roster only ever plays one true starter (QB) or one dedicated starter plus a
@@ -1179,8 +1192,8 @@ function computeFairness(sideASends, sideBSends, teamA, teamB) {
   if (aStars > bStars && valueB < valueA * Math.pow(1 + STAR_PREMIUM, aStars - bStars)) starWarningSide = 'A';
   else if (bStars > aStars && valueA < valueB * Math.pow(1 + STAR_PREMIUM, bStars - aStars)) starWarningSide = 'B';
 
-  // Also informational-only here - flags a player worse than the best free agent at his own
-  // position (see isRealTradeAsset) being sent as if it were real trade capital, and a side that
+  // Also informational-only here - flags a player below the waiver-wire replacement floor at his
+  // own position (see isRealTradeAsset) being sent as if it were real trade capital, and a side that
   // would end up with a 3rd QB or TE (see MAX_USEFUL_ROSTER_COUNT), since the Calculator doesn't
   // block anything the user manually builds, only the Finder's auto-suggestions do.
   const deadWeightA = sideBSends.filter(p => !isRealTradeAsset(p));
@@ -1225,7 +1238,7 @@ function renderCalcSummary() {
         ${calcBullets(f.evenness, f.weeklyStarterA, f.weeklyBenchA, f.rankABefore, f.rankAAfter)}
         ${pickupBullets(f.pickupsA).map(b => `<div style="font-size:0.85rem; margin-top:4px;">${b}</div>`).join('')}
         ${f.starWarningSide === 'A' ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; Trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</div>' : ''}
-        ${f.deadWeightA.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightA.map(p => p.name).join(', ')} ${f.deadWeightA.length > 1 ? 'are' : 'is'} worse than the best free agent at ${f.deadWeightA.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
+        ${f.deadWeightA.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightA.map(p => p.name).join(', ')} ${f.deadWeightA.length > 1 ? 'are' : 'is'} below a typical available free agent at ${f.deadWeightA.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
         ${f.clogA ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; This leaves you with a 3rd QB or TE - a wasted roster spot no matter how the value nets out.</div>' : ''}
       </div>
       <div class="calc-summary-side">
@@ -1234,7 +1247,7 @@ function renderCalcSummary() {
         ${calcBullets(f.evenness, f.weeklyStarterB, f.weeklyBenchB, f.rankBBefore, f.rankBAfter)}
         ${pickupBullets(f.pickupsB).map(b => `<div style="font-size:0.85rem; margin-top:4px;">${b}</div>`).join('')}
         ${f.starWarningSide === 'B' ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; Trading away a difference-maker without a real premium coming back - real managers are usually reluctant to accept this.</div>' : ''}
-        ${f.deadWeightB.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightB.map(p => p.name).join(', ')} ${f.deadWeightB.length > 1 ? 'are' : 'is'} worse than the best free agent at ${f.deadWeightB.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
+        ${f.deadWeightB.length ? `<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; ${f.deadWeightB.map(p => p.name).join(', ')} ${f.deadWeightB.length > 1 ? 'are' : 'is'} below a typical available free agent at ${f.deadWeightB.length > 1 ? 'their position' : 'his position'} - not real trade value, just drop for a waiver pickup instead.</div>` : ''}
         ${f.clogB ? '<div style="color:var(--red); font-size:0.82rem; margin-top: 4px;">&#9888; This leaves you with a 3rd QB or TE - a wasted roster spot no matter how the value nets out.</div>' : ''}
       </div>
     </div>
