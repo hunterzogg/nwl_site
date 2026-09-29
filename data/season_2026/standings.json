@@ -1,37 +1,70 @@
 {
-  "week": 3,
-  "updated_at": "2026-09-28T10:08:56.391106+00:00",
+  "week": 4,
+  "updated_at": "2026-09-29T10:07:08.064103+00:00",
   "standings": [
+    {
+      "manager": "Glaser",
+      "division": "Silver",
+      "wins": 3,
+      "losses": 0,
+      "ties": 0,
+      "points_for": 379.0,
+      "points_against": 287.5,
+      "streak_type": "WIN",
+      "streak_length": 3
+    },
     {
       "manager": "Ainsworth",
       "division": "Gold",
       "wins": 2,
-      "losses": 0,
+      "losses": 1,
       "ties": 0,
-      "points_for": 283.8,
-      "points_against": 164.0,
-      "streak_type": "WIN",
-      "streak_length": 2
+      "points_for": 382.9,
+      "points_against": 265.3,
+      "streak_type": "LOSS",
+      "streak_length": 1
     },
     {
-      "manager": "Glaser",
+      "manager": "Muenchow",
       "division": "Silver",
       "wins": 2,
-      "losses": 0,
+      "losses": 1,
       "ties": 0,
-      "points_for": 265.9,
-      "points_against": 181.2,
+      "points_for": 312.4,
+      "points_against": 289.3,
       "streak_type": "WIN",
-      "streak_length": 2
+      "streak_length": 1
     },
     {
       "manager": "Larson",
       "division": "Silver",
       "wins": 2,
-      "losses": 0,
+      "losses": 1,
       "ties": 0,
-      "points_for": 203.5,
-      "points_against": 146.8,
+      "points_for": 309.9,
+      "points_against": 259.9,
+      "streak_type": "LOSS",
+      "streak_length": 1
+    },
+    {
+      "manager": "Goetz",
+      "division": "Bronze",
+      "wins": 2,
+      "losses": 1,
+      "ties": 0,
+      "points_for": 305.0,
+      "points_against": 328.2,
+      "streak_type": "WIN",
+      "streak_length": 1
+    },
+    {
+      "manager": "Hagan",
+      "division": "Bronze",
+      "wins": 2,
+      "losses": 1,
+      "ties": 0,
+      "points_for": 268.7,
+      "points_against": 269.6,
       "streak_type": "WIN",
       "streak_length": 2
     },
@@ -39,54 +72,21 @@
       "manager": "Conlin",
       "division": "Gold",
       "wins": 1,
-      "losses": 1,
+      "losses": 2,
       "ties": 0,
-      "points_for": 225.4,
-      "points_against": 196.3,
+      "points_for": 306.4,
+      "points_against": 298.8,
       "streak_type": "LOSS",
-      "streak_length": 1
+      "streak_length": 2
     },
     {
-      "manager": "Muenchow",
+      "manager": "Palaia",
       "division": "Silver",
       "wins": 1,
-      "losses": 1,
+      "losses": 2,
       "ties": 0,
-      "points_for": 209.9,
-      "points_against": 208.3,
-      "streak_type": "LOSS",
-      "streak_length": 1
-    },
-    {
-      "manager": "Zogg",
-      "division": "Bronze",
-      "wins": 1,
-      "losses": 1,
-      "ties": 0,
-      "points_for": 207.4,
-      "points_against": 241.2,
-      "streak_type": "WIN",
-      "streak_length": 1
-    },
-    {
-      "manager": "Goetz",
-      "division": "Bronze",
-      "wins": 1,
-      "losses": 1,
-      "ties": 0,
-      "points_for": 183.7,
-      "points_against": 224.3,
-      "streak_type": "LOSS",
-      "streak_length": 1
-    },
-    {
-      "manager": "Hagan",
-      "division": "Bronze",
-      "wins": 1,
-      "losses": 1,
-      "ties": 0,
-      "points_for": 183.1,
-      "points_against": 200.8,
+      "points_for": 295.8,
+      "points_against": 327.7,
       "streak_type": "WIN",
       "streak_length": 1
     },
@@ -94,10 +94,32 @@
       "manager": "Prodahl",
       "division": "Bronze",
       "wins": 1,
-      "losses": 1,
+      "losses": 2,
       "ties": 0,
-      "points_for": 172.8,
-      "points_against": 174.8,
+      "points_for": 276.7,
+      "points_against": 296.2,
+      "streak_type": "LOSS",
+      "streak_length": 1
+    },
+    {
+      "manager": "Zogg",
+      "division": "Bronze",
+      "wins": 1,
+      "losses": 2,
+      "ties": 0,
+      "points_for": 276.2,
+      "points_against": 326.8,
+      "streak_type": "LOSS",
+      "streak_length": 1
+    },
+    {
+      "manager": "Stover",
+      "division": "Gold",
+      "wins": 1,
+      "losses": 2,
+      "ties": 0,
+      "points_for": 259.7,
+      "points_against": 292.1,
       "streak_type": "WIN",
       "streak_length": 1
     },
@@ -105,34 +127,12 @@
       "manager": "Pfaffinger",
       "division": "Gold",
       "wins": 0,
-      "losses": 2,
+      "losses": 3,
       "ties": 0,
-      "points_for": 166.2,
-      "points_against": 238.5,
+      "points_for": 239.3,
+      "points_against": 370.7,
       "streak_type": "LOSS",
-      "streak_length": 2
-    },
-    {
-      "manager": "Palaia",
-      "division": "Silver",
-      "wins": 0,
-      "losses": 2,
-      "ties": 0,
-      "points_for": 163.6,
-      "points_against": 254.6,
-      "streak_type": "LOSS",
-      "streak_length": 2
-    },
-    {
-      "manager": "Stover",
-      "division": "Gold",
-      "wins": 0,
-      "losses": 2,
-      "ties": 0,
-      "points_for": 158.4,
-      "points_against": 193.0,
-      "streak_type": "LOSS",
-      "streak_length": 2
+      "streak_length": 3
     }
   ]
 }
