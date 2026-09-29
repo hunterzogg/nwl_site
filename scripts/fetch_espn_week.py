@@ -153,8 +153,9 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
         the season), so a current hot streak can boost a team independent of their full-season
         record.
     Also computes (for display only, not part of the composite score) a strength-of-schedule
-    rank: each manager's opponents' own season PPG, averaged and ranked 1 (toughest) to N
-    (easiest) against the field.
+    rank: each manager's opponents' own season PPG (excluding their games against that manager),
+    averaged and ranked 1 (toughest) to N (easiest) against the field - opponents played so far
+    only, not the remaining schedule.
     Returns a list of per-manager dicts (rank/manager/trend/delta plus the display stats used by
     season-2026.html's stacked bullet list), sorted best to worst.
     """
@@ -162,7 +163,7 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
 
     by_week = {}  # week -> [(manager, score), ...]
     results = {}  # manager -> [(week, own_score, win_fraction), ...] in week order
-    opponents = {}  # manager -> [opponent_manager, ...] (byes excluded - no opponent to weigh)
+    opponents = {}  # manager -> [(week, opponent_manager), ...] (byes excluded - no opponent to weigh)
     for m in played:
         wk = m["matchupPeriodId"]
         home, away = m.get("home", {}), m.get("away", {})
@@ -185,8 +186,8 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
                 home_win, away_win = 0.5, 0.5
             results[home_mgr].append((wk, home_score, home_win))
             results[away_mgr].append((wk, away_score, away_win))
-            opponents[home_mgr].append(away_mgr)
-            opponents[away_mgr].append(home_mgr)
+            opponents[home_mgr].append((wk, away_mgr))
+            opponents[away_mgr].append((wk, home_mgr))
         else:
             results[home_mgr].append((wk, home_score, 1))  # bye counts as a win, matches ESPN's own treatment
 
@@ -224,10 +225,17 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
 
     # Strength of schedule: each manager's opponents' own season PPG, averaged - then ranked
     # 1 (toughest slate) to N (easiest) against the field. Display-only, not part of composite.
+    # Each opponent's PPG leaves out their game(s) against this manager - otherwise SoS partly
+    # just re-measures this manager's own points against (a third of it after 3 weeks). Falls
+    # back to the full PPG when the head-to-head is the opponent's only game (e.g. week 1).
     sos_value = {}
     for mgr in managers:
-        opp_list = opponents.get(mgr, [])
-        sos_value[mgr] = (sum(avg_points[o] for o in opp_list) / len(opp_list)) if opp_list else 0
+        opp_ratings = []
+        for _, opp in opponents.get(mgr, []):
+            h2h_weeks = {w for w, o in opponents[opp] if o == mgr}
+            other = [s for w, s, _ in results[opp] if w not in h2h_weeks]
+            opp_ratings.append(sum(other) / len(other) if other else avg_points[opp])
+        sos_value[mgr] = (sum(opp_ratings) / len(opp_ratings)) if opp_ratings else 0
     sos_rank = {m: i + 1 for i, m in enumerate(sorted(managers, key=lambda m: sos_value[m], reverse=True))}
 
     composite = {}

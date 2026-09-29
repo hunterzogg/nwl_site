@@ -219,6 +219,15 @@ ranked 1 (toughest slate so far) to 12 (easiest) against the field - computed in
 already had them 3rd rather than 1st despite being unbeaten - the new field makes that visible
 instead of implicit in the composite math. `blurb` was removed entirely (all three
 weeks' entries recomputed to backfill the new fields) rather than kept alongside the new ones.
+**SoS refined (later session, Week 4)**: Hunter noticed SoS didn't line up with points against.
+That's by design, since SoS measures opponent quality while PA measures what opponents actually
+scored against you. But there was a real flaw: each opponent's PPG included the game against the
+manager being rated, so SoS partly re-measured that manager's own PA (a third of it after 3
+weeks). Each opponent's rating now excludes their game(s) against that manager, falling back to
+the full PPG when the head-to-head is their only game (week 1). All published weeks' `sos_rank`
+values were backfilled, with nothing else in those entries touched. The Larson 12th/12 finding
+above no longer holds: with the head-to-head excluded they were 8th after Week 2 and are 1st
+(toughest) after Week 3. SoS is still opponents played so far only, not the remaining schedule.
 
 **"Same" rank now shows how many weeks running (later follow-up)**: per explicit request, a
 manager whose rank hasn't moved shows how many consecutive published weeks they've held it (e.g.
