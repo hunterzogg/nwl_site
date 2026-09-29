@@ -46,7 +46,9 @@ const QUESTIONS = [
   },
   {
     type: 'this_or_that',
-    prompt: "Glaser (3-0, the league's only unbeaten team) hosts Ainsworth in a real rivalry renewal - Ainsworth vs. Glaser is tied for the most-played matchup in league history (27 meetings), with Ainsworth leading the all-time series 15-12, including the most recent meeting, a 113-112 nail-biter in 2025. Who wins?",
+    // Corrected live (UPDATE on id 50) after the ESPN matchup-history rebuild: the original
+    // 27 meetings / 15-12 Ainsworth came from the old inferred pairings.
+    prompt: "Glaser (3-0, the league's only unbeaten team) hosts Ainsworth in a real rivalry renewal - Ainsworth vs. Glaser is one of the most-played matchups in league history (24 meetings, one behind Conlin vs. Palaia's 25), and the all-time series is dead even at 12-12. Ainsworth took the most recent meeting, a 113.54-112.20 nail-biter in 2025. Who wins?",
     option_a: 'Glaser',
     option_b: 'Ainsworth',
   },
