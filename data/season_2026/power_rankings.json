@@ -373,7 +373,7 @@
   },
   {
     "week": 3,
-    "published": false,
+    "published": true,
     "rankings": [
       {
         "rank": 1,
@@ -559,7 +559,7 @@
   },
   {
     "week": 4,
-    "published": false,
+    "published": true,
     "rankings": [
       {
         "rank": 1,

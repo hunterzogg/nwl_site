@@ -1,23 +1,26 @@
 ---
 name: weekly-espn-update
-description: Pull this week's NWL fantasy football matchups, standings, power rankings, and current rosters/trade values from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results, grading last week's Pick'em props, and drafting next week's. Use this whenever the user asks to update the site with this week's scores/matchups/standings/rosters, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub" or "refresh rosters" or "update the weekly pick'em" or "grade last week's picks" or "create next week's props", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site. Note: the data-pull half also runs automatically on a schedule via .github/workflows/weekly-espn-update.yml — this skill is for an on-demand/manual run (e.g. the user wants fresher data right now, is troubleshooting, or wants Pick'em grading/props handled, which the automated workflow never does).
+description: Pull this week's NWL fantasy football matchups, standings, power rankings, and current rosters/trade values from ESPN into data/season_2026/*.json, then walk through reviewing and publishing the results (including commentary and Brian's Fun Facts), grading last week's Pick'em props, and drafting next week's. Use this whenever the user asks to update the site with this week's scores/matchups/standings/rosters, mentions running the weekly ESPN pull, says something like "pull this week's data" or "update the 2026 hub" or "refresh rosters" or "update the weekly pick'em" or "grade last week's picks" or "create next week's props" or "update Brian's Fun Facts", or wants to publish power rankings/commentary for the current NWL season. Applies during the NWL season (roughly September through year-end) whenever real ESPN data needs to land on the site. Note: the data-pull half also runs automatically on a schedule via .github/workflows/weekly-espn-update.yml — this skill is for an on-demand/manual run (e.g. the user wants fresher data right now, is troubleshooting, or wants Pick'em grading/props/Fun Facts handled, which the automated workflow never does).
 ---
 
 # Weekly ESPN update
 
-Runs the NWL site's weekly data pull from ESPN and walks through publishing it, grading last
-week's Pick'em props, and drafting the next week's. Three parts:
+Runs the NWL site's weekly data pull from ESPN and walks through publishing it (matchups,
+standings, power rankings, commentary, and Brian's Fun Facts), grading last week's Pick'em props,
+and drafting the next week's. Three parts:
 
-1. **Data pull** - a thin wrapper around `scripts/fetch_espn_week.py` (matchups/standings/power
-   rankings/commentary) and `scripts/fetch_espn_rosters.py` (current rosters + trade values, for
-   Trade Tools) - the scripts do the actual work; this skill's job is to run them correctly, help
-   review what they produced, and not skip the manual publish step for the editorial pieces. A
-   scheduled GitHub Action (`.github/workflows/weekly-espn-update.yml`) already runs both scripts
-   automatically several times a week during the season and auto-commits matchups/standings/
-   rosters (the facts) while still leaving power rankings/commentary unpublished for review - use
-   this skill when the user wants a fresher pull right now rather than waiting for the next
-   scheduled run, is troubleshooting a failed run, or wants Pick'em grading/props handled (which
-   the automated workflow never does - see parts 2 and 3).
+1. **Data pull + editorial review** - a thin wrapper around `scripts/fetch_espn_week.py`
+   (matchups/standings/power rankings/commentary) and `scripts/fetch_espn_rosters.py` (current
+   rosters + trade values, for Trade Tools) - the scripts do the actual work; this skill's job is
+   to run them correctly, help review what they produced, and not skip the manual publish step for
+   the editorial pieces (power rankings, commentary, and Brian's Fun Facts - the last of which no
+   script writes at all, see "After running" below). A scheduled GitHub Action
+   (`.github/workflows/weekly-espn-update.yml`) already runs both scripts automatically several
+   times a week during the season and auto-commits matchups/standings/rosters (the facts) while
+   still leaving power rankings/commentary unpublished for review - use this skill when the user
+   wants a fresher pull right now rather than waiting for the next scheduled run, is
+   troubleshooting a failed run, or wants Pick'em grading/props or Fun Facts handled (which the
+   automated workflow never does - see parts 2 and 3, and "After running" for Fun Facts).
 2. **Grade last week's props** - once that week's games are fully final, compute and write
    `correct_option` for whatever's gradable from real site data (see "Grading last week's Pick'em
    props" below). **Show the computed grades before writing them** - same sign-off requirement as
@@ -65,27 +68,46 @@ This writes/updates five files under `data/season_2026/`:
 ## After running — walk through publishing
 
 Matchups and standings are pure facts pulled straight from ESPN — they don't need review, and
-just having run the script is enough for those two files. Power rankings and commentary are the
-editorial layer and are deliberately never auto-published, so always do the following instead of
-treating the script's success as "done":
+just having run the script is enough for those two files. Power rankings, commentary, and Brian's
+Fun Facts are the editorial layer and are deliberately never auto-published, so always do the
+following instead of treating the script's success as "done":
 
 1. **Show the user what changed.** Summarize the week's matchup results and standings movement
    briefly in chat so they don't have to open the JSON themselves.
-2. **Surface the computed power rankings** (`power_rankings.json`'s newest entry) for the current
-   week. If there aren't enough played games yet to rank anyone (e.g. week 1 before kickoff),
-   say so plainly rather than presenting an empty list as a problem.
+2. **Check `power_rankings.json` for EVERY unpublished entry, not just the current week's.** A
+   week can slip through unpublished if a prior session pulled fresh data but nobody walked
+   through this review step before moving on - real example: Week 3's entry sat unpublished with
+   full, correct data for several days because a session graded that week's Pick'em props but
+   never separately reviewed its power rankings. `rank`/`trend`/`delta`/`rank_streak`/`sos_rank`
+   all auto-chain correctly off whatever the most recent prior entry is (published or not) each
+   time the script runs, so there's no need to manually recompute anything week over week - that
+   was only ever a one-time backfill fix for entries computed before those fields existed (see
+   the "Power rankings restyled..." and "'Same' rank now shows..." entries in HANDOFF.md). Surface
+   every unpublished week's rankings for review; if a week has too few played games to rank anyone
+   yet (e.g. week 1 before kickoff), say so plainly rather than presenting an empty list as a
+   problem.
 3. **Ask whether to write commentary** for the week — the `commentary.json` stub ships with empty
    `title`/`body`. If the user wants a recap, draft it with them (or from the matchup data) and
    fill in the stub; don't invent opinions or storylines that aren't grounded in the actual scores.
-4. **Flip `published: true`** on the power rankings and commentary entries for the week only once
-   the user has actually reviewed/approved them — never do this automatically as part of running
-   the script. Edit the JSON directly (find the entry matching the current `week`, set
-   `"published": false` → `"published": true`).
-5. **Remind the user that nothing here touches git.** The data files are now updated locally, but
+4. **Ask whether to draft "Brian's Fun Facts" for the week** — unlike commentary, no script writes
+   `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
+   (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing
+   week 2 entry for the shape). Each fact is `{label, headline, num, sub, tone, wide}` - `headline`
+   uses a literal `{{num}}` placeholder the front end swaps for a styled `<span>` (e.g. `"headline":
+   "{{num}} — Ainsworth"`, `"num": "165.56"`), `tone` is `hot`/`cold`/`green`/`red`/`""` (colors the
+   number), `wide: true` spans both grid columns. Ground every fact in real data the same way the
+   Week 4 Pick'em props were (this week's matchups.json, recent-weeks trends, and real league
+   history from the data files - see "Weekly Pick'em props" below for where that history lives) -
+   never invent a stat. 8-10 facts is a reasonable batch size (see the week 2 entry).
+5. **Flip `published: true`** on every power rankings, commentary, and Fun Facts entry the user
+   has actually reviewed/approved (could be more than one week at once, per point 2 above) — never
+   do this automatically as part of running the script. Edit the JSON directly (find the matching
+   entry, set `"published": false` → `"published": true`).
+6. **Remind the user that nothing here touches git.** The data files are now updated locally, but
    the live site (GitHub Pages + Vercel) won't see any of it until it's committed and pushed:
    ```bash
    git add -A
-   git commit -m "Update week N data: matchups, standings, power rankings, rosters"
+   git commit -m "Update week N data: matchups, standings, power rankings, commentary, fun facts, rosters"
    git push
    ```
    Per this project's standing rule, always ask before running `git push` — don't assume a prior
