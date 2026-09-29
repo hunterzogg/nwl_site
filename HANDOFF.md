@@ -780,6 +780,21 @@ II") - one-line change in `weekLabel()` in `pickem.js` (`week === -1` case), no 
 referenced the old "Preseason" string. Bumped `pickem.js?v=8`. Final batch label set: Draft
 (week 0), Season I (week -1), Season II (week -2), Week N (1+).
 
+**Archived batches split into their own row, fixed display order (later follow-up)**: per explicit
+request, historical (fully-locked) batches no longer sit in the same tab row as This Week/
+Leaderboard - `buildTabs()` in `pickem.js` now renders those two into `#tabRow` only, and every
+archived batch into a new `#archiveTabSection` (added to `pages/pickem.html`) under a small
+"Past Batches" label (reusing the site's existing `.nav-group-label` visual pattern, scoped
+locally as `.tab-row-label` since this page doesn't use `renderNav()`'s grouped nav). Click
+handling is unchanged (`document.querySelectorAll('.tab-btn')` still finds buttons in both
+containers). Also fixed the archive order itself: `weekSortKey()` previously sorted by actual
+lock time, which put Season II (locks well into the season) awkwardly between Week 3 and Week 4
+in the row; per explicit request the order is now always fixed regardless of lock time - Draft,
+Season I, Season II, then Week 1/2/3/... (`weekSortKey` returns -3/-2/-1 for the three special
+buckets, the raw week number otherwise). Bumped `pickem.js?v=9`. Verified via a mock-data
+`buildTabs()` call in-browser (real login isn't available outside `vercel dev`) - correct order
+and two-row layout confirmed by screenshot.
+
 ### mock-draft.html ✅ (archived from nav - see "Trade Tools" section below)
 **Archived this session**: the real 2026 draft finished, so this tool no longer has a public entry
 point — dropped from `NWL_IN_SEASON_PAGES` in `shared.js` and its homepage hero CTA

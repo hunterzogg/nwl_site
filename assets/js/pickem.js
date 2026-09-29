@@ -9,9 +9,10 @@ let archivedWeeks = []; // week numbers whose questions are all locked, oldest-f
 // Every batch of questions gets a `week` bucket - 0 is Draft Day, -1 is the original season-long
 // "Season I" props (locks after the draft but before Week 1), -2 is "Season II" (a second
 // season-long batch added once real Week 1-3 results existed to inform better lines - locks
-// after Week 3, before Week 4), 1+ are real weekly props. Numeric week order doesn't match
-// chronological order (-1/-2 sort before 0, and -2 locks later than -1), so label/sort are
-// separate helpers rather than using the raw number directly.
+// after Week 3, before Week 4), 1+ are real weekly props. Display order is fixed (Draft, Season I,
+// Season II, then Week 1/2/3/...) rather than sorted by actual lock time - Season II locks well
+// into the season but reads better grouped with Season I than interleaved into the weekly
+// archive - so weekSortKey encodes that fixed order directly instead of the raw week number.
 function weekLabel(week) {
   if (week === 0) return 'Draft';
   if (week === -1) return 'Season I';
@@ -19,9 +20,9 @@ function weekLabel(week) {
   return `Week ${week}`;
 }
 function weekSortKey(week) {
-  if (week === 0) return -2;
-  if (week === -1) return -1;
-  if (week === -2) return 3.5; // chronologically after Week 3, before Week 4
+  if (week === 0) return -3;
+  if (week === -1) return -2;
+  if (week === -2) return -1;
   return week;
 }
 
@@ -270,6 +271,12 @@ function renderQuestionsPanel(containerId, questionsList, showActionBar) {
 // that's fully locked) - called once at init, since which weeks exist/are locked doesn't change
 // within a session. "This Week" pools every not-yet-locked question regardless of its week bucket
 // (in practice there's only ever one open batch at a time, but nothing breaks if two overlap).
+//
+// Archived (fully-locked) batches render in a visually separate row from This Week/Leaderboard,
+// under a small "Past Batches" label, per explicit request - they're historical, not part of the
+// live/current pick'em the way the first two tabs are, and mixing them into one row implied they
+// were all equally "current." Display order within that row is fixed (Draft, Season I, Season II,
+// then Week 1/2/3/... - see weekSortKey), not sorted by actual lock time.
 function buildTabs() {
   const now = new Date();
   const weeksPresent = [...new Set(questions.map(q => q.week))];
@@ -280,9 +287,20 @@ function buildTabs() {
   const tabButtons = [
     '<button class="tab-btn active" data-tab="this-week">This Week</button>',
     '<button class="tab-btn" data-tab="leaderboard">Leaderboard</button>',
-    ...archivedWeeks.map(week => `<button class="tab-btn" data-tab="week-${week}">${weekLabel(week)}</button>`),
   ];
   document.getElementById('tabRow').innerHTML = tabButtons.join('');
+
+  const archiveSection = document.getElementById('archiveTabSection');
+  if (archivedWeeks.length) {
+    archiveSection.innerHTML = `
+      <div class="tab-row-label">Past Batches</div>
+      <div class="tab-row">
+        ${archivedWeeks.map(week => `<button class="tab-btn" data-tab="week-${week}">${weekLabel(week)}</button>`).join('')}
+      </div>
+    `;
+  } else {
+    archiveSection.innerHTML = '';
+  }
 
   const panels = [
     '<div class="panel active" id="panel-this-week"><div id="picksContent"></div></div>',
