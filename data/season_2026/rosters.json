@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-09-29T17:37:10.728253+00:00",
+  "updated_at": "2026-09-29T18:20:46.917518+00:00",
   "weeks_remaining": 11,
   "vbd_baseline": {
     "QB": 279.9,
@@ -1395,7 +1395,7 @@
           "name": "Alec Pierce",
           "position": "WR",
           "nfl_team": "IND",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 21,
           "projected_total": 93.1,
           "actual_so_far": 9.7,
           "ros_value": 150.4,
@@ -1473,7 +1473,7 @@
           "name": "Zach Charbonnet",
           "position": "RB",
           "nfl_team": "SEA",
-          "lineup_slot_id": 21,
+          "lineup_slot_id": 20,
           "projected_total": 133.2,
           "actual_so_far": 0.0,
           "ros_value": 122.8,
