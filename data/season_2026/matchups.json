@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-02T09:56:45.277023+00:00",
+    "updated_at": "2026-10-02T18:04:58.991736+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-02T09:56:45.277053+00:00",
+    "updated_at": "2026-10-02T18:04:58.991772+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-02T09:56:45.277067+00:00",
+    "updated_at": "2026-10-02T18:04:58.991789+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,20 +199,20 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-02T09:56:45.277093+00:00",
+    "updated_at": "2026-10-02T18:04:58.991821+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
         "home_score": 0.0,
-        "home_projected": 101.7,
+        "home_projected": 102.2,
         "away_manager": "Palaia",
         "away_score": 0.0,
-        "away_projected": 100.7,
+        "away_projected": 103.1,
         "winner": "UNDECIDED",
         "line": {
-          "favorite": "Muenchow",
+          "favorite": "Palaia",
           "spread": 1.0,
-          "over_under": 202.5
+          "over_under": 205.5
         }
       },
       {
@@ -235,12 +235,12 @@
         "home_projected": 112.7,
         "away_manager": "Zogg",
         "away_score": 0.0,
-        "away_projected": 92.3,
+        "away_projected": 93.4,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Prodahl",
-          "spread": 20.5,
-          "over_under": 205.0
+          "spread": 19.5,
+          "over_under": 206.0
         }
       },
       {

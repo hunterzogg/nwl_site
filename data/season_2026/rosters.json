@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-10-02T09:56:46.082108+00:00",
+  "updated_at": "2026-10-02T18:05:00.297137+00:00",
   "weeks_remaining": 11,
   "vbd_baseline": {
     "QB": 279.9,
@@ -657,19 +657,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 4429501,
-          "name": "Ray Davis",
-          "position": "RB",
-          "nfl_team": "BUF",
-          "lineup_slot_id": 20,
-          "projected_total": 17.9,
-          "actual_so_far": 0.3,
-          "ros_value": 33.8,
-          "vbd_value": -135.3,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": 4682745,
           "name": "Jaylen Wright",
           "position": "RB",
@@ -679,6 +666,19 @@
           "actual_so_far": 1.0,
           "ros_value": 32.2,
           "vbd_value": -136.9,
+          "slot": "BEN",
+          "is_starter": false
+        },
+        {
+          "espn_id": 5081432,
+          "name": "Antonio Williams",
+          "position": "WR",
+          "nfl_team": "WSH",
+          "lineup_slot_id": 20,
+          "projected_total": 61.1,
+          "actual_so_far": 20.8,
+          "ros_value": 72.7,
+          "vbd_value": -103.7,
           "slot": "BEN",
           "is_starter": false
         }
@@ -1141,7 +1141,7 @@
           "position": "RB",
           "nfl_team": "PHI",
           "lineup_slot_id": 2,
-          "projected_total": 200.0,
+          "projected_total": 200.1,
           "actual_so_far": 19.5,
           "ros_value": 251.1,
           "vbd_value": 82.0,
@@ -1599,7 +1599,7 @@
           "position": "RB",
           "nfl_team": "PIT",
           "lineup_slot_id": 2,
-          "projected_total": 177.0,
+          "projected_total": 177.5,
           "actual_so_far": 49.7,
           "ros_value": 172.8,
           "vbd_value": 3.7,
@@ -1958,7 +1958,7 @@
           "position": "WR",
           "nfl_team": "PHI",
           "lineup_slot_id": 23,
-          "projected_total": 77.8,
+          "projected_total": 80.2,
           "actual_so_far": 6.8,
           "ros_value": 119.9,
           "vbd_value": -56.5,
@@ -2640,7 +2640,7 @@
           "position": "WR",
           "nfl_team": "PHI",
           "lineup_slot_id": 20,
-          "projected_total": 173.1,
+          "projected_total": 160.6,
           "actual_so_far": 39.0,
           "ros_value": 181.5,
           "vbd_value": 5.1,
@@ -2757,7 +2757,7 @@
           "position": "WR",
           "nfl_team": "PHI",
           "lineup_slot_id": 4,
-          "projected_total": 105.3,
+          "projected_total": 106.4,
           "actual_so_far": 28.4,
           "ros_value": 114.8,
           "vbd_value": -61.6,
