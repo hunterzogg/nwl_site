@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-04T17:19:13.460798+00:00",
+    "updated_at": "2026-10-04T23:05:12.978657+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-04T17:19:13.460836+00:00",
+    "updated_at": "2026-10-04T23:05:12.978693+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-04T17:19:13.460852+00:00",
+    "updated_at": "2026-10-04T23:05:12.978709+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,15 +199,15 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-04T17:19:13.460885+00:00",
+    "updated_at": "2026-10-04T23:05:12.978743+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
         "home_score": 0.0,
-        "home_projected": 95.3,
+        "home_projected": 95.2,
         "away_manager": "Palaia",
         "away_score": 0.0,
-        "away_projected": 103.1,
+        "away_projected": 103.2,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Palaia",
@@ -218,15 +218,15 @@
       {
         "home_manager": "Pfaffinger",
         "home_score": 0.0,
-        "home_projected": 94.7,
+        "home_projected": 96.5,
         "away_manager": "Goetz",
         "away_score": 0.0,
-        "away_projected": 116.4,
+        "away_projected": 116.3,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Goetz",
-          "spread": 21.5,
-          "over_under": 211.0
+          "spread": 20.0,
+          "over_under": 213.0
         }
       },
       {
@@ -260,7 +260,7 @@
       {
         "home_manager": "Glaser",
         "home_score": 0.0,
-        "home_projected": 109.9,
+        "home_projected": 110.0,
         "away_manager": "Ainsworth",
         "away_score": 0.0,
         "away_projected": 119.4,
@@ -274,7 +274,7 @@
       {
         "home_manager": "Stover",
         "home_score": 0.0,
-        "home_projected": 99.4,
+        "home_projected": 99.5,
         "away_manager": "Conlin",
         "away_score": 0.0,
         "away_projected": 106.6,
