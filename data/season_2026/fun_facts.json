@@ -162,5 +162,99 @@
         "wide": true
       }
     ]
+  },
+  {
+    "week": 5,
+    "published": true,
+    "facts": [
+      {
+        "label": "Four-Way Logjam",
+        "headline": "{{num}} teams tied for first at 3-1",
+        "num": "4",
+        "sub": "Ainsworth, Glaser, Goetz, and Larson. From 2013-2025, 39 teams started 3-1. 29 of them made the playoffs and 8 won the title.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Highest Score",
+        "headline": "{{num}} — Goetz",
+        "num": "138.78",
+        "sub": "Chuba Hubbard (25.4) and Emanuel Wilson (25.5, from the flex) led the way in a win over Pfaffinger. Goetz started 0-4 last year and finished 12th. This year they're 3-1.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Lowest Score",
+        "headline": "{{num}} — Glaser",
+        "num": "73.18",
+        "sub": "Glaser's perfect start ended against Ainsworth (99.34), who now leads the all-time series 13-12. Glaser is 3-1 after four weeks for the second straight year.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "The 0-4 Club",
+        "headline": "Pfaffinger's {{num}} 0-4 start",
+        "num": "2nd",
+        "sub": "Their first was 2020. Larson (2013, 2015) and Hagan (2021, 2022) are the only other managers to do it twice. None of the 9 teams that started 0-4 from 2013-2025 won a title, and only 2 made the playoffs.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Worst Luck in the League",
+        "headline": "{{num}} points against",
+        "num": "509.5",
+        "sub": "The 4th-most through four weeks in NWL history. The closest comparison is Pfaffinger's own 2020 team, which faced 504.6, started 0-4, and still finished 5th.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Last Year's Unbeatens",
+        "headline": "A combined {{num}}",
+        "num": "1-7",
+        "sub": "Conlin and Pfaffinger both opened 2025 at 5-0. In 2026, Conlin is 1-3 with three straight losses and Pfaffinger is 0-4.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Benched: Most Costly",
+        "headline": "{{num}} points on Prodahl's bench",
+        "num": "38.0",
+        "sub": "That's what Drake Maye (26.2 on the bench, over Kyler Murray's 11.5) and Kyle Monangai (27.5 on the bench, over TreVeyon Henderson's 4.2) would have added. Prodahl was an 18-point favorite and lost to Zogg by 29.32. In Week 3 they made the opposite call and started Maye (3.8) over Murray (10.4).",
+        "tone": "red",
+        "wide": true
+      },
+      {
+        "label": "Benched Again",
+        "headline": "Purdy +{{num}}",
+        "num": "24.8",
+        "sub": "Brock Purdy has outscored Jalen Hurts 50.9 to 26.1 over the last two weeks without starting either game for Hagan.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Wasted Boom",
+        "headline": "{{num}} from Tetairoa McMillan",
+        "num": "38.2",
+        "sub": "The top score by any rostered player in Week 4, and Pfaffinger still lost by 18.22. Benching Rashee Rice (0.0) and Bhayshul Tuten (10.1) for KC Concepcion (8.9) and Alvin Kamara (20.3) would have won it.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Trade Market",
+        "headline": "{{num}} trades completed",
+        "num": "0",
+        "sub": "ESPN has logged 34 player-trade proposals since the draft, and 22 of them came from Zogg. None have been accepted.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Week 5 Game of the Week",
+        "headline": "#12 is favored over #1 by {{num}}",
+        "num": "5.5",
+        "sub": "0-4 Pfaffinger hosts 3-1 Ainsworth. Pfaffinger leads the all-time series 12-5 and won the last meeting, 82.06–65.06 in Week 14 of 2025.",
+        "tone": "",
+        "wide": true
+      }
+    ]
   }
 ]
