@@ -110,6 +110,17 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    claim has to come from real data. Don't infer why a player scored 0.0 (bye vs. injury) without
    checking. Use they/them for managers. Always draft it, show it, and leave it unpublished for
    review.
+   **Add visuals where they help** (tables and bar charts, not decoration): a commentary entry can
+   carry an optional `visuals` array, each placed in `body` by a paragraph that is exactly
+   `{{visual:<id>}}`. Two types, rendered by `commentaryVisualHTML()` in `pages/season-2026.html`:
+   `table` (`columns: [{key, label, num?, manager?}]`, `rows: [{...cells, _hl?, _em?: [keys]}]`) and
+   `bar` (`bars: [{manager?, label, value, display?, tone?: 'hot'|'muted'}]`, optional `legend`). Week
+   5 is the worked example: Week 4 scores bar chart, all-time points-against bars, a wrong-QB table,
+   and the best-ball table. Let the visual carry the numbers and keep the prose around it short.
+   **Best-ball standings** are a standing section: every team and every opponent plays its
+   highest-scoring legal lineup from that week's roster (slots QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX
+   per ESPN `lineupSlotCounts`; IR excluded; use each player's `eligibleSlots`), compared with actual
+   records plus season bench points left, as a table with flipped records highlighted.
 4. **Draft "Brian's Fun Facts"** for the upcoming week (same look-back convention). Unlike commentary, no script writes
    `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
    (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing

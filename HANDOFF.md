@@ -290,6 +290,22 @@ rebuild mapped them to managers per season by matching scores against `weekly_sc
   was Muenchow's 67.98-point win over Stover (2022), not Pfaffinger's over Conlin (2015), and
   historical 2-0 starts were 39 (5 champions), not 37 (4 champions), with Palaia leading at 7.
 
+**Commentary visuals + best-ball section (Week 5).** `commentary.json` entries can now carry an
+optional `visuals` array (`table` or `bar`, plain HTML/CSS, no chart library), placed inline by a
+body paragraph that is exactly `{{visual:<id>}}`. See `commentaryBodyHTML()`/
+`commentaryVisualHTML()` in `season-2026.html` and the weekly-espn-update skill's step 3 for the
+shape. The body now renders as `<p>` per blank-line-separated paragraph instead of one
+`white-space: pre-wrap` block (older entries look the same). Week 5 added a recurring best-ball
+table: optimal lineup vs. optimal lineup, with flipped records highlighted. Same pass: power-ranking
+cards dropped "actual" after the record and "of 12" after the SoS rank, and the manager name is now larger with the rank-change arrow/emoji shown small beside it (it used to be its own column).
+
+**Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a
+redirect to `draft.html#a26-grades`. Its five tabs are a labeled "2026 Draft" tab row on
+`draft.html` (`a26-*` tab ids, `.a26`-scoped CSS), with the JS moved to
+`assets/js/draft_analysis_2026.js` (an IIFE exposing only `initDraftAnalysis2026`, because draft.html
+already has top-level `draftGrades`/`gradeBadge`/`renderGrades`). `draft.html` tabs can now be deep-linked by
+hash. The nav's In Season group is now 2026 Hub / Pick'em / Trade Tools (`shared.js?v=17`).
+
 ### hall-of-fame.html ✅ (formerly lookup.html)
 Three tabs: League Records (single-game, season, streaks), Head-to-Head (pick 2 managers → full matchup history), Seasons (weekly scores + standings + a top-3/last-place header, per year). Career Stats tab removed — moved to Managers page. Seasons tab shows two weekly-score tables — Regular Season and Playoffs (playoff weeks/managers vary correctly by era) — and standings grouped by division, sorted by wins.
 

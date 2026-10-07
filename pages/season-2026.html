@@ -47,7 +47,10 @@
 .division-Bronze { color: #A9784F; background: rgba(169, 120, 79, 0.14); }
 .rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
 .rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
-.rank-trend { width: 64px; flex-shrink: 0; text-align: center; font-size: 0.8rem; font-family: var(--font-mono); white-space: nowrap; }
+.rank-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.rank-name .manager-tag { font-size: 1.2rem; font-weight: 600; }
+.rank-name .manager-dot { width: 11px; height: 11px; }
+.rank-trend { font-size: 0.72rem; font-family: var(--font-mono); white-space: nowrap; opacity: 0.85; }
 .rank-trend.up { color: #4FA876; }
 .rank-trend.down { color: #E0524A; }
 .rank-trend.same { color: var(--text-muted); }
@@ -57,7 +60,32 @@
 }
 .rank-stats li { color: var(--text-muted); font-size: 0.82rem; }
 .rank-stats li b { color: var(--text); font-family: var(--font-mono); font-weight: 600; }
-.commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; white-space: pre-wrap; }
+.commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; }
+.commentary-body p { margin: 0 0 1em; white-space: pre-wrap; }
+.commentary-body p:last-child { margin-bottom: 0; }
+/* Inline commentary visuals (an entry's optional `visuals` array, placed via {{visual:id}} in body) */
+.cv { margin: 4px 0 22px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; }
+.cv-title { font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 10px; color: var(--text); }
+.cv-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+.cv-table-wrap { overflow-x: auto; }
+.cv table { width: 100%; border-collapse: collapse; font-size: 0.84rem; line-height: 1.4; }
+.cv th { text-align: left; font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.cv td { padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.cv tr:last-child td { border-bottom: none; }
+.cv .num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.cv td.em { color: var(--live-bright); font-weight: 600; }
+.cv tr.hl td { background: rgba(61, 95, 224, 0.08); }
+.cv-bars { display: flex; flex-direction: column; gap: 6px; }
+.cv-bar-row { display: grid; grid-template-columns: minmax(90px, 30%) 1fr auto; gap: 10px; align-items: center; font-size: 0.82rem; }
+.cv-bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-bar-track { height: 14px; }
+.cv-bar-fill { height: 100%; border-radius: 0 3px 3px 0; background: var(--blue); min-width: 2px; }
+.cv-bar-fill.tone-hot { background: var(--live-bright); }
+.cv-bar-fill.tone-muted { background: var(--line-strong, #33405c); }
+.cv-bar-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.8rem; min-width: 52px; text-align: right; }
+.cv-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.74rem; color: var(--text-muted); margin-bottom: 10px; }
+@media (max-width: 640px) { .commentary-body { padding: 16px; } .cv { padding: 12px 10px; } .cv th, .cv td { padding: 6px 5px; } .cv-bar-row { grid-template-columns: 96px 1fr auto; gap: 6px; } }
+.cv-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
 .commentary-title { margin-bottom: 12px; }
 .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 640px) { .fact-grid { grid-template-columns: 1fr; } }
@@ -156,7 +184,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=16"></script>
+<script src="../assets/js/shared.js?v=17"></script>
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];
@@ -293,16 +321,18 @@ function renderPower() {
   document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
     <div class="rank-card hover-lift">
       <div class="rank-num-big">${r.rank}</div>
-      <div class="rank-trend ${r.trend}">${trendLabel(r)}</div>
       <div class="rank-body">
-        ${managerTagWithDivision(managers, r.manager)}
+        <div class="rank-name-row">
+          <span class="rank-name">${managerTagWithDivision(managers, r.manager)}</span>
+          <span class="rank-trend ${r.trend}">${trendLabel(r)}</span>
+        </div>
         ${r.record_actual ? `
           <ul class="rank-stats">
-            <li>Record: <b>${r.record_actual}</b> actual</li>
+            <li>Record: <b>${r.record_actual}</b></li>
             <li>Expected Wins: <b>${r.expected_wins}</b></li>
             <li>PPG: <b>${r.ppg}</b></li>
             <li>Last ${r.recent_games}: <b>${r.recent_record}</b>, ${r.recent_ppg} PPG</li>
-            <li>Strength of Schedule: <b>${ordinal(r.sos_rank)}</b> of ${r.sos_total}</li>
+            <li>Strength of Schedule: <b>${ordinal(r.sos_rank)}</b></li>
           </ul>
         ` : ''}
       </div>
@@ -361,6 +391,48 @@ const GISCUS_REPO_ID = 'R_kgDOTSHvaA';
 const GISCUS_CATEGORY = 'Announcements';
 const GISCUS_CATEGORY_ID = 'DIC_kwDOTSHvaM4DAyKl';
 
+// Commentary body: paragraphs split on blank lines. A paragraph that is exactly {{visual:<id>}}
+// is replaced by the matching entry in the entry's optional `visuals` array, so a week's recap can
+// carry tables/bar charts inline. Visual shapes (hand-authored in commentary.json):
+//   {id, type: 'table', title, note?, columns: [{key, label, num?, manager?}], rows: [{...cells, _hl?, _em?: [keys]}]}
+//   {id, type: 'bar', title, note?, unit?, legend?: [{label, tone}], bars: [{label, manager?, value, tone?: 'hot'|'muted'}]}
+function commentaryBodyHTML(entry) {
+  const visuals = {};
+  (entry.visuals || []).forEach(v => { visuals[v.id] = v; });
+  return entry.body.split(/\n\s*\n/).map(par => {
+    const m = par.trim().match(/^\{\{visual:([\w-]+)\}\}$/);
+    if (m) return visuals[m[1]] ? commentaryVisualHTML(visuals[m[1]]) : '';
+    return `<p>${par}</p>`;
+  }).join('');
+}
+
+function commentaryVisualHTML(v) {
+  const title = v.title ? `<div class="cv-title">${v.title}</div>` : '';
+  const note = v.note ? `<div class="cv-note">${v.note}</div>` : '';
+  if (v.type === 'table') {
+    const head = v.columns.map(c => `<th class="${c.num ? 'num' : ''}">${c.label}</th>`).join('');
+    const body = v.rows.map(r => `<tr class="${r._hl ? 'hl' : ''}">${v.columns.map(c => {
+      const val = r[c.key] === undefined || r[c.key] === null ? '' : r[c.key];
+      const cls = [c.num ? 'num' : '', (r._em || []).includes(c.key) ? 'em' : ''].join(' ').trim();
+      return `<td class="${cls}">${c.manager && val ? managerTag(managers, val) : val}</td>`;
+    }).join('')}</tr>`).join('');
+    return `<div class="cv">${title}<div class="cv-table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>${note}</div>`;
+  }
+  if (v.type === 'bar') {
+    const max = Math.max(...v.bars.map(b => b.value), 0) || 1;
+    const legend = v.legend ? `<div class="cv-legend">${v.legend.map(l =>
+      `<span><i class="cv-bar-fill${l.tone ? ' tone-' + l.tone : ''}"></i>${l.label}</span>`).join('')}</div>` : '';
+    const bars = v.bars.map(b => `
+      <div class="cv-bar-row">
+        <span class="cv-bar-label">${b.manager ? managerTag(managers, b.manager) + (b.label ? ' ' + b.label : '') : b.label}</span>
+        <div class="cv-bar-track"><div class="cv-bar-fill${b.tone ? ' tone-' + b.tone : ''}" style="width:${(b.value / max * 100).toFixed(1)}%"></div></div>
+        <span class="cv-bar-value">${b.display || b.value}${v.unit ? ' ' + v.unit : ''}</span>
+      </div>`).join('');
+    return `<div class="cv">${title}${legend}<div class="cv-bars">${bars}</div>${note}</div>`;
+  }
+  return '';
+}
+
 function renderCommentary() {
   const week = document.getElementById('commentaryWeek').value;
   const entry = commentary.find(c => String(c.week) === String(week) && c.published);
@@ -372,7 +444,7 @@ function renderCommentary() {
   document.getElementById('commentaryContent').innerHTML = `
     <div class="commentary-body">
       ${entry.title ? `<h2 class="commentary-title">${entry.title}</h2>` : ''}
-      ${entry.body}
+      ${commentaryBodyHTML(entry)}
     </div>
     <div class="comments-section">
       <div class="comments-title">Discussion</div>

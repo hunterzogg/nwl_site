@@ -202,6 +202,46 @@
   z-index: 20;
 }
 [data-tip]:hover::after, [data-tip].tip-open::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- 2026 Draft tab group (ported from the former pages/draft-analysis.html) ----
+   .grade-badge/.grade-lead/.grade-detail/.methodology are shared with the historical tabs above;
+   only the few rules that differed are overridden here, scoped to .a26. */
+.tab-group-label {
+  font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); margin: -10px 0 8px;
+}
+.tab-row-2026 .tab-btn.active { border-color: var(--live-bright); }
+.a26 .grade-lead { flex-wrap: wrap; }
+.a26 .grade-lead .mgr-body { min-width: 180px; }
+.a26 .grade-detail { padding: 12px 18px 16px; }
+.a26 .empty-state {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  padding: 48px 24px; text-align: center; color: var(--text-muted);
+}
+.a26 .empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.a26 .updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
+.a26 .pos-grade-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.a26 .pos-grade-chip { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--text-muted); }
+.a26 .pos-grade-chip .lbl { font-family: var(--font-mono); }
+.a26 .award-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+.a26 .award-title { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.01em; color: var(--blue-bright); margin-bottom: 6px; }
+.a26 .award-mgr-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.a26 .award-blurb { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+.a26 .leaderboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 20px; }
+.a26 .leaderboard-title { font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; border-left: 3px solid var(--blue-bright); padding-left: 10px; }
+.a26 .value-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.88rem; }
+.a26 .value-row:last-child { border-bottom: none; }
+.a26 .value-row .rank-num { font-family: var(--font-mono); color: var(--text-muted); width: 20px; flex-shrink: 0; }
+.a26 .value-row .player-body { flex: 1; min-width: 0; }
+.a26 .value-row .player-sub { color: var(--text-muted); font-size: 0.78rem; margin-top: 1px; }
+.a26 .value-row .value-num { font-family: var(--font-mono); font-weight: 600; flex-shrink: 0; }
+.a26 .value-num.steal { color: #4FA876; }
+.a26 .value-num.reach { color: #E0524A; }
+.a26 .rank-num-big { font-family: var(--font-mono); font-size: 1rem; color: var(--text-muted); width: 28px; flex-shrink: 0; display: inline-block; }
+.a26 .mgr-summary-row { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 18px; margin-bottom: 8px; }
+.a26 .mgr-summary-row .mgr-body { flex: 1; }
+.a26 .mgr-summary-row .mgr-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.a26 .mgr-summary-row .total-num { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; color: var(--blue-bright); }
 </style>
 </head>
 <body>
@@ -220,6 +260,20 @@
     <button class="tab-btn" data-tab="te">TE Analysis</button>
     <button class="tab-btn" data-tab="qb">QB Analysis</button>
   </div>
+  <div class="tab-group-label">2026 Draft</div>
+  <div class="tab-row tab-row-2026">
+    <button class="tab-btn" data-tab="a26-grades">2026 Grades</button>
+    <button class="tab-btn" data-tab="a26-contender">Contender Profile</button>
+    <button class="tab-btn" data-tab="a26-superlatives">Superlatives</button>
+    <button class="tab-btn" data-tab="a26-reaches">Reaches &amp; Steals</button>
+    <button class="tab-btn" data-tab="a26-buzz">Media Buzz Ranking</button>
+  </div>
+
+  <div class="panel a26" id="panel-a26-grades"><div id="gradesContent"></div></div>
+  <div class="panel a26" id="panel-a26-contender"><div id="contenderContent"></div></div>
+  <div class="panel a26" id="panel-a26-superlatives"><div id="superlativesContent"></div></div>
+  <div class="panel a26" id="panel-a26-reaches"><div id="reachesContent"></div></div>
+  <div class="panel a26" id="panel-a26-buzz"><div id="upsideManagersContent"></div></div>
 
   <div class="panel active" id="panel-board">
     <div class="controls-row">
@@ -327,7 +381,8 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=16"></script>
+<script src="../assets/js/draft_analysis_2026.js?v=1"></script>
+<script src="../assets/js/shared.js?v=17"></script>
 <script>
 let picks = [], managers = [], teamSeasons = [];
 
@@ -713,7 +768,7 @@ function renderManagerGradesLeaderboard() {
     </div>
   `).join('');
 
-  document.querySelectorAll('.grade-lead').forEach(el => {
+  document.querySelectorAll('#managerGradesLeaderboard .grade-lead').forEach(el => {
     el.addEventListener('click', () => {
       el.classList.toggle('expanded');
       el.nextElementSibling.classList.toggle('expanded');
@@ -1857,14 +1912,25 @@ async function init() {
   renderTe();
   renderQb();
 
+  await initDraftAnalysis2026(managers);
+
+  function showTab(tab) {
+    const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+    if (!btn) return;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      showTab(btn.dataset.tab);
+      history.replaceState(null, '', '#' + btn.dataset.tab);
     });
   });
+  // Deep links (e.g. draft.html#a26-grades) - the old pages/draft-analysis.html redirects here.
+  if (location.hash) showTab(location.hash.slice(1));
+  window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
 }
 
 // Stacked-bar segment tooltips (Handcuffs/Mid-Late WRs/TEs' [data-tip] elements) show on hover
