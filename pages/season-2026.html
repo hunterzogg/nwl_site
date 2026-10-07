@@ -332,8 +332,8 @@ function renderPower() {
             <li>Expected Wins: <b>${r.expected_wins}</b></li>
             <li>PPG: <b>${r.ppg}</b></li>
             <li>Last ${r.recent_games}: <b>${r.recent_record}</b>, ${r.recent_ppg} PPG</li>
-            <li>Strength of Schedule (1st = hardest, 12th = easiest): <b>${ordinal(r.sos_rank)}</b></li>
-            ${r.remaining_sos_rank ? `<li>Remaining SoS (next ${r.remaining_games} games): <b>${ordinal(r.remaining_sos_rank)}</b></li>` : ''}
+            <li>Strength of Schedule: <b>${sosLabel(r.sos_rank, r.sos_total)}</b></li>
+            ${r.remaining_sos_rank ? `<li>Remaining SoS (next ${r.remaining_games} games): <b>${sosLabel(r.remaining_sos_rank, r.sos_total)}</b></li>` : ''}
           </ul>
         ` : ''}
       </div>
@@ -353,6 +353,13 @@ function trendLabel(r) {
   const arrow = delta > 0 ? '&#9650;' : '&#9660;';
   const emoji = delta > 2 ? ' \u{1F525}' : delta < -2 ? ' ❄️' : '';
   return `${arrow}${Math.abs(delta)}${emoji}`;
+}
+
+// "1st (hardest)" / "12th (easiest)" only at the two extremes, plain ordinal otherwise.
+function sosLabel(rank, total) {
+  if (rank === 1) return `${ordinal(rank)} (hardest)`;
+  if (rank === total) return `${ordinal(rank)} (easiest)`;
+  return ordinal(rank);
 }
 
 function ordinal(n) {
