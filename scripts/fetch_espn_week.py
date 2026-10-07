@@ -154,8 +154,9 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
         record.
     Also computes (for display only, not part of the composite score) a strength-of-schedule
     rank: each manager's opponents' own season PPG (excluding their games against that manager),
-    averaged and ranked 1 (toughest) to N (easiest) against the field - opponents played so far
-    only, not the remaining schedule.
+    averaged and ranked 1 (toughest) to N (easiest) against the field - opponents played so far.
+    remaining_sos_rank does the same for the unplayed regular-season schedule, rating each future
+    opponent by their full season PPG to date.
     Returns a list of per-manager dicts (rank/manager/trend/delta plus the display stats used by
     season-2026.html's stacked bullet list), sorted best to worst.
     """
@@ -238,6 +239,23 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
         sos_value[mgr] = (sum(opp_ratings) / len(opp_ratings)) if opp_ratings else 0
     sos_rank = {m: i + 1 for i, m in enumerate(sorted(managers, key=lambda m: sos_value[m], reverse=True))}
 
+    # Remaining strength of schedule: the regular-season games not yet played, each future
+    # opponent rated by their full season PPG so far, averaged and ranked 1 (hardest) to N
+    # (easiest). Display-only like sos_rank. None once a manager has no regular-season games left.
+    played_ids = {id(m) for m in played}
+    remaining_opps = {mgr: [] for mgr in managers}
+    for m in schedule:
+        if id(m) in played_ids or m.get("playoffTierType", "NONE") != "NONE" or not m.get("away"):
+            continue
+        home_mgr = resolve_manager(m["home"].get("teamId"), team_map)
+        away_mgr = resolve_manager(m["away"].get("teamId"), team_map)
+        if home_mgr in remaining_opps and away_mgr in avg_points:
+            remaining_opps[home_mgr].append(away_mgr)
+        if away_mgr in remaining_opps and home_mgr in avg_points:
+            remaining_opps[away_mgr].append(home_mgr)
+    rem_value = {m: sum(avg_points[o] for o in opps) / len(opps) for m, opps in remaining_opps.items() if opps}
+    rem_sos_rank = {m: i + 1 for i, m in enumerate(sorted(rem_value, key=lambda m: rem_value[m], reverse=True))}
+
     composite = {}
     for mgr in managers:
         composite[mgr] = (
@@ -298,6 +316,8 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
             "recent_ppg": round(recent_form_raw[mgr]["pts"], 1),
             "sos_rank": sos_rank[mgr],
             "sos_total": len(managers),
+            "remaining_sos_rank": rem_sos_rank.get(mgr),
+            "remaining_games": len(remaining_opps.get(mgr, [])),
         })
 
     return output

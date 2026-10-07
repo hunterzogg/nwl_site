@@ -760,7 +760,9 @@
         "recent_record": "2-1",
         "recent_ppg": 105.6,
         "sos_rank": 3,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 12,
+        "remaining_games": 10
       },
       {
         "rank": 2,
@@ -775,7 +777,9 @@
         "recent_record": "2-1",
         "recent_ppg": 111.9,
         "sos_rank": 12,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 9,
+        "remaining_games": 10
       },
       {
         "rank": 3,
@@ -790,7 +794,9 @@
         "recent_record": "2-1",
         "recent_ppg": 99.8,
         "sos_rank": 1,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 11,
+        "remaining_games": 10
       },
       {
         "rank": 4,
@@ -805,7 +811,9 @@
         "recent_record": "2-1",
         "recent_ppg": 107.4,
         "sos_rank": 4,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 4,
+        "remaining_games": 10
       },
       {
         "rank": 5,
@@ -820,7 +828,9 @@
         "recent_record": "2-1",
         "recent_ppg": 103.5,
         "sos_rank": 5,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 6,
+        "remaining_games": 10
       },
       {
         "rank": 6,
@@ -835,7 +845,9 @@
         "recent_record": "2-1",
         "recent_ppg": 109.6,
         "sos_rank": 6,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 10,
+        "remaining_games": 10
       },
       {
         "rank": 7,
@@ -850,7 +862,9 @@
         "recent_record": "1-2",
         "recent_ppg": 87.0,
         "sos_rank": 8,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 2,
+        "remaining_games": 10
       },
       {
         "rank": 8,
@@ -865,7 +879,9 @@
         "recent_record": "2-1",
         "recent_ppg": 91.7,
         "sos_rank": 2,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 8,
+        "remaining_games": 10
       },
       {
         "rank": 9,
@@ -880,7 +896,9 @@
         "recent_record": "1-2",
         "recent_ppg": 93.5,
         "sos_rank": 7,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 7,
+        "remaining_games": 10
       },
       {
         "rank": 10,
@@ -895,7 +913,9 @@
         "recent_record": "2-1",
         "recent_ppg": 88.7,
         "sos_rank": 10,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 1,
+        "remaining_games": 10
       },
       {
         "rank": 11,
@@ -910,7 +930,9 @@
         "recent_record": "0-3",
         "recent_ppg": 84.1,
         "sos_rank": 9,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 5,
+        "remaining_games": 10
       },
       {
         "rank": 12,
@@ -925,7 +947,9 @@
         "recent_record": "0-3",
         "recent_ppg": 88.2,
         "sos_rank": 11,
-        "sos_total": 12
+        "sos_total": 12,
+        "remaining_sos_rank": 3,
+        "remaining_games": 10
       }
     ]
   }

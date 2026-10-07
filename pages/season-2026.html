@@ -333,6 +333,7 @@ function renderPower() {
             <li>PPG: <b>${r.ppg}</b></li>
             <li>Last ${r.recent_games}: <b>${r.recent_record}</b>, ${r.recent_ppg} PPG</li>
             <li>Strength of Schedule (1st = hardest, 12th = easiest): <b>${ordinal(r.sos_rank)}</b></li>
+            ${r.remaining_sos_rank ? `<li>Remaining SoS (next ${r.remaining_games} games): <b>${ordinal(r.remaining_sos_rank)}</b></li>` : ''}
           </ul>
         ` : ''}
       </div>

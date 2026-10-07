@@ -297,7 +297,10 @@ body paragraph that is exactly `{{visual:<id>}}`. See `commentaryBodyHTML()`/
 shape. The body now renders as `<p>` per blank-line-separated paragraph instead of one
 `white-space: pre-wrap` block (older entries look the same). Week 5 added a recurring best-ball
 table: optimal lineup vs. optimal lineup, with flipped records highlighted. Same pass: power-ranking
-cards dropped "actual" after the record and "of 12" after the SoS rank, and the manager name is now larger with the rank-change arrow/emoji shown small beside it (it used to be its own column).
+cards dropped "actual" after the record and "of 12" after the SoS rank, and the manager name is now larger with the rank-change arrow/emoji shown small beside it (it used to be its own column). Later the same day: the SoS label became "(1st = hardest, 12th = easiest)", and a new
+**Remaining SoS** line was added (`remaining_sos_rank`/`remaining_games` from `compute_power_rankings()`:
+unplayed regular-season opponents rated by their full season PPG to date, 1 = hardest). It was backfilled for
+Week 5 only; earlier weeks hide the line, since their "remaining" schedule can't be recomputed after the fact.
 
 **Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a
 redirect to `draft.html#a26-grades`. Its five tabs are a labeled "2026 Draft" tab row on
