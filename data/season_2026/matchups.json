@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-07T19:06:06.047877+00:00",
+    "updated_at": "2026-10-08T20:53:14.877821+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-07T19:06:06.047916+00:00",
+    "updated_at": "2026-10-08T20:53:14.877857+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-07T19:06:06.047932+00:00",
+    "updated_at": "2026-10-08T20:53:14.877874+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,7 +199,7 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-07T19:06:06.047949+00:00",
+    "updated_at": "2026-10-08T20:53:14.877889+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -265,7 +265,7 @@
   },
   {
     "week": 5,
-    "updated_at": "2026-10-07T19:06:06.047982+00:00",
+    "updated_at": "2026-10-08T20:53:14.877921+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -326,7 +326,7 @@
       {
         "home_manager": "Palaia",
         "home_score": 0.0,
-        "home_projected": 104.0,
+        "home_projected": 103.7,
         "away_manager": "Prodahl",
         "away_score": 0.0,
         "away_projected": 113.4,
@@ -334,7 +334,7 @@
         "line": {
           "favorite": "Prodahl",
           "spread": 9.5,
-          "over_under": 217.5
+          "over_under": 217.0
         }
       },
       {
