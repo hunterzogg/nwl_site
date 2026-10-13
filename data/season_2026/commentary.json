@@ -198,7 +198,7 @@
             "sp": "3.8",
             "benched": "Kyler Murray",
             "bp": "10.4",
-            "cost": "−6.6",
+            "cost": "\u22126.6",
             "_em": [
               "cost"
             ]
@@ -210,7 +210,7 @@
             "sp": "11.5",
             "benched": "Drake Maye",
             "bp": "26.2",
-            "cost": "−14.7",
+            "cost": "\u221214.7",
             "_em": [
               "cost"
             ]
@@ -222,7 +222,7 @@
             "sp": "12.6",
             "benched": "Brock Purdy",
             "bp": "31.3",
-            "cost": "−18.7",
+            "cost": "\u221218.7",
             "_em": [
               "cost"
             ]
@@ -234,7 +234,7 @@
             "sp": "13.5",
             "benched": "Brock Purdy",
             "bp": "19.6",
-            "cost": "−6.1",
+            "cost": "\u22126.1",
             "_em": [
               "cost"
             ]
@@ -361,5 +361,11 @@
         "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). Highlighted rows changed record."
       }
     ]
+  },
+  {
+    "week": 6,
+    "published": false,
+    "title": "",
+    "body": ""
   }
 ]
