@@ -108,7 +108,7 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    `playerPoolEntry.appliedStatTotal`. Bench-vs-starter swaps that would have flipped a result are
    reliably the best material. The jokes can be opinionated, but every number and "first/most ever"
    claim has to come from real data. Don't infer why a player scored 0.0 (bye vs. injury) without
-   checking. Use they/them for managers. Always draft it, show it, and leave it unpublished for
+   checking. Use he/him for managers (the league's stated preference). Always draft it, show it, and leave it unpublished for
    review.
    **Add visuals where they help** (tables and bar charts, not decoration): a commentary entry can
    carry an optional `visuals` array, each placed in `body` by a paragraph that is exactly

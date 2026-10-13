@@ -85,7 +85,7 @@
         "label": "Glaser Does It Again",
         "headline": "The first back-to-back {{num}} start in NWL history",
         "num": "3-0",
-        "sub": "Glaser also opened 2025 at 3-0. 17 teams had started 3-0 from 2013-2025, and none of them did it two years running. Before last season, Glaser's best start was 2-1, and they'd opened 0-3 twice (2016, 2020).",
+        "sub": "Glaser also opened 2025 at 3-0. 17 teams had started 3-0 from 2013-2025, and none of them did it two years running. Before last season, Glaser's best start was 2-1, and he'd opened 0-3 twice (2016, 2020).",
         "tone": "green",
         "wide": true
       },
@@ -125,7 +125,7 @@
         "label": "Benched: Most Points",
         "headline": "{{num}} from Brock Purdy, on Hagan's bench",
         "num": "31.3",
-        "sub": "The most points by any QB in the league in Week 3. Hagan started Jalen Hurts (12.6) instead and still beat Zogg 85.62–68.84. At 2-1, Hagan has scored less than they've allowed (268.7 PF vs. 269.6 PA).",
+        "sub": "The most points by any QB in the league in Week 3. Hagan started Jalen Hurts (12.6) instead and still beat Zogg 85.62–68.84. At 2-1, Hagan has scored less than he's allowed (268.7 PF vs. 269.6 PA).",
         "tone": "hot",
         "wide": false
       },
@@ -141,7 +141,7 @@
         "label": "From 3-0 to 0-3",
         "headline": "Pfaffinger's {{num}} 0-3 start",
         "num": "3rd",
-        "sub": "Pfaffinger opened 2025 at 3-0. Their other 0-3 starts were 2020 and 2022, which ties Hagan, Goetz, and Larson for the most in league history. None of the 18 teams that started 0-3 from 2013-2025 won a title, and only 4 made the playoffs.",
+        "sub": "Pfaffinger opened 2025 at 3-0. His other 0-3 starts were 2020 and 2022, which ties Hagan, Goetz, and Larson for the most in league history. None of the 18 teams that started 0-3 from 2013-2025 won a title, and only 4 made the playoffs.",
         "tone": "cold",
         "wide": true
       },
@@ -149,7 +149,7 @@
         "label": "Worst Luck in the League",
         "headline": "{{num}} points against",
         "num": "370.7",
-        "sub": "Pfaffinger's points against lead the league by 42.5, the 9th-most through three weeks in NWL history. Pfaffinger has seen worse: their 2020 team faced 394.8 (2nd-most ever), started 0-3, and still finished 5th.",
+        "sub": "Pfaffinger's points against lead the league by 42.5, the 9th-most through three weeks in NWL history. Pfaffinger has seen worse: his 2020 team faced 394.8 (2nd-most ever), started 0-3, and still finished 5th.",
         "tone": "red",
         "wide": false
       },
@@ -179,7 +179,7 @@
         "label": "Highest Score",
         "headline": "{{num}} — Goetz",
         "num": "138.78",
-        "sub": "Chuba Hubbard (25.4) and Emanuel Wilson (25.5, from the flex) led the way in a win over Pfaffinger. Goetz started 0-4 last year and finished 12th. This year they're 3-1.",
+        "sub": "Chuba Hubbard (25.4) and Emanuel Wilson (25.5, from the flex) led the way in a win over Pfaffinger. Goetz started 0-4 last year and finished 12th. This year he's 3-1.",
         "tone": "hot",
         "wide": false
       },
@@ -195,7 +195,7 @@
         "label": "The 0-4 Club",
         "headline": "Pfaffinger's {{num}} 0-4 start",
         "num": "2nd",
-        "sub": "Their first was 2020. Larson (2013, 2015) and Hagan (2021, 2022) are the only other managers to do it twice. None of the 9 teams that started 0-4 from 2013-2025 won a title, and only 2 made the playoffs.",
+        "sub": "His first was 2020. Larson (2013, 2015) and Hagan (2021, 2022) are the only other managers to do it twice. None of the 9 teams that started 0-4 from 2013-2025 won a title, and only 2 made the playoffs.",
         "tone": "cold",
         "wide": true
       },
@@ -219,7 +219,7 @@
         "label": "Benched: Most Costly",
         "headline": "{{num}} points on Prodahl's bench",
         "num": "38.0",
-        "sub": "That's what Drake Maye (26.2 on the bench, over Kyler Murray's 11.5) and Kyle Monangai (27.5 on the bench, over TreVeyon Henderson's 4.2) would have added. Prodahl was an 18-point favorite and lost to Zogg by 29.32. In Week 3 they made the opposite call and started Maye (3.8) over Murray (10.4).",
+        "sub": "That's what Drake Maye (26.2 on the bench, over Kyler Murray's 11.5) and Kyle Monangai (27.5 on the bench, over TreVeyon Henderson's 4.2) would have added. Prodahl was an 18-point favorite and lost to Zogg by 29.32. In Week 3 he made the opposite call and started Maye (3.8) over Murray (10.4).",
         "tone": "red",
         "wide": true
       },
@@ -337,7 +337,7 @@
         "label": "Most Points Left on the Bench",
         "headline": "{{num}} — Glaser",
         "num": "115.7",
-        "sub": "Through five weeks, compared with Glaser's best possible lineup each week. They're 4-1 anyway. Goetz has left the fewest (31.9).",
+        "sub": "Through five weeks, compared with Glaser's best possible lineup each week. He's 4-1 anyway. Goetz has left the fewest (31.9).",
         "tone": "",
         "wide": false
       },
