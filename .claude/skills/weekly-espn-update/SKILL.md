@@ -122,7 +122,8 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    per ESPN `lineupSlotCounts`; IR excluded; use each player's `eligibleSlots`), compared with actual
    records plus season bench points left, as a table with flipped records highlighted.
    Run `python3 scripts/compute_best_ball.py` (read-only, ~20s): it prints the best-ball table,
-   per-week flips, zero-point starters, started-HC wins (for grading those props), and the
+   per-week flips, zero-or-negative starters (a negative score counts as a zero-point game; Head
+   Coaches excluded), started-HC wins (for grading those props), and the
    **starters who got hurt mid-game**. **Never suggest a team should have started someone else over
    a player who got injured during the game** - the script locks those starters into the optimal
    lineup (so best ball and "bench points left" don't count them either), and any bench-decision

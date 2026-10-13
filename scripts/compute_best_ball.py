@@ -5,7 +5,7 @@ Pulls each played week's ESPN box scores and prints, for the weekly recap:
   - Best-ball standings: every team AND every opponent plays its highest-scoring legal lineup
     from that week's roster (slots from ESPN's lineupSlotCounts; IR excluded; each player's own
     eligibleSlots), compared with actual records, plus season bench points left on the table.
-  - Per-week: started players (non-HC) who scored exactly 0.0, and started Head Coaches who won
+  - Per-week: started players (non-HC) who scored 0.0 or less, and started Head Coaches who won
     (+5) - both used for weekly Pick'em props.
   - Optional --json PATH dumps everything (incl. each team's optimal lineup) for further digging.
 
@@ -133,8 +133,9 @@ def main():
                     p = e["playerPoolEntry"]
                     if e["lineupSlotId"] == HC:
                         week["hc_started"].append({"manager": mgr, "coach": p["player"]["fullName"], "points": p.get("appliedStatTotal", 0)})
-                    elif p.get("appliedStatTotal", 0) == 0:
-                        week["zero_starters"].append({"manager": mgr, "player": p["player"]["fullName"]})
+                    elif p.get("appliedStatTotal", 0) <= 0:  # zero OR negative (HCs excluded above)
+                        week["zero_starters"].append({"manager": mgr, "player": p["player"]["fullName"],
+                                                      "points": round(p.get("appliedStatTotal", 0), 2)})
                 actual_pts = round(t.get("totalPoints", 0), 2)
                 bench_left[mgr] += opt_pts - actual_pts
                 sides[side] = {"manager": mgr, "actual": actual_pts, "optimal": round(opt_pts, 2),
@@ -158,7 +159,8 @@ def main():
         flips = [g for g in w["games"] if (g["home"]["actual"] > g["away"]["actual"]) != (g["home"]["optimal"] > g["away"]["optimal"])]
         hc_wins = sum(1 for h in w["hc_started"] if h["points"] > 0)
         biggest = max((s for g in w["games"] for s in g.values()), key=lambda s: s["optimal"] - s["actual"])
-        print(f"Week {w['week']}: zero-point starters {len(w['zero_starters'])} {[z['manager'] + ': ' + z['player'] for z in w['zero_starters']]}")
+        print(f"Week {w['week']}: zero-or-negative starters {len(w['zero_starters'])} "
+              f"{[z['manager'] + ': ' + z['player'] + ' ' + format(z['points'], '.1f') for z in w['zero_starters']]}")
         print(f"         HCs started {len(w['hc_started'])}, won {hc_wins}")
         print(f"         starters hurt mid-game (locked in, don't second-guess): "
               f"{[i['manager'] + ': ' + i['player'] + ' ' + format(i['points'], '.1f') for i in w['injured_starters']]}")
