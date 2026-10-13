@@ -41,7 +41,7 @@ const QUESTIONS = [
   },
   {
     type: 'over_under',
-    prompt: "How many started players (not counting Head Coaches) score exactly 0.0 in Week 5? Weeks 1-4 had 3, 1, 0, and 2. Carolina and Kansas City are on bye.",
+    prompt: "How many started players (not counting Head Coaches) score 0.0 or less in Week 5? Weeks 1-4 had 3, 2, 0, and 2. Carolina and Kansas City are on bye.",
     option_a: "Over 1.5",
     option_b: "Under 1.5",
   },

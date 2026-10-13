@@ -41,7 +41,7 @@ const QUESTIONS = [
   },
   {
     type: 'this_or_that',
-    prompt: "Pfaffinger is 0-5. Will they avoid 0-6 against Conlin, who is favored by 12.5? Conlin leads that series 11-10. Only two teams have ever started 0-6: Larson (2015) and Goetz (2025).",
+    prompt: "Pfaffinger is 0-5. Will he fall to 0-6 against Conlin, who is favored by 12.5? Conlin leads that series 11-10. Only two teams have ever started 0-6: Larson (2015) and Goetz (2025).",
     option_a: "Yes",
     option_b: "No",
   },
