@@ -302,6 +302,23 @@ cards dropped "actual" after the record and "of 12" after the SoS rank, and the 
 unplayed regular-season opponents rated by their full season PPG to date, 1 = hardest). It was backfilled for
 Week 5 only; earlier weeks hide the line, since their "remaining" schedule can't be recomputed after the fact.
 
+**Injury rule for bench criticism + `scripts/compute_best_ball.py` (Week 6).** Commentary never
+suggests a team should have started a worse player over one who got hurt during the game. The
+new read-only `scripts/compute_best_ball.py` locks mid-game-injured starters into the optimal
+lineup, detected from ESPN NFL play-by-play. It also prints zero-point starters and started-HC
+wins for Pick'em grading. Applying the rule corrected the published Week 5 recap: it dropped a
+Saquon Barkley (hurt mid-game) bench line, Prodahl's Week 4 optimal went from 139.06 to 135.56 and
+their bench miss from 47.28 to 43.78 (Ja'Marr Chase was hurt), and bench-points-left values were
+recomputed. No best-ball record changed.
+
+**Projected lines use each team's best possible projected lineup (Week 6).** Before this change,
+`fetch_projected_points()` in `fetch_espn_week.py` summed ESPN projections for the lineup currently
+set. On the Tuesday the update runs, most lineups still have bye-week and injured starters, so the
+lines were nonsense (Week 6 had Pfaffinger projected at 46.9 and a 45.5-point spread). It now fills
+the starting slots optimally from every non-IR player's ESPN weekly projection, using the shared
+`optimal_lineup()`/`starting_slots()` helpers, which now live in `fetch_espn_week.py`; the best-ball
+script imports them from there. The Week 6 lines moved a lot: Muenchow by 26 became Ainsworth by 9.5.
+
 **Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a
 redirect to `draft.html#a26-grades`. Its five tabs are a labeled "2026 Draft" tab row on
 `draft.html` (`a26-*` tab ids, `.a26`-scoped CSS), with the JS moved to

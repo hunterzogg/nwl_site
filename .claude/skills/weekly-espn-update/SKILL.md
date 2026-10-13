@@ -121,6 +121,15 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    highest-scoring legal lineup from that week's roster (slots QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX
    per ESPN `lineupSlotCounts`; IR excluded; use each player's `eligibleSlots`), compared with actual
    records plus season bench points left, as a table with flipped records highlighted.
+   Run `python3 scripts/compute_best_ball.py` (read-only, ~20s): it prints the best-ball table,
+   per-week flips, zero-point starters, started-HC wins (for grading those props), and the
+   **starters who got hurt mid-game**. **Never suggest a team should have started someone else over
+   a player who got injured during the game** - the script locks those starters into the optimal
+   lineup (so best ball and "bench points left" don't count them either), and any bench-decision
+   line in commentary/Fun Facts must skip them. Detection comes from ESPN's NFL play-by-play
+   ("KC-R.Rice was injured during the play" with no later "has returned to the game"). It's
+   name-matched, so if a starter's low score looks like an injury and isn't listed, spot-check
+   that game before writing the line.
 4. **Draft "Brian's Fun Facts"** for the upcoming week (same look-back convention). Unlike commentary, no script writes
    `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
    (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing
@@ -210,11 +219,16 @@ is a direct Postgres write via `.env.local` + `node`, not a trip through `pickem
    Nothing else is needed after this - the leaderboard (`api/leaderboard.js`) computes standings
    live from `correct_option`, there's no separate "publish the leaderboard" step.
 
+**FAAB timing:** waivers process early Wednesday morning, and none process on Tuesday. A FAAB-spend
+prop's window (Wed through Tue) is therefore final by the Tuesday update. Grade it then; don't wait.
+
 ## Weekly Pick'em props
 
 Once real data exists for the upcoming week (run the data pull above first if it hasn't run yet -
-this needs that week's `matchups.json` entry, which carries ESPN's own projected spread/over-under
-per game), draft that week's weekly Pick'em props. **Always show the drafted props to the user and
+this needs that week's `matchups.json` entry, which carries a projected spread/over-under per
+game computed from each team's *best possible projected lineup*, not the lineup currently set -
+on Tuesday most managers haven't moved bye-week/injured starters yet, so the set lineup's
+projection is meaningless; see `fetch_projected_points()` in `fetch_espn_week.py`), draft that week's weekly Pick'em props. **Always show the drafted props to the user and
 get explicit sign-off before writing anything to the database** - this is a hard rule, not a
 default that can be skipped because the props look obviously fine. Unlike matchups/standings/
 rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment call (which

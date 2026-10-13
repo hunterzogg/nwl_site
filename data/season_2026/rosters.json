@@ -1,6 +1,6 @@
 {
   "season": 2026,
-  "updated_at": "2026-10-13T11:04:27.812654+00:00",
+  "updated_at": "2026-10-13T13:28:42.232150+00:00",
   "weeks_remaining": 9,
   "vbd_baseline": {
     "QB": 279.9,
@@ -257,20 +257,20 @@
         "vbd_value": -26.6
       },
       {
+        "espn_id": 3116164,
+        "name": "Mike Gesicki",
+        "position": "TE",
+        "nfl_team": "CIN",
+        "ros_value": 110.6,
+        "vbd_value": -26.8
+      },
+      {
         "espn_id": 4242557,
         "name": "Colby Parkinson",
         "position": "TE",
         "nfl_team": "LAR",
         "ros_value": 110.6,
         "vbd_value": -26.8
-      },
-      {
-        "espn_id": 4367209,
-        "name": "Greg Dulcich",
-        "position": "TE",
-        "nfl_team": "MIA",
-        "ros_value": 109.4,
-        "vbd_value": -27.7
       }
     ]
   },
@@ -485,7 +485,7 @@
       "manager": "Conlin",
       "division": "Gold",
       "espn_team_id": 4,
-      "roster_size": 16,
+      "roster_size": 15,
       "players": [
         {
           "espn_id": 4379399,
@@ -666,19 +666,6 @@
           "actual_so_far": 5.3,
           "ros_value": 33.8,
           "vbd_value": -135.3,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
-          "espn_id": 4429086,
-          "name": "Michael Mayer",
-          "position": "TE",
-          "nfl_team": "LV",
-          "lineup_slot_id": 23,
-          "projected_total": 65.3,
-          "actual_so_far": 33.6,
-          "ros_value": 74.9,
-          "vbd_value": -53.6,
           "slot": "BEN",
           "is_starter": false
         },
@@ -924,7 +911,7 @@
           "name": "Jahmyr Gibbs",
           "position": "RB",
           "nfl_team": "DET",
-          "lineup_slot_id": 2,
+          "lineup_slot_id": 20,
           "projected_total": 284.2,
           "actual_so_far": 140.2,
           "ros_value": 353.8,
@@ -963,7 +950,7 @@
           "name": "Luther Burden III",
           "position": "WR",
           "nfl_team": "CHI",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 5,
           "projected_total": 117.7,
           "actual_so_far": 44.3,
           "ros_value": 167.0,
@@ -976,7 +963,7 @@
           "name": "Lamar Jackson",
           "position": "QB",
           "nfl_team": "BAL",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 0,
           "projected_total": 235.5,
           "actual_so_far": 79.1,
           "ros_value": 340.4,
@@ -989,7 +976,7 @@
           "name": "Brian Thomas Jr.",
           "position": "WR",
           "nfl_team": "JAX",
-          "lineup_slot_id": 5,
+          "lineup_slot_id": 23,
           "projected_total": 65.1,
           "actual_so_far": 21.0,
           "ros_value": 139.3,
@@ -1002,7 +989,7 @@
           "name": "Chuba Hubbard",
           "position": "RB",
           "nfl_team": "CAR",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 2,
           "projected_total": 178.7,
           "actual_so_far": 74.0,
           "ros_value": 190.0,
@@ -1106,7 +1093,7 @@
           "name": "Sam Darnold",
           "position": "QB",
           "nfl_team": "SEA",
-          "lineup_slot_id": 0,
+          "lineup_slot_id": 20,
           "projected_total": 177.8,
           "actual_so_far": 49.8,
           "ros_value": 204.5,
@@ -1814,7 +1801,7 @@
           "name": "Tee Higgins",
           "position": "WR",
           "nfl_team": "CIN",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 146.1,
           "actual_so_far": 61.8,
           "ros_value": 174.9,
@@ -1853,7 +1840,7 @@
           "name": "Jayden Daniels",
           "position": "QB",
           "nfl_team": "WSH",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 0,
           "projected_total": 259.9,
           "actual_so_far": 64.7,
           "ros_value": 317.9,
@@ -1879,7 +1866,7 @@
           "name": "Rachaad White",
           "position": "RB",
           "nfl_team": "WSH",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 83.0,
           "actual_so_far": 28.1,
           "ros_value": 105.7,
@@ -1905,7 +1892,7 @@
           "name": "Jared Goff",
           "position": "QB",
           "nfl_team": "DET",
-          "lineup_slot_id": 0,
+          "lineup_slot_id": 20,
           "projected_total": 223.0,
           "actual_so_far": 115.0,
           "ros_value": 264.3,
@@ -2475,7 +2462,7 @@
           "name": "Colston Loveland",
           "position": "TE",
           "nfl_team": "CHI",
-          "lineup_slot_id": 6,
+          "lineup_slot_id": 20,
           "projected_total": 85.0,
           "actual_so_far": 17.5,
           "ros_value": 152.3,
@@ -2553,7 +2540,7 @@
           "name": "Woody Marks",
           "position": "RB",
           "nfl_team": "HOU",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 23,
           "projected_total": 90.0,
           "actual_so_far": 37.8,
           "ros_value": 97.0,
@@ -2566,7 +2553,7 @@
           "name": "Hunter Henry",
           "position": "TE",
           "nfl_team": "NE",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 6,
           "projected_total": 80.0,
           "actual_so_far": 31.2,
           "ros_value": 118.6,
@@ -2579,7 +2566,7 @@
           "name": "49ers Coach",
           "position": "HC",
           "nfl_team": "SF",
-          "lineup_slot_id": 20,
+          "lineup_slot_id": 19,
           "projected_total": 41.6,
           "actual_so_far": 25.0,
           "ros_value": 19.2,
@@ -2605,7 +2592,7 @@
           "name": "Will Shipley",
           "position": "RB",
           "nfl_team": "PHI",
-          "lineup_slot_id": 23,
+          "lineup_slot_id": 20,
           "projected_total": 46.6,
           "actual_so_far": 17.3,
           "ros_value": 28.8,
@@ -2619,7 +2606,7 @@
       "manager": "Zogg",
       "division": "Bronze",
       "espn_team_id": 9,
-      "roster_size": 16,
+      "roster_size": 14,
       "players": [
         {
           "espn_id": 4241389,
@@ -2791,19 +2778,6 @@
           "is_starter": false
         },
         {
-          "espn_id": 3116164,
-          "name": "Mike Gesicki",
-          "position": "TE",
-          "nfl_team": "CIN",
-          "lineup_slot_id": 20,
-          "projected_total": 56.7,
-          "actual_so_far": 45.9,
-          "ros_value": 88.4,
-          "vbd_value": -43.4,
-          "slot": "BEN",
-          "is_starter": false
-        },
-        {
           "espn_id": -14006,
           "name": "Cowboys Coach",
           "position": "HC",
@@ -2815,19 +2789,6 @@
           "vbd_value": null,
           "slot": "HC",
           "is_starter": true
-        },
-        {
-          "espn_id": 4595342,
-          "name": "Oronde Gadsden",
-          "position": "TE",
-          "nfl_team": "LAC",
-          "lineup_slot_id": 20,
-          "projected_total": 31.2,
-          "actual_so_far": 19.3,
-          "ros_value": 49.4,
-          "vbd_value": -72.7,
-          "slot": "BEN",
-          "is_starter": false
         }
       ]
     }

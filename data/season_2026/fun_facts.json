@@ -256,5 +256,99 @@
         "wide": true
       }
     ]
+  },
+  {
+    "week": 6,
+    "published": true,
+    "facts": [
+      {
+        "label": "Highest Score",
+        "headline": "{{num}} — Muenchow",
+        "num": "168.22",
+        "sub": "The highest score in any NWL game since the current scoring era began in 2022, and 7th-highest in league history. Muenchow's best is still 172.30, from Week 1 of 2018.",
+        "tone": "hot",
+        "wide": true
+      },
+      {
+        "label": "Biggest Blowout",
+        "headline": "Muenchow by {{num}}",
+        "num": "86.26",
+        "sub": "Over Larson, the second-biggest margin of 2026. Ainsworth's 97.06-point win over Zogg in Week 1 is still the biggest.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Lowest Score",
+        "headline": "{{num}} — Pfaffinger",
+        "num": "63.42",
+        "sub": "Tetairoa McMillan and Bryce Young were on Carolina's bye, and Rashee Rice was on Kansas City's.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "The 0-5 Club",
+        "headline": "Pfaffinger is the {{num}} team to start 0-5",
+        "num": "5th",
+        "sub": "After Larson (2015), Ainsworth (2018), Hagan (2021), and Goetz (2025). None of them made the playoffs, and the best finish was 9th. It's Pfaffinger's first 0-5 start.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Tied at the Top",
+        "headline": "{{num}} of 22 teams that started 4-1 made the playoffs",
+        "num": "19",
+        "sub": "Ainsworth and Glaser are both 4-1. Five of the 22 historical 4-1 teams won the title, most recently Muenchow in 2025.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Right QB, Finally",
+        "headline": "{{num}} from Drake Maye",
+        "num": "39.5",
+        "sub": "The top score by any rostered player in Week 5. Prodahl picked the wrong quarterback in Weeks 3 and 4. This time Maye started, and Prodahl beat Palaia.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Benched Again (and Again)",
+        "headline": "Purdy +{{num}} over three weeks",
+        "num": "28.0",
+        "sub": "Brock Purdy has outscored Jalen Hurts from Hagan's bench three straight weeks: by 18.7, 6.1, and 3.2.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Sub-70 Club",
+        "headline": "{{num}} games under 70 in five weeks",
+        "num": "3",
+        "sub": "Zogg scored 68.50, 68.84, and 69.84, with 138.86 and 121.10 in between. Week 5's included 1.9 points from CeeDee Lamb.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Hot Streak",
+        "headline": "Stover's {{num}}-game win streak",
+        "num": "3",
+        "sub": "The longest active win streak in the league. Stover has also played the hardest schedule so far.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Most Points Left on the Bench",
+        "headline": "{{num}} — Glaser",
+        "num": "115.7",
+        "sub": "Through five weeks, compared with Glaser's best possible lineup each week. They're 4-1 anyway. Goetz has left the fewest (31.9).",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Week 6 Game of the Week",
+        "headline": "Muenchow leads the series {{num}}",
+        "num": "12-7",
+        "sub": "#4 Muenchow, coming off 168.22, hosts #2 Ainsworth. Based on each team's best projected lineup, Ainsworth is favored by 9.5. Muenchow won their last meeting, 124.48–102.72 in Week 5 of 2025.",
+        "tone": "",
+        "wide": true
+      }
+    ]
   }
 ]

@@ -35,6 +35,7 @@ import sys
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -323,15 +324,59 @@ def compute_power_rankings(schedule, week, team_map, prev_rankings):
     return output
 
 
-def fetch_projected_points(league_id, season, week, creds):
+def starting_slots(lineup_slot_counts):
+    """ESPN rosterSettings.lineupSlotCounts -> flat list of starting slot ids (bench/IR dropped),
+    single-position slots first so optimal_lineup's search prunes faster (order doesn't change the
+    optimum, only speed)."""
+    slots = []
+    for sid, n in sorted((int(k), v) for k, v in lineup_slot_counts.items()):
+        if sid not in (20, 21):
+            slots += [sid] * n
+    slots.sort(key=lambda s: (s in (5, 23), s))
+    return slots
+
+
+def optimal_lineup(players, slots, locked=()):
+    """players: tuple of (points, eligible_slots_tuple, name). Exact max-weight fill of `slots`
+    (a list of slot ids, duplicates allowed) via memoized search - rosters are ~16 players and
+    ~9 slots, so this is instant. A slot with no eligible player left stays empty (0).
+    locked: (slot_id, player_index) pairs pinned in place first (mid-game injuries)."""
+    slots = list(slots)
+    pinned = []
+    used0 = 0
+    for slot_id, j in locked:
+        if slot_id in slots:
+            slots.remove(slot_id)
+            pinned.append((slot_id, players[j][2], players[j][0]))
+            used0 |= 1 << j
+    slots = tuple(slots)
+
+    @lru_cache(None)
+    def go(i, used):
+        if i == len(slots):
+            return 0.0, ()
+        best = None
+        for j, (pts, elig, name) in enumerate(players):
+            if used >> j & 1 or slots[i] not in elig:
+                continue
+            sub_pts, sub = go(i + 1, used | 1 << j)
+            if best is None or sub_pts + pts > best[0]:
+                best = (sub_pts + pts, ((slots[i], name, pts),) + sub)
+        return best if best is not None else go(i + 1, used)
+    rest_pts, rest = go(0, used0)
+    return rest_pts + sum(p for _, _, p in pinned), tuple(pinned) + rest
+
+
+def fetch_projected_points(league_id, season, week, creds, slots):
     """
-    Sum of ESPN's own weekly projected points (statSourceId 1 = projected, statSplitTypeId 1 =
-    that single scoring period) for every player in a team's starting lineup - i.e. every roster
-    slot except Bench (20) and IR (21), whatever those starters happen to be. Returns
-    {team_id: projected_points}. Players ESPN hasn't projected yet (deep bench/practice-squad
-    types) just contribute 0, same as ESPN's own UI would show.
+    Each team's BEST POSSIBLE projected lineup for the week, not whatever lineup is set right now -
+    early in the week managers haven't moved bye-week/injured starters yet, and a stale lineup
+    (e.g. two starters on bye and an empty Head Coach slot) makes ESPN's own projection and the
+    resulting spread meaningless. Uses ESPN's weekly projections (statSourceId 1 = projected,
+    statSplitTypeId 1 = that single scoring period) for every non-IR roster player, fills `slots`
+    (see starting_slots) with optimal_lineup, and returns {team_id: projected_points}. Players ESPN
+    hasn't projected (bye weeks, OUT) count as 0, so they never make the optimal lineup.
     """
-    BENCH_SLOTS = {20, 21}
     path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}"
     url = f"{API_HOST}{path}?view=mRoster&scoringPeriodId={week}"
     req = urllib.request.Request(url)
@@ -345,16 +390,19 @@ def fetch_projected_points(league_id, season, week, creds):
 
     projected = {}
     for t in data.get("teams", []):
-        total = 0.0
+        pool = []
         for entry in t.get("roster", {}).get("entries", []):
-            if entry.get("lineupSlotId") in BENCH_SLOTS:
+            if entry.get("lineupSlotId") == 21:  # IR can't be started
                 continue
             player = entry.get("playerPoolEntry", {}).get("player", {})
+            proj = 0.0
             for s in player.get("stats", []):
                 if (s.get("scoringPeriodId") == week and s.get("seasonId") == season
                         and s.get("statSourceId") == 1 and s.get("statSplitTypeId") == 1):
-                    total += s.get("appliedTotal", 0.0)
+                    proj = s.get("appliedTotal", 0.0)
                     break
+            pool.append((round(proj, 2), tuple(player.get("eligibleSlots", [])), player.get("fullName", "")))
+        total, _ = optimal_lineup(tuple(pool), tuple(slots))
         projected[t["id"]] = round(total, 1)
     return projected
 
@@ -381,7 +429,8 @@ def cmd_fetch_week(args, creds):
     division_by_id = {d["id"]: d["name"] for d in data.get("settings", {}).get("scheduleSettings", {}).get("divisions", [])}
     # Live projections only make sense for the current week - past weeks are already decided, and
     # future weeks haven't got games loaded yet, so don't waste a call fetching them.
-    projected_by_team = fetch_projected_points(args.league_id, args.season, current_week, creds) if current_week else {}
+    slots = starting_slots(data.get("settings", {}).get("rosterSettings", {}).get("lineupSlotCounts", {}))
+    projected_by_team = fetch_projected_points(args.league_id, args.season, current_week, creds, slots) if current_week else {}
 
     # ---- Matchups ----
     # Rebuild EVERY played-or-current week's entry from the schedule ESPN just returned, not just
