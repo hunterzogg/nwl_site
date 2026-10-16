@@ -1576,8 +1576,16 @@ with everything:
 - **Grade per team**: `0.5 × market gap (±100%) + 0.5 × lineup Δ (±4 pts/wk = full)` → A+…F, B ≈ even.
 - **Market verdicts**: each source totals both sides with the same consolidation math → Fair / favors X
   (+ "big" over 25%), with coverage (how many traded players that source values).
-- **Free agent check**: each traded player vs the best healthy FA at his position; within 0.5 pts/g is
-  flagged "Waiver-level".
+- **Waiver-level players count zero** (replaced the standalone Free agent check box, per explicit request):
+  a traded player within `WAIVER_MARGIN` (0.5) pts/g ROS of the best healthy free agent at his position
+  counts 0 in the market totals for every source (`tv()`), shows a struck-through value + "waiver-level"
+  on his card, and is never suggested in "Even it out".
+- **Overall verdict card** (top of results): winner = higher grade score, with a sentence reconciling the
+  market read and the lineup read. Added after a real confusion: Conlin gets Odunze/Brown/Wicks for
+  Jeanty/Washington/Boston showed "Leans Conlin" (market, Brown 6,068 vs Jeanty 4,840) next to Conlin F /
+  Zogg A+ (lineup: Jeanty 15.3 and Boston 12.5 pts/g vs Brown 13.2 and Odunze 9.0 → ±5.7 pts/wk). The market
+  card is now titled "Market value (on paper)", and "Even it out" says it balances market value only (with
+  a heads-up when the side it asks to add more is already the overall loser).
 - **UI**: pick Team 1 and Team 2; each side's "gets" list pulls from the *other* team's roster through a
   picker (centered dialog on desktop, full-screen sheet ≤640px; starters/bench groups, search, position
   chips). Swap sides, Copy link (state in `?a=&b=&ag=&bg=`), Clear.

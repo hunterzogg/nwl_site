@@ -57,6 +57,11 @@
 .tc-pair { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 16px; align-items: start; }
 .tc-pair.solo, .tc-pair > .tc-card:only-child { grid-template-columns: 1fr; }
 @media (max-width: 860px) { .tc-pair { grid-template-columns: 1fr; } }
+/* overall verdict */
+.tc-overall { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; border-color: var(--line-strong); }
+.tc-ov-main { flex: 1 1 320px; min-width: 0; }
+.tc-ov-grades { display: flex; gap: 10px; }
+.tc-ov-team { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--bg); border-radius: 8px; padding: 10px 14px; }
 /* value add */
 .tc-impact { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 760px) { .tc-impact { grid-template-columns: 1fr; } }
@@ -117,7 +122,7 @@
 
 <div class="container" style="padding-top: 24px;">
   <h1 style="margin-bottom: 6px;">Trade Calculator</h1>
-  <p class="tc-intro">Build a trade between two NWL teams. It checks the deal three ways: what the redraft markets say it's worth, how much each team's starting lineup actually improves given who's on the waiver wire, and how six market tools would grade it.</p>
+  <p class="tc-intro">Build a trade between two NWL teams. It weighs what the redraft markets say each side is worth (with waiver-level players counting for nothing) against how much each team's starting lineup actually improves, and shows how six market tools would grade it.</p>
   <p class="tc-updated" id="updated"></p>
 
   <section class="tc-sides" aria-label="Trade sides">
@@ -175,6 +180,18 @@ const mv = id => D.market[id] || 0;
 const team = mgr => D.teams.find(t => t.manager === mgr);
 const ownerOf = id => (D.teams.find(t => t.players.includes(id) || t.ir.includes(id)) || {}).manager || null;
 const adj = vals => Math.pow(vals.reduce((s, v) => s + Math.pow(Math.max(0, v), EXP), 0), 1 / EXP);
+// Waiver-level: a traded player within 0.5 pts/g (rest of season) of the best healthy free agent at his
+// position. Anyone could claim that player for free, so he counts as zero in every market total.
+const WAIVER_MARGIN = 0.5;
+function bestFA(pos, exclude = []) {
+  return D.free_agents.map(P).filter(p => p.pos === pos && !exclude.includes(p.id) && p.inj !== 'OUT' && p.inj !== 'INJURY_RESERVE').sort((a, b) => b.ros_pg - a.ros_pg)[0];
+}
+function waiverLevel(id) {
+  const p = P(id); if (p.pos === 'HC') return null;
+  const fa = bestFA(p.pos, [...state.aGets, ...state.bGets]);
+  return fa && p.ros_pg <= fa.ros_pg + WAIVER_MARGIN ? fa : null;
+}
+const tv = (id, src) => waiverLevel(id) ? 0 : (src ? (src[id] || 0) : mv(id)); // trade value used in all totals
 
 /* ---------- lineups (rest-of-season points per game) ---------- */
 function lineup(ids) {
@@ -223,12 +240,13 @@ function leagueRanks(mgr, ids) { // where this roster's position groups rank vs 
 function evaluate() {
   const A = team(state.a), B = team(state.b);
   const aGet = state.aGets, bGet = state.bGets; // A receives aGet from B; B receives bGet from A
-  const vA = adj(aGet.map(mv)), vB = adj(bGet.map(mv));
+  const vA = adj(aGet.map(id => tv(id))), vB = adj(bGet.map(id => tv(id)));
   const rawA = aGet.reduce((s, id) => s + mv(id), 0), rawB = bGet.reduce((s, id) => s + mv(id), 0);
+  const waived = [...aGet, ...bGet].filter(id => waiverLevel(id));
   const top = Math.max(vA, vB) || 1, diff = (vA - vB) / top; // >0: A receives more market value
   const need = Math.pow(Math.abs(Math.pow(vA, EXP) - Math.pow(vB, EXP)), 1 / EXP);
   const sources = Object.keys(D.sources).map(k => {
-    const s = D.sources[k], ga = adj(aGet.map(id => s[id] || 0)), gb = adj(bGet.map(id => s[id] || 0));
+    const s = D.sources[k], ga = adj(aGet.map(id => tv(id, s))), gb = adj(bGet.map(id => tv(id, s)));
     const covered = [...aGet, ...bGet].filter(id => s[id]).length;
     const d = (ga - gb) / (Math.max(ga, gb) || 1);
     return { k, ga, gb, d, covered, total: aGet.length + bGet.length };
@@ -242,7 +260,7 @@ function evaluate() {
     const score = 0.5 * clamp(mDiff, -1, 1) + 0.5 * clamp(dppg / 4, -1, 1);
     return { T, before, after, dppg, ros: dppg * g, xw, rb, ra, score, grade: grade(score) };
   };
-  return { A, B, vA, vB, rawA, rawB, diff, need, sources, ia: impact(A, aGet, bGet, diff), ib: impact(B, bGet, aGet, -diff) };
+  return { A, B, vA, vB, rawA, rawB, diff, need, sources, waived, ia: impact(A, aGet, bGet, diff), ib: impact(B, bGet, aGet, -diff) };
 }
 function grade(s) {
   const t = [[0.4, 'A+'], [0.25, 'A'], [0.12, 'A−'], [0.05, 'B+'], [-0.05, 'B'], [-0.12, 'C'], [-0.25, 'D']];
@@ -259,7 +277,7 @@ function playerCard(id, side) {
   const p = P(id); const st = starterLabel(id);
   return `<div class="tc-pcard"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}</div>
     <div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} pts/g ROS${st ? ' · ' + st : ''}${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div></div>
-    <div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>
+    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="No better than ${esc(fa.name)} (${fa.ros_pg.toFixed(1)} pts/g), the best free agent ${esc(p.pos)}"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> 0<small style="color:#E0524A">waiver-level</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
     <button class="tc-x" type="button" data-remove="${id}" data-side="${side}" aria-label="Remove ${esc(p.name)}">✕</button></div>`;
 }
 function starterLabel(id) {
@@ -270,7 +288,7 @@ function starterLabel(id) {
 function renderSide(key) {
   const me = state[key], other = key === 'a' ? state.b : state.a, gets = key === 'a' ? state.aGets : state.bGets;
   const el = document.getElementById(key === 'a' ? 'sideA' : 'sideB');
-  const val = adj(gets.map(mv));
+  const val = adj(gets.map(id => tv(id)));
   el.innerHTML = `<div class="tc-side-head"><label for="sel-${key}">${key === 'a' ? 'Team 1' : 'Team 2'}</label>
       <select id="sel-${key}" data-side="${key}">${teamOptions(me, other)}</select></div>
     <div class="tc-gets-title">${me ? esc(me) + ' gets' : 'Gets'}</div>
@@ -286,7 +304,25 @@ function renderResults() {
   if (!state.aGets.length || !state.bGets.length) { el.innerHTML = `<div class="tc-empty">Add at least one player to each side to see how the trade grades.</div>`; return; }
   const R = evaluate();
   const even = evenCard(R);
-  el.innerHTML = `<div class="tc-results"><div class="tc-pair${even ? '' : ' solo'}">${marketCard(R)}${even}</div>${impactCard(R)}${verdictCard(R)}${faCard(R)}</div>`;
+  el.innerHTML = `<div class="tc-results">${overallCard(R)}<div class="tc-pair${even ? '' : ' solo'}">${marketCard(R)}${even}</div>${impactCard(R)}${verdictCard(R)}</div>`;
+}
+function overallCard(R) {
+  const a = R.ia, b = R.ib, gap = a.score - b.score;
+  const winner = gap > 0 ? a : b, loser = gap > 0 ? b : a;
+  const mFav = Math.abs(R.diff) <= FAIR ? null : (R.diff > 0 ? state.a : state.b);
+  const lFav = Math.abs(a.dppg - b.dppg) < 0.6 ? null : (a.dppg > b.dppg ? state.a : state.b);
+  let head, why;
+  if (Math.abs(gap) < 0.1) head = 'Even trade';
+  else if (a.dppg > 0.3 && b.dppg > 0.3) head = `Win-win, edge ${esc(winner.T.manager)}`;
+  else head = `${esc(winner.T.manager)} wins this trade`;
+  const parts = [];
+  parts.push(mFav ? `On paper the market favors <b>${esc(mFav)}</b> by ${(Math.abs(R.diff) * 100).toFixed(0)}%` : 'On paper the market calls it fair');
+  parts.push(lFav ? `${mFav && mFav !== lFav ? 'but' : 'and'} <b>${esc(lFav)}</b>'s starting lineup gains more (${esc(state.a)} ${sgn(a.dppg)}, ${esc(state.b)} ${sgn(b.dppg)} pts/wk)` : `and the lineup impact is about even (${esc(state.a)} ${sgn(a.dppg)}, ${esc(state.b)} ${sgn(b.dppg)} pts/wk)`);
+  why = parts.join(', ') + '. The grades weigh both equally.';
+  const g = I => `<div class="tc-ov-team">${managerTag(managers, I.T.manager)}<span class="tc-grade" style="color:${gradeColor(I.grade)};background:${gradeColor(I.grade)}22">${I.grade}</span></div>`;
+  return `<section class="tc-card tc-overall"><div class="tc-ov-main"><div class="tc-psub" style="text-transform:uppercase;letter-spacing:.08em">Verdict</div>
+    <div class="tc-verdict ${Math.abs(gap) < 0.1 ? 'fair' : Math.abs(gap) < 0.4 ? 'lean' : 'lopsided'}">${head}</div><p class="tc-note" style="margin:0">${why}</p></div>
+    <div class="tc-ov-grades">${g(a)}${g(b)}</div></section>`;
 }
 function marketCard(R) {
   const a = state.a, b = state.b, d = R.diff, abs = Math.abs(d);
@@ -296,12 +332,13 @@ function marketCard(R) {
   const w = clamp(abs * 50 / 0.5, 0, 50); // half-bar = 50% gap
   const fill = d > 0 ? `<div class="fill-a" style="width:${w}%"></div>` : `<div class="fill-b" style="width:${w}%"></div>`;
   const giver = d > 0 ? a : b, taker = d > 0 ? b : a;
-  return `<section class="tc-card"><h2>Market value</h2>
-    <p class="tc-note">Consensus redraft value (median of six sources). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.</p>
+  const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} as zero: no better than the best free agent at ${R.waived.length === 1 ? 'his' : 'their'} position.` : '';
+  return `<section class="tc-card"><h2>Market value (on paper)</h2>
+    <p class="tc-note">Consensus redraft value (median of six sources). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.${wv}</p>
     <div class="tc-verdict ${cls}">${head}</div>
     <div class="tc-meter" role="img" aria-label="${head}">${'<div class="fairband"></div>'}${fill}<div class="mid"></div></div>
     <div class="tc-meter-labels"><span>${esc(a)} gets <b>${fmt(R.vA)}</b></span><span>${(abs * 100).toFixed(0)}% gap</span><span>${esc(b)} gets <b>${fmt(R.vB)}</b></span></div>
-    ${abs > FAIR ? `<p class="tc-even">To even it out, <b>${esc(giver)}</b> would add about <b>${fmt(R.need)}</b> in value going to ${esc(taker)}.</p>` : ''}
+    ${abs > FAIR ? `<p class="tc-even">To even out the market value, <b>${esc(giver)}</b> would add about <b>${fmt(R.need)}</b> going to ${esc(taker)}.</p>` : ''}
   </section>`;
 }
 function impactCard(R) {
@@ -347,32 +384,17 @@ function verdictCard(R) {
     <p class="tc-note">How each redraft tool grades it: ${favA} favor ${esc(state.a)}, ${favB} favor ${esc(state.b)}, ${fair} call it fair. Each side is totaled the same consolidation-adjusted way. Rank-only sources are converted with FantasyCalc's value at that positional rank.</p>
     <div class="tc-tablewrap"><table class="tc-table"><thead><tr><th>Source</th><th class="n">${esc(state.a)} gets</th><th class="n">${esc(state.b)} gets</th><th class="n">Gap</th><th>Verdict</th><th class="n">Valued</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
-function bestFA(pos, exclude) {
-  return D.free_agents.map(P).filter(p => p.pos === pos && !exclude.includes(p.id) && p.inj !== 'OUT' && p.inj !== 'INJURY_RESERVE').sort((a, b) => b.ros_pg - a.ros_pg)[0];
-}
-function faCard(R) {
-  const ids = [...state.aGets, ...state.bGets];
-  const rows = ids.map(id => {
-    const p = P(id), fa = bestFA(p.pos, ids); if (!fa) return '';
-    const d = p.ros_pg - fa.ros_pg; const flag = d <= 0.5;
-    return `<tr><td>${posTag(p.pos)} ${esc(p.name)}</td><td class="n">${p.ros_pg.toFixed(1)}</td><td>${esc(fa.name)} <span class="tc-psub">${esc(fa.team)}</span></td><td class="n">${fa.ros_pg.toFixed(1)}</td><td class="n">${sgn(d)}</td><td>${flag ? '<span class="tc-chip warn">Waiver-level</span>' : ''}</td></tr>`;
-  }).join('');
-  const flagged = ids.filter(id => { const fa = bestFA(P(id).pos, ids); return fa && P(id).ros_pg - fa.ros_pg <= 0.5; });
-  return `<section class="tc-card"><h2>Free agent check</h2>
-    <p class="tc-note">Each traded player against the best healthy free agent at his position (rest-of-season points per game). ${flagged.length ? `<b>${flagged.map(id => esc(P(id).name)).join(', ')}</b> ${flagged.length === 1 ? "isn't" : "aren't"} meaningfully better than what's on waivers, so ${flagged.length === 1 ? "he shouldn't" : "they shouldn't"} carry much weight in the deal.` : 'Every player in this trade beats the best free agent at his position.'}</p>
-    <div class="tc-tablewrap"><table class="tc-table"><thead><tr><th>Player</th><th class="n">Pts/g</th><th>Best free agent</th><th class="n">Pts/g</th><th class="n">Edge</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
-}
 function evenCard(R) {
   if (Math.abs(R.diff) <= FAIR) return '';
   const giverMgr = R.diff > 0 ? state.a : state.b, takerSide = R.diff > 0 ? 'b' : 'a';
   const T = team(giverMgr); const inTrade = [...state.aGets, ...state.bGets];
   const base = lineup(T.players).pts;
-  const list = T.players.filter(id => !inTrade.includes(id) && mv(id) > 0)
+  const list = T.players.filter(id => !inTrade.includes(id) && mv(id) > 0 && !waiverLevel(id))
     .map(id => ({ id, v: mv(id), cost: base - lineup(T.players.filter(x => x !== id)).pts }))
     .filter(x => x.v >= R.need * 0.5 && x.v <= R.need * 1.6)
     .sort((x, y) => Math.abs(x.v - R.need) - Math.abs(y.v - R.need)).slice(0, 5);
   return `<section class="tc-card"><h2>Even it out</h2>
-    <p class="tc-note">Players from ${esc(giverMgr)}'s roster worth about ${fmt(R.need)}, closest first, with what each would cost ${esc(giverMgr)}'s lineup.</p>
+    <p class="tc-note">Balances the market value only. Players from ${esc(giverMgr)}'s roster worth about ${fmt(R.need)}, closest first, with what each would cost ${esc(giverMgr)}'s lineup.${(R.diff > 0 ? R.ia : R.ib).score < (R.diff > 0 ? R.ib : R.ia).score ? ` <b>Heads up:</b> ${esc(giverMgr)} already comes out behind once lineup impact is counted, so adding more would widen that gap.` : ''}</p>
     ${list.map(x => `<div class="tc-sugg"><div><div class="tc-pname">${posTag(P(x.id).pos)} ${esc(P(x.id).name)}</div><div class="tc-psub">${P(x.id).ros_pg.toFixed(1)} pts/g · ${starterLabel(x.id)} · lineup cost ${x.cost > 0.05 ? '−' + x.cost.toFixed(1) : '0.0'}/wk</div></div><div class="tc-pval">${fmt(x.v)}<small>value</small></div><button class="tc-btn" type="button" data-addid="${x.id}" data-side="${takerSide}">Add</button></div>`).join('') || `<p class="tc-psub">No single player on ${esc(giverMgr)}'s roster is close to that value. Try swapping a piece instead.</p>`}
   </section>`;
 }
@@ -443,7 +465,8 @@ function methodology() {
     <p><strong>Consolidation.</strong> A side is worth (Σ value<sup>1.5</sup>)<sup>1/1.5</sup>, so stacking small pieces doesn't buy a star: two players worth 3,000 total about 4,760, not 6,000. Within ${FAIR * 100}% is called fair. "Even it out" solves for the single player value that closes the gap on that same scale.</p>
     <p><strong>Value add.</strong> For each team, the best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) is built from ESPN rest-of-season points per game, before and after the trade. If the team ends up with more than ${D.roster_size} players it drops whoever costs the lineup least (never its only Head Coach); with open spots it claims the free agents that help most. That happens before and after, so a trade only earns credit for the spot it opens or fills. Expected wins = games left × (Φ(Δ ÷ (sd·√2)) − ½), with sd the league's 2026 weekly score spread.</p>
     <p><strong>Grade.</strong> Half market (the value gap, capped at ±100%) and half lineup change (±4 pts/wk = full credit), mapped to A+ through F. B means about even.</p>
-    <p><strong>Free agent check.</strong> A traded player within 0.5 pts/g of the best healthy free agent at his position is flagged as waiver-level.</p>`;
+    <p><strong>Free agents.</strong> A traded player within ${WAIVER_MARGIN} pts/g (rest of season) of the best healthy free agent at his position is <em>waiver-level</em>: anyone could claim an equal player for free, so he counts as 0 in the market totals for every source and is never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
+    <p><strong>Verdict.</strong> The team with the higher grade score wins the trade; the summary spells out where the market and the lineup math agree or disagree.</p>`;
 }
 
 async function init() {
