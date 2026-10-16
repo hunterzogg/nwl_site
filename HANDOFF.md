@@ -1613,7 +1613,7 @@ with everything:
   star (Dynasty Daddy's stated principle). Within 8% (`FAIR`) = fair; >25% = "Favors". "Even it out"
   solves for the single value that closes the gap on the same scale, then lists players from the favored
   team's own roster within 0.5-1.6x of it, with each one's lineup cost.
-- **Value add per team**: best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) on ROS points/game before
+- **Value add per team** (now blended pts/g + next-4-weeks injuries, same as the Trade Finder; see that section): best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) on ROS points/game before
   vs after. `settle()` applies roster reality to both: over 15 → drop whoever costs the lineup least (never
   the only HC); under 15 → claim the free agents that help most. So a 2-for-1 credits the open spot and
   charges the forced drop. Shows Δ pts/wk on a shared diverging scale, ROS points (Δ × games left),
@@ -1697,8 +1697,12 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
   projection at the position), because ESPN's projection alone had Zogg's Dak Prescott last of the 12 starting QBs
   while every rank source had him QB6-7. The next 4 weeks rebuild the lineup each week with expected missed games
   taken out (byes ignored: one bye made Glaser's QBs look like the league's worst), so a backup filling in counts.
-  The result is that Goetz with an OUT Lamar Jackson is QB 6th (was 10th on an injury-only view) and Zogg is QB 10th. The
-  calculator's lineup math still uses ESPN pts/g alone (unchanged, open question). Starters rank 8th or worse, or RB/WR with no healthy backup. Top 2 by gap to the
+  The result is that Goetz with an OUT Lamar Jackson is QB 6th (was 10th on an injury-only view) and Zogg is QB 10th.
+  **The calculator now uses the same logic** (moved into `trade_engine.js`, `?v=2`): `blendPg` is the default
+  lineup value, `posStrength(ids, tol)` / `leagueRanks` use the 60/40 horizon blend, and each team's lineup change
+  is `dppg = 0.6 × ΔROS + 0.4 × Δnext-4-weeks` (`dRos`/`dShort` kept on the result), with injury discounts
+  scaled by that team's record (`AVAIL`, `avail`, `tolOf`). Calculator grades therefore changed from the Oct 16
+  launch numbers; a finder card and its calculator page give identical grades/Δ/values (verified on Goetz–Larson). Starters rank 8th or worse, or RB/WR with no healthy backup. Top 2 by gap to the
   league median. Surplus = a bench player at or above the league's median weakest starter at that position.
 - **Search**: top 14 non-HC, non-waiver-level assets per team by market value (triples from the top 10).
   Shapes 1-1, 2-1, 2-2, 3-2, 3-3 (both directions). The other side's packages are sorted by `adj(tv)`, and a

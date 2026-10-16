@@ -120,7 +120,7 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=22"></script>
-<script src="../assets/js/trade_engine.js?v=1"></script>
+<script src="../assets/js/trade_engine.js?v=2"></script>
 <script>
 let managers = [];
 const state = { a: null, b: null, pos: '', mag: '' }; // b = trade partner filter, pos = incoming position, mag = key/bench
@@ -133,7 +133,7 @@ const MODES = {
   bubble:    { label: 'Bubble', w: { now: 0.2, reg: 0.6, po: 0.2 }, focus: 'now', blurb: 'In the hunt: weighs the rest of the regular season most.' },
   chasing:   { label: 'Chasing', w: { now: 0.7, reg: 0.3, po: 0 }, focus: 'now', blurb: 'Needs wins now: weighs the next 4 weeks of matchups most.' },
 };
-const NOW_WEEKS = 4, SHRINK = 0.5, MULT_MIN = 0.8, MULT_MAX = 1.2;
+const SHRINK = 0.5, MULT_MIN = 0.8, MULT_MAX = 1.2;
 // Schedule previews (week-by-week matchup chips on players, the legend, and the "Playoff schedule" line)
 // are built but switched off until the fantasy playoffs are closer; flip to true then. SoS still feeds the scoring.
 const SHOW_SCHEDULE = false;
@@ -166,27 +166,15 @@ function mult(p, wk) {
   }
   multCache.set(k, m); return m;
 }
-// ESPN's per-game ROS projection assumes the player plays, so near-term weeks are discounted by injury
-// status: [share of a game expected, for each upcoming week starting now].
-const AVAIL = { OUT: [0], DOUBTFUL: [0.25], QUESTIONABLE: [0.8], INJURY_RESERVE: [0, 0, 0, 0], SUSPENSION: [0, 0] };
-// How much a team minds the missed games depends on its record: a winning team can ride out an absence
-// (half the discount, so it buys injured players low), a losing team can't wait (the absence counts
-// twice as long, so injured players are worth less to it and it's happy to move them).
-const tolOf = mgr => { const t = team(mgr); return t.w > t.l ? 'patient' : t.w < t.l ? 'urgent' : 'even'; };
-function avail(p, wk, tol) {
-  const a = AVAIL[p.inj]; if (!a) return 1;
-  const i = wk - D.week, len = tol === 'urgent' ? a.length * 2 : a.length;
-  if (i < 0 || i >= len) return 1;
-  const v = a[Math.min(i, a.length - 1)];
-  return tol === 'patient' ? 1 - 0.5 * (1 - v) : v;
-}
+// Injury availability (AVAIL, avail, tolOf) and the blended player strength (blendPg, posStrength) live in
+// trade_engine.js, shared with the Trade Calculator so both rate rosters the same way.
 const winMult = (p, weeks) => weeks.length ? weeks.reduce((s, w) => s + mult(p, w), 0) / weeks.length : 1;
 // Schedule-weighted points per game for a team in a given mode.
 function wp(p, mode, tol) {
   const k = mode + '|' + tol + '|' + p.id; if (wpCache.has(k)) return wpCache.get(k);
   const w = MODES[mode].w; let tot = 0, wsum = 0;
   for (const key of ['now', 'reg', 'po']) if (w[key] && W[key].length) { tot += w[key] * W[key].reduce((s, wk) => s + mult(p, wk) * avail(p, wk, tol), 0) / W[key].length; wsum += w[key]; }
-  const v = (p.ros_pg || 0) * (wsum ? tot / wsum : 1);
+  const v = blendPg(p) * (wsum ? tot / wsum : 1);
   wpCache.set(k, v); return v;
 }
 // Projected final wins: current wins + remaining games against a league-average lineup.
@@ -200,7 +188,7 @@ function computeAutoModes() {
   rows.forEach((r, i) => { autoModes[r.t.manager] = { mode: i < 5 ? 'contender' : i < 8 ? 'bubble' : 'chasing', rank: i + 1, proj: r.proj, pts: r.pts, avg }; });
 }
 const modeFor = mgr => (autoModes[mgr] || {}).mode || 'bubble';
-// Starters on each roster as it stands (best lineup on ROS projections), for the Trade Magnitude filter.
+// Starters on each roster as it stands (best lineup, blended ROS pts/g), for the Trade Magnitude filter.
 const _starters = {};
 const starters = mgr => _starters[mgr] || (_starters[mgr] = new Set(lineup(team(mgr).players).st.map(x => x[1])));
 const isStarter = id => { const o = ownerOf(id); return !!o && starters(o).has(id); };
@@ -209,55 +197,25 @@ const isStarter = id => { const o = ownerOf(id); return !!o && starters(o).has(i
 // Needs: position groups whose starters rank 8th or worse in the league (or RB/WR with no healthy
 // backup), biggest gap to the league median first. Surplus: a bench player who would start for most teams.
 const POS4 = ['QB', 'RB', 'WR', 'TE'];
-let leagueStrength = {}; // manager -> groupStrength (combined ROS + short-term pts/g of the starters by position)
-// Needs look at two horizons and blend them:
-//  - ROS: full rest-of-season quality, injuries ignored (a hurt star still anchors the group long term).
-//    Each player = average of his ESPN pts/g and the pts/g his consensus ROS rank implies (positional rank N =
-//    the Nth-best ESPN projection at his position), since one projection can be an outlier (Oct 16: Dak Prescott
-//    projected lowest of the 12 starting QBs while every rank source had him QB6-7).
-//  - Short term: the next 4 weeks, one lineup per week with injured players' expected missed games taken out,
-//    so whoever actually fills in counts (e.g. Goetz's backup QB while Lamar Jackson is out). Byes are ignored
-//    (a single bye made Glaser's QBs look like the league's worst; waivers cover a bye, a trade isn't needed).
-// One combined rank drives the need; the two horizons aren't shown separately.
-const NEED_W = { ros: 0.6, short: 0.4 };
-let _rankCurve = null; const _needPg = new Map();
-function rankPg(p) {
-  if (!_rankCurve) { _rankCurve = {}; for (const pos of POS4) _rankCurve[pos] = Object.values(D.players).filter(x => x.pos === pos).map(x => x.ros_pg || 0).sort((a, b) => b - a); }
-  const r = (rosRank(p.id) || {}).rank, c = _rankCurve[p.pos];
-  return r && c && c.length ? c[Math.min(r, c.length) - 1] : p.ros_pg || 0;
-}
-function needPg(p) { // full-ROS blended pts/g, no injury discount
-  if (_needPg.has(p.id)) return _needPg.get(p.id);
-  const v = p.pos === 'HC' ? p.ros_pg || 0 : 0.5 * (p.ros_pg || 0) + 0.5 * rankPg(p);
-  _needPg.set(p.id, v); return v;
-}
-const playsPg = (p, w) => needPg(p) * avail(p, w, 'even'); // that week, with expected missed games out (byes ignored: waivers cover a bye)
-function byPos(st) { const s = { QB: 0, RB: 0, WR: 0, TE: 0 }; for (const [slot, id, pts] of st) { const pos = P(id).pos; if (s[pos] != null) s[pos] += pts; } return s; }
-function groupStrength(ids) { // combined strength by position (ROS and short term blended)
-  const ros = byPos(lineup(ids, needPg).st), wks = W.now.length ? W.now : [D.week];
-  const short = { QB: 0, RB: 0, WR: 0, TE: 0 };
-  for (const w of wks) { const s = byPos(lineup(ids, p => playsPg(p, w)).st); for (const k in short) short[k] += s[k] / wks.length; }
-  const out = {}; for (const k of POS4) out[k] = NEED_W.ros * ros[k] + NEED_W.short * short[k];
-  return out;
-}
+let leagueStrength = {}; // manager -> posStrength (blended ROS + next 4 weeks, starters by position; from the engine)
 function median(a) { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
 const _needs = {};
 function teamNeeds(mgr) {
   if (_needs[mgr]) return _needs[mgr];
   const ids = team(mgr).players, mine = leagueStrength[mgr];
   const others = D.teams.filter(t => t.manager !== mgr).map(t => leagueStrength[t.manager]);
-  const starters = new Set(lineup(ids, needPg).st.map(s => s[1]));
+  const starters = new Set(lineup(ids, blendPg).st.map(s => s[1]));
   const needs = [], surplus = [];
   for (const pos of POS4) {
     const rank = 1 + others.filter(o => o[pos] > mine[pos] + 1e-9).length;
     const med = median(D.teams.map(t => leagueStrength[t.manager][pos]));
-    const bench = ids.filter(id => !starters.has(id) && P(id).pos === pos && healthy(P(id))).sort((x, y) => needPg(P(y)) - needPg(P(x)));
+    const bench = ids.filter(id => !starters.has(id) && P(id).pos === pos && healthy(P(id))).sort((x, y) => blendPg(P(y)) - blendPg(P(x)));
     const noDepth = (pos === 'RB' || pos === 'WR') && !bench.length;
     if (rank >= 8 || noDepth) needs.push({ pos, rank, deficit: med - mine[pos], noDepth });
     // would a bench player start for most teams? compare with the league's median weakest starter there
     if (bench.length) {
-      const weakest = D.teams.map(t => { const s = lineup(t.players, needPg).st.filter(x => P(x[1]).pos === pos && x[0] !== 'FLEX' && x[0] !== 'W/T'); return s.length ? Math.min(...s.map(x => x[2])) : 0; });
-      if (needPg(P(bench[0])) >= median(weakest)) surplus.push({ pos, id: bench[0] });
+      const weakest = D.teams.map(t => { const s = lineup(t.players, blendPg).st.filter(x => P(x[1]).pos === pos && x[0] !== 'FLEX' && x[0] !== 'W/T'); return s.length ? Math.min(...s.map(x => x[2])) : 0; });
+      if (blendPg(P(bench[0])) >= median(weakest)) surplus.push({ pos, id: bench[0] });
     }
   }
   needs.sort((x, y) => (y.rank >= 8) - (x.rank >= 8) || y.deficit - x.deficit);
@@ -294,7 +252,7 @@ async function searchPair(A, B, fullPerShape, token, onGrade) {
   const vals = pkB.map(p => p.v);
   const lower = x => { let lo = 0, hi = vals.length; while (lo < hi) { const m = (lo + hi) >> 1; if (vals[m] < x) lo = m + 1; else hi = m; } return lo; };
   // need bonus: +0.4 pts/wk-equivalent per top-need position whose league rank improves 2+ spots
-  const needBonus = (mgr, need, after) => { const s = groupStrength(after); let b = 0; for (const pos of need.top) if (posRank(mgr, leagueStrength[mgr], pos) - posRank(mgr, s, pos) >= 2) b += 0.4; return b; };
+  const needBonus = (mgr, need, after) => { const s = posStrength(after, tolOf(mgr)); let b = 0; for (const pos of need.top) if (posRank(mgr, leagueStrength[mgr], pos) - posRank(mgr, s, pos) >= 2) b += 0.4; return b; };
   const bench = state.mag === 'bench';
   const depthPos = need => new Set([...need.needs.map(x => x.pos)]);
   const depthBonus = (need, gets, gives) => { const d = depthPos(need); const inn = gets.filter(id => d.has(P(id).pos)).length, out = gives.filter(id => d.has(P(id).pos)).length; return 0.3 * Math.max(0, inn - out); };
@@ -386,7 +344,7 @@ function renderTeam() {
     body = `<div class="tf-mode-row"><span class="tf-mode ${m}">${MODES[m].label}</span></div>
       <p class="tf-mode-why">${esc(MODES[m].blurb.replace('{po}', po))} Projected ${am.proj.toFixed(1)} wins, ${ord(am.rank)} in the league (top 6 make the playoffs).</p>
       <div class="tf-tags">Needs ${n.needs.length ? n.needs.map(x => `<span class="tf-tag need" title="${x.pos} starters rank ${ord(x.rank)} in the league, weighing the rest of the season and the next ${W.now.length} weeks (injuries)">${x.pos} <small>${x.noDepth && x.rank < 8 ? 'no depth' : ord(x.rank)}</small></span>`).join('') : '<span class="tf-tag"><small>none major</small></span>'}</div>
-      <div class="tf-tags">Surplus ${n.surplus.length ? n.surplus.map(x => `<span class="tf-tag surplus" title="${esc(P(x.id).name)} (${needPg(P(x.id)).toFixed(1)} pts/g, blended) would start for most teams">${x.pos} <small>${esc(P(x.id).name.split(' ').slice(-1)[0])}</small></span>`).join('') : '<span class="tf-tag"><small>none</small></span>'}</div>`;
+      <div class="tf-tags">Surplus ${n.surplus.length ? n.surplus.map(x => `<span class="tf-tag surplus" title="${esc(P(x.id).name)} (${blendPg(P(x.id)).toFixed(1)} pts/g, blended) would start for most teams">${x.pos} <small>${esc(P(x.id).name.split(' ').slice(-1)[0])}</small></span>`).join('') : '<span class="tf-tag"><small>none</small></span>'}</div>`;
   }
   el.innerHTML = `<div class="tf-team-head"><label for="sel-a">Your team</label><select id="sel-a" data-f="a">${teamOptions(mgr, null, 'Choose your team')}</select></div>${body}`;
 }
@@ -432,14 +390,14 @@ function schedNote(ids, mode) {
 }
 function whyLines(mgr, I, gets, gives, mode, need) {
   const out = [];
-  const before = leagueStrength[mgr], after = groupStrength(I.T.players.filter(id => !gives.includes(id)).concat(gets));
+  const before = leagueStrength[mgr], after = posStrength(I.T.players.filter(id => !gives.includes(id)).concat(gets), tolOf(mgr));
   need.top.forEach(pos => { const r0 = posRank(mgr, before, pos), r1 = posRank(mgr, after, pos); if (r1 < r0) out.push(`Fills the <b>${pos}</b> need (${ord(r0)} → ${ord(r1)})`); });
   const s = SHOW_SCHEDULE && schedNote(gets, mode); if (s) out.push(s);
   const t = team(mgr), rec = `${t.w}-${t.l}${t.t ? '-' + t.t : ''}`, hurt = ids => ids.filter(id => AVAIL[P(id).inj]);
   const lbl = id => `${esc(P(id).name)} (${esc(P(id).inj.replace('_', ' ').toLowerCase())})`;
   if (tolOf(mgr) === 'patient' && hurt(gets).length) out.push(`Buys low on ${hurt(gets).map(lbl).join(', ')}: at ${rec}, ${esc(mgr)} can wait out the injury`);
   if (tolOf(mgr) === 'urgent' && hurt(gives).length) out.push(`Moves ${hurt(gives).map(lbl).join(', ')} while hurt: at ${rec}, ${esc(mgr)} can't wait`);
-  out.push(`Lineup ${sgn(I.dppg)} pts/wk on ROS projections${Math.abs(I.dppg - (I._fit || 0)) > 0.3 ? `, ${sgn(I._fit)} weighted for a ${MODES[mode].label.toLowerCase()}'s schedule` : ''}`);
+  out.push(`Lineup ${sgn(I.dppg)} pts/wk${Math.abs(I.dppg - (I._fit || 0)) > 0.3 ? `, ${sgn(I._fit)} weighted for a ${MODES[mode].label.toLowerCase()}'s schedule` : ''}`);
   return out;
 }
 function tradeCard(c, i) {
@@ -495,10 +453,10 @@ document.addEventListener('change', e => {
 function methodology() {
   const po = W.po.length ? `weeks ${W.po[0]}–${W.po[W.po.length - 1]}` : 'the fantasy playoffs';
   document.getElementById('methodology').innerHTML = `
-    <p><strong>Team situation.</strong> Each team's projected final wins = current wins + games left × the chance its best lineup (ESPN rest-of-season projections) beats a league-average lineup in a given week. The top 5 are <em>Contenders</em>, 6th–8th are <em>Bubble</em> teams, and 9th–12th are <em>Chasing</em>.</p>
+    <p><strong>Team situation.</strong> Each team's projected final wins = current wins + games left × the chance its best lineup (blended rest-of-season pts/g, as in the Trade Calculator) beats a league-average lineup in a given week. The top 5 are <em>Contenders</em>, 6th–8th are <em>Bubble</em> teams, and 9th–12th are <em>Chasing</em>.</p>
     <p><strong>Strength of schedule.</strong> For every remaining week, a player's matchup is the fantasy points his opponent allows per game to his position (ESPN, league scoring), compared with the league average. That ratio is shrunk halfway toward average, because a few weeks of defensive data is noisy, and capped at ±20%. A bye counts as zero. Head Coaches only get the bye adjustment. Injured players are discounted in the weeks right ahead, because ESPN's per-game projection assumes they play: OUT counts as 0 this week, doubtful 25%, questionable 80%, IR 0 for the next 4 weeks, suspended 0 for 2. That discount depends on the record of the team holding him: a winning team takes half of it (it can wait out an injury, so it buys low), and a losing team counts the absence twice as long (it can't wait, so it's happy to move injured players). ${SHOW_SCHEDULE ? 'Green chips are matchups at least 4% easier than average, red at least 4% tougher.' : ''}</p>
     <p><strong>What each team wants.</strong> A player's points per game are reweighted by his matchups over three windows: the next ${NOW_WEEKS} weeks, the rest of the regular season, and ${po}. Chasing teams weigh them 70/30/0 (wins now), Bubble teams 20/60/20, and Contenders 0/40/60 (playoff schedules). ${SHOW_SCHEDULE ? 'Week chips on each player show the window that matters most to the team receiving him.' : ''}</p>
-    <p><strong>Needs.</strong> Each position group's starters are rated over two horizons. <em>Rest of season</em> ignores injuries and counts each player as the average of his ESPN rest-of-season points per game and the points per game his consensus ROS rank implies (rank N at a position = the Nth-best ESPN projection there), because one projection can be an outlier. <em>Now</em> rebuilds the lineup for each of the next ${NOW_WEEKS} weeks with injured players' expected missed games taken out, so whoever actually fills in counts (byes are ignored, since waivers cover a bye). Each group gets one league rank from ${NEED_W.ros * 100}% rest of season + ${NEED_W.short * 100}% now. A position group is a need when its starters rank 8th or worse in the league on that blend, or, at RB/WR, when there's no healthy backup. Needs are ordered by the gap to the league median. Surplus means a bench player who'd start for most teams. A trade earns a bonus when it lifts one of a team's top two needs by 2+ league spots.</p>
+    <p><strong>Needs.</strong> Each position group's starters are rated the same way the Trade Calculator rates lineups, over two horizons. <em>Rest of season</em> ignores injuries and counts each player as the average of his ESPN rest-of-season points per game and the points per game his consensus ROS rank implies (rank N at a position = the Nth-best ESPN projection there), because one projection can be an outlier. <em>Now</em> rebuilds the lineup for each of the next ${NOW_WEEKS} weeks with injured players' expected missed games taken out (scaled by the team's record), so whoever actually fills in counts (byes are ignored, since waivers cover a bye). Each group gets one league rank from ${NEED_W.ros * 100}% rest of season + ${NEED_W.short * 100}% now. A position group is a need when its starters rank 8th or worse in the league on that blend, or, at RB/WR, when there's no healthy backup. Needs are ordered by the gap to the league median. Surplus means a bench player who'd start for most teams. A trade earns a bonus when it lifts one of a team's top two needs by 2+ league spots.</p>
     <p><strong>Search.</strong> Each team's top ${TOP_ASSETS} tradeable players by market value are considered (no Head Coaches, no waiver-level players), with 3-player packages drawn from the top ${TRIPLE_ASSETS}. Every 1-for-1, 2-for-1, 2-for-2, 3-for-2 and 3-for-3 combination within ${MARKET_WINDOW * 100}% market value of each other is checked. A trade survives only if both teams' schedule-weighted starting lineups improve. The best ${FULL_PER_SHAPE} of each size (${ANY_PER_SHAPE} per partner when searching every team) are then run through the Trade Calculator, and any trade where either team grades below B, or the market leans more than 25%, is dropped. Filters apply before grading, so the calculator's attention goes to matching trades: <em>Trade for</em> keeps only packages bringing you that position, <em>Key players</em> needs at least one current starter (best lineup on ROS projections) in the deal, and <em>Bench players</em> allows none on either side (pieces come from each bench). Bench swaps rarely move a starting lineup, so there a trade helps a team when it costs the lineup nothing and adds depth at one of its needs.</p>
     <p><strong>Ranking.</strong> Each team's match = half its Trade Calculator grade score, half its schedule-weighted lineup gain (±4 pts/wk = full). Trades are ranked by the <em>lower</em> of the two teams' matches, so the top trades help both teams. A bigger deal is hidden when a smaller deal inside it ranks higher. With no trade partner filter, every other team is searched and at most ${ANY_PER_PARTNER} trades per partner are shown (${ANY_SHOWN} total). "Open in calculator" loads the trade in the Trade Calculator to tweak.</p>`;
 }
@@ -510,7 +468,7 @@ async function init() {
   W = windows();
   document.getElementById('legend').hidden = !SHOW_SCHEDULE;
   for (const pos of POS4) { const v = Object.values((D.def_vs_pos || {})[pos] || {}); if (v.length) dvpMean[pos] = v.reduce((s, x) => s + x, 0) / v.length; }
-  D.teams.forEach(t => leagueStrength[t.manager] = groupStrength(t.players));
+  D.teams.forEach(t => leagueStrength[t.manager] = teamStrength(t.manager));
   computeAutoModes();
   const u = new URLSearchParams(location.search), ok = m => m && team(m) ? m : null;
   state.a = ok(u.get('a')); state.b = ok(u.get('b')) !== state.a ? ok(u.get('b')) : null;

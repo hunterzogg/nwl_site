@@ -74,10 +74,46 @@ function trendIcon(id) {
 }
 const tv = (id, src) => (src ? (src[id] || 0) : mv(id)) * (waiverLevel(id) ? WAIVER_DISCOUNT : 1); // trade value used in all totals
 
+/* ---------- player strength ---------- */
+// A player's rest-of-season points per game = average of ESPN's projection and the pts/g his consensus ROS
+// rank implies (positional rank N = the Nth-best ESPN projection at his position). ESPN's number alone can be
+// an outlier (Oct 16: Dak Prescott projected lowest of the 12 starting QBs while every rank source had him QB6-7).
+// Head Coaches have no ranks, so they keep ESPN's projection.
+let _rankCurve = null; const _blend = new Map();
+function rankPg(p) {
+  if (!_rankCurve) { _rankCurve = {}; for (const pos of ['QB', 'RB', 'WR', 'TE']) _rankCurve[pos] = Object.values(D.players).filter(x => x.pos === pos).map(x => x.ros_pg || 0).sort((a, b) => b - a); }
+  const r = (rosRank(p.id) || {}).rank, c = _rankCurve[p.pos];
+  return r && c && c.length ? c[Math.min(r, c.length) - 1] : p.ros_pg || 0;
+}
+function blendPg(p) {
+  if (_blend.has(p.id)) return _blend.get(p.id);
+  const v = p.pos === 'HC' ? p.ros_pg || 0 : 0.5 * (p.ros_pg || 0) + 0.5 * rankPg(p);
+  _blend.set(p.id, v); return v;
+}
+// Lineup value blends two horizons: the rest of the season (injuries ignored, so a hurt star still counts) and
+// the next 4 weeks, rebuilt week by week with injured players' expected missed games taken out so whoever
+// fills in counts (byes ignored: waivers cover a bye).
+const NOW_WEEKS = 4, NEED_W = { ros: 0.6, short: 0.4 };
+// share of a game expected for each upcoming week, starting now
+const AVAIL = { OUT: [0], DOUBTFUL: [0.25], QUESTIONABLE: [0.8], INJURY_RESERVE: [0, 0, 0, 0], SUSPENSION: [0, 0] };
+// A winning team can ride out an absence (half the discount, so it buys injured players low); a losing team
+// can't wait (the absence counts twice as long, so injured players are worth less to it).
+const tolOf = mgr => { const t = team(mgr); return !t ? 'even' : t.w > t.l ? 'patient' : t.w < t.l ? 'urgent' : 'even'; };
+function avail(p, wk, tol) {
+  const a = AVAIL[p.inj]; if (!a) return 1;
+  const i = wk - D.week, len = tol === 'urgent' ? a.length * 2 : a.length;
+  if (i < 0 || i >= len) return 1;
+  const v = a[Math.min(i, a.length - 1)];
+  return tol === 'patient' ? 1 - 0.5 * (1 - v) : v;
+}
+function nowWeeks() { const out = []; for (let w = D.week; w <= Math.max(D.week, Math.min(D.regular_season_weeks, D.week + NOW_WEEKS - 1)); w++) out.push(w); return out; }
+const playsPg = (p, w, tol) => blendPg(p) * avail(p, w, tol);
+function shortPts(ids, tol) { const wks = nowWeeks(); return wks.reduce((t, w) => t + lineup(ids, p => playsPg(p, w, tol)).pts, 0) / wks.length; }
+
 /* ---------- lineups (rest-of-season points per game) ---------- */
-function lineup(ids, ptsFn) { // ptsFn(player) -> points per game; default = ESPN rest-of-season pts/g
+function lineup(ids, ptsFn) { // ptsFn(player) -> points per game; default = blended rest-of-season pts/g
   const by = { QB: [], RB: [], WR: [], TE: [], HC: [] };
-  for (const id of ids) { const p = P(id); if (p && by[p.pos]) by[p.pos].push([ptsFn ? ptsFn(p) : (p.ros_pg || 0), id]); }
+  for (const id of ids) { const p = P(id); if (p && by[p.pos]) by[p.pos].push([ptsFn ? ptsFn(p) : blendPg(p), id]); }
   let pts = 0; const st = []; const left = [];
   for (const pos in by) {
     by[pos].sort((a, b) => b[0] - a[0]);
@@ -106,13 +142,17 @@ function settle(ids) {
   }
   return { roster, drops, adds, ...lineup(roster) };
 }
-function posStrength(ids) { // starters' points per game by position group
-  const l = lineup(ids); const s = { QB: 0, RB: 0, WR: 0, TE: 0 };
-  for (const [slot, id, pts] of l.st) { const pos = P(id).pos; if (s[pos] != null) s[pos] += pts; }
-  return s;
+function byPos(st) { const s = { QB: 0, RB: 0, WR: 0, TE: 0 }; for (const [slot, id, pts] of st) { const pos = P(id).pos; if (s[pos] != null) s[pos] += pts; } return s; }
+function posStrength(ids, tol = 'even') { // starters' points per game by position group, both horizons blended
+  const ros = byPos(lineup(ids).st), wks = nowWeeks(), short = { QB: 0, RB: 0, WR: 0, TE: 0 };
+  for (const w of wks) { const s = byPos(lineup(ids, p => playsPg(p, w, tol)).st); for (const k in short) short[k] += s[k] / wks.length; }
+  const out = {}; for (const k in ros) out[k] = NEED_W.ros * ros[k] + NEED_W.short * short[k];
+  return out;
 }
+const _teamStrength = {};
+const teamStrength = mgr => _teamStrength[mgr] || (_teamStrength[mgr] = posStrength(team(mgr).players, tolOf(mgr)));
 function leagueRanks(mgr, ids) { // where this roster's position groups rank vs the other 11 (as they are now)
-  const mine = posStrength(ids); const others = D.teams.filter(t => t.manager !== mgr).map(t => posStrength(t.players));
+  const mine = posStrength(ids, tolOf(mgr)); const others = D.teams.filter(t => t.manager !== mgr).map(t => teamStrength(t.manager));
   const r = {}; for (const pos in mine) r[pos] = 1 + others.filter(o => o[pos] > mine[pos] + 1e-9).length;
   return r;
 }
@@ -133,12 +173,14 @@ function evaluateTrade(aMgr, bMgr, aGet, bGet) { // A receives aGet from B; B re
   });
   const impact = (T, gets, gives, mDiff) => {
     const before = settle(T.players), after = settle(T.players.filter(id => !gives.includes(id)).concat(gets));
-    const dppg = after.pts - before.pts;
+    const tol = tolOf(T.manager);
+    const dRos = after.pts - before.pts, dShort = shortPts(after.roster, tol) - shortPts(before.roster, tol);
+    const dppg = NEED_W.ros * dRos + NEED_W.short * dShort;
     const sd = D.score_sd || 25, g = D.games_remaining;
     const xw = g * (Phi(dppg / (sd * Math.SQRT2)) - 0.5);
     const rb = leagueRanks(T.manager, T.players), ra = leagueRanks(T.manager, T.players.filter(id => !gives.includes(id)).concat(gets));
     const score = 0.5 * clamp(mDiff, -1, 1) + 0.5 * clamp(dppg / 4, -1, 1);
-    return { T, before, after, dppg, ros: dppg * g, xw, rb, ra, score, grade: grade(score) };
+    return { T, before, after, dppg, dRos, dShort, ros: dppg * g, xw, rb, ra, score, grade: grade(score) };
   };
   return { A, B, vA, vB, rawA, rawB, diff, need, sources, waived, ia: impact(A, aGet, bGet, diff), ib: impact(B, bGet, aGet, -diff) };
 }
