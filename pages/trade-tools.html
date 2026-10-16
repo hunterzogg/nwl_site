@@ -463,7 +463,9 @@ function openPicker(side) {
   document.getElementById('pickerSearch').value = '';
   document.getElementById('pickerFilters').innerHTML = ['ALL', 'QB', 'RB', 'WR', 'TE', 'HC'].map(p => `<button class="tc-filter" type="button" data-pos="${p}" aria-pressed="${p === 'ALL'}">${p === 'ALL' ? 'All' : p}</button>`).join('');
   document.getElementById('picker').hidden = false; document.body.style.overflow = 'hidden';
-  renderPicker(); setTimeout(() => document.getElementById('pickerSearch').focus(), 30);
+  renderPicker();
+  const list = document.getElementById('pickerList'); list.scrollTop = 0; // always open at the top of the roster
+  setTimeout(() => { document.getElementById('pickerSearch').focus({ preventScroll: true }); list.scrollTop = 0; }, 30);
 }
 function closePicker() { document.getElementById('picker').hidden = true; document.body.style.overflow = ''; }
 function renderPicker() {
@@ -501,9 +503,9 @@ document.addEventListener('click', e => {
   else if (t.dataset.remove) { const k = t.dataset.side === 'a' ? 'aGets' : 'bGets'; state[k] = state[k].filter(x => x !== t.dataset.remove); render(); }
   else if (t.dataset.pick) { const k = pick.side === 'a' ? 'aGets' : 'bGets', id = t.dataset.pick; state[k] = state[k].includes(id) ? state[k].filter(x => x !== id) : [...state[k], id]; render(); renderPicker(); } // tap again to remove
   else if (t.dataset.addid) { const k = t.dataset.side === 'a' ? 'aGets' : 'bGets'; if (!state[k].includes(t.dataset.addid)) state[k].push(t.dataset.addid); render(); }
-  else if (t.classList.contains('tc-filter')) { pick.pos = t.dataset.pos; document.querySelectorAll('.tc-filter').forEach(b => b.setAttribute('aria-pressed', b === t)); renderPicker(); }
+  else if (t.classList.contains('tc-filter')) { pick.pos = t.dataset.pos; document.querySelectorAll('.tc-filter').forEach(b => b.setAttribute('aria-pressed', b === t)); renderPicker(); document.getElementById('pickerList').scrollTop = 0; }
 });
-document.getElementById('pickerSearch').addEventListener('input', e => { pick.q = e.target.value; renderPicker(); });
+document.getElementById('pickerSearch').addEventListener('input', e => { pick.q = e.target.value; renderPicker(); document.getElementById('pickerList').scrollTop = 0; });
 document.getElementById('pickerClose').addEventListener('click', closePicker);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('picker').hidden) closePicker(); });
 document.getElementById('clearBtn').addEventListener('click', () => { state.aGets = []; state.bGets = []; render(); });
