@@ -1691,7 +1691,14 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
   the absence twice as long (sell them), even records unchanged. Cards say "Buys low on X" / "Moves X while hurt".
 - **Window weights** (next 4 wks / rest of regular season / playoffs): Chasing 70/30/0, Bubble 20/60/20,
   Contender 0/40/60. Window pts/g = `ros_pg` × weighted mean multiplier.
-- **Needs**: starters rank 8th or worse (flat ROS pts/g), or RB/WR with no healthy backup. Top 2 by gap to the
+- **Needs**: one combined rank per position group (`groupStrength`, `NEED_W` = 60% rest of season + 40% next 4
+  weeks), shown as a single rank (Hunter asked not to split the two horizons in the UI). Rest of season ignores
+  injuries; each player = ½ ESPN ROS pts/g + ½ the pts/g his consensus ROS rank implies (rank N = Nth-best ESPN
+  projection at the position), because ESPN's projection alone had Zogg's Dak Prescott last of the 12 starting QBs
+  while every rank source had him QB6-7. The next 4 weeks rebuild the lineup each week with expected missed games
+  taken out (byes ignored: one bye made Glaser's QBs look like the league's worst), so a backup filling in counts.
+  The result is that Goetz with an OUT Lamar Jackson is QB 6th (was 10th on an injury-only view) and Zogg is QB 10th. The
+  calculator's lineup math still uses ESPN pts/g alone (unchanged, open question). Starters rank 8th or worse, or RB/WR with no healthy backup. Top 2 by gap to the
   league median. Surplus = a bench player at or above the league's median weakest starter at that position.
 - **Search**: top 14 non-HC, non-waiver-level assets per team by market value (triples from the top 10).
   Shapes 1-1, 2-1, 2-2, 3-2, 3-3 (both directions). The other side's packages are sorted by `adj(tv)`, and a
