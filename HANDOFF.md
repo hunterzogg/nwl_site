@@ -1591,7 +1591,7 @@ with everything:
   ranks the builder stores in `ranks` (FantasyPros ECR, ESPN, FanDuel, FantasyGuys); hover for each.
 - **UI**: pick Team 1 and Team 2; each side's "gets" list pulls from the *other* team's roster through a
   picker (centered dialog on desktop, full-screen sheet ≤640px; starters/bench groups, search, position
-  chips). Swap sides, Copy link (state in `?a=&b=&ag=&bg=`), Clear.
+  chips). Copy link (state in `?a=&b=&ag=&bg=`), Clear.
 
 
 ## Known Bugs & Data Issues
