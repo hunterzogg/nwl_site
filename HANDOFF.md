@@ -302,6 +302,16 @@ cards dropped "actual" after the record and "of 12" after the SoS rank, and the 
 unplayed regular-season opponents rated by their full season PPG to date, 1 = hardest). It was backfilled for
 Week 5 only; earlier weeks hide the line, since their "remaining" schedule can't be recomputed after the fact.
 
+**Week 6 Pick'em corrections (Oct 16): voided props and the `void:` pick convention.**
+- **Prop 68** (does Hagan start Purdy) was voided because Jalen Hurts is out. Its 6 picks were deleted and
+  the question set `published=false`; it stays in the table for the record.
+- **Prop 69** (trade in Week 6): the league's first 2026 player trade was accepted Wed Oct 14 at 19:44:53 UTC
+  (ESPN `TRADE_ACCEPT`, Palaia). The prop's `lock_at` was moved back to that moment, and it was graded Yes.
+  Picks submitted after it (Muenchow, Stover, Palaia) were rewritten to `choice = 'void:' || choice`, so they
+  can never equal `correct_option` and score 0, but the original answer is still in the row.
+- Caveat: a resubmit refreshes `submitted_at` on every pick in the batch, so "submitted after" means the last save.
+- Reuse the `void:` prefix to zero out specific picks without deleting them.
+
 **Injury rule for bench criticism + `scripts/compute_best_ball.py` (Week 6).** Commentary never
 suggests a team should have started a worse player over one who got hurt during the game. The
 new read-only `scripts/compute_best_ball.py` locks mid-game-injured starters into the optimal
