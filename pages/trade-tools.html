@@ -181,8 +181,9 @@ const team = mgr => D.teams.find(t => t.manager === mgr);
 const ownerOf = id => (D.teams.find(t => t.players.includes(id) || t.ir.includes(id)) || {}).manager || null;
 const adj = vals => Math.pow(vals.reduce((s, v) => s + Math.pow(Math.max(0, v), EXP), 0), 1 / EXP);
 // Waiver-level: a traded player within 0.5 pts/g (rest of season) of the best healthy free agent at his
-// position. Anyone could claim that player for free, so he counts as zero in every market total.
-const WAIVER_MARGIN = 0.5;
+// position. His production is replaceable for free, so he counts at half his market value in every total.
+// Not zero: market value also prices contingent upside (e.g. a handcuff RB), which a free agent may not have.
+const WAIVER_MARGIN = 0.5, WAIVER_DISCOUNT = 0.5;
 function bestFA(pos, exclude = []) {
   return D.free_agents.map(P).filter(p => p.pos === pos && !exclude.includes(p.id) && p.inj !== 'OUT' && p.inj !== 'INJURY_RESERVE').sort((a, b) => b.ros_pg - a.ros_pg)[0];
 }
@@ -191,7 +192,7 @@ function waiverLevel(id) {
   const fa = bestFA(p.pos, [...state.aGets, ...state.bGets]);
   return fa && p.ros_pg <= fa.ros_pg + WAIVER_MARGIN ? fa : null;
 }
-const tv = (id, src) => waiverLevel(id) ? 0 : (src ? (src[id] || 0) : mv(id)); // trade value used in all totals
+const tv = (id, src) => (src ? (src[id] || 0) : mv(id)) * (waiverLevel(id) ? WAIVER_DISCOUNT : 1); // trade value used in all totals
 
 /* ---------- lineups (rest-of-season points per game) ---------- */
 function lineup(ids) {
@@ -277,7 +278,7 @@ function playerCard(id, side) {
   const p = P(id); const st = starterLabel(id);
   return `<div class="tc-pcard"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}</div>
     <div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} pts/g ROS${st ? ' · ' + st : ''}${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div></div>
-    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="No better than ${esc(fa.name)} (${fa.ros_pg.toFixed(1)} pts/g), the best free agent ${esc(p.pos)}"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> 0<small style="color:#E0524A">waiver-level</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
+    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="Projects no better than ${esc(fa.name)} (${fa.ros_pg.toFixed(1)} pts/g), the best free agent ${esc(p.pos)}, so he counts at half value"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> ${fmt(tv(id))}<small style="color:#E0524A">waiver-level ½</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
     <button class="tc-x" type="button" data-remove="${id}" data-side="${side}" aria-label="Remove ${esc(p.name)}">✕</button></div>`;
 }
 function starterLabel(id) {
@@ -332,7 +333,7 @@ function marketCard(R) {
   const w = clamp(abs * 50 / 0.5, 0, 50); // half-bar = 50% gap
   const fill = d > 0 ? `<div class="fill-a" style="width:${w}%"></div>` : `<div class="fill-b" style="width:${w}%"></div>`;
   const giver = d > 0 ? a : b, taker = d > 0 ? b : a;
-  const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} as zero: no better than the best free agent at ${R.waived.length === 1 ? 'his' : 'their'} position.` : '';
+  const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} at half value: projected no better than the best free agent at ${R.waived.length === 1 ? 'his' : 'their'} position (the other half keeps any upside the market prices in, like a handcuff).` : '';
   return `<section class="tc-card"><h2>Market value (on paper)</h2>
     <p class="tc-note">Consensus redraft value (median of six sources). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.${wv}</p>
     <div class="tc-verdict ${cls}">${head}</div>
@@ -465,7 +466,7 @@ function methodology() {
     <p><strong>Consolidation.</strong> A side is worth (Σ value<sup>1.5</sup>)<sup>1/1.5</sup>, so stacking small pieces doesn't buy a star: two players worth 3,000 total about 4,760, not 6,000. Within ${FAIR * 100}% is called fair. "Even it out" solves for the single player value that closes the gap on that same scale.</p>
     <p><strong>Value add.</strong> For each team, the best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) is built from ESPN rest-of-season points per game, before and after the trade. If the team ends up with more than ${D.roster_size} players it drops whoever costs the lineup least (never its only Head Coach); with open spots it claims the free agents that help most. That happens before and after, so a trade only earns credit for the spot it opens or fills. Expected wins = games left × (Φ(Δ ÷ (sd·√2)) − ½), with sd the league's 2026 weekly score spread.</p>
     <p><strong>Grade.</strong> Half market (the value gap, capped at ±100%) and half lineup change (±4 pts/wk = full credit), mapped to A+ through F. B means about even.</p>
-    <p><strong>Free agents.</strong> A traded player within ${WAIVER_MARGIN} pts/g (rest of season) of the best healthy free agent at his position is <em>waiver-level</em>: anyone could claim an equal player for free, so he counts as 0 in the market totals for every source and is never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
+    <p><strong>Free agents.</strong> A traded player within ${WAIVER_MARGIN} pts/g (rest of season) of the best healthy free agent at his position is <em>waiver-level</em>: his production is free on the wire, so he counts at ${WAIVER_DISCOUNT * 100}% of his market value in every source's totals (not zero, because market value also prices contingent upside like a handcuff RB's), and he's never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
     <p><strong>Verdict.</strong> The team with the higher grade score wins the trade; the summary spells out where the market and the lineup math agree or disagree.</p>`;
 }
 

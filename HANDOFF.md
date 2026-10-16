@@ -1578,8 +1578,9 @@ with everything:
   (+ "big" over 25%), with coverage (how many traded players that source values).
 - **Waiver-level players count zero** (replaced the standalone Free agent check box, per explicit request):
   a traded player within `WAIVER_MARGIN` (0.5) pts/g ROS of the best healthy free agent at his position
-  counts 0 in the market totals for every source (`tv()`), shows a struck-through value + "waiver-level"
-  on his card, and is never suggested in "Even it out".
+  counts at `WAIVER_DISCOUNT` (50%) of his value in every source's totals (`tv()`), shows a struck-through
+  value + "waiver-level ½" on his card, and is never suggested in "Even it out". Originally zeroed; changed to
+  half per explicit feedback that market value also prices contingent upside (handcuff RBs).
 - **Overall verdict card** (top of results): winner = higher grade score, with a sentence reconciling the
   market read and the lineup read. Added after a real confusion: Conlin gets Odunze/Brown/Wicks for
   Jeanty/Washington/Boston showed "Leans Conlin" (market, Brown 6,068 vs Jeanty 4,840) next to Conlin F /
