@@ -167,7 +167,7 @@ function renderGuessBody(q, mine, graded, disabled) {
   `;
 }
 
-function questionCardHTML(q) {
+function questionCardHTML(q, idx) {
   const now = new Date();
   const locked = new Date(q.lock_at) <= now;
   const graded = q.correct_option !== null;
@@ -192,10 +192,20 @@ function questionCardHTML(q) {
   }
 
   const submittedClass = currentManager && pageMode === 'saved' && !graded ? ' submitted' : '';
+  // Status pill: graded (right/wrong for the logged-in manager), locked, or open with its lock time
+  let status;
+  if (graded && mine !== undefined && mine !== '') {
+    const right = q.type === 'number_guess' ? Math.abs(Number(mine) - Number(q.correct_option)) <= 2 : mine === q.correct_option;
+    status = `<span class="q-status ${right ? 'right' : 'wrong'}">${right ? '✓ Correct' : '✗ Missed'}</span>`;
+  } else if (graded) status = '<span class="q-status locked">Graded</span>';
+  else if (locked) status = '<span class="q-status locked">🔒 Locked</span>';
+  else status = `<span class="q-status open">Open · locks ${new Date(q.lock_at).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span>`;
   return `
     <div class="question-card${submittedClass}">
-      <div class="question-prompt">${q.prompt}</div>
-      <div class="question-meta">${weekLabel(q.week)} &middot; ${q.points} pt${q.points === 1 ? '' : 's'} &middot; ${locked ? 'Locked' : 'Locks ' + new Date(q.lock_at).toLocaleString()}</div>
+      <div class="q-head"><div class="q-num">${(idx ?? 0) + 1}</div><div class="q-main">
+        <div class="question-prompt">${q.prompt}</div>
+        <div class="question-meta">${status}<span>${weekLabel(q.week)}</span><span>· ${q.points} pt${q.points === 1 ? '' : 's'}</span></div>
+      </div></div>
       ${body}
       ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}
       ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}
@@ -234,8 +244,8 @@ function renderQuestionsPanel(containerId, questionsList, showActionBar) {
         const unlockedQs = questionsList.filter(q => new Date(q.lock_at) > now);
         const answered = unlockedQs.filter(q => draftPicks[q.id] !== undefined && draftPicks[q.id] !== '').length;
         bottomBar = `
-          <div class="picks-actionbar">
-            <span class="picks-progress">${answered} of ${unlockedQs.length} answered</span>
+          <div class="picks-actionbar sticky">
+            <div class="picks-progress"><span>${answered} of ${unlockedQs.length} answered</span><div class="bar"><span style="width:${unlockedQs.length ? (answered / unlockedQs.length * 100).toFixed(0) : 0}%"></span></div></div>
             <button class="btn" id="submitPicksBtn" ${answered === 0 ? 'disabled' : ''}>Submit Picks</button>
             <span class="login-error" id="submitError"></span>
           </div>`;
@@ -337,35 +347,21 @@ async function renderLeaderboard() {
     return;
   }
   const thisWeekMap = Object.fromEntries((data.this_week || []).map(r => [r.manager, r.points]));
+  // Competition ranking: tied points share a rank (1, 2, 2, 4)
+  const rows = data.season.map(r => ({ ...r, points: Number(r.points) }));
+  rows.forEach((r, i) => { r.rank = i && r.points === rows[i - 1].points ? rows[i - 1].rank : i + 1; });
+  const max = Math.max(1, ...rows.map(r => r.points));
+  const color = m => managerColor(managers, m);
+  const wk = m => Number(thisWeekMap[m]) || 0; // API returns SUMs as strings
+  const pod = rows.slice(0, 3), order = pod.length === 3 ? [pod[1], pod[0], pod[2]] : pod;
   el.innerHTML = `
-    ${data.latest_week ? `<p class="updated-note" style="color:var(--text-muted);font-size:0.78rem;margin-bottom:16px;">Through week ${data.latest_week}</p>` : ''}
-    <div class="table-wide" style="overflow-x:auto;">
-    <table>
-      <thead><tr><th>Rank</th><th>Manager</th><th class="num">Season Points</th><th class="num">This Week</th></tr></thead>
-      <tbody>
-        ${data.season.map((r, i) => `
-          <tr>
-            <td class="rank-num">${i + 1}</td>
-            <td>${managerTag(managers, r.manager)}</td>
-            <td class="num mono">${r.points}</td>
-            <td class="num mono">${thisWeekMap[r.manager] || 0}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    </div>
-    <div class="table-cards">
-      ${data.season.map((r, i) => `
-        <div class="table-card">
-          <div class="table-card-top">
-            <span class="rank-num">${i + 1}</span>
-            <span class="grow">${managerTag(managers, r.manager)}</span>
-            <span class="mono">${r.points} pts</span>
-          </div>
-          <div class="table-card-sub">This week: ${thisWeekMap[r.manager] || 0} pts</div>
-        </div>
-      `).join('')}
-    </div>
+    ${data.latest_week ? `<p class="updated-note" style="color:var(--text-muted);font-size:0.78rem;margin-bottom:14px;">Season standings through week ${data.latest_week}</p>` : ''}
+    <div class="hx-podium">${order.map(r => `<div class="hx-pod p${Math.min(r.rank, 3)}" style="--accent:${color(r.manager)}"><div class="medal">${['', '🥇 1st', '🥈 2nd', '🥉 3rd'][Math.min(r.rank, 3)]}${rows.filter(x => x.rank === r.rank).length > 1 ? ' (tie)' : ''}</div><div class="val">${r.points} pts</div><div class="who">${managerTag(managers, r.manager)}</div><div class="sub">+${wk(r.manager)} in week ${data.latest_week || '—'}</div></div>`).join('')}</div>
+    <div class="hx-card lb-list">${rows.slice(3).map(r => `
+      <div class="hx-bar-row" style="--accent:${color(r.manager)}"><span class="rk">${r.rank}</span>
+        <div class="hx-bar-main"><div class="hx-bar-label">${managerTag(managers, r.manager)}${wk(r.manager) ? `<span class="hx-pill up">+${wk(r.manager)} this week</span>` : ''}</div>
+          <div class="hx-bar-track"><div class="hx-bar-fill" style="width:${(r.points / max * 100).toFixed(1)}%"></div></div></div>
+        <span class="hx-bar-val">${r.points}<small>pts</small></span></div>`).join('') || '<p class="hx-muted" style="margin:10px 0">Everyone is on the podium so far.</p>'}</div>
   `;
 }
 

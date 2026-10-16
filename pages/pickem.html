@@ -14,52 +14,68 @@
   color: var(--text-muted); opacity: 0.65; margin: 4px 2px 8px;
 }
 .empty-state {
-  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 14px;
   padding: 48px 24px; text-align: center; color: var(--text-muted);
 }
 .empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
 
 .login-card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-  padding: 20px 24px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 18px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
 }
-.login-card.logged-in { display: flex; justify-content: space-between; align-items: center; }
+.login-card.logged-in { justify-content: space-between; align-items: center; border-color: rgba(242, 183, 5, 0.35); background: linear-gradient(90deg, rgba(242, 183, 5, 0.08), rgba(242, 183, 5, 0) 50%), var(--surface); }
 .field { display: flex; flex-direction: column; gap: 4px; }
-.field label { font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+.field label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
 .field select, .field input {
-  background: var(--surface-raised); border: 1px solid var(--line); color: var(--text);
-  padding: 9px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 160px;
+  background: var(--bg); border: 1px solid var(--line-strong); color: var(--text);
+  padding: 10px 12px; border-radius: 10px; font-family: var(--font-body); font-size: 0.95rem; min-width: 170px;
 }
+.field select:focus, .field input:focus { outline: none; border-color: var(--live); }
 .btn {
-  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 10px 20px; border-radius: 4px; border: 1px solid var(--blue); background: var(--blue);
-  color: #fff; cursor: pointer;
+  font-family: var(--font-display); font-size: 0.86rem; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 11px 20px; border-radius: 10px; border: 1px solid var(--live); background: var(--live);
+  color: #0B0F17; cursor: pointer; font-weight: 600;
 }
-.btn:hover { background: var(--blue-bright); border-color: var(--blue-bright); }
+.btn:hover { background: var(--live-bright); border-color: var(--live-bright); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-ghost { background: transparent; border-color: var(--line); color: var(--text-muted); }
-.login-error { color: var(--red); font-size: 0.85rem; }
-.login-hint { color: var(--text-muted); font-size: 0.8rem; margin: 8px 0 24px; }
+.btn-ghost { background: transparent; border-color: var(--line-strong); color: var(--text); font-weight: 500; }
+.btn-ghost:hover { background: var(--surface-raised); border-color: var(--live); }
+.login-error { color: #E0524A; font-size: 0.85rem; }
+.login-hint { color: var(--text-muted); font-size: 0.8rem; margin: -8px 0 20px; }
 
-.question-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; margin-bottom: 14px; }
-.question-prompt { font-weight: 600; margin-bottom: 4px; }
-.question-meta { font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 12px; }
-.option-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.question-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; }
+.q-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.q-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px; background: var(--live-bg); color: var(--live-bright); font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.q-main { flex: 1; min-width: 0; }
+.question-prompt { font-weight: 600; font-size: 1rem; line-height: 1.45; margin-bottom: 6px; }
+.question-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+.q-status { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; background: var(--surface-raised); font-weight: 600; }
+.q-status.open { background: rgba(79, 168, 118, 0.15); color: #4FA876; }
+.q-status.locked { background: var(--surface-raised); color: var(--text-muted); }
+.q-status.right { background: rgba(79, 168, 118, 0.15); color: #4FA876; }
+.q-status.wrong { background: rgba(224, 82, 74, 0.15); color: #E0524A; }
+.option-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .option-btn {
-  flex: 1; min-width: 140px; text-align: center; padding: 12px 14px; border-radius: 6px;
-  border: 1px solid var(--line); background: var(--surface-raised); color: var(--text);
-  cursor: pointer; font-family: var(--font-body); font-size: 0.9rem;
+  text-align: center; padding: 13px 14px; border-radius: 10px;
+  border: 1px solid var(--line-strong); background: var(--bg); color: var(--text);
+  cursor: pointer; font-family: var(--font-body); font-size: 0.92rem; font-weight: 500; transition: border-color 0.12s, background 0.12s;
 }
-.option-btn.selected { border-color: var(--live); background: var(--live-bg); color: var(--live-bright); font-weight: 600; }
-.option-btn.correct { border-color: #4FA876; background: rgba(79,168,118,0.12); }
-.option-btn.incorrect { border-color: #E0524A; background: rgba(224,82,74,0.10); }
+.option-btn:hover:not(:disabled) { border-color: var(--live); }
+.option-btn.selected { border-color: var(--live); background: var(--live-bg); color: var(--live-bright); font-weight: 600; box-shadow: inset 0 0 0 1px var(--live); }
+.option-btn.correct { border-color: #4FA876; background: rgba(79,168,118,0.14); color: var(--text); }
+.option-btn.correct::before { content: "✓ "; color: #4FA876; font-weight: 700; }
+.option-btn.incorrect { border-color: #E0524A; background: rgba(224,82,74,0.12); }
+.option-btn.incorrect::before { content: "✗ "; color: #E0524A; font-weight: 700; }
+/* once graded, right/wrong beats the amber 'selected' look */
+.option-btn.selected.correct { border-color: #4FA876; background: rgba(79,168,118,0.2); color: var(--text); box-shadow: inset 0 0 0 1px #4FA876; }
+.option-btn.selected.incorrect { border-color: #E0524A; background: rgba(224,82,74,0.16); color: var(--text); box-shadow: inset 0 0 0 1px #E0524A; }
 .option-btn:disabled { cursor: not-allowed; }
-.manager-grid .option-btn { flex: 0 1 120px; min-width: 100px; }
-.locked-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+.manager-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.locked-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; }
 .guess-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .guess-input {
-  background: var(--surface-raised); border: 1px solid var(--line); color: var(--text);
-  padding: 12px 14px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.95rem; width: 140px;
+  background: var(--bg); border: 1px solid var(--line-strong); color: var(--text);
+  padding: 12px 14px; border-radius: 10px; font-family: var(--font-mono); font-size: 1rem; width: 150px;
 }
 .guess-result { margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); }
 .guess-result.correct { color: #4FA876; }
@@ -67,21 +83,21 @@
 
 .picks-actionbar {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-  background: var(--surface-raised); border: 1px solid var(--line); border-radius: 8px;
-  padding: 14px 18px; margin-top: 4px;
+  background: rgba(24, 34, 54, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--line-strong); border-radius: 14px; padding: 12px 16px; margin: 4px 0 14px;
 }
-.picks-actionbar.saved { border-color: #4FA876; }
-.picks-progress { color: var(--text-muted); font-size: 0.85rem; font-family: var(--font-mono); flex: 1; }
-.picks-confirm { color: #4FA876; font-weight: 600; font-size: 0.92rem; flex: 1; }
+.picks-actionbar.sticky { position: sticky; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 5; box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+.picks-actionbar.saved { border-color: rgba(79, 168, 118, 0.6); background: linear-gradient(90deg, rgba(79,168,118,0.12), rgba(79,168,118,0) 60%), var(--surface); }
+.picks-progress { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 6px; color: var(--text-muted); font-size: 0.82rem; font-family: var(--font-mono); }
+.picks-progress .bar { height: 6px; border-radius: 3px; background: var(--bg); overflow: hidden; }
+.picks-progress .bar span { display: block; height: 100%; background: var(--live); border-radius: 3px; transition: width 0.2s; }
+.picks-confirm { color: #4FA876; font-weight: 600; font-size: 0.95rem; flex: 1; }
 #submitPicksBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.question-card.submitted {
-  opacity: 0.55;
-  filter: grayscale(0.4);
-  transition: opacity 0.15s, filter 0.15s;
-}
+.question-card.submitted { opacity: 0.6; filter: grayscale(0.4); transition: opacity 0.15s, filter 0.15s; }
 
-.rank-num { font-family: var(--font-mono); color: var(--live-bright); }
+.lb-list { padding: 4px 16px; }
+.lb-list .hx-bar-row { grid-template-columns: 30px minmax(0, 1fr) auto; }
 </style>
 </head>
 <body>
@@ -104,6 +120,6 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=21"></script>
-<script src="../assets/js/pickem.js?v=10"></script>
+<script src="../assets/js/pickem.js?v=11"></script>
 </body>
 </html>

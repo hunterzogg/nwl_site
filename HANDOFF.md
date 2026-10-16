@@ -128,6 +128,14 @@ Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), 
   leaders). Managers cards got a manager-colored band, titles/record/PPG on the closed card, and an expanded
   card spans the full grid with its sections in columns. The homepage is a split hero (pitch + crest), stat
   tiles, a live 2026 card (week, leader, power #1 from the season_2026 files) and archive cards with a stat each.
+- **2026 Hub tab content:** matchup cards (manager-colored sides, big scores, a points-share bar that uses
+  projections before kickoff and real points after, line/O-U pills), standings as one card per division
+  (record, PF bar, streak pill), power-ranking cards (big rank, manager stripe, movement pill, stat tiles),
+  commentary (Week N recap eyebrow, readable width) and Fun Facts (tone-colored accent stripe, big numbers).
+- **Pick'em tabs:** question cards with a number badge and status pill (Open · locks…, Locked, ✓ Correct /
+  ✗ Missed for the logged-in manager), answer tiles (graded right/wrong overrides the amber selected style),
+  a sticky Submit bar with a progress bar, and a leaderboard podium + bar rows with competition ranking
+  (ties share a rank). Note `/api/leaderboard` returns point SUMs as strings, so convert with `Number()`.
 - Not restyled: `mock-draft.html` (archived, its own design) and `pickem-admin.html` (hidden admin page).
 
 **History UI kit (Oct 2026 redesign, `style.css?v=10`).** The League History pages are moving from plain
