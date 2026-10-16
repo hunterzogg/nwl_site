@@ -9,48 +9,69 @@
 <link rel="stylesheet" href="../assets/css/style.css?v=15">
 <style>
 .empty-state {
-  background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
+  background: var(--surface); border: 1px dashed var(--line); border-radius: 14px;
   padding: 48px 24px; text-align: center; color: var(--text-muted);
 }
 .empty-state .headline { font-family: var(--font-display); color: var(--text); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
-.matchup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-.matchup-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
-.matchup-side { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+.matchup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 14px; }
+.matchup-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.matchup-side { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 10px; padding: 8px 10px 8px 14px; border-radius: 10px; background: var(--bg); }
+.matchup-side::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; border-radius: 2px; background: var(--mc, var(--line-strong)); }
+.matchup-side.winner { box-shadow: inset 0 0 0 1px rgba(242, 183, 5, 0.45); }
 .matchup-side.winner .matchup-score { color: var(--live-bright); }
-.matchup-score { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; }
-.matchup-vs { text-align: center; color: var(--text-muted); font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.08em; padding: 2px 0; }
-.matchup-proj { color: var(--text-muted); font-size: 0.78rem; font-family: var(--font-mono); }
-.matchup-line { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
-.matchup-line b { color: var(--text); font-family: var(--font-mono); }
+.matchup-side.loser .matchup-score { color: var(--text-muted); }
+.matchup-score { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; line-height: 1; }
+.matchup-proj { grid-column: 1 / -1; color: var(--text-muted); font-size: 0.72rem; font-family: var(--font-mono); }
+.matchup-share { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: var(--bg); }
+.matchup-share span { height: 100%; }
+.matchup-share-label { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: -4px; }
+.matchup-line { display: flex; gap: 6px; flex-wrap: wrap; }
+.matchup-line .hx-pill b { color: var(--text); font-weight: 600; }
 .division-title { color: var(--text-muted); font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 20px 0 8px; }
 .division-title:first-child { margin-top: 0; }
 .division-badge {
   display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.03em; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle;
+  letter-spacing: 0.03em; padding: 1px 6px; border-radius: 999px; margin-left: 6px; vertical-align: middle;
 }
 .division-Gold { color: #D9B23C; background: rgba(217, 178, 60, 0.12); }
 .division-Silver { color: #9A9A9A; background: rgba(154, 154, 154, 0.14); }
 .division-Bronze { color: #A9784F; background: rgba(169, 120, 79, 0.14); }
-.rank-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
-.rank-num-big { font-family: var(--font-mono); font-size: 1.4rem; color: var(--live-bright); width: 32px; flex-shrink: 0; }
-.rank-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+/* Standings: one card per division */
+.stand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 14px; }
+.stand-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 6px 16px 10px; }
+.stand-card h3 { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; letter-spacing: 0.08em; margin: 10px 0 4px; }
+.stand-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.stand-row:last-child { border-bottom: 0; }
+.stand-row .pos { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+.stand-row .rec { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; text-align: right; }
+.stand-row .meta { grid-column: 2 / -1; display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+.stand-row .meta .hx-bar-track { flex: 1; }
+.stand-row .meta .hx-pill { font-size: 0.66rem; }
+/* Power rankings */
+.rank-card { position: relative; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 14px 18px; margin-bottom: 10px; overflow: hidden; }
+.rank-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--mc, var(--line-strong)); }
+.rank-card.top3 { border-color: rgba(242, 183, 5, 0.35); background: linear-gradient(90deg, rgba(242, 183, 5, 0.07), rgba(242, 183, 5, 0) 40%), var(--surface); }
+.rank-num-big { font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; line-height: 1; color: var(--live-bright); text-align: center; }
+.rank-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .rank-name .manager-tag { font-size: 1.2rem; font-weight: 600; }
 .rank-name .manager-dot { width: 11px; height: 11px; }
-.rank-trend { font-size: 0.72rem; font-family: var(--font-mono); white-space: nowrap; opacity: 0.85; }
-.rank-trend.up { color: #4FA876; }
-.rank-trend.down { color: #E0524A; }
+.rank-trend { font-size: 0.72rem; font-family: var(--font-mono); font-weight: 600; white-space: nowrap; padding: 2px 8px; border-radius: 999px; background: var(--surface-raised); }
+.rank-trend.up { color: #4FA876; background: rgba(79, 168, 118, 0.15); }
+.rank-trend.down { color: #E0524A; background: rgba(224, 82, 74, 0.15); }
 .rank-trend.same { color: var(--text-muted); }
-.rank-body { flex: 1; }
-.rank-stats {
-  list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px;
-}
-.rank-stats li { color: var(--text-muted); font-size: 0.82rem; }
-.rank-stats li b { color: var(--text); font-family: var(--font-mono); font-weight: 600; }
-.commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; line-height: 1.7; }
+.rank-body { min-width: 0; }
+.rank-stats { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; }
+.rank-stats li { background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 6px 9px; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); display: flex; flex-direction: column; gap: 1px; }
+.rank-stats li b { color: var(--text); font-family: var(--font-mono); font-weight: 600; font-size: 0.92rem; letter-spacing: 0; text-transform: none; }
+.rank-stats li small { font-size: 0.66rem; text-transform: none; letter-spacing: 0; }
+@media (max-width: 560px) { .rank-card { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; } .rank-num-big { font-size: 1.9rem; } .rank-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; line-height: 1.75; font-size: 1rem; }
+.commentary-body > * { max-width: 74ch; }
+.commentary-body .cv { max-width: none; }
 .commentary-body p { margin: 0 0 1em; white-space: pre-wrap; }
 .commentary-body p:last-child { margin-bottom: 0; }
 /* Inline commentary visuals (an entry's optional `visuals` array, placed via {{visual:id}} in body) */
-.cv { margin: 4px 0 22px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; }
+.cv { margin: 6px 0 24px; padding: 16px 18px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
 .cv-title { font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 0 10px; color: var(--text); }
 .cv-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
 .cv-table-wrap { overflow-x: auto; }
@@ -72,17 +93,22 @@
 .cv-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.74rem; color: var(--text-muted); margin-bottom: 10px; }
 @media (max-width: 640px) { .commentary-body { padding: 16px; } .cv { padding: 12px 10px; } .cv th, .cv td { padding: 6px 5px; } .cv-bar-row { grid-template-columns: 96px 1fr auto; gap: 6px; } }
 .cv-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-.commentary-title { margin-bottom: 12px; }
-.fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.commentary-title { margin: 0 0 16px; font-size: clamp(1.4rem, 3.5vw, 1.9rem); line-height: 1.1; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.commentary-eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--live-bright); margin-bottom: 6px; }
+.fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 640px) { .fact-grid { grid-template-columns: 1fr; } }
-.fact-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+.fact-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px 16px 20px; }
+.fact-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--line-strong); }
+.fact-card.hot::before { background: var(--live-bright); } .fact-card.cold::before { background: var(--blue-bright); }
+.fact-card.green::before { background: #4FA876; } .fact-card.red::before { background: #E0524A; }
+.fact-card.hot { background: linear-gradient(135deg, rgba(242, 183, 5, 0.08), rgba(242, 183, 5, 0) 50%), var(--surface); }
 .fact-card.wide { grid-column: 1 / -1; }
 .fact-label {
   font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em;
   font-size: 0.68rem; color: var(--text-muted); margin: 0 0 8px;
 }
-.fact-headline { font-size: 1.05rem; font-weight: 600; margin: 0 0 4px; line-height: 1.35; }
-.fact-headline .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.fact-headline { font-size: 1.1rem; font-weight: 600; margin: 0 0 6px; line-height: 1.35; }
+.fact-headline .num { font-family: var(--font-display); font-size: 1.55em; font-weight: 600; letter-spacing: 0.01em; vertical-align: -0.06em; }
 .fact-card.hot .fact-headline .num { color: var(--live-bright); }
 .fact-card.cold .fact-headline .num { color: var(--blue-bright); }
 .fact-card.green .fact-headline .num { color: #4FA876; }
@@ -212,25 +238,30 @@ function renderMatchups() {
     <p class="updated-note">Last updated ${new Date(entry.updated_at).toLocaleString()}</p>
     <div class="matchup-grid">
       ${entry.games.map(g => {
-        const homeWin = g.winner === 'HOME';
-        const awayWin = g.winner === 'AWAY';
+        const done = g.winner === 'HOME' || g.winner === 'AWAY' || g.winner === 'TIE';
+        const started = (g.home_score || 0) + (g.away_score || 0) > 0;
+        const homeWin = g.winner === 'HOME', awayWin = g.winner === 'AWAY';
+        const cls = (win, lose) => win ? 'winner' : lose ? 'loser' : '';
+        // Share bar: actual points once scoring has started, projections before kickoff
+        const useProj = !started && g.home_projected != null && g.away_projected != null;
+        const hv = useProj ? g.home_projected : g.home_score, av = useProj ? g.away_projected : (g.away_score || 0);
+        const tot = hv + av, hp = tot ? hv / tot * 100 : 50;
+        const side = (mgr, score, proj, c) => `
+          <div class="matchup-side ${c}" style="--mc:${mgr ? managerColor(managers, mgr) : 'var(--line-strong)'}">
+            ${mgr ? managerTagWithDivision(managers, mgr) : '<span style="color:var(--text-muted)">BYE</span>'}
+            <span class="matchup-score">${score != null ? score.toFixed(1) : ''}</span>
+            ${proj != null ? `<div class="matchup-proj">proj ${proj.toFixed(1)}</div>` : ''}
+          </div>`;
         return `
         <div class="matchup-card hover-lift">
-          <div class="matchup-side ${homeWin ? 'winner' : ''}">
-            ${managerTagWithDivision(managers, g.home_manager)}
-            <span class="matchup-score">${g.home_score.toFixed(1)}</span>
-          </div>
-          ${g.home_projected != null ? `<div class="matchup-proj" style="text-align:right;">proj ${g.home_projected.toFixed(1)}</div>` : ''}
-          <div class="matchup-vs">at</div>
-          <div class="matchup-side ${awayWin ? 'winner' : ''}">
-            ${g.away_manager ? managerTagWithDivision(managers, g.away_manager) : '<span style="color:var(--text-muted)">BYE</span>'}
-            <span class="matchup-score">${g.away_score !== null ? g.away_score.toFixed(1) : ''}</span>
-          </div>
-          ${g.away_projected != null ? `<div class="matchup-proj" style="text-align:right;">proj ${g.away_projected.toFixed(1)}</div>` : ''}
+          ${side(g.home_manager, g.home_score, g.home_projected, cls(homeWin, awayWin))}
+          ${side(g.away_manager, g.away_score, g.away_projected, cls(awayWin, homeWin))}
+          ${g.away_manager && tot ? `<div class="matchup-share" role="img" aria-label="${useProj ? 'Projected' : 'Points'} share"><span style="width:${hp.toFixed(1)}%;background:${managerColor(managers, g.home_manager)}"></span><span style="width:${(100 - hp).toFixed(1)}%;background:${managerColor(managers, g.away_manager)}"></span></div>
+            <div class="matchup-share-label"><span>${useProj ? 'Projected' : done ? 'Final' : 'Live'}</span><span>${hp.toFixed(0)}% – ${(100 - hp).toFixed(0)}%</span></div>` : ''}
           ${g.line ? `
             <div class="matchup-line">
-              <span>Line: <b>${g.line.favorite}${g.line.spread > 0 ? ' -' + g.line.spread.toFixed(1) : ' (PK)'}</b></span>
-              <span>O/U <b>${g.line.over_under.toFixed(1)}</b></span>
+              <span class="hx-pill">Line <b>${g.line.favorite}${g.line.spread > 0 ? ' −' + g.line.spread.toFixed(1) : ' PK'}</b></span>
+              <span class="hx-pill">O/U <b>${g.line.over_under.toFixed(1)}</b></span>
             </div>
           ` : ''}
         </div>
@@ -255,40 +286,26 @@ function renderStandings() {
       .sort((a, b) => b.wins - a.wins || b.points_for - a.points_for);
   });
 
+  const maxPF = Math.max(...standings.standings.map(s => s.points_for));
+  const streak = s => !s.streak_length ? '' : `<span class="hx-pill ${s.streak_type === 'WIN' ? 'up' : s.streak_type === 'LOSS' ? 'down' : ''}">${s.streak_type.charAt(0)}${s.streak_length}</span>`;
   document.getElementById('standingsContent').innerHTML = `
     <p class="updated-note">As of week ${standings.week} &middot; updated ${new Date(standings.updated_at).toLocaleString()}</p>
+    <div class="stand-grid">
     ${divisions.map(div => `
-      <div class="division-title">${div}</div>
-      <div class="table-wide" style="overflow-x:auto;">
-      <table>
-        <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">PF</th><th class="num">PA</th><th class="num">Streak</th></tr></thead>
-        <tbody>
-          ${byDivision[div].map(s => `
-            <tr>
-              <td>${managerTag(managers, s.manager)}</td>
-              <td class="num">${s.wins}</td>
-              <td class="num">${s.losses}</td>
-              <td class="num">${s.ties}</td>
-              <td class="num">${s.points_for.toFixed(1)}</td>
-              <td class="num">${s.points_against.toFixed(1)}</td>
-              <td class="num">${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      </div>
-      <div class="table-cards">
-        ${byDivision[div].map(s => `
-          <div class="table-card">
-            <div class="table-card-top">
-              <span class="grow">${managerTag(managers, s.manager)}</span>
-              <span class="mono">${s.wins}-${s.losses}${s.ties ? '-' + s.ties : ''}</span>
-            </div>
-            <div class="table-card-sub">PF ${s.points_for.toFixed(1)} &middot; PA ${s.points_against.toFixed(1)} &middot; Streak ${s.streak_length ? s.streak_type.charAt(0) + s.streak_length : '—'}</div>
+      <section class="stand-card">
+        <h3><span class="division-badge division-${div}" style="margin:0">${div}</span><span class="hx-muted" style="font-size:.7rem;letter-spacing:.06em">W–L</span></h3>
+        ${byDivision[div].map((s, i) => `
+          <div class="stand-row">
+            <span class="pos">${i + 1}</span>
+            <span>${managerTag(managers, s.manager)}</span>
+            <span class="rec">${s.wins}–${s.losses}${s.ties ? '–' + s.ties : ''}</span>
+            <div class="meta"><span>${s.points_for.toFixed(1)} PF</span><div class="hx-bar-track"><div class="hx-bar-fill" style="width:${(s.points_for / maxPF * 100).toFixed(1)}%;--accent:${managerColor(managers, s.manager)}"></div></div><span>${s.points_against.toFixed(1)} PA</span>${streak(s)}</div>
           </div>
         `).join('')}
-      </div>
+      </section>
     `).join('')}
+    </div>
+    <p class="hx-muted" style="font-size:.74rem;margin-top:10px">Bars show points for, relative to the league's top scorer.</p>
   `;
 }
 
@@ -301,7 +318,7 @@ function renderPower() {
     return;
   }
   document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
-    <div class="rank-card hover-lift">
+    <div class="rank-card hover-lift${r.rank <= 3 ? ' top3' : ''}" style="--mc:${managerColor(managers, r.manager)}">
       <div class="rank-num-big">${r.rank}</div>
       <div class="rank-body">
         <div class="rank-name-row">
@@ -310,12 +327,12 @@ function renderPower() {
         </div>
         ${r.record_actual ? `
           <ul class="rank-stats">
-            <li>Record: <b>${r.record_actual}</b></li>
-            <li>Expected Wins: <b>${r.expected_wins}</b></li>
-            <li>PPG: <b>${r.ppg}</b></li>
-            <li>Last ${r.recent_games}: <b>${r.recent_record}</b>, ${r.recent_ppg} PPG</li>
-            <li>Strength of Schedule: <b>${sosLabel(r.sos_rank, r.sos_total)}</b></li>
-            ${r.remaining_sos_rank ? `<li>Remaining SoS (next ${r.remaining_games} games): <b>${sosLabel(r.remaining_sos_rank, r.sos_total)}</b></li>` : ''}
+            <li>Record<b>${r.record_actual}</b></li>
+            <li>Expected wins<b>${r.expected_wins}</b></li>
+            <li>PPG<b>${r.ppg}</b></li>
+            <li>Last ${r.recent_games}<b>${r.recent_record}</b><small>${r.recent_ppg} PPG</small></li>
+            <li>Strength of schedule<b>${sosLabel(r.sos_rank, r.sos_total)}</b></li>
+            ${r.remaining_sos_rank ? `<li>Remaining SoS<b>${sosLabel(r.remaining_sos_rank, r.sos_total)}</b><small>next ${r.remaining_games} games</small></li>` : ''}
           </ul>
         ` : ''}
       </div>
@@ -433,6 +450,7 @@ function renderCommentary() {
   }
   document.getElementById('commentaryContent').innerHTML = `
     <div class="commentary-body">
+      <div class="commentary-eyebrow">Week ${entry.week} recap</div>
       ${entry.title ? `<h2 class="commentary-title">${entry.title}</h2>` : ''}
       ${commentaryBodyHTML(entry)}
     </div>
