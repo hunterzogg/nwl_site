@@ -4,7 +4,7 @@ const NWL_HOME = { href: 'index.html', label: 'Home' };
 const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Hub' };
 const NWL_MOCK_DRAFT_PAGE = { href: 'pages/mock-draft.html', label: 'Mock Draft' };
 const NWL_PICKEM_PAGE = { href: 'pages/pickem.html', label: "Pick'em" };
-const NWL_TRADE_TOOLS_PAGE = { href: 'pages/trade-tools.html', label: 'Trade Tools' };
+const NWL_TRADE_TOOLS_PAGE = { href: 'pages/trade-tools.html', label: 'Trade Calculator' };
 
 // In-season pages (amber, grouped together) vs. league history / archive pages (grouped
 // separately) - kept as two distinct arrays so renderNav can label and style each group.

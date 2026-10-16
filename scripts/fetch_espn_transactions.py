@@ -19,10 +19,10 @@ pull's `season == "2026"` entries each time, exactly like fetch_espn_week.py ove
 current week's matchups.json entry. Historical 2013-2025 rows are never touched.
 
 Player names/positions are resolved via ESPN's public kona_player_info endpoint (same one
-fetch_espn_rosters.py uses for the free-agent pool), filtered to exactly the player IDs this pull
+build_trade_values.py uses for the free-agent pool), filtered to exactly the player IDs this pull
 needs via x-fantasy-filter. Head Coach picks use negative synthetic IDs (ESPN's own convention
 for this league's custom HC category) of the form -(14000 + proTeamId) - confirmed against the
-real HC entries already sitting in data/season_2026/rosters.json - so those resolve locally via
+real HC entries in ESPN roster data - so those resolve locally via
 PRO_TEAM_NICKNAME instead of an API call (kona_player_info doesn't carry them).
 
 Losing bids ("offers report"): ESPN doesn't expose a dedicated won/lost report the way its UI's

@@ -2,7 +2,7 @@ name: Weekly ESPN Update
 
 # Pulls this week's NWL matchups/standings/projections, current rosters/trade values, and free
 # agent/waiver acquisitions from ESPN, and commits the result so GitHub Pages + Vercel pick it up
-# automatically. See scripts/fetch_espn_week.py, scripts/fetch_espn_rosters.py, and
+# automatically. See scripts/fetch_espn_week.py, scripts/build_trade_values.py, and
 # scripts/fetch_espn_transactions.py for the actual pull logic and
 # .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this same workflow.
 #
@@ -45,8 +45,8 @@ jobs:
       - name: Run weekly matchups/standings fetch
         run: python3 scripts/fetch_espn_week.py
 
-      - name: Run roster/trade-value fetch
-        run: python3 scripts/fetch_espn_rosters.py
+      - name: Build Trade Calculator data (rosters, free agents, market values)
+        run: python3 scripts/build_trade_values.py
 
       - name: Run free agent/waiver transactions fetch
         run: python3 scripts/fetch_espn_transactions.py
@@ -57,7 +57,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/season_2026/matchups.json data/season_2026/standings.json \
                   data/season_2026/power_rankings.json data/season_2026/commentary.json \
-                  data/season_2026/rosters.json data/transactions_with_dates.json
+                  data/season_2026/trade_values.json data/transactions_with_dates.json
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

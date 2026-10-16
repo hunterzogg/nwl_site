@@ -10,8 +10,8 @@ standings, power rankings, commentary, and Brian's Fun Facts), grading last week
 and drafting the next week's. Three parts:
 
 1. **Data pull + editorial review** - a thin wrapper around `scripts/fetch_espn_week.py`
-   (matchups/standings/power rankings/commentary) and `scripts/fetch_espn_rosters.py` (current
-   rosters + trade values, for Trade Tools) - the scripts do the actual work; this skill's job is
+   (matchups/standings/power rankings/commentary) and `scripts/build_trade_values.py` (current
+   rosters, free agents, and redraft market values, for the Trade Calculator) - the scripts do the actual work; this skill's job is
    to run them correctly, help review what they produced, and not skip the manual publish step for
    the editorial pieces (power rankings, commentary, and Brian's Fun Facts - the last of which no
    script writes at all, see "After running" below). A scheduled GitHub Action
@@ -44,7 +44,7 @@ From the repo root:
 
 ```bash
 python3 scripts/fetch_espn_week.py
-python3 scripts/fetch_espn_rosters.py
+python3 scripts/build_trade_values.py
 ```
 
 No `--week` needed in the normal case — `fetch_espn_week.py` auto-detects ESPN's current scoring
@@ -52,10 +52,10 @@ period. Only pass `--week N` explicitly if the user asks for a specific past/fut
 backfilling a missed week, or pre-loading a schedule week before it's played). Both scripts are
 safe to re-run any time — `fetch_espn_week.py` overwrites that week's entry rather than
 duplicating it (fine to re-run later in the day to catch a score correction), and
-`fetch_espn_rosters.py` just overwrites the whole file with a fresh snapshot every time (run it
+`build_trade_values.py` just overwrites the whole file with a fresh snapshot every time (run it
 whenever the user wants current trade values, e.g. after a waiver period). Run
-`fetch_espn_week.py` first if both are needed — `fetch_espn_rosters.py` reads the just-written
-`standings.json` for each team's division.
+`fetch_espn_week.py` first if both are needed — `build_trade_values.py` reads the just-written
+`matchups.json` for the weekly score spread.
 
 This writes/updates five files under `data/season_2026/`:
 
@@ -63,7 +63,7 @@ This writes/updates five files under `data/season_2026/`:
 - `standings.json` — current W-L/points standings (factual, no review needed)
 - `power_rankings.json` — a computed ranking draft for the week, `published: false`
 - `commentary.json` — a blank stub (`title`/`body` empty), `published: false`
-- `rosters.json` — current rosters + trade values for Trade Tools (factual, no review needed)
+- `trade_values.json` — rosters, free agents, and market values for the Trade Calculator (factual, no review needed)
 
 ## After running — walk through publishing
 
