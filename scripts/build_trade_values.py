@@ -26,6 +26,8 @@ rebuild). Everything the calculator needs in one file:
      end of FantasyCalc's list). A source that fails to load is simply left out; the page grades
      with whatever sources are present.
   3. market: the consensus value per player = median of the available source values.
+  4. ranks: each player's raw rest-of-season positional ranks per rank source (fantasypros, espn,
+     fanduel, fantasyguys); the page shows their median as the player's ROS rank.
 
 Head Coaches (ESPN slot 19) are included for lineups but have no market values (no source lists them).
 
@@ -228,6 +230,7 @@ def main():
 
     # ---- market sources ----
     sources, notes = {}, {}
+    ranks = {}  # espnId -> {source: rest-of-season positional rank}
     fc = None
     try:
         fc = src_fantasycalc()
@@ -271,6 +274,8 @@ def main():
                 pid = match(p["name"], p["pos"])
                 if pid in players:
                     sources["fantasypros"][pid] = rank_to_value(fc["by_pos"], p["pos"], p["pos_rank"])
+                    if p["pos_rank"]:
+                        ranks.setdefault(pid, {})["fantasypros"] = p["pos_rank"]
             notes["fantasypros"] = f"{experts} experts"
         except Exception as e:  # noqa: BLE001
             notes["fantasypros"] = f"failed: {e}"
@@ -280,6 +285,7 @@ def main():
                 pid = str(x.get("espn_id") or "")
                 if pid in players and x.get(key):
                     vals[pid] = rank_to_value(fc["by_pos"], x["position"], int(x[key]))
+                    ranks.setdefault(pid, {})[label] = int(x[key])
             if vals:
                 sources[label] = vals
 
@@ -308,7 +314,7 @@ def main():
         "slots": {str(k): v for k, v in slots.items() if k not in (BENCH_SLOT, IR_SLOT)},
         "score_sd": sd_team,
         "teams": teams, "free_agents": fa_ids, "players": players,
-        "sources": sources, "source_notes": notes, "market": market,
+        "sources": sources, "source_notes": notes, "market": market, "ranks": ranks,
     }
     OUTPUT_PATH.write_text(json.dumps(out, separators=(",", ":")))
     counts = ", ".join(f"{k} {len(v)}" for k, v in sources.items())

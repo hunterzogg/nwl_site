@@ -1579,7 +1579,7 @@ with everything:
 - **Waiver-level players count zero** (replaced the standalone Free agent check box, per explicit request):
   a traded player within `WAIVER_MARGIN` (0.5) pts/g ROS of the best healthy free agent at his position
   counts at `WAIVER_DISCOUNT` (50%) of his value in every source's totals (`tv()`), shows a struck-through
-  value + "waiver-level ½" on his card, and is never suggested in "Even it out". Originally zeroed; changed to
+  value + "½ waiver" on his card, and is never suggested in "Even it out". Originally zeroed; changed to
   half per explicit feedback that market value also prices contingent upside (handcuff RBs).
 - **Overall verdict card** (top of results): winner = higher grade score, with a sentence reconciling the
   market read and the lineup read. Added after a real confusion: Conlin gets Odunze/Brown/Wicks for
@@ -1587,6 +1587,8 @@ with everything:
   Zogg A+ (lineup: Jeanty 15.3 and Boston 12.5 pts/g vs Brown 13.2 and Odunze 9.0 → ±5.7 pts/wk). The market
   card is now titled "Market value (on paper)", and "Even it out" says it balances market value only (with
   a heads-up when the side it asks to add more is already the overall loser).
+- **ROS rank** (amber, next to value on cards, picker rows and suggestions): median of the raw positional
+  ranks the builder stores in `ranks` (FantasyPros ECR, ESPN, FanDuel, FantasyGuys); hover for each.
 - **UI**: pick Team 1 and Team 2; each side's "gets" list pulls from the *other* team's roster through a
   picker (centered dialog on desktop, full-screen sheet ≤640px; starters/bench groups, search, position
   chips). Swap sides, Copy link (state in `?a=&b=&ag=&bg=`), Clear.
