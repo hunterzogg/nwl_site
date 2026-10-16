@@ -23,7 +23,7 @@ const NWL_PAGES = [
   { href: 'pages/transactions.html', label: 'Transactions', desc: 'Waivers, FAAB and trades' },
 ];
 
-// Header: brand on the left; Home, the In Season pages (amber pills) and a "League History"
+// Header: brand on the left (it links home, so there's no separate Home link); the In Season pages (amber pills) and a "League History"
 // dropdown on the right. Under 900px everything collapses into a full-width grouped menu behind
 // the hamburger. This is the only place nav markup is generated.
 function renderNav(activeHref) {
@@ -52,10 +52,9 @@ function renderNav(activeHref) {
         <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
       </button>
       <nav class="nav-main nav-links" id="navMain" aria-label="Main">
-        <a href="${homeHref}" class="nav-pill${isActive(NWL_HOME) ? ' active' : ''}">Home</a>
         <span class="nav-group-label">In Season</span>
         <div class="nav-group nav-group-live">${liveLinks}</div>
-        <span class="nav-group-label">League History</span>
+        <span class="nav-group-label nav-label-history">League History</span>
         <div class="nav-dd">
           <button class="nav-pill nav-dd-btn${activeHistory ? ' active' : ''}" type="button" aria-expanded="false" aria-haspopup="true">
             ${activeHistory ? `History <span class="nav-dd-cur">· ${activeHistory.label}</span>` : 'League History'}<span class="chev" aria-hidden="true">▾</span>

@@ -88,6 +88,10 @@ a { color: inherit; text-decoration: none; }
 .nav-pill.nav-live.active { background: var(--live); color: #0B0F17; border-color: var(--live); }
 .nav-pill.nav-live.active .nav-live-dot { background: #0B0F17; box-shadow: none; animation: none; }
 .nav-group-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); opacity: 0.7; margin-left: 10px; padding-left: 12px; border-left: 1px solid var(--line); align-self: stretch; display: flex; align-items: center; }
+.nav-main > .nav-group-label:first-child { margin-left: 0; padding-left: 0; border-left: 0; }
+/* The dropdown button already says League History on desktop; the label only shows in the phone menu */
+.nav-label-history { display: none; }
+.nav-dd { margin-left: 10px; padding-left: 12px; border-left: 1px solid var(--line); }
 .nav-dd { position: relative; }
 .nav-dd-btn .chev { font-size: 0.7rem; transition: transform 0.15s; }
 .topnav.dd-open .nav-dd-btn .chev { transform: rotate(180deg); }
@@ -140,6 +144,8 @@ a { color: inherit; text-decoration: none; }
   .nav-group { flex-direction: column; gap: 4px; }
   .nav-group-label { margin: 14px 0 4px; padding: 0 4px; border-left: 0; font-size: 0.66rem; }
   .nav-dd-btn { display: none; }
+  .nav-label-history { display: flex; }
+  .nav-dd { margin-left: 0; padding-left: 0; border-left: 0; }
   .nav-dd-menu { display: grid; position: static; width: auto; padding: 0; background: none; border: 0; box-shadow: none; gap: 4px; }
   .nav-dd-item { padding: 11px 14px; background: var(--surface); border: 1px solid var(--line); }
   body.nav-locked { overflow: hidden; }

@@ -114,7 +114,7 @@ Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), 
 
 **Site-wide redesign (Oct 2026), all pages on the new look (`style.css?v=13`, `shared.js?v=19`).**
 - **Header/nav** (`renderNav()` in shared.js, "Top nav" block in style.css): slim sticky header with a blurred
-  background and a blue→red bottom rule; brand = crest + "NWL / National Wayzata League". Desktop: Home,
+  background and a blue→red bottom rule; brand = crest + "NWL / National Wayzata League". Desktop: no Home link (the crest/wordmark goes home),
   amber In Season pills (active = filled amber), and a **League History dropdown** (each page has a one-line
   `desc` in `NWL_PAGES`; the button shows "History · <current page>"). Under 900px: hamburger → full-screen
   grouped menu. Gotcha: `backdrop-filter` makes the header the containing block for `position: fixed`
