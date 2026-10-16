@@ -57,7 +57,8 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/season_2026/matchups.json data/season_2026/standings.json \
                   data/season_2026/power_rankings.json data/season_2026/commentary.json \
-                  data/season_2026/trade_values.json data/transactions_with_dates.json
+                  data/season_2026/trade_values.json data/season_2026/trade_value_history.json \
+                  data/transactions_with_dates.json
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

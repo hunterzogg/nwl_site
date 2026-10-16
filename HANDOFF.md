@@ -1598,6 +1598,12 @@ with everything:
   Zogg A+ (lineup: Jeanty 15.3 and Boston 12.5 pts/g vs Brown 13.2 and Odunze 9.0 → ±5.7 pts/wk). The market
   card is now titled "Market value (on paper)", and "Even it out" says it balances market value only (with
   a heads-up when the side it asks to add more is already the overall loser).
+- **Trend arrows** (▲ green / ▼ red before the value): `trends` in the JSON, only significant moves. The
+  builder saves one consensus-value snapshot per day to `data/season_2026/trade_value_history.json` (35 days
+  kept; the Action commits it) and compares today with the snapshot nearest 14 days ago (11–17 days back),
+  needing ≥15% AND ≥250 points (`TREND_MIN_*`). History started Oct 16 2026, so until ~Oct 27-30 the builder
+  falls back to FantasyCalc's own `trend30Day` (FantasyCalc-listed players only, stricter `FC30_MIN_*` = 30%/500);
+  the tooltip names the basis. On Oct 16 the stand-in flagged 60 players (55 rostered).
 - **ROS rank** (amber, next to value on cards, picker rows and suggestions): median of the raw positional
   ranks the builder stores in `ranks` (FantasyPros ECR, ESPN, FanDuel, FantasyGuys); hover for each.
 - **UI**: pick Team 1 and Team 2; each side's "gets" list pulls from the *other* team's roster through a

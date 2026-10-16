@@ -26,6 +26,8 @@
 .tc-psub { font-size: 0.76rem; color: var(--text-muted); }
 .tc-pval { font-family: var(--font-mono); font-weight: 600; text-align: right; }
 .tc-pval small { display: block; font-weight: 500; color: var(--text-muted); font-size: 0.7rem; }
+.tc-trend { font-size: 0.7rem; margin-right: 4px; vertical-align: 1px; cursor: help; }
+.tc-trend.up { color: #4FA876; } .tc-trend.down { color: #E0524A; }
 .tc-prank { font-family: var(--font-mono); font-weight: 600; text-align: right; min-width: 44px; color: var(--live-bright); }
 .tc-prank small { display: block; font-weight: 500; color: var(--text-muted); font-size: 0.7rem; }
 @media (max-width: 480px) {
@@ -235,6 +237,14 @@ function waiverLevel(id) {
   const rk = (rosRank(id) || {}).rank;
   return p.ros_pg <= r.pg + WAIVER_MARGIN && (!rk || rk >= r.rank) ? r : null;
 }
+// Value trend arrow: only for significant ~2-week moves (see build_trade_values.py). Until two weeks of
+// daily snapshots exist, FantasyCalc's 30-day trend stands in, and the tooltip says so.
+function trendIcon(id) {
+  const t = (D.trends || {})[id]; if (!t) return '';
+  const up = t.delta > 0, pct = Math.round(Math.abs(t.pct) * 100);
+  const basis = t.basis === 'fantasycalc30d' ? 'FantasyCalc, last 30 days' : `consensus value, last ${parseInt(t.basis)} days`;
+  return `<span class="tc-trend ${up ? 'up' : 'down'}" title="${up ? 'Up' : 'Down'} ${fmt(Math.abs(t.delta))} (${up ? '+' : '−'}${pct}%) · ${basis}" aria-label="Trending ${up ? 'up' : 'down'} ${pct}%">${up ? '▲' : '▼'}</span>`;
+}
 const tv = (id, src) => (src ? (src[id] || 0) : mv(id)) * (waiverLevel(id) ? WAIVER_DISCOUNT : 1); // trade value used in all totals
 
 /* ---------- lineups (rest-of-season points per game) ---------- */
@@ -321,7 +331,7 @@ function playerCard(id, side) {
   const p = P(id); const st = starterLabel(id);
   return `<div class="tc-pcard"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}</div>
     <div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${st ? ' · ' + st : ''}${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div></div>
-    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="Projects and ranks no better than what's on waivers (${fa.pg.toFixed(1)} proj pts/g, ${esc(p.pos)}${fa.rank} for the 3rd-best healthy free agent ${esc(p.pos)}), so he counts at half value"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> ${fmt(tv(id))}<small style="color:#E0524A;white-space:nowrap">½ waiver</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
+    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="Projects and ranks no better than what's on waivers (${fa.pg.toFixed(1)} proj pts/g, ${esc(p.pos)}${fa.rank} for the 3rd-best healthy free agent ${esc(p.pos)}), so he counts at half value">${trendIcon(id)}<s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> ${fmt(tv(id))}<small style="color:#E0524A;white-space:nowrap">½ waiver</small></div>` : `<div class="tc-pval">${trendIcon(id)}${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
     ${rankCell(id)}
     <button class="tc-x" type="button" data-remove="${id}" data-side="${side}" aria-label="Remove ${esc(p.name)}">✕</button></div>`;
 }
@@ -440,7 +450,7 @@ function evenCard(R) {
     .sort((x, y) => Math.abs(x.v - R.need) - Math.abs(y.v - R.need)).slice(0, 5);
   return `<section class="tc-card"><h2>Even it out</h2>
     <p class="tc-note">Balances the market value only. Players from ${esc(giverMgr)}'s roster worth about ${fmt(R.need)}, closest first, with what each would cost ${esc(giverMgr)}'s lineup.${(R.diff > 0 ? R.ia : R.ib).score < (R.diff > 0 ? R.ib : R.ia).score ? ` <b>Heads up:</b> ${esc(giverMgr)} already comes out behind once lineup impact is counted, so adding more would widen that gap.` : ''}</p>
-    ${list.map(x => `<div class="tc-sugg"><div><div class="tc-pname">${posTag(P(x.id).pos)} ${esc(P(x.id).name)}</div><div class="tc-psub">${P(x.id).ros_pg.toFixed(1)} proj pts/g · ${starterLabel(x.id)} · lineup cost ${x.cost > 0.05 ? '−' + x.cost.toFixed(1) : '0.0'}/wk</div></div><div class="tc-pval">${fmt(x.v)}<small>value</small></div>${rankCell(x.id)}<button class="tc-btn" type="button" data-addid="${x.id}" data-side="${takerSide}">Add</button></div>`).join('') || `<p class="tc-psub">No single player on ${esc(giverMgr)}'s roster is close to that value. Try swapping a piece instead.</p>`}
+    ${list.map(x => `<div class="tc-sugg"><div><div class="tc-pname">${posTag(P(x.id).pos)} ${esc(P(x.id).name)}</div><div class="tc-psub">${P(x.id).ros_pg.toFixed(1)} proj pts/g · ${starterLabel(x.id)} · lineup cost ${x.cost > 0.05 ? '−' + x.cost.toFixed(1) : '0.0'}/wk</div></div><div class="tc-pval">${trendIcon(x.id)}${fmt(x.v)}<small>value</small></div>${rankCell(x.id)}<button class="tc-btn" type="button" data-addid="${x.id}" data-side="${takerSide}">Add</button></div>`).join('') || `<p class="tc-psub">No single player on ${esc(giverMgr)}'s roster is close to that value. Try swapping a piece instead.</p>`}
   </section>`;
 }
 
@@ -462,7 +472,7 @@ function renderPicker() {
   const ids = [...from.players, ...from.ir].filter(id => (pick.pos === 'ALL' || P(id).pos === pick.pos) && (!q || P(id).name.toLowerCase().includes(q) || P(id).team.toLowerCase() === q));
   const l = lineup(from.players); const starters = new Set(l.st.map(s => s[1]));
   const row = id => { const p = P(id), on = chosen.includes(id);
-    return `<button class="tc-opt${on ? ' on' : ''}" type="button" data-pick="${id}" aria-pressed="${on}" title="${on ? 'Tap to remove from the trade' : 'Tap to add to the trade'}"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}${on ? '<span class="tc-added">✓ Added</span>' : ''}</div><div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ' · ' + esc(p.inj.replace('_', ' ').toLowerCase()) : ''}</div></div><div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>${rankCell(id)}</button>`; };
+    return `<button class="tc-opt${on ? ' on' : ''}" type="button" data-pick="${id}" aria-pressed="${on}" title="${on ? 'Tap to remove from the trade' : 'Tap to add to the trade'}"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}${on ? '<span class="tc-added">✓ Added</span>' : ''}</div><div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ' · ' + esc(p.inj.replace('_', ' ').toLowerCase()) : ''}</div></div><div class="tc-pval">${trendIcon(id)}${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>${rankCell(id)}</button>`; };
   const byVal = (x, y) => mv(y) - mv(x) || P(y).ros_pg - P(x).ros_pg;
   const st = ids.filter(id => starters.has(id)).sort(byVal), bn = ids.filter(id => !starters.has(id)).sort(byVal);
   document.getElementById('pickerList').innerHTML = (st.length ? `<div class="tc-group">Starters</div>${st.map(row).join('')}` : '') + (bn.length ? `<div class="tc-group">Bench &amp; IR</div>${bn.map(row).join('')}` : '') || `<p class="tc-psub" style="padding:16px">No players match.</p>`;
@@ -509,6 +519,7 @@ function methodology() {
     <p><strong>Consolidation.</strong> A side is worth (Σ value<sup>1.5</sup>)<sup>1/1.5</sup>, so stacking small pieces doesn't buy a star: two players worth 3,000 total about 4,760, not 6,000. Within ${FAIR * 100}% is called fair. "Even it out" solves for the single player value that closes the gap on that same scale.</p>
     <p><strong>Value add.</strong> For each team, the best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) is built from ESPN rest-of-season points per game, before and after the trade. If the team ends up with more than ${D.roster_size} players it drops whoever costs the lineup least (never its only Head Coach); with open spots it claims the free agents that help most. That happens before and after, so a trade only earns credit for the spot it opens or fills. Expected wins = games left × (Φ(Δ ÷ (sd·√2)) − ½), with sd the league's 2026 weekly score spread.</p>
     <p><strong>ROS rank.</strong> The amber number next to each value is the player's rest-of-season positional rank: the weighted median of FantasyPros ECR (half PPR, counts double), ESPN, FanDuel and FantasyGuys. A source that doesn't rank a player counts him just below its last-ranked player. Hover it for each source's rank.</p>
+    <p><strong>Trend arrows.</strong> ▲/▼ next to a value marks a significant move in consensus value over about the last two weeks (at least 15% and 250 points), measured from daily snapshots. Until two weeks of snapshots exist, FantasyCalc's own 30-day trend stands in (at least 30% and 500 points). Hover an arrow for the size of the move and which basis it uses.</p>
     <p><strong>Grade.</strong> Half market (the value gap, capped at ±100%) and half lineup change (±4 pts/wk = full credit), mapped to A+ through F. B means about even.</p>
     <p><strong>Free agents.</strong> The waiver bar at each position is the ${REPL_DEPTH}rd-best healthy free agent (no OUT, IR or doubtful players), by projection and by consensus ROS rank separately. A traded player is <em>waiver-level</em> only if both agree: projected within ${WAIVER_MARGIN} pts/g of that bar <em>and</em> ranked no better than it. his production is free on the wire, so he counts at ${WAIVER_DISCOUNT * 100}% of his market value in every source's totals (not zero, because market value also prices contingent upside like a handcuff RB's), and he's never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
     <p><strong>Verdict.</strong> The team with the higher grade score wins the trade; the summary spells out where the market and the lineup math agree or disagree.</p>`;

@@ -27,6 +27,8 @@ rebuild). Everything the calculator needs in one file:
      with whatever sources are present.
   3. market: the consensus value per player = weighted median of the source values (FantasyPros counts
      double). A source that doesn't list a player counts him just past the end of its list at his position.
+  5. trends: significant ~2-week moves in consensus value, from data/season_2026/trade_value_history.json
+     (one snapshot per day, kept 35 days); FantasyCalc's 30-day trend stands in until 2 weeks exist.
   4. ranks: each player's raw rest-of-season positional ranks per rank source (fantasypros, espn,
      fanduel, fantasyguys); the page shows their median as the player's ROS rank.
 
@@ -53,6 +55,7 @@ CREDENTIALS_PATH = SCRIPT_DIR / "espn_credentials.json"
 TEAM_MAP_PATH = SCRIPT_DIR / "espn_team_map.json"
 MATCHUPS_PATH = SITE_DIR / "data" / "season_2026" / "matchups.json"
 OUTPUT_PATH = SITE_DIR / "data" / "season_2026" / "trade_values.json"
+HISTORY_PATH = SITE_DIR / "data" / "season_2026" / "trade_value_history.json"
 
 LEAGUE_ID = 39276
 SEASON = 2026
@@ -68,6 +71,10 @@ PRO_TEAM = {1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: "DEN"
 FREE_AGENT_POOL = 300  # top available players by % owned
 # FantasyPros ECR (a multi-expert consensus) counts double in the consensus value and the ROS rank.
 SOURCE_WEIGHT = {"fantasypros": 2}
+# A value trend is shown only for a real move over ~2 weeks: at least 15% AND at least 250 points.
+TREND_MIN_PCT, TREND_MIN_ABS = 0.15, 250
+# FantasyCalc's 30-day trend (the stand-in until 2 weeks of history exist) moves more, so it needs a bigger move.
+FC30_MIN_PCT, FC30_MIN_ABS = 0.30, 500
 
 
 def weighted_median(pairs):
@@ -162,6 +169,8 @@ def player_row(pl, week):
 def src_fantasycalc():
     rows = get("https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=0.5")
     return {"by_espn": {str(r["player"]["espnId"]): r["value"] for r in rows if r["player"].get("espnId")},
+            "trend30": {str(r["player"]["espnId"]): r.get("trend30Day") for r in rows
+                        if r["player"].get("espnId") and r.get("trend30Day") is not None},
             "by_pos": {p: sorted((r["value"] for r in rows if r["player"].get("position") == p), reverse=True)
                        for p in ("QB", "RB", "WR", "TE")}}
 
@@ -343,6 +352,41 @@ def main():
         if pairs:
             market[pid] = round(weighted_median(pairs))
 
+    # ---- value trends ----
+    # One consensus snapshot per day (re-runs on the same day overwrite it), last 35 days kept. A player's
+    # trend compares today with the snapshot closest to 14 days ago (11-17 days back). Until that much
+    # history exists, FantasyCalc's own 30-day trend stands in (FantasyCalc-listed players only). Only
+    # significant moves are written: at least TREND_MIN_PCT and TREND_MIN_ABS value points.
+    today = datetime.now(timezone.utc).date()
+    try:
+        history = json.loads(HISTORY_PATH.read_text())
+    except Exception:  # noqa: BLE001
+        history = {}
+    history[today.isoformat()] = {pid: v for pid, v in market.items()}
+    history = {d: v for d, v in history.items()
+               if (today - datetime.fromisoformat(d).date()).days <= 35}
+    HISTORY_PATH.write_text(json.dumps(history, separators=(",", ":"), sort_keys=True))
+    past = [(abs((today - datetime.fromisoformat(d).date()).days - 14), d) for d in history
+            if 11 <= (today - datetime.fromisoformat(d).date()).days <= 17]
+    trends = {}
+    if past:
+        base_date = min(past)[1]
+        base = history[base_date]
+        days = (today - datetime.fromisoformat(base_date).date()).days
+        for pid, now in market.items():
+            then = base.get(pid)
+            if then:
+                delta = now - then
+                if abs(delta) >= TREND_MIN_ABS and abs(delta) / then >= TREND_MIN_PCT:
+                    trends[pid] = {"delta": round(delta), "pct": round(delta / then, 3), "basis": f"{days}d"}
+    elif fc:
+        for pid, t in fc["trend30"].items():
+            now = (sources.get("fantasycalc") or {}).get(pid)
+            if pid in players and now and t:
+                then = now - t
+                if then > 0 and abs(t) >= FC30_MIN_ABS and abs(t) / then >= FC30_MIN_PCT:
+                    trends[pid] = {"delta": t, "pct": round(t / then, 3), "basis": "fantasycalc30d"}
+
     # ---- weekly score spread, for points/week -> expected wins ----
     sd_team = 25.0
     try:
@@ -363,7 +407,7 @@ def main():
         "score_sd": sd_team,
         "teams": teams, "free_agents": fa_ids, "players": players,
         "sources": sources, "source_notes": notes, "market": market, "ranks": ranks, "unranked": unranked,
-        "source_weights": SOURCE_WEIGHT,
+        "source_weights": SOURCE_WEIGHT, "trends": trends,
     }
     OUTPUT_PATH.write_text(json.dumps(out, separators=(",", ":")))
     counts = ", ".join(f"{k} {len(v)}" for k, v in sources.items())
