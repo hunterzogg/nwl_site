@@ -53,6 +53,10 @@
 .tc-meter-labels { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-top: 6px; gap: 8px; }
 .tc-meter-labels b { color: var(--text); font-family: var(--font-mono); }
 .tc-even { margin-top: 10px; font-size: 0.88rem; }
+/* market value + even it out sit side by side on wide screens */
+.tc-pair { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 16px; align-items: start; }
+.tc-pair.solo, .tc-pair > .tc-card:only-child { grid-template-columns: 1fr; }
+@media (max-width: 860px) { .tc-pair { grid-template-columns: 1fr; } }
 /* value add */
 .tc-impact { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 760px) { .tc-impact { grid-template-columns: 1fr; } }
@@ -281,7 +285,8 @@ function renderResults() {
   if (!state.a || !state.b) { el.innerHTML = `<div class="tc-empty">Pick two teams to start building a trade.</div>`; return; }
   if (!state.aGets.length || !state.bGets.length) { el.innerHTML = `<div class="tc-empty">Add at least one player to each side to see how the trade grades.</div>`; return; }
   const R = evaluate();
-  el.innerHTML = `<div class="tc-results">${marketCard(R)}${impactCard(R)}${verdictCard(R)}${faCard(R)}${evenCard(R)}</div>`;
+  const even = evenCard(R);
+  el.innerHTML = `<div class="tc-results"><div class="tc-pair${even ? '' : ' solo'}">${marketCard(R)}${even}</div>${impactCard(R)}${verdictCard(R)}${faCard(R)}</div>`;
 }
 function marketCard(R) {
   const a = state.a, b = state.b, d = R.diff, abs = Math.abs(d);
@@ -296,7 +301,7 @@ function marketCard(R) {
     <div class="tc-verdict ${cls}">${head}</div>
     <div class="tc-meter" role="img" aria-label="${head}">${'<div class="fairband"></div>'}${fill}<div class="mid"></div></div>
     <div class="tc-meter-labels"><span>${esc(a)} gets <b>${fmt(R.vA)}</b></span><span>${(abs * 100).toFixed(0)}% gap</span><span>${esc(b)} gets <b>${fmt(R.vB)}</b></span></div>
-    ${abs > FAIR ? `<p class="tc-even">To even it out, <b>${esc(giver)}</b> would add about <b>${fmt(R.need)}</b> in value going to ${esc(taker)}. Suggestions are below.</p>` : ''}
+    ${abs > FAIR ? `<p class="tc-even">To even it out, <b>${esc(giver)}</b> would add about <b>${fmt(R.need)}</b> in value going to ${esc(taker)}.</p>` : ''}
   </section>`;
 }
 function impactCard(R) {
