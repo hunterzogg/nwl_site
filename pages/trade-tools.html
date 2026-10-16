@@ -124,7 +124,8 @@
 .tc-sheet-list { overflow-y: auto; padding: 6px 8px calc(10px + env(safe-area-inset-bottom, 0px)); }
 .tc-opt { width: 100%; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--text); font: inherit; padding: 11px 8px; cursor: pointer; }
 .tc-opt:hover, .tc-opt:focus-visible { background: var(--surface-raised); }
-.tc-opt[disabled] { opacity: 0.4; cursor: default; }
+.tc-opt.on { background: var(--live-bg); box-shadow: inset 3px 0 0 var(--live); }
+.tc-opt .tc-added { color: var(--live-bright); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
 .tc-group { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 10px 8px 4px; }
 :focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
 </style>
@@ -461,7 +462,7 @@ function renderPicker() {
   const ids = [...from.players, ...from.ir].filter(id => (pick.pos === 'ALL' || P(id).pos === pick.pos) && (!q || P(id).name.toLowerCase().includes(q) || P(id).team.toLowerCase() === q));
   const l = lineup(from.players); const starters = new Set(l.st.map(s => s[1]));
   const row = id => { const p = P(id), on = chosen.includes(id);
-    return `<button class="tc-opt" type="button" data-pick="${id}" ${on ? 'disabled' : ''}><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}${on ? ' <span class="tc-psub">added</span>' : ''}</div><div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ' · ' + esc(p.inj.replace('_', ' ').toLowerCase()) : ''}</div></div><div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>${rankCell(id)}</button>`; };
+    return `<button class="tc-opt${on ? ' on' : ''}" type="button" data-pick="${id}" aria-pressed="${on}" title="${on ? 'Tap to remove from the trade' : 'Tap to add to the trade'}"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}${on ? '<span class="tc-added">✓ Added · tap to remove</span>' : ''}</div><div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ' · ' + esc(p.inj.replace('_', ' ').toLowerCase()) : ''}</div></div><div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>${rankCell(id)}</button>`; };
   const byVal = (x, y) => mv(y) - mv(x) || P(y).ros_pg - P(x).ros_pg;
   const st = ids.filter(id => starters.has(id)).sort(byVal), bn = ids.filter(id => !starters.has(id)).sort(byVal);
   document.getElementById('pickerList').innerHTML = (st.length ? `<div class="tc-group">Starters</div>${st.map(row).join('')}` : '') + (bn.length ? `<div class="tc-group">Bench &amp; IR</div>${bn.map(row).join('')}` : '') || `<p class="tc-psub" style="padding:16px">No players match.</p>`;
@@ -488,7 +489,7 @@ document.addEventListener('click', e => {
   if (!t) { if (e.target.id === 'picker') closePicker(); return; }
   if (t.dataset.add) openPicker(t.dataset.add);
   else if (t.dataset.remove) { const k = t.dataset.side === 'a' ? 'aGets' : 'bGets'; state[k] = state[k].filter(x => x !== t.dataset.remove); render(); }
-  else if (t.dataset.pick) { const k = pick.side === 'a' ? 'aGets' : 'bGets'; if (!state[k].includes(t.dataset.pick)) state[k].push(t.dataset.pick); render(); renderPicker(); }
+  else if (t.dataset.pick) { const k = pick.side === 'a' ? 'aGets' : 'bGets', id = t.dataset.pick; state[k] = state[k].includes(id) ? state[k].filter(x => x !== id) : [...state[k], id]; render(); renderPicker(); } // tap again to remove
   else if (t.dataset.addid) { const k = t.dataset.side === 'a' ? 'aGets' : 'bGets'; if (!state[k].includes(t.dataset.addid)) state[k].push(t.dataset.addid); render(); }
   else if (t.classList.contains('tc-filter')) { pick.pos = t.dataset.pos; document.querySelectorAll('.tc-filter').forEach(b => b.setAttribute('aria-pressed', b === t)); renderPicker(); }
 });
