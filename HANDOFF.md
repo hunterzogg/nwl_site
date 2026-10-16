@@ -1576,8 +1576,13 @@ with everything:
 - **Grade per team**: `0.5 × market gap (±100%) + 0.5 × lineup Δ (±4 pts/wk = full)` → A+…F, B ≈ even.
 - **Market verdicts**: each source totals both sides with the same consolidation math → Fair / favors X
   (+ "big" over 25%), with coverage (how many traded players that source values).
-- **Waiver-level players count zero** (replaced the standalone Free agent check box, per explicit request):
-  a traded player within `WAIVER_MARGIN` (0.5) pts/g ROS of the best healthy free agent at his position
+- **Waiver-level players count at half value** (replaced the standalone Free agent check box, per explicit request).
+  The waiver bar per position is the `REPL_DEPTH` (3rd)-best *healthy* free agent (OUT/IR/DOUBTFUL/suspended
+  excluded), taken separately by projection and by consensus ROS rank (`replacement()`). A traded player is
+  waiver-level only if BOTH agree: projected within `WAIVER_MARGIN` (0.5) pts/g of the bar AND ranked no better
+  than it. (First version compared projection only, against the single best FA. One outlier projection,
+  e.g. a doubtful Adonai Mitchell at 8.0/g, flagged 60 of 168 rostered players, starters like Waddle WR24 and
+  Loveland TE9 included. Now 24/168, all deep bench.) Such a player
   counts at `WAIVER_DISCOUNT` (50%) of his value in every source's totals (`tv()`), shows a struck-through
   value + "½ waiver" on his card, and is never suggested in "Even it out". Originally zeroed; changed to
   half per explicit feedback that market value also prices contingent upside (handcuff RBs).

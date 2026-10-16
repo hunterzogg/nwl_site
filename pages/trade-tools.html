@@ -188,18 +188,6 @@ const mv = id => D.market[id] || 0;
 const team = mgr => D.teams.find(t => t.manager === mgr);
 const ownerOf = id => (D.teams.find(t => t.players.includes(id) || t.ir.includes(id)) || {}).manager || null;
 const adj = vals => Math.pow(vals.reduce((s, v) => s + Math.pow(Math.max(0, v), EXP), 0), 1 / EXP);
-// Waiver-level: a traded player within 0.5 pts/g (rest of season) of the best healthy free agent at his
-// position. His production is replaceable for free, so he counts at half his market value in every total.
-// Not zero: market value also prices contingent upside (e.g. a handcuff RB), which a free agent may not have.
-const WAIVER_MARGIN = 0.5, WAIVER_DISCOUNT = 0.5;
-function bestFA(pos, exclude = []) {
-  return D.free_agents.map(P).filter(p => p.pos === pos && !exclude.includes(p.id) && p.inj !== 'OUT' && p.inj !== 'INJURY_RESERVE').sort((a, b) => b.ros_pg - a.ros_pg)[0];
-}
-function waiverLevel(id) {
-  const p = P(id); if (p.pos === 'HC') return null;
-  const fa = bestFA(p.pos, [...state.aGets, ...state.bGets]);
-  return fa && p.ros_pg <= fa.ros_pg + WAIVER_MARGIN ? fa : null;
-}
 // Rest-of-season positional rank: median of the rank sources (FantasyPros ECR, ESPN, FanDuel, FantasyGuys).
 const RANK_LABEL = { fantasypros: 'FantasyPros', espn: 'ESPN', fanduel: 'FanDuel', fantasyguys: 'FantasyGuys' };
 function rosRank(id) {
@@ -209,6 +197,36 @@ function rosRank(id) {
   return { rank: Math.round(m), detail: Object.entries(r).map(([k, x]) => `${RANK_LABEL[k] || k} ${P(id).pos}${x}`).join(' · ') };
 }
 const rankCell = id => { const r = rosRank(id); return r ? `<div class="tc-prank" title="ROS rank: ${esc(r.detail)}">${esc(P(id).pos)}${r.rank}<small>ROS</small></div>` : `<div class="tc-prank" title="Not ranked by the ROS sources">—<small>ROS</small></div>`; };
+// Waiver-level: a traded player whose production is freely available. Measured against a sturdy
+// replacement bar, not the single best free agent (one outlier projection used to flag starters):
+//   - healthy free agents only (no OUT / IR / DOUBTFUL / suspended)
+//   - projection bar = the 3rd-best healthy free agent's proj pts/g (12 teams chase the same few)
+//   - rank bar = the 3rd-best healthy free agent's consensus ROS rank
+// A player is waiver-level only if BOTH agree: projected within 0.5 pts/g of the bar AND ranked no
+// better than it. He then counts at half his market value (not zero: market value also prices
+// contingent upside, e.g. a handcuff RB).
+const WAIVER_MARGIN = 0.5, WAIVER_DISCOUNT = 0.5, REPL_DEPTH = 3;
+const healthy = p => !['OUT', 'INJURY_RESERVE', 'DOUBTFUL', 'SUSPENSION'].includes(p.inj);
+let _repl = null;
+function replacement(pos) {
+  if (!_repl) {
+    _repl = {};
+    for (const ps of ['QB', 'RB', 'WR', 'TE']) {
+      const fas = D.free_agents.map(P).filter(p => p.pos === ps && healthy(p));
+      const byPg = [...fas].sort((a, b) => b.ros_pg - a.ros_pg);
+      const byRank = fas.map(p => ({ p, r: (rosRank(p.id) || {}).rank })).filter(x => x.r).sort((a, b) => a.r - b.r);
+      const k = REPL_DEPTH - 1;
+      _repl[ps] = byPg[k] ? { pg: byPg[k].ros_pg, pgPlayer: byPg[k], rank: byRank[k] ? byRank[k].r : Infinity } : null;
+    }
+  }
+  return _repl[pos];
+}
+function waiverLevel(id) {
+  const p = P(id); if (p.pos === 'HC') return null;
+  const r = replacement(p.pos); if (!r) return null;
+  const rk = (rosRank(id) || {}).rank;
+  return p.ros_pg <= r.pg + WAIVER_MARGIN && (!rk || rk >= r.rank) ? r : null;
+}
 const tv = (id, src) => (src ? (src[id] || 0) : mv(id)) * (waiverLevel(id) ? WAIVER_DISCOUNT : 1); // trade value used in all totals
 
 /* ---------- lineups (rest-of-season points per game) ---------- */
@@ -295,7 +313,7 @@ function playerCard(id, side) {
   const p = P(id); const st = starterLabel(id);
   return `<div class="tc-pcard"><div><div class="tc-pname">${posTag(p.pos)} ${esc(p.name)}</div>
     <div class="tc-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${st ? ' · ' + st : ''}${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div></div>
-    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="Projects no better than ${esc(fa.name)} (${fa.ros_pg.toFixed(1)} proj pts/g), the best free agent ${esc(p.pos)}, so he counts at half value"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> ${fmt(tv(id))}<small style="color:#E0524A;white-space:nowrap">½ waiver</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
+    ${(() => { const fa = waiverLevel(id); return fa ? `<div class="tc-pval" title="Projects and ranks no better than what's on waivers (${fa.pg.toFixed(1)} proj pts/g, ${esc(p.pos)}${fa.rank} for the 3rd-best healthy free agent ${esc(p.pos)}), so he counts at half value"><s style="color:var(--text-muted)">${mv(id) ? fmt(mv(id)) : '—'}</s> ${fmt(tv(id))}<small style="color:#E0524A;white-space:nowrap">½ waiver</small></div>` : `<div class="tc-pval">${mv(id) ? fmt(mv(id)) : '—'}<small>value</small></div>`; })()}
     ${rankCell(id)}
     <button class="tc-x" type="button" data-remove="${id}" data-side="${side}" aria-label="Remove ${esc(p.name)}">✕</button></div>`;
 }
@@ -351,7 +369,7 @@ function marketCard(R) {
   const w = clamp(abs * 50 / 0.5, 0, 50); // half-bar = 50% gap
   const fill = d > 0 ? `<div class="fill-a" style="width:${w}%"></div>` : `<div class="fill-b" style="width:${w}%"></div>`;
   const giver = d > 0 ? a : b, taker = d > 0 ? b : a;
-  const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} at half value: projected no better than the best free agent at ${R.waived.length === 1 ? 'his' : 'their'} position (the other half keeps any upside the market prices in, like a handcuff).` : '';
+  const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} at half value: projected and ranked no better than what's on waivers at ${R.waived.length === 1 ? 'his' : 'their'} position (the other half keeps any upside the market prices in, like a handcuff).` : '';
   return `<section class="tc-card"><h2>Market value (on paper)</h2>
     <p class="tc-note">Consensus redraft value (median of six sources). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.${wv}</p>
     <div class="tc-verdict ${cls}">${head}</div>
@@ -484,7 +502,7 @@ function methodology() {
     <p><strong>Value add.</strong> For each team, the best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) is built from ESPN rest-of-season points per game, before and after the trade. If the team ends up with more than ${D.roster_size} players it drops whoever costs the lineup least (never its only Head Coach); with open spots it claims the free agents that help most. That happens before and after, so a trade only earns credit for the spot it opens or fills. Expected wins = games left × (Φ(Δ ÷ (sd·√2)) − ½), with sd the league's 2026 weekly score spread.</p>
     <p><strong>ROS rank.</strong> The amber number next to each value is the player's rest-of-season positional rank: the median of FantasyPros ECR (half PPR), ESPN, FanDuel and FantasyGuys. Hover it for each source's rank.</p>
     <p><strong>Grade.</strong> Half market (the value gap, capped at ±100%) and half lineup change (±4 pts/wk = full credit), mapped to A+ through F. B means about even.</p>
-    <p><strong>Free agents.</strong> A traded player within ${WAIVER_MARGIN} pts/g (rest of season) of the best healthy free agent at his position is <em>waiver-level</em>: his production is free on the wire, so he counts at ${WAIVER_DISCOUNT * 100}% of his market value in every source's totals (not zero, because market value also prices contingent upside like a handcuff RB's), and he's never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
+    <p><strong>Free agents.</strong> The waiver bar at each position is the ${REPL_DEPTH}rd-best healthy free agent (no OUT, IR or doubtful players), by projection and by consensus ROS rank separately. A traded player is <em>waiver-level</em> only if both agree: projected within ${WAIVER_MARGIN} pts/g of that bar <em>and</em> ranked no better than it. his production is free on the wire, so he counts at ${WAIVER_DISCOUNT * 100}% of his market value in every source's totals (not zero, because market value also prices contingent upside like a handcuff RB's), and he's never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
     <p><strong>Verdict.</strong> The team with the higher grade score wins the trade; the summary spells out where the market and the lineup math agree or disagree.</p>`;
 }
 
