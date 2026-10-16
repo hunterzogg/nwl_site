@@ -115,6 +115,8 @@
 .tc-sheet-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
 .tc-sheet-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .tc-sheet-top h3 { margin: 0; font-size: 1rem; }
+.tc-done { background: var(--live); color: #0B0F17; border: 0; border-radius: 8px; padding: 9px 20px; font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; }
+.tc-done:hover { background: var(--live-bright); }
 .tc-search { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px 12px; font: inherit; font-size: 1rem; }
 .tc-filters { display: flex; gap: 6px; flex-wrap: wrap; }
 .tc-filter { background: var(--bg); border: 1px solid var(--line-strong); color: var(--text-muted); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
@@ -156,7 +158,7 @@
 <div class="tc-overlay" id="picker" hidden role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
   <div class="tc-sheet">
     <div class="tc-sheet-head">
-      <div class="tc-sheet-top"><h3 id="pickerTitle">Add player</h3><button class="tc-x" id="pickerClose" type="button" aria-label="Close">✕</button></div>
+      <div class="tc-sheet-top"><h3 id="pickerTitle">Add player</h3><button class="tc-done" id="pickerClose" type="button">Done</button></div>
       <input class="tc-search" id="pickerSearch" type="search" placeholder="Search players" autocomplete="off">
       <div class="tc-filters" id="pickerFilters"></div>
     </div>
