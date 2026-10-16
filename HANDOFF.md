@@ -47,6 +47,7 @@ nwl_site/
 ├── assets/
 │   ├── css/style.css             # All global styles + design tokens (incl. --live amber accent)
 │   ├── js/shared.js              # Nav renderer, data loader, managerTag(), posTag(), loadDataSafe()
+│   ├── js/trade_engine.js        # Trade valuation engine shared by the Trade Calculator and Trade Finder (evaluateTrade, lineup, settle, ...)
 │   ├── img/nwl_logo.png          # Shield logo, background-removed PNG (see img/nwl_logo_source.jpeg)
 │   ├── img/nwl_logo_source.jpeg  # Original flat (white-bg) logo Hunter supplied - reprocess from this if the logo changes
 │   └── img/managers/             # Drop {name-lowercase}.jpg here for manager photos (empty)
@@ -86,6 +87,7 @@ nwl_site/
     ├── season-2026.html          # Current-season hub - Matchups / Standings / Power Rankings / Commentary
     ├── draft-analysis.html       # 2026 real-draft analysis - Grades / Contender Profile / Superlatives / Reaches & Steals / Upside Ranking tabs
     ├── trade-tools.html          # Trade Calculator (rebuilt Oct 2026) - see "Trade Calculator" section below
+    ├── trade-finder.html         # Trade Finder (rebuilt Oct 2026 on the calculator's engine) - see "Trade Finder" section below
     └── mock-draft.html           # 15-round mock draft vs 11 CPU managers - archived from nav (real draft is over), still works if visited directly - own detailed handoff, see below
 ```
 
@@ -1574,7 +1576,7 @@ Per explicit request, the old Trade Tools page (Trade Finder + Trade Calculator,
 model with QB/TE haircuts, star premiums, consolidation gates, etc.) and its `fetch_espn_rosters.py` /
 `rosters.json` pipeline were **scrapped entirely** and replaced with a single new Trade Calculator,
 modeled on Dynasty Daddy's calculator (https://dynasty-daddy.com/trade-calculator) for both UI and logic,
-plus NWL league context. The Trade Finder is gone; it could be rebuilt on the new value engine if wanted.
+plus NWL league context. The Trade Finder was later rebuilt on this engine (see "Trade Finder" below).
 Nav label is now "Trade Calculator" (`shared.js?v=18`); the file is still `pages/trade-tools.html` so
 old links work.
 
@@ -1648,6 +1650,55 @@ with everything:
   picker (centered dialog on desktop, full-screen sheet ≤640px; starters/bench groups, search, position
   chips). Copy link (state in `?a=&b=&ag=&bg=`), Clear.
 
+
+## Trade Finder (rebuilt on the calculator engine, Oct 16 2026)
+
+`pages/trade-finder.html`, nav "Trade Finder" next to Trade Calculator (`NWL_TRADE_FINDER_PAGE`, `shared.js?v=22`).
+Pick your team; the trade partner is optional ("Any team" searches all 11 others, 10 graded per shape per
+partner, up to 20 shown with at most 3 per partner, each card naming its partner). It searches for fair trades that help both sides, grades them with the calculator, and
+links each one to the calculator (`trade-tools.html?a=&b=&ag=&bg=`) for editing. The calculator's actions row has
+a "Find trades between these teams" link back to it.
+
+**Shared engine.** The calculator's valuation logic now lives in `assets/js/trade_engine.js` (plain globals,
+loaded after shared.js; the page sets `D`). `evaluate()` became `evaluateTrade(aMgr, bMgr, aGets, bGets)`, so a
+finder card and the calculator show identical grades. `lineup(ids, ptsFn)` takes an optional points function.
+Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps before and after.
+
+**New data in `trade_values.json`** (from `build_trade_values.py`):
+- `schedule`: `{team: {week: opponent | null (bye)}}`, current week → last playoff week, from ESPN's public
+  `seasons/2026?view=proTeamSchedules_wl`.
+- `def_vs_pos`: `{QB|RB|WR|TE: {defense: fantasy pts allowed per game}}`, ESPN's league-scored "OPRK" data
+  (`positionAgainstOpponent`), which comes back free on the existing `kona_player_info` free-agent call.
+- `playoff_weeks`: `[15, 16, 17]` (14-week regular season, 6 teams = 3 one-week rounds, from mSettings).
+- `sos_source`: `"espn"`. **FantasyPros SoS** (opponent-adjusted, better) needs a logged-in FantasyPros session:
+  the SoS page is account-gated, and the free API key returns 403 on SoS. Decision: ship on ESPN, and plug FP
+  into `defense_vs_position()` later if Hunter supplies a session cookie (gitignored file + Action secret, same
+  pattern as ESPN). Set `sos_source` to `"fantasypros"` then, and update the finder's methodology text.
+
+**Logic (client-side):**
+- **Team mode**: projected wins = W + games left × Φ((best lineup − league avg)/(sd·√2)). Ranks 1–5 Contender,
+  6–8 Bubble, 9–12 Chasing, with a per-team override (`?ma=&mb=`).
+- **Matchup multiplier** per player-week = points allowed to his position ÷ league mean, shrunk 50% toward 1,
+  clamped 0.8–1.2. A bye is 0. HC gets the bye adjustment only. Injury discount on the weeks right ahead (ESPN's
+  per-game ROS projection assumes he plays): OUT 0 this week, doubtful 0.25, questionable 0.8, IR 0 for 4 weeks,
+  suspended 0 for 2 (`AVAIL`). Added after Pfaffinger's top "points now" trade was an OUT Zach Charbonnet.
+- **Window weights** (next 4 wks / rest of regular season / playoffs): Chasing 70/30/0, Bubble 20/60/20,
+  Contender 0/40/60. Window pts/g = `ros_pg` × weighted mean multiplier.
+- **Needs**: starters rank 8th or worse (flat ROS pts/g), or RB/WR with no healthy backup. Top 2 by gap to the
+  league median. Surplus = a bench player at or above the league's median weakest starter at that position.
+- **Search**: top 14 non-HC, non-waiver-level assets per team by market value (triples from the top 10).
+  Shapes 1-1, 2-1, 2-2, 3-2, 3-3 (both directions). The other side's packages are sorted by `adj(tv)`, and a
+  binary search keeps pairings within 20% market value (~5-9k combos per pair). Cheap pass: both
+  schedule-weighted lineups must gain more than 0.15 pts/wk, plus a +0.4 bonus per top need lifted 2+ league
+  spots. Dedupe by core pair per shape. Then the top 40 per shape go through `evaluateTrade()`, keeping trades
+  where both grade B or better and the market gap is 25% or less.
+- **Ranking**: match per team = ½ calculator grade score + ½ clamp(fit/4). Sorted by the lower team's match. A
+  bigger deal is hidden if a sub-deal inside it matches better. "All" shows up to 3 of each size first, then the
+  best of the rest (15 max).
+- Searches take 0.2–1.6 s per pair, 1–2.5 s for all 11 partners, on Oct 16 data. Some pairs legitimately return nothing (Goetz–Conlin: both need WR).
+  The empty state names the shared need.
+- Local testing gotcha: the browser caches `trade_values.json`, so after re-running the builder, refetch it with
+  `cache:'reload'` or the page silently runs on the old file (it showed "no schedule data" until refreshed).
 
 ## Known Bugs & Data Issues
 

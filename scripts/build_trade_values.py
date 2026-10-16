@@ -31,6 +31,9 @@ rebuild). Everything the calculator needs in one file:
      (one snapshot per day, kept 35 days); FantasyCalc's 30-day trend stands in until 2 weeks exist.
   4. ranks: each player's raw rest-of-season positional ranks per rank source (fantasypros, espn,
      fanduel, fantasyguys); the page shows their median as the player's ROS rank.
+  6. Trade Finder strength-of-schedule inputs: schedule (each NFL team's opponent per week from now
+     through the fantasy playoffs, None on a bye; ESPN's public proTeamSchedules_wl), def_vs_pos (ESPN's
+     league-scored fantasy points allowed per game by each defense to QB/RB/WR/TE) and playoff_weeks.
 
 Head Coaches (ESPN slot 19) are included for lineups but have no market values (no source lists them).
 
@@ -164,6 +167,40 @@ def player_row(pl, week):
             "own": round((pl.get("ownership") or {}).get("percentOwned") or 0, 1)}
 
 
+# ---------------- strength of schedule (Trade Finder) ----------------
+
+def pro_schedule(first_week, last_week):
+    """{team: {week: opponent, or None on a bye}} from ESPN's public NFL schedule (no cookies needed)."""
+    data = get(f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{SEASON}?view=proTeamSchedules_wl")
+    out = {}
+    for t in data["settings"]["proTeams"]:
+        abbr = PRO_TEAM.get(t["id"])
+        if not abbr:
+            continue
+        games = t.get("proGamesByScoringPeriod") or {}
+        row = {}
+        for wk in range(first_week, last_week + 1):
+            g = (games.get(str(wk)) or [None])[0]
+            row[str(wk)] = None if not g else PRO_TEAM.get(g["awayProTeamId"] if g["homeProTeamId"] == t["id"] else g["homeProTeamId"])
+        out[abbr] = row
+    return out
+
+
+def defense_vs_position(kona_resp):
+    """{pos: {defense: fantasy points allowed per game to that position}}, league scoring. ESPN returns
+    this (its "OPRK" matchup data) alongside every kona_player_info response.
+    FantasyPros' opponent-adjusted SoS would be a better input, but it needs a logged-in session
+    (the free API key gets 403); see HANDOFF "Trade Finder" for how to plug it in here."""
+    ratings = (kona_resp.get("positionAgainstOpponent") or {}).get("positionalRatings") or {}
+    out = {}
+    for pid, pos in POS.items():
+        by = (ratings.get(str(pid)) or {}).get("ratingsByOpponent") or {}
+        vals = {PRO_TEAM[int(k)]: round(v["average"], 2) for k, v in by.items() if int(k) in PRO_TEAM and v.get("average") is not None}
+        if vals:
+            out[pos] = vals
+    return out
+
+
 # ---------------- market sources ----------------
 
 def src_fantasycalc():
@@ -246,7 +283,8 @@ def main():
                        "filterSlotIds": {"value": [0, 2, 4, 6, HC_SLOT]}, "limit": FREE_AGENT_POOL,
                        "sortPercOwned": {"sortPriority": 1, "sortAsc": False}}}
     fa_ids = []
-    for p in espn(f"view=kona_player_info&scoringPeriodId={week}", cookies, {"x-fantasy-filter": json.dumps(flt)})["players"]:
+    fa_resp = espn(f"view=kona_player_info&scoringPeriodId={week}", cookies, {"x-fantasy-filter": json.dumps(flt)})
+    for p in fa_resp["players"]:
         pl = p["player"]
         if not pos_of(pl):
             continue
@@ -398,6 +436,22 @@ def main():
     except Exception:  # noqa: BLE001
         pass
 
+    # ---- strength of schedule inputs, for the Trade Finder ----
+    sched = st["scheduleSettings"]
+    rounds = math.ceil(math.log2(max(2, sched.get("playoffTeamCount") or 2)))
+    plen = sched.get("playoffMatchupPeriodLength") or 1
+    playoff_weeks = list(range(reg_weeks + 1, reg_weeks + 1 + rounds * plen))
+    last_week = playoff_weeks[-1] if playoff_weeks else reg_weeks
+    schedule, def_vs_pos = {}, {}
+    try:
+        schedule = pro_schedule(week, last_week)
+    except Exception as e:  # noqa: BLE001 - the finder falls back to neutral schedules
+        notes["schedule"] = f"failed: {e}"
+    try:
+        def_vs_pos = defense_vs_position(fa_resp)
+    except Exception as e:  # noqa: BLE001
+        notes["def_vs_pos"] = f"failed: {e}"
+
     out = {
         "season": SEASON, "week": week, "updated_at": datetime.now(timezone.utc).isoformat(),
         "regular_season_weeks": reg_weeks,
@@ -408,6 +462,7 @@ def main():
         "teams": teams, "free_agents": fa_ids, "players": players,
         "sources": sources, "source_notes": notes, "market": market, "ranks": ranks, "unranked": unranked,
         "source_weights": SOURCE_WEIGHT, "trends": trends,
+        "playoff_weeks": playoff_weeks, "schedule": schedule, "def_vs_pos": def_vs_pos, "sos_source": "espn",
     }
     OUTPUT_PATH.write_text(json.dumps(out, separators=(",", ":")))
     counts = ", ".join(f"{k} {len(v)}" for k, v in sources.items())
