@@ -6,72 +6,89 @@
 <title>Hall of Fame — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=8">
+<link rel="stylesheet" href="../assets/css/style.css?v=10">
 <style>
-.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
-.tab-btn {
-  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-  color: var(--text-muted); cursor: pointer;
-}
-.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
-.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.controls-row select {
-  background: var(--surface); border: 1px solid var(--line); color: var(--text);
-  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 160px;
-}
-.panel { display: none; }
-.panel.active { display: block; }
-.h2h-result { display: flex; gap: 24px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
-.h2h-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; text-align: center; flex: 1; min-width: 140px; }
-.h2h-box .v { font-family: var(--font-mono); font-size: 1.8rem; }
-.h2h-box .l { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
-.records-group-title {
-  font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
-  color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
-}
-.records-group-title:first-child { margin-top: 0; }
-.season-note { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; color: var(--text-muted); font-size: 0.88rem; }
-.weekly-score-table th.playoff-divider, .weekly-score-table td.playoff-divider { border-left: 2px solid var(--blue-bright); }
-.score-top { color: #4FA876; font-weight: 600; }
-.score-bottom { color: #E0524A; font-weight: 600; }
-.score-legend { display: flex; gap: 18px; margin: 8px 0 16px; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap; }
-.score-legend span.score-top, .score-legend span.score-bottom { font-weight: 600; }
+/* Champions timeline */
+.champ-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.champ { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); position: relative; overflow: hidden; }
+.champ::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--accent); }
+.champ .yr { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.champ .nm { font-weight: 600; margin-top: 2px; }
+.champ-count { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+/* Head-to-head */
+.vs-pickers { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-bottom: 16px; }
+.vs-pickers .vs { font-family: var(--font-display); color: var(--text-muted); font-size: 1.1rem; }
+.vs-pickers select { width: 100%; min-width: 0; }
+.vs-score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; text-align: center; }
+.vs-side .n { font-family: var(--font-display); font-size: clamp(2.6rem, 9vw, 3.6rem); font-weight: 700; line-height: 1; }
+.vs-side .who { margin-top: 6px; display: flex; justify-content: center; }
+.vs-mid { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); }
+.vs-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin: 16px 0 6px; background: var(--bg); }
+.vs-bar span { height: 100%; }
+.vs-table { width: 100%; border-collapse: collapse; }
+.vs-table td { padding: 9px 6px; border-bottom: 1px solid var(--line); text-align: center; font-family: var(--font-mono); }
+.vs-table td.lbl { font-family: var(--font-body); color: var(--text-muted); font-size: 0.8rem; }
+.vs-table td.win { color: var(--text); font-weight: 600; }
+.vs-table tr:hover td { background: transparent; }
+.form { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+.form span { width: 26px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; color: #0B0F17; }
+/* Season */
+.season-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; margin-bottom: 4px; }
+@media (max-width: 760px) { .season-head { grid-template-columns: 1fr; } }
+.champ-card { display: flex; gap: 14px; align-items: center; border-color: rgba(242, 183, 5, 0.45); background: linear-gradient(135deg, rgba(242, 183, 5, 0.12), rgba(242, 183, 5, 0) 60%), var(--surface); }
+.champ-card .trophy { font-size: 2.4rem; line-height: 1; }
+.champ-card .t { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--live-bright); }
+.champ-card .nm { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; line-height: 1.1; }
+.finish-list { display: flex; flex-direction: column; gap: 6px; }
+.finish-list div { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.88rem; flex-wrap: wrap; }
+.heat { border-collapse: separate; border-spacing: 3px; width: 100%; font-size: 0.8rem; }
+.heat th { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); font-weight: 500; padding: 2px 4px; text-align: center; border: 0; letter-spacing: 0; text-transform: none; }
+.heat th:first-child { text-align: left; }
+.heat td { border: 0; padding: 6px 4px; text-align: center; font-family: var(--font-mono); border-radius: 5px; min-width: 44px; }
+.heat td.mgr { text-align: left; font-family: var(--font-body); white-space: nowrap; padding-right: 10px; background: transparent !important; }
+.heat td.po-first, .heat th.po-first { box-shadow: -3px 0 0 var(--surface), -5px 0 0 var(--blue-bright); }
+.heat tr:hover td { background-color: inherit; filter: brightness(1.15); }
+.heat-legend { display: flex; align-items: center; gap: 8px; font-size: 0.74rem; color: var(--text-muted); margin: 8px 0 0; flex-wrap: wrap; }
+.heat-legend .ramp { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgba(224,82,74,0.75), rgba(35,46,69,0.6), rgba(79,168,118,0.85)); }
+.div-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 14px; }
+.stand-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.stand-row:last-child { border-bottom: 0; }
+.stand-row .rec { font-family: var(--font-mono); font-weight: 600; }
+.stand-row .meta { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+.stand-row .meta .hx-bar-track { flex: 1; }
 </style>
 </head>
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <h1 style="margin-bottom: 6px;">Hall of Fame</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">League records, head-to-head history, and a year-by-year reference. Career stats live on the Managers page.</p>
+  <header class="hx-hero">
+    <div class="hx-eyebrow">League History</div>
+    <h1>Hall of Fame</h1>
+    <p>Thirteen seasons of records, rivalries and champions. Career stats for each manager live on the Managers page.</p>
+    <div class="hx-stats" id="heroStats"></div>
+  </header>
 
-  <div class="tab-row">
-    <button class="tab-btn active" data-tab="records">League Records</button>
-    <button class="tab-btn" data-tab="h2h">Head-to-Head</button>
-    <button class="tab-btn" data-tab="seasons">Seasons</button>
-  </div>
+  <nav class="hx-tabs" role="tablist" aria-label="Hall of Fame sections">
+    <button class="hx-tab" role="tab" aria-selected="true" data-tab="records">Records</button>
+    <button class="hx-tab" role="tab" aria-selected="false" data-tab="h2h">Head-to-Head</button>
+    <button class="hx-tab" role="tab" aria-selected="false" data-tab="seasons">Seasons</button>
+  </nav>
 
-  <div class="panel active" id="panel-records">
-    <div id="recordsTable"></div>
-  </div>
+  <section id="panel-records" role="tabpanel"></section>
 
-  </div>
-
-  <div class="panel" id="panel-h2h">
-    <div class="controls-row">
-      <select id="mgrA"></select>
-      <span style="color: var(--text-muted); font-family: var(--font-display);">VS</span>
-      <select id="mgrB"></select>
+  <section id="panel-h2h" role="tabpanel" hidden>
+    <div class="vs-pickers">
+      <select class="hx-select" id="mgrA" aria-label="First manager"></select>
+      <span class="vs">VS</span>
+      <select class="hx-select" id="mgrB" aria-label="Second manager"></select>
     </div>
     <div id="h2hResult"></div>
-  </div>
+  </section>
 
-  <div class="panel" id="panel-seasons">
-    <div class="controls-row">
-      <select id="seasonSelect"></select>
-    </div>
+  <section id="panel-seasons" role="tabpanel" hidden>
+    <div class="hx-chips" id="seasonChips" role="group" aria-label="Season"></div>
     <div id="seasonContent"></div>
-  </div>
+  </section>
 </div>
 
 <footer>National Wayzata League &middot; est. 2013</footer>
@@ -79,333 +96,254 @@
 <script src="../assets/js/shared.js?v=18"></script>
 <script>
 let weekly = [], matchups = [], managers = [], regSeasons = [];
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const color = name => managerColor(managers, name);
+const f1 = n => Number(n).toFixed(1);
+const fmt = n => Math.round(n).toLocaleString();
+const isTie = m => parseFloat(m.winning_score) === parseFloat(m.losing_score);
 
-function recordRow(label, value, who) {
-  return `<tr><td>${label}</td><td class="num">${value}</td><td>${who}</td></tr>`;
+/* ---------- records ---------- */
+function recordCard(title, list, valueOf, unit, who, ctx) {
+  // list is sorted best-first: #1 shown big, #2-#5 as a mini leaderboard
+  const top = list[0]; if (!top) return '';
+  return `<article class="hx-card hx-record" style="--accent:${color(who(top))}">
+    <h3>${title}</h3>
+    <div class="hx-record-top"><div class="hx-big">${valueOf(top)}<small>${unit}</small></div></div>
+    <div><div class="hx-holder">${managerTag(managers, who(top))}</div><div class="hx-ctx">${ctx(top)}</div></div>
+    <ol class="hx-mini">${list.slice(1, 5).map((x, i) => `<li><span class="r">${i + 2}</span><span>${esc(who(x))} · ${ctx(x)}</span><span class="v">${valueOf(x)}</span></li>`).join('')}</ol>
+  </article>`;
 }
-
+function streaks() {
+  const games = {};
+  matchups.slice().sort((a, b) => a.season - b.season || a.week - b.week).forEach(m => {
+    if (isTie(m)) return;
+    (games[m.winner] ||= []).push({ season: m.season, week: m.week, r: 'W' });
+    (games[m.loser] ||= []).push({ season: m.season, week: m.week, r: 'L' });
+  });
+  const runs = { W: [], L: [] };
+  for (const [name, gs] of Object.entries(games)) {
+    gs.sort((a, b) => a.season - b.season || a.week - b.week);
+    let cur = null;
+    for (const g of gs) {
+      if (cur && cur.r === g.r) { cur.len++; cur.end = g; }
+      else { if (cur) runs[cur.r].push(cur); cur = { name, r: g.r, len: 1, start: g, end: g }; }
+    }
+    if (cur) runs[cur.r].push(cur);
+  }
+  runs.W.sort((a, b) => b.len - a.len); runs.L.sort((a, b) => b.len - a.len);
+  return runs;
+}
 function buildRecords() {
   const regular = weekly.filter(r => r.game_type === 'regular');
+  const byScoreDesc = weekly.slice().sort((a, b) => b.score - a.score);
+  // Lowest score is regular season only: late playoff/consolation weeks are full of unset lineups (2.2, 2.4...)
+  const byScoreAsc = regular.slice().sort((a, b) => a.score - b.score);
+  const withMargin = matchups.map(m => ({ ...m, margin: parseFloat(m.winning_score) - parseFloat(m.losing_score) }));
+  const blowouts = withMargin.slice().sort((a, b) => b.margin - a.margin);
+  const closest = withMargin.filter(m => m.margin > 0).sort((a, b) => a.margin - b.margin); // the 4 true ties (2013-14) are skipped
 
-  let topScore = {score: -1}, lowScore = {score: 99999};
-  weekly.forEach(r => {
-    const s = parseFloat(r.score);
-    if (s > topScore.score) topScore = {...r, score: s};
-    if (s < lowScore.score) lowScore = {...r, score: s};
-  });
+  const totals = {};
+  regular.forEach(r => { const k = r.season + '|' + r.manager; (totals[k] ||= { season: r.season, manager: r.manager, total: 0, scores: [] }); totals[k].total += r.score; totals[k].scores.push(r.score); });
+  const seasons = Object.values(totals);
+  const sd = a => { const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / a.length); };
+  const consistent = seasons.filter(s => s.scores.length >= 13).map(s => ({ ...s, sd: sd(s.scores) })).sort((a, b) => a.sd - b.sd);
 
-  let biggestBlowout = {margin: -1}, closestGame = {margin: 99999};
-  matchups.forEach(m => {
-    const margin = parseFloat(m.winning_score) - parseFloat(m.losing_score);
-    if (margin > biggestBlowout.margin) biggestBlowout = {...m, margin};
-    if (margin > 0 && margin < closestGame.margin) closestGame = {...m, margin};  // skip true ties (4 ever, all 2013-14)
-  });
+  const winsBy = {};
+  matchups.forEach(m => { if (!isTie(m)) { const k = m.season + '|' + m.winner; winsBy[k] = (winsBy[k] || 0) + 1; } });
+  const mostWins = Object.entries(winsBy).map(([k, w]) => { const [season, manager] = k.split('|'); return { season, manager, w }; }).sort((a, b) => b.w - a.w);
 
-  const seasonTotals = {};
-  regular.forEach(r => {
-    const key = r.season + '|' + r.manager;
-    if (!seasonTotals[key]) seasonTotals[key] = { season: r.season, manager: r.manager, total: 0, scores: [] };
-    seasonTotals[key].total += parseFloat(r.score);
-    seasonTotals[key].scores.push(parseFloat(r.score));
-  });
-  const seasonTotalsArr = Object.values(seasonTotals);
-  const mostPointsSeason = seasonTotalsArr.reduce((a,b) => b.total > a.total ? b : a);
-  const fewestPointsSeason = seasonTotalsArr.reduce((a,b) => b.total < a.total ? b : a);
-
-  function stdev(arr) {
-    const mean = arr.reduce((a,b)=>a+b,0) / arr.length;
-    const variance = arr.reduce((a,b)=>a + (b-mean)*(b-mean), 0) / arr.length;
-    return Math.sqrt(variance);
-  }
-  const eligibleSeasons = seasonTotalsArr.filter(s => s.scores.length >= 13).map(s => ({...s, sd: stdev(s.scores)}));
-  const mostConsistent = eligibleSeasons.reduce((a,b) => b.sd < a.sd ? b : a);
-
-  const sortedMatchups = matchups.slice().sort((a,b) => a.season - b.season || a.week - b.week);
-  const winsBySeasonMgr = {};
-  sortedMatchups.forEach(m => {
-    const wKey = m.season + '|' + m.winner;
-    winsBySeasonMgr[wKey] = (winsBySeasonMgr[wKey] || 0) + 1;
-  });
-  let mostWinsSeason = {wins: -1};
-  Object.entries(winsBySeasonMgr).forEach(([key, wins]) => {
-    if (wins > mostWinsSeason.wins) {
-      const [season, manager] = key.split('|');
-      mostWinsSeason = { wins, season, manager };
+  const runs = streaks();
+  const weeksBy = {};
+  regular.forEach(r => (weeksBy[r.manager + '|' + r.season] ||= []).push({ week: +r.week, score: r.score }));
+  const stretches = [];
+  for (const [k, gs] of Object.entries(weeksBy)) {
+    gs.sort((a, b) => a.week - b.week);
+    for (let i = 0; i + 2 < gs.length; i++) if (gs[i + 1].week === gs[i].week + 1 && gs[i + 2].week === gs[i].week + 2) {
+      const [manager, season] = k.split('|'); stretches.push({ manager, season, total: gs[i].score + gs[i + 1].score + gs[i + 2].score, weeks: `${gs[i].week}–${gs[i + 2].week}` });
     }
-  });
-
-  const byManagerGames = {};
-  sortedMatchups.forEach(m => {
-    [m.winner, m.loser].forEach(name => {
-      if (!byManagerGames[name]) byManagerGames[name] = [];
-    });
-    byManagerGames[m.winner].push({ season: m.season, week: m.week, result: 'W' });
-    byManagerGames[m.loser].push({ season: m.season, week: m.week, result: 'L' });
-  });
-  let longestWinStreak = {len: 0}, longestLossStreak = {len: 0};
-  Object.entries(byManagerGames).forEach(([name, games]) => {
-    games.sort((a,b) => a.season - b.season || a.week - b.week);
-    let curW = 0, curL = 0, curWStart = null, curLStart = null;
-    games.forEach(g => {
-      if (g.result === 'W') {
-        if (curW === 0) curWStart = g;
-        curW++; curL = 0;
-        if (curW > longestWinStreak.len) longestWinStreak = { len: curW, manager: name, start: curWStart, end: g };
-      } else {
-        if (curL === 0) curLStart = g;
-        curL++; curW = 0;
-        if (curL > longestLossStreak.len) longestLossStreak = { len: curL, manager: name, start: curLStart, end: g };
-      }
-    });
-  });
-
-  const byManagerSeasonWeeks = {};
-  regular.forEach(r => {
-    const key = r.manager + '|' + r.season;
-    if (!byManagerSeasonWeeks[key]) byManagerSeasonWeeks[key] = [];
-    byManagerSeasonWeeks[key].push({ week: parseInt(r.week), score: parseFloat(r.score) });
-  });
-  let best3wk = {total: -1};
-  Object.entries(byManagerSeasonWeeks).forEach(([key, games]) => {
-    games.sort((a,b) => a.week - b.week);
-    for (let i = 0; i <= games.length - 3; i++) {
-      const a = games[i], b = games[i+1], c = games[i+2];
-      if (b.week === a.week+1 && c.week === b.week+1) {
-        const total = a.score + b.score + c.score;
-        if (total > best3wk.total) {
-          const [manager, season] = key.split('|');
-          best3wk = { total, manager, season, weeks: `${a.week}-${c.week}` };
-        }
-      }
-    }
-  });
-
-  document.getElementById('recordsTable').innerHTML = `
-    <div class="records-group-title">Single-Game Records</div>
-    <table>
-      <tbody>
-        ${recordRow('Highest single-week score', topScore.score.toFixed(1) + ' pts', `${topScore.manager}, Week ${topScore.week} ${topScore.season}`)}
-        ${recordRow('Lowest single-week score', lowScore.score.toFixed(1) + ' pts', `${lowScore.manager}, Week ${lowScore.week} ${lowScore.season}`)}
-        ${recordRow('Biggest blowout', `${biggestBlowout.winning_score}-${biggestBlowout.losing_score}`, `${biggestBlowout.winner} over ${biggestBlowout.loser}, Wk ${biggestBlowout.week} ${biggestBlowout.season}`)}
-        ${recordRow('Closest game', `${closestGame.winning_score}-${closestGame.losing_score}`, `${closestGame.winner} over ${closestGame.loser}, Wk ${closestGame.week} ${closestGame.season}`)}
-      </tbody>
-    </table>
-
-    <div class="records-group-title">Season Records</div>
-    <table>
-      <tbody>
-        ${recordRow('Most points scored, season', mostPointsSeason.total.toFixed(1) + ' pts', `${mostPointsSeason.manager}, ${mostPointsSeason.season}`)}
-        ${recordRow('Fewest points scored, season', fewestPointsSeason.total.toFixed(1) + ' pts', `${fewestPointsSeason.manager}, ${fewestPointsSeason.season}`)}
-        ${recordRow('Most wins, season', mostWinsSeason.wins, `${mostWinsSeason.manager}, ${mostWinsSeason.season}`)}
-        ${recordRow('Most consistent season', '&plusmn;' + mostConsistent.sd.toFixed(1) + ' pts std dev', `${mostConsistent.manager}, ${mostConsistent.season}`)}
-      </tbody>
-    </table>
-
-    <div class="records-group-title">Streaks</div>
-    <table>
-      <tbody>
-        ${recordRow('Longest win streak', longestWinStreak.len + ' games', `${longestWinStreak.manager}, ${longestWinStreak.start.season} Wk${longestWinStreak.start.week} &ndash; ${longestWinStreak.end.season} Wk${longestWinStreak.end.week}`)}
-        ${recordRow('Longest losing streak', longestLossStreak.len + ' games', `${longestLossStreak.manager}, ${longestLossStreak.start.season} Wk${longestLossStreak.start.week} &ndash; ${longestLossStreak.end.season} Wk${longestLossStreak.end.week}`)}
-        ${recordRow('Highest 3-week scoring stretch', best3wk.total.toFixed(1) + ' pts', `${best3wk.manager}, ${best3wk.season} Wks ${best3wk.weeks}`)}
-      </tbody>
-    </table>
-  `;
-}
-
-function buildH2H() {
-  const a = document.getElementById('mgrA').value;
-  const b = document.getElementById('mgrB').value;
-  if (!a || !b || a === b) {
-    document.getElementById('h2hResult').innerHTML = '<p style="color:var(--text-muted)">Pick two different managers.</p>';
-    return;
   }
-  let aWins = 0, bWins = 0, games = [];
-  matchups.forEach(m => {
-    if (m.winner === a && m.loser === b) { aWins++; games.push(m); }
-    else if (m.winner === b && m.loser === a) { bWins++; games.push(m); }
-  });
+  stretches.sort((a, b) => b.total - a.total);
+  const span = r => `${r.start.season} Wk ${r.start.week} – ${r.end.season === r.start.season ? '' : r.end.season + ' '}Wk ${r.end.week}`;
 
-  document.getElementById('h2hResult').innerHTML = `
-    <div class="h2h-result">
-      <div class="h2h-box"><div class="v">${aWins}</div><div class="l">${a} wins</div></div>
-      <div class="h2h-box"><div class="v">${games.length}</div><div class="l">Total matchups</div></div>
-      <div class="h2h-box"><div class="v">${bWins}</div><div class="l">${b} wins</div></div>
+  document.getElementById('panel-records').innerHTML = `
+    ${championsHTML()}
+    <div class="hx-section-title"><h2>Single game</h2><span>Regular season and playoffs</span></div>
+    <div class="hx-grid">
+      ${recordCard('Highest score', byScoreDesc, x => f1(x.score), 'pts', x => x.manager, x => `Week ${x.week}, ${x.season}`)}
+      ${recordCard('Lowest score (regular season)', byScoreAsc, x => f1(x.score), 'pts', x => x.manager, x => `Week ${x.week}, ${x.season}`)}
+      ${recordCard('Biggest blowout', blowouts, x => f1(x.margin), 'pt margin', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Closest game', closest, x => x.margin.toFixed(2), 'pt margin', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
     </div>
-    <table style="margin-top: 20px;">
-      <thead><tr><th>Season</th><th>Week</th><th>Winner</th><th class="num">Score</th></tr></thead>
-      <tbody>
-        ${games.sort((x,y) => x.season - y.season || x.week - y.week).map(g => `
-          <tr><td>${g.season}</td><td>${g.week}</td><td>${managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}-${g.losing_score}</td></tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+    <div class="hx-section-title"><h2>Season</h2><span>Regular season</span></div>
+    <div class="hx-grid">
+      ${recordCard('Most points', seasons.slice().sort((a, b) => b.total - a.total), x => fmt(x.total), 'pts', x => x.manager, x => x.season)}
+      ${recordCard('Fewest points', seasons.slice().sort((a, b) => a.total - b.total), x => fmt(x.total), 'pts', x => x.manager, x => x.season)}
+      ${recordCard('Most wins', mostWins, x => x.w, 'wins', x => x.manager, x => x.season)}
+      ${recordCard('Most consistent', consistent, x => '±' + f1(x.sd), 'pts std dev', x => x.manager, x => x.season)}
+    </div>
+    <div class="hx-section-title"><h2>Streaks</h2></div>
+    <div class="hx-grid">
+      ${recordCard('Longest win streak', runs.W, x => x.len, 'games', x => x.name, span)}
+      ${recordCard('Longest losing streak', runs.L, x => x.len, 'games', x => x.name, span)}
+      ${recordCard('Best 3-week stretch', stretches, x => f1(x.total), 'pts', x => x.manager, x => `${x.season}, Wks ${x.weeks}`)}
+    </div>`;
+}
+function champions() {
+  return regSeasons.filter(t => t.final_finish === 1).sort((a, b) => a.season - b.season);
+}
+function championsHTML() {
+  const ch = champions();
+  const counts = {}; ch.forEach(c => counts[c.manager] = (counts[c.manager] || 0) + 1);
+  return `<section class="hx-card" style="margin-bottom:6px">
+    <h3>Champions</h3>
+    <div class="champ-strip">${ch.slice().reverse().map(c => `<div class="champ" style="--accent:${color(c.manager)}"><div class="yr">${c.season}</div><div class="nm">${esc(c.manager)}</div></div>`).join('')}</div>
+    <div class="champ-count">${Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m, n]) => `<span class="hx-pill gold">🏆 ${esc(m)} ×${n}</span>`).join('')}</div>
+  </section>`;
 }
 
+/* ---------- head-to-head ---------- */
+function buildH2H() {
+  const a = document.getElementById('mgrA').value, b = document.getElementById('mgrB').value;
+  const out = document.getElementById('h2hResult');
+  if (!a || !b || a === b) { out.innerHTML = `<div class="hx-card hx-muted">Pick two different managers to see their rivalry.</div>`; return; }
+  const games = matchups.filter(m => (m.winner === a && m.loser === b) || (m.winner === b && m.loser === a)).sort((x, y) => x.season - y.season || x.week - y.week);
+  if (!games.length) { out.innerHTML = `<div class="hx-card hx-muted">${esc(a)} and ${esc(b)} have never played each other.</div>`; return; }
+  const sc = (m, who) => parseFloat(m.winner === who ? m.winning_score : m.losing_score);
+  const won = (m, who) => m.winner === who && !isTie(m);
+  const aW = games.filter(m => won(m, a)).length, bW = games.filter(m => won(m, b)).length, ties = games.length - aW - bW;
+  const avg = who => games.reduce((s, m) => s + sc(m, who), 0) / games.length;
+  const big = who => games.filter(m => won(m, who)).map(m => ({ m, d: sc(m, who) - sc(m, who === a ? b : a) })).sort((x, y) => y.d - x.d)[0];
+  let streak = { who: null, n: 0 };
+  for (let i = games.length - 1; i >= 0; i--) {
+    const w = isTie(games[i]) ? null : games[i].winner;
+    if (i === games.length - 1) streak = { who: w, n: 1 }; else if (w && w === streak.who) streak.n++; else break;
+  }
+  const last = games[games.length - 1];
+  const playoffs = games.filter(m => m.week > 14);
+  const row = (lbl, av, bv, aWin) => `<tr><td class="${aWin === true ? 'win' : ''}">${av}</td><td class="lbl">${lbl}</td><td class="${aWin === false ? 'win' : ''}">${bv}</td></tr>`;
+  const ba = big(a), bb = big(b);
+  const pa = aW / games.length * 100, pb = bW / games.length * 100;
+  const when = x => `<br><span class="hx-muted" style="font-size:.7rem">${x.m.season} Wk ${x.m.week}</span>`;
+  out.innerHTML = `
+    <div class="hx-card">
+      <div class="vs-score">
+        <div class="vs-side"><div class="n" style="color:${color(a)}">${aW}</div><div class="who">${managerTag(managers, a)}</div></div>
+        <div class="vs-mid">${games.length} games${ties ? `<br>${ties} tie${ties > 1 ? 's' : ''}` : ''}</div>
+        <div class="vs-side"><div class="n" style="color:${color(b)}">${bW}</div><div class="who">${managerTag(managers, b)}</div></div>
+      </div>
+      <div class="vs-bar" role="img" aria-label="${esc(a)} ${aW} wins, ${esc(b)} ${bW} wins"><span style="width:${pa}%;background:${color(a)}"></span><span style="width:${100 - pa - pb}%;background:var(--line-strong)"></span><span style="width:${pb}%;background:${color(b)}"></span></div>
+      <table class="vs-table"><tbody>
+        ${row('Avg score', f1(avg(a)), f1(avg(b)), avg(a) > avg(b) ? true : avg(a) < avg(b) ? false : null)}
+        ${row('Biggest win', ba ? `+${f1(ba.d)}${when(ba)}` : '—', bb ? `+${f1(bb.d)}${when(bb)}` : '—', ba && bb ? ba.d > bb.d : null)}
+        ${row('Playoff wins', playoffs.filter(m => won(m, a)).length, playoffs.filter(m => won(m, b)).length, null)}
+        <tr><td colspan="3" class="lbl" style="padding-top:12px">${streak.who ? `<b style="color:var(--text)">${esc(streak.who)}</b> has won ${streak.n > 1 ? `the last ${streak.n} meetings` : 'the last meeting'}.` : 'Their last meeting was a tie.'} Last game: ${esc(last.winner)} ${last.winning_score}–${last.losing_score}, Week ${last.week} of ${last.season}.</td></tr>
+      </tbody></table>
+    </div>
+    <div class="hx-section-title"><h2>Recent form</h2><span>Last ${Math.min(10, games.length)} meetings, oldest first, from ${esc(a)}'s side</span></div>
+    <div class="form">${games.slice(-10).map(m => { const r = isTie(m) ? 'T' : m.winner === a ? 'W' : 'L'; return `<span title="${m.season} Wk ${m.week}: ${m.winning_score}–${m.losing_score}" style="background:${r === 'W' ? color(a) : r === 'L' ? color(b) : 'var(--line-strong)'}">${r}</span>`; }).join('')}</div>
+    <details class="hx-card" style="margin-top:16px"><summary style="cursor:pointer;color:var(--blue-bright)">Every meeting (${games.length})</summary>
+      <div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Season</th><th class="num">Week</th><th>Winner</th><th class="num">Score</th></tr></thead><tbody>
+      ${games.slice().reverse().map(g => `<tr><td>${g.season}</td><td class="num">${g.week}${g.week > 14 ? ' <span class="hx-pill gold">PO</span>' : ''}</td><td>${isTie(g) ? '<span class="hx-muted">Tie</span>' : managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}–${g.losing_score}</td></tr>`).join('')}
+      </tbody></table></div></details>`;
+}
+
+/* ---------- seasons ---------- */
+let currentSeason = null;
+function heatColor(score, lo, hi) {
+  if (score == null) return 'transparent';
+  const t = hi > lo ? (score - lo) / (hi - lo) : 0.5; // 0 = season low, 1 = season high
+  if (t >= 0.5) return `rgba(79,168,118,${(0.1 + (t - 0.5) * 1.3).toFixed(2)})`;
+  return `rgba(224,82,74,${(0.1 + (0.5 - t) * 1.3).toFixed(2)})`;
+}
 function buildSeason() {
-  const season = parseInt(document.getElementById('seasonSelect').value);
-  if (!season) return;
+  const season = currentSeason;
+  document.querySelectorAll('#seasonChips .hx-chip').forEach(c => c.setAttribute('aria-pressed', +c.dataset.season === season));
+  const sw = weekly.filter(r => r.season === season), sm = matchups.filter(m => m.season === season);
+  const regular = sw.filter(r => r.game_type === 'regular'), playoff = sw.filter(r => r.game_type === 'playoff');
+  const fin = regSeasons.filter(t => t.season === season).sort((a, b) => a.final_finish - b.final_finish);
 
-  const seasonWeekly = weekly.filter(r => r.season === season);
-  const seasonMatchups = matchups.filter(m => m.season === season);
-  const regular = seasonWeekly.filter(r => r.game_type === 'regular');
-  const seasonFinishes = regSeasons.filter(t => t.season === season);
-
-  const standings = {};
-  seasonWeekly.forEach(r => {
-    if (!standings[r.manager]) standings[r.manager] = { manager: r.manager, division: r.division, wins: 0, losses: 0, pf: 0, pa: 0 };
+  const st = {};
+  sw.forEach(r => st[r.manager] ||= { manager: r.manager, division: r.division, w: 0, l: 0, pf: 0, pa: 0 });
+  sm.forEach(m => {
+    if (st[m.winner]) { st[m.winner].w++; st[m.winner].pf += +m.winning_score; st[m.winner].pa += +m.losing_score; }
+    if (st[m.loser]) { st[m.loser].l++; st[m.loser].pf += +m.losing_score; st[m.loser].pa += +m.winning_score; }
   });
-  seasonMatchups.forEach(m => {
-    if (standings[m.winner]) { standings[m.winner].wins++; standings[m.winner].pf += parseFloat(m.winning_score); standings[m.winner].pa += parseFloat(m.losing_score); }
-    if (standings[m.loser]) { standings[m.loser].losses++; standings[m.loser].pf += parseFloat(m.losing_score); standings[m.loser].pa += parseFloat(m.winning_score); }
-  });
-  const standingsArr = Object.values(standings).sort((a,b) => b.wins - a.wins || b.pf - a.pf);
+  const arr = Object.values(st).sort((a, b) => b.w - a.w || b.pf - a.pf);
+  const divs = [...new Set(arr.map(s => s.division))].sort();
+  const maxPF = Math.max(...arr.map(s => s.pf));
 
-  const divisions = [...new Set(standingsArr.map(s => s.division))].sort();
-  const byDivision = {};
-  divisions.forEach(div => {
-    byDivision[div] = standingsArr.filter(s => s.division === div).sort((a,b) => b.wins - a.wins || b.pf - a.pf);
-  });
-
-  const playoff = seasonWeekly.filter(r => r.game_type === 'playoff');
-
-  const weeks = [...new Set(regular.map(r => parseInt(r.week)))].sort((a,b) => a-b);
-  const grid = {};
-  regular.forEach(r => {
-    if (!grid[r.manager]) grid[r.manager] = {};
-    grid[r.manager][r.week] = parseFloat(r.score).toFixed(1);
-  });
-
-  const playoffWeeks = [...new Set(playoff.map(r => parseInt(r.week)))].sort((a,b) => a-b);
-  const playoffGrid = {};
-  playoff.forEach(r => {
-    if (!playoffGrid[r.manager]) playoffGrid[r.manager] = {};
-    playoffGrid[r.manager][r.week] = parseFloat(r.score).toFixed(1);
-  });
-
-  // Top 5 / bottom 5 scores for the season, colored green/red — computed separately for the
-  // regular-season pool and the (much smaller) playoff pool so playoff outliers don't just
-  // always win/lose against the larger regular-season sample.
-  function thresholds(scores, n = 5) {
-    if (!scores.length) return { top: Infinity, bottom: -Infinity };
-    const desc = scores.slice().sort((a,b) => b - a);
-    const asc = scores.slice().sort((a,b) => a - b);
-    return { top: desc[Math.min(n, desc.length) - 1], bottom: asc[Math.min(n, asc.length) - 1] };
-  }
-  const regThresh = thresholds(regular.map(r => parseFloat(r.score)));
-  const poThresh = thresholds(playoff.map(r => parseFloat(r.score)));
-
-  function scoreCell(value, thresh, extraClass) {
-    const classes = ['num'];
-    if (extraClass) classes.push(extraClass);
-    if (value === undefined) return `<td class="${classes.join(' ')}">&mdash;</td>`;
-    const num = parseFloat(value);
-    if (num >= thresh.top) classes.push('score-top');
-    else if (num <= thresh.bottom) classes.push('score-bottom');
-    return `<td class="${classes.join(' ')}">${value}</td>`;
-  }
-
-  const finishSorted = seasonFinishes.slice().sort((a,b) => a.final_finish - b.final_finish);
-  const top3 = finishSorted.slice(0, 3);
-  const lastPlaceRank = Math.max(...seasonFinishes.map(t => t.final_finish));
-  const lastPlace = finishSorted.find(t => t.final_finish === lastPlaceRank);
-  const medals = ['&#129351;', '&#129352;', '&#129353;'];
+  const weeks = [...new Set(regular.map(r => +r.week))].sort((a, b) => a - b);
+  const pweeks = [...new Set(playoff.map(r => +r.week))].sort((a, b) => a - b);
+  const grid = {}; sw.forEach(r => (grid[r.manager] ||= {})[r.week] = r.score);
+  const rs = regular.map(r => r.score), lo = Math.min(...rs), hi = Math.max(...rs);
+  const ps = playoff.map(r => r.score), plo = Math.min(...ps), phi = Math.max(...ps);
+  const top = regular.slice().sort((a, b) => b.score - a.score)[0];
+  const champ = fin[0], last = fin[fin.length - 1];
 
   document.getElementById('seasonContent').innerHTML = `
-    <div class="season-note">
-      ${top3.map((t,i) => `${medals[i]} ${managerTag(managers, t.manager)}`).join(' &nbsp;&middot;&nbsp; ')}
-      ${lastPlace ? ` &nbsp;&middot;&nbsp; &#128169; ${managerTag(managers, lastPlace.manager)} (last)` : ''}
+    <div class="season-head">
+      ${champ ? `<div class="hx-card champ-card"><div class="trophy">🏆</div><div><div class="t">${season} Champion</div><div class="nm" style="color:${color(champ.manager)}">${esc(champ.manager)}</div><div class="hx-ctx">${champ.ppg ? f1(champ.ppg) + ' PPG in the regular season' : ''}</div></div></div>` : '<div></div>'}
+      <div class="hx-card"><h3>Final finish</h3><div class="finish-list">
+        ${fin.slice(1, 3).map(t => `<div><span>${t.final_finish === 2 ? '🥈' : '🥉'} ${managerTag(managers, t.manager)}</span><span class="hx-pill">${t.final_finish === 2 ? '2nd' : '3rd'}</span></div>`).join('')}
+        ${last ? `<div><span>💩 ${managerTag(managers, last.manager)}</span><span class="hx-pill down">Last</span></div>` : ''}
+        ${top ? `<div><span class="hx-muted">High score</span><span class="hx-pill up">${f1(top.score)} · ${esc(top.manager)} Wk ${top.week}</span></div>` : ''}
+      </div></div>
     </div>
 
-    <div class="records-group-title">Weekly Scores</div>
-    <div class="score-legend">
-      <span class="score-top">&#9632;</span> Top 5 scores this season
-      <span class="score-bottom">&#9632;</span> Bottom 5 scores this season
+    <div class="hx-section-title"><h2>Weekly scores</h2><span>Shaded by how each score ranked that season</span></div>
+    <div class="hx-card" style="overflow-x:auto">
+      <table class="heat"><thead><tr><th>Week</th>${weeks.map(w => `<th>${w}</th>`).join('')}${pweeks.map((w, i) => `<th class="${i === 0 ? 'po-first' : ''}">${w}${i === 0 ? ' PO' : ''}</th>`).join('')}</tr></thead>
+      <tbody>${arr.map(s => `<tr><td class="mgr">${managerTag(managers, s.manager)}</td>
+        ${weeks.map(w => { const v = grid[s.manager]?.[w]; return `<td style="background:${heatColor(v, lo, hi)}" title="${esc(s.manager)}, Week ${w}">${v == null ? '–' : f1(v)}</td>`; }).join('')}
+        ${pweeks.map((w, i) => { const v = grid[s.manager]?.[w]; return `<td class="${i === 0 ? 'po-first' : ''}" style="background:${heatColor(v, plo, phi)}" title="${esc(s.manager)}, playoff Week ${w}">${v == null ? '–' : f1(v)}</td>`; }).join('')}
+      </tr>`).join('')}</tbody></table>
+      <div class="heat-legend"><span>Season low</span><span class="ramp"></span><span>Season high</span>${pweeks.length ? '<span>· Playoff weeks (PO) are shaded against each other</span>' : ''}</div>
     </div>
-    <div style="overflow-x:auto;">
-    <table class="weekly-score-table">
-      <thead>
-        <tr>
-          <th rowspan="2">Manager</th>
-          <th colspan="${weeks.length}">Regular Season</th>
-          ${playoffWeeks.length ? `<th colspan="${playoffWeeks.length}" class="playoff-divider">Playoffs</th>` : ''}
-        </tr>
-        <tr>
-          ${weeks.map(w => `<th class="num">Wk${w}</th>`).join('')}
-          ${playoffWeeks.map((w, i) => `<th class="num${i === 0 ? ' playoff-divider' : ''}">Wk${w}</th>`).join('')}
-        </tr>
-      </thead>
-      <tbody>
-        ${standingsArr.map(s => `
-          <tr>
-            <td>${managerTag(managers, s.manager)}</td>
-            ${weeks.map(w => scoreCell(grid[s.manager] && grid[s.manager][w], regThresh)).join('')}
-            ${playoffWeeks.map((w, i) => scoreCell(playoffGrid[s.manager] && playoffGrid[s.manager][w], poThresh, i === 0 ? 'playoff-divider' : '')).join('')}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    </div>
-    ${playoffWeeks.length === 0 ? `<p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px;">No playoff weeks recorded for this season.</p>` : ''}
 
-    <div class="records-group-title">Standings by Division</div>
-    ${divisions.map(div => `
-      <p style="color:var(--text-muted); font-family: var(--font-display); font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; margin: 16px 0 6px;">${div}</p>
-      <table>
-        <thead><tr><th>Manager</th><th class="num">W</th><th class="num">L</th><th class="num">PF</th><th class="num">PA</th></tr></thead>
-        <tbody>
-          ${byDivision[div].map(s => `
-            <tr>
-              <td>${managerTag(managers, s.manager)}</td>
-              <td class="num">${s.wins}</td>
-              <td class="num">${s.losses}</td>
-              <td class="num">${s.pf.toFixed(1)}</td>
-              <td class="num">${s.pa.toFixed(1)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `).join('')}
-
-    <div class="records-group-title">That Season's Draft &amp; Transactions</div>
-    <p style="color:var(--text-muted); font-size: 0.88rem;">
-      See the full <a href="draft.html" style="color:var(--blue-bright);">Draft History</a> and
-      <a href="transactions.html" style="color:var(--blue-bright);">Transactions</a> pages and filter by ${season}.
-    </p>
-  `;
+    <div class="hx-section-title"><h2>Standings</h2><span>Records include playoff games · bars show points for vs. the season's top scorer</span></div>
+    <div class="div-cards">${divs.map(d => `<div class="hx-card"><h3>${esc(d)} division</h3>
+      ${arr.filter(s => s.division === d).map(s => `<div class="stand-row"><span>${managerTag(managers, s.manager)}</span><span class="rec">${s.w}–${s.l}</span>
+        <div class="meta"><span>${fmt(s.pf)} PF</span><div class="hx-bar-track"><div class="hx-bar-fill" style="width:${(s.pf / maxPF * 100).toFixed(1)}%;--accent:${color(s.manager)}"></div></div><span>${fmt(s.pa)} PA</span></div></div>`).join('')}
+    </div>`).join('')}</div>
+    <p class="hx-muted" style="font-size:.85rem;margin-top:18px">Looking for ${season}'s draft or moves? Filter the <a href="draft.html" style="color:var(--blue-bright)">Draft</a> and <a href="transactions.html" style="color:var(--blue-bright)">Transactions</a> pages by ${season}.</p>`;
 }
 
+/* ---------- hero + wiring ---------- */
+function heroStats() {
+  const seasons = [...new Set(weekly.map(r => r.season))];
+  const pts = weekly.reduce((s, r) => s + r.score, 0);
+  const ch = champions(); const counts = {}; ch.forEach(c => counts[c.manager] = (counts[c.manager] || 0) + 1);
+  const most = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const tied = most.filter(x => x[1] === most[0][1]).map(x => x[0]);
+  const top = weekly.slice().sort((a, b) => b.score - a.score)[0];
+  document.getElementById('heroStats').innerHTML = [
+    ['Seasons', seasons.length, `${Math.min(...seasons)}–${Math.max(...seasons)}`],
+    ['Games played', fmt(matchups.length), 'regular season + playoffs'],
+    ['Points scored', fmt(pts), 'every manager, every week'],
+    ['Most titles', most[0][1], tied.join(', ')],
+    ['Highest score', f1(top.score), `${top.manager}, ${top.season}`],
+  ].map(([k, v, s]) => `<div class="hx-stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${esc(s)}</div></div>`).join('');
+}
+function showTab(tab) {
+  document.querySelectorAll('.hx-tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
+  ['records', 'h2h', 'seasons'].forEach(t => document.getElementById('panel-' + t).hidden = t !== tab);
+}
 async function init() {
-  [weekly, matchups, managers, regSeasons] = await Promise.all([
-    loadData('weekly_scores'), loadData('matchup_results'), getManagers(), loadData('team_seasons_regular')
-  ]);
-  weekly.forEach(r => r.season = parseInt(r.season));
-  matchups.forEach(m => { m.season = parseInt(m.season); m.week = parseInt(m.week); });
-  regSeasons.forEach(t => { t.season = parseInt(t.season); t.final_finish = parseInt(t.final_finish); });
-
-  buildRecords();
-
-  const opts = managers.map(m => `<option value="${m.manager}">${m.manager}</option>`).join('');
-  document.getElementById('mgrA').innerHTML = '<option value="">Select manager</option>' + opts;
-  document.getElementById('mgrB').innerHTML = '<option value="">Select manager</option>' + opts;
-  document.getElementById('mgrA').addEventListener('change', buildH2H);
-  document.getElementById('mgrB').addEventListener('change', buildH2H);
-
-  const seasons = [...new Set(weekly.map(r => r.season))].sort((a,b) => b-a);
-  document.getElementById('seasonSelect').innerHTML = seasons.map(s => `<option value="${s}">${s}</option>`).join('');
-  document.getElementById('seasonSelect').addEventListener('change', buildSeason);
+  [weekly, matchups, managers, regSeasons] = await Promise.all([loadData('weekly_scores'), loadData('matchup_results'), getManagers(), loadData('team_seasons_regular')]);
+  weekly.forEach(r => { r.season = +r.season; r.score = parseFloat(r.score); });
+  matchups.forEach(m => { m.season = +m.season; m.week = +m.week; });
+  regSeasons.forEach(t => { t.season = +t.season; t.final_finish = +t.final_finish; });
+  heroStats(); buildRecords();
+  const opts = managers.map(m => `<option value="${esc(m.manager)}">${esc(m.manager)}</option>`).join('');
+  ['mgrA', 'mgrB'].forEach(id => { const el = document.getElementById(id); el.innerHTML = '<option value="">Select manager</option>' + opts; el.addEventListener('change', buildH2H); });
+  buildH2H();
+  const seasons = [...new Set(weekly.map(r => r.season))].sort((a, b) => b - a);
+  currentSeason = seasons[0];
+  document.getElementById('seasonChips').innerHTML = seasons.map(s => `<button class="hx-chip" type="button" data-season="${s}" aria-pressed="${s === currentSeason}">${s}</button>`).join('');
+  document.getElementById('seasonChips').addEventListener('click', e => { const c = e.target.closest('.hx-chip'); if (!c) return; currentSeason = +c.dataset.season; buildSeason(); });
   buildSeason();
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-    });
-  });
+  document.querySelectorAll('.hx-tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 }
-
 renderNav('hall of fame');
 init();
 </script>

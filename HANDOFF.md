@@ -112,6 +112,19 @@ Ainsworth `#D65151`, Conlin `#C37222`, Glaser `#D6D651`, Goetz `#72C322`, Hagan 
 Larson `#22C372`, Muenchow `#51D6D6`, Palaia `#2272C3`, Pfaffinger `#5151D6`,
 Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), Zogg `#C32272`
 
+**History UI kit (Oct 2026 redesign, `style.css?v=10`).** The League History pages are moving from plain
+record tables to a shared set of `hx-` components at the end of `style.css`: `hx-hero` (gradient header +
+`hx-stats` stat tiles), `hx-tabs` (segmented tab bar, toggle with `aria-selected` + the `hidden` attribute),
+`hx-card` / `hx-record` (record card: big #1 value, holder in manager color via `--accent`, `hx-mini` top-5
+list), `hx-bar-row` (ranked rows with a proportional bar), `hx-podium` (top 3; compact rows under 560px),
+`hx-chips` (scrollable year picker), `hx-seg` (sort toggle), `hx-pill` (up/down/gold), `hx-select`, `hx-toolbar`.
+A global `[hidden]{display:none!important}` lives there too. Done so far: **Hall of Fame** (records as top-5
+cards, champions timeline, rivalry-style Head-to-Head with win-share bar and recent form, Seasons with year
+chips, champion card, score heatmap and division standing cards; "Lowest score" is now regular season only,
+since late playoff/consolation weeks have unset lineups, 2.2/2.4 pts) and **Team Rankings** (podium + bar rows,
+25 at a time, factor bar chart in "How seasons are compared"). Still on the old look: Managers, Scorigami, Draft,
+Transactions. Use the kit when converting them.
+
 **Responsive tables** (`.table-wide` / `.table-cards` in style.css): any table with too many columns to fit a phone screen renders twice — once as the normal `<table>` wrapped in `.table-wide`, once as a stack of `.table-card` divs wrapped in `.table-cards` — and a `@media (max-width: 640px)` rule toggles which one is visible, no JS involved. Used on rankings, draft (board/strategy/slots/grades), transactions (log/trades/summary), and season-2026 standings. Deliberately *not* used on genuine data grids like the Hall of Fame weekly-scores matrix, where a card would just restate the same wide row — that one stays an intentionally scrollable table. When adding a new wide table, follow this pattern rather than introducing a new one.
 
 **Cache-busting:** `style.css` is loaded as `style.css?v=8` from every page (currently) — bump this query string (find/replace across all HTML files) any time style.css changes, since GitHub Pages / most browsers cache it aggressively and won't otherwise pick up edits. Same idea applies to `shared.js?v=14` (bumped this session when `shared.js` changed for the nav update below — same browser-caching reason, confirmed via a real repro: after editing `shared.js` without bumping the version, a fresh page load still showed the pre-edit nav until the version query string changed) if that file is ever changed again, and to `pickem.js?v=5` on `pickem.html` specifically. **Caught the gotcha in the wild again this session**: edited `style.css` for the banner-narrowing pass below, verified in-browser, and the padding change silently didn't apply — turned out to be this exact caching issue since `v=7` hadn't been bumped yet. Always bump immediately after any `style.css` edit, before verifying.
