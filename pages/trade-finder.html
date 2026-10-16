@@ -22,6 +22,17 @@
 .tf-field { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 8px; }
 .tf-field label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; color: var(--text-muted); }
 @media (max-width: 480px) { .tf-field { grid-template-columns: 1fr; gap: 4px; } }
+.tf-ps { position: relative; min-width: 0; }
+.tf-ps-input { width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line-strong); border-radius: 6px; padding: 9px 10px; font: inherit; font-size: 0.95rem; }
+.tf-ps-list { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 50; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; max-height: 320px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.45); }
+.tf-ps-opt { width: 100%; display: flex; align-items: center; gap: 6px; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--text); font: inherit; font-size: 0.9rem; padding: 9px 12px; cursor: pointer; }
+.tf-ps-opt:last-child { border-bottom: 0; }
+.tf-ps-opt:hover, .tf-ps-opt.on { background: var(--surface-raised); }
+.tf-ps-opt .n { font-weight: 600; } .tf-ps-opt small { color: var(--text-muted); } .tf-ps-opt .v { margin-left: auto; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+.tf-ps-chip { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; background: var(--live-bg); border: 1px solid var(--live); border-radius: 6px; padding: 6px 6px 6px 10px; font-size: 0.92rem; }
+.tf-ps-chip small { color: var(--text-muted); }
+.tf-ps-x { margin-left: auto; background: none; border: 0; color: var(--text-muted); font-size: 1.05rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.tf-ps-x:hover { color: var(--red); background: var(--bg); }
 .tf-mode-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.84rem; color: var(--text-muted); }
 .tf-mode-row select { flex: 0 1 auto; min-width: 0; padding: 5px 8px; font-size: 0.84rem; }
 .tf-mode { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -123,7 +134,10 @@
 <script src="../assets/js/trade_engine.js?v=2"></script>
 <script>
 let managers = [];
-const state = { a: null, b: null, pos: '', mag: '' }; // b = trade partner filter, pos = incoming position, mag = key/bench
+const state = { a: null, b: null, pos: '', mag: '', pl: '', autoB: false }; // autoB: partner was set by the player pick // b = trade partner filter, pos = incoming position, mag = key/bench, pl = player to trade for/away
+// Player filter: one of your players (trade him away) or another team's (trade for him, which fixes the partner).
+const plOut = () => state.pl && ownerOf(state.pl) === state.a;
+const plIn = () => state.pl && ownerOf(state.pl) && ownerOf(state.pl) !== state.a;
 
 /* ---------- team situation: contender / bubble / chasing ---------- */
 // What each mode cares about: share of weight on the next 4 weeks, the rest of the regular season,
@@ -226,7 +240,9 @@ function posRank(mgr, strength, pos) { return 1 + D.teams.filter(t => t.manager 
 /* ---------- search ---------- */
 function assets(mgr) {
   // bench-players mode draws its pieces from the bench, otherwise the top of the roster is all starters
-  return team(mgr).players.filter(id => P(id).pos !== 'HC' && mv(id) > 0 && !waiverLevel(id) && (state.mag !== 'bench' || !isStarter(id))).sort((x, y) => mv(y) - mv(x)).slice(0, TOP_ASSETS);
+  const list = team(mgr).players.filter(id => id !== state.pl && P(id).pos !== 'HC' && mv(id) > 0 && !waiverLevel(id) && (state.mag !== 'bench' || !isStarter(id))).sort((x, y) => mv(y) - mv(x)).slice(0, TOP_ASSETS);
+  // the player you picked is always in his team's pool (first, so he's in the 3-player packages too)
+  return state.pl && ownerOf(state.pl) === mgr ? [state.pl, ...list.slice(0, TOP_ASSETS - 1)] : list;
 }
 function packages(list) {
   const out = [], t = list.slice(0, TRIPLE_ASSETS);
@@ -246,9 +262,9 @@ async function searchPair(A, B, fullPerShape, token, onGrade) {
   const fA = p => wp(p, mA, tA), fB = p => wp(p, mB, tB);
   const baseA = lineup(rosA, fA).pts, baseB = lineup(rosB, fB).pts;
   // filters: incoming position (what A gets must include it) and magnitude (bench = no starters anywhere in the deal)
-  const benchOnly = pk => state.mag !== 'bench' || pk.ids.every(id => !isStarter(id));
-  const pkA = packages(assets(B)).filter(pk => (!state.pos || pk.ids.some(id => P(id).pos === state.pos)) && benchOnly(pk)); // pkA: what A gets (from B)
-  const pkB = packages(assets(A)).filter(benchOnly).sort((x, y) => x.v - y.v);
+  const benchOnly = pk => state.mag !== 'bench' || pk.ids.every(id => id === state.pl || !isStarter(id)); // your picked player is exempt
+  const pkA = packages(assets(B)).filter(pk => (plIn() ? pk.ids.includes(state.pl) : !state.pos || pk.ids.some(id => P(id).pos === state.pos)) && benchOnly(pk)); // pkA: what A gets (from B)
+  const pkB = packages(assets(A)).filter(pk => (!plOut() || pk.ids.includes(state.pl)) && benchOnly(pk)).sort((x, y) => x.v - y.v);
   const vals = pkB.map(p => p.v);
   const lower = x => { let lo = 0, hi = vals.length; while (lo < hi) { const m = (lo + hi) >> 1; if (vals[m] < x) lo = m + 1; else hi = m; } return lo; };
   // need bonus: +0.4 pts/wk-equivalent per top-need position whose league rank improves 2+ spots
@@ -310,7 +326,7 @@ async function search() {
   const token = ++searchToken; results = [];
   const A = state.a; searching = !!A; renderResults(); if (!searching) return;
   const t0 = performance.now(), status = document.getElementById('status');
-  const partners = state.b ? [state.b] : D.teams.map(t => t.manager).filter(m => m !== A);
+  const partners = plIn() ? [ownerOf(state.pl)] : state.b ? [state.b] : D.teams.map(t => t.manager).filter(m => m !== A);
   const perShape = state.b ? FULL_PER_SHAPE : ANY_PER_SHAPE;
   let tried = 0, graded = 0, all = [];
   for (let k = 0; k < partners.length; k++) {
@@ -348,14 +364,42 @@ function renderTeam() {
   }
   el.innerHTML = `<div class="tf-team-head"><label for="sel-a">Your team</label><select id="sel-a" data-f="a">${teamOptions(mgr, null, 'Choose your team')}</select></div>${body}`;
 }
+// Player filter: a search box with suggestions (your players = trade away, everyone else's = trade for).
+const normName = x => x.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9 ]/g, '');
+function playerMatches(q) {
+  q = normName(q.trim()); if (!q || !state.a) return [];
+  const ids = D.teams.flatMap(t => t.players).filter(id => P(id).pos !== 'HC' && (normName(P(id).name).includes(q) || P(id).team.toLowerCase() === q));
+  // with a partner picked, his players and yours come first
+  const rankOf = id => { const o = ownerOf(id); return o === state.a ? 0 : o === state.b ? 0 : 1; };
+  return ids.sort((x, y) => rankOf(x) - rankOf(y) || mv(y) - mv(x)).slice(0, 8);
+}
+function playerField() {
+  if (state.pl) {
+    const p = P(state.pl), o = ownerOf(state.pl);
+    return `<div class="tf-ps-chip">${posTag(p.pos)} <b>${esc(p.name)}</b> <small>${o === state.a ? 'trade away' : 'trade for · ' + esc(o)}</small><button type="button" class="tf-ps-x" data-clearpl aria-label="Clear player">✕</button></div>`;
+  }
+  return `<div class="tf-ps"><input id="f-pl" class="tf-ps-input" type="search" placeholder="${state.a ? 'Search a player to trade for or away' : 'Pick your team first'}" autocomplete="off" ${state.a ? '' : 'disabled'} role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="f-pl-list"><div class="tf-ps-list" id="f-pl-list" role="listbox" hidden></div></div>`;
+}
+let psActive = -1;
+function renderSuggest() {
+  const input = document.getElementById('f-pl'), list = document.getElementById('f-pl-list'); if (!input) return;
+  const m = playerMatches(input.value);
+  if (!input.value.trim()) { list.hidden = true; input.setAttribute('aria-expanded', 'false'); return; }
+  psActive = Math.min(psActive, m.length - 1);
+  list.innerHTML = m.length ? m.map((id, k) => { const p = P(id), o = ownerOf(id);
+    return `<button type="button" class="tf-ps-opt${k === psActive ? ' on' : ''}" role="option" aria-selected="${k === psActive}" data-pickpl="${id}">${posTag(p.pos)} <span class="n">${esc(p.name)}</span> <small>${o === state.a ? 'yours · trade away' : esc(o)}</small><span class="v">${fmt(mv(id))}</span></button>`; }).join('')
+    : `<div class="tf-psub" style="padding:10px 12px">No rostered player matches.</div>`;
+  list.hidden = false; input.setAttribute('aria-expanded', 'true');
+}
 function renderFilters() {
   const need = state.a ? teamNeeds(state.a).top : [];
   const posOpt = ['', 'QB', 'RB', 'WR', 'TE'].map(p => `<option value="${p}" ${state.pos === p ? 'selected' : ''}>${p ? p + (need.includes(p) ? ' (a need)' : '') : 'Any position'}</option>`).join('');
   document.getElementById('filters').innerHTML = `<div class="tf-fgrid">
     <div class="tf-field"><label for="f-pos">Trade for</label><select id="f-pos" data-f="pos">${posOpt}</select></div>
     <div class="tf-field"><label for="f-b">Trade partner</label><select id="f-b" data-f="b">${teamOptions(state.b, state.a, 'Any team')}</select></div>
+    <div class="tf-field"><label for="f-pl">Player</label>${playerField()}</div>
     <div class="tf-field"><label for="f-mag">Magnitude</label><select id="f-mag" data-f="mag">${Object.entries(MAGS).map(([k, l]) => `<option value="${k}" ${state.mag === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
-    <p class="tf-mode-why">Trade for: only offers that bring you that position. Key players: at least one starter changes hands. Bench players: no starters on either side.</p></div>`;
+    <p class="tf-mode-why">Player: pick one of yours to shop him, or anyone else's to see what it takes to get him. Trade for: only offers that bring you that position. Key players: at least one starter changes hands. Bench players: no starters on either side.</p></div>`;
 }
 function visible() {
   // Searching every partner: show more, but at most 3 per partner so one team can't fill the list
@@ -426,8 +470,9 @@ function tradeCard(c, i) {
 function renderResults() {
   const el = document.getElementById('results');
   if (!state.a) { el.innerHTML = `<div class="tf-empty">Pick your team to search for trades.</div>`; document.getElementById('status').textContent = ''; return; }
-  const filt = [state.pos && `bring you a ${state.pos}`, state.mag && `involve only ${state.mag === 'key' ? 'key' : 'bench'} players`.replace('only key', 'key')].filter(Boolean).join(' and ');
+  const filt = [plOut() && `send away ${esc(P(state.pl).name)}`, plIn() && `bring you ${esc(P(state.pl).name)}`, !plIn() && state.pos && `bring you a ${state.pos}`, state.mag && `involve only ${state.mag === 'key' ? 'key' : 'bench'} players`.replace('only key', 'key')].filter(Boolean).join(' and ');
   if (!results.length && !state.b) { el.innerHTML = searching ? '' : `<div class="tf-empty">No trade${filt ? ` that would ${filt}` : ''} helps both sides and grades B or better for each.${filt ? ' Try loosening a filter.' : ''}</div>`; return; }
+  if (!results.length && state.pl) { el.innerHTML = searching ? '' : `<div class="tf-empty">No trade that would ${filt} helps both teams and grades B or better for each.${plOut() && !team(state.a).players.some(id => id !== state.pl && P(id).pos === P(state.pl).pos) ? ` He's your only ${esc(P(state.pl).pos)}, so any deal has to send one back.` : ''} Try another player${plIn() ? '' : ' or trade partner'}, or loosen a filter.</div>`; return; }
   if (!results.length) {
     const shared = teamNeeds(state.a).top.filter(p => teamNeeds(state.b).top.includes(p));
     el.innerHTML = searching ? '' : `<div class="tf-empty">No trade between these two rosters helps both teams and grades B or better for each.${shared.length ? ` Both teams' top needs include <b>${shared.join(' and ')}</b>, so they're chasing the same players.` : ''} Try another trade partner${filt ? ' or loosen a filter' : ''}.</div>`; return;
@@ -439,15 +484,35 @@ function renderResults() {
 /* ---------- state, url, wiring ---------- */
 function syncUrl() {
   const u = new URLSearchParams();
-  for (const k of ['a', 'b', 'pos', 'mag']) if (state[k]) u.set(k, state[k]);
+  for (const k of ['a', 'b', 'pos', 'mag', 'pl']) if (state[k]) u.set(k, state[k]);
   history.replaceState(null, '', location.pathname + (u.toString() ? '?' + u : ''));
 }
 function renderAll() { renderTeam(); renderFilters(); syncUrl(); search(); }
-document.addEventListener('change', e => {
-  const t = e.target; if (!t.matches('select[data-f]')) return;
-  const k = t.dataset.f; state[k] = t.value || (k === 'a' || k === 'b' ? null : '');
+function applyFilter(k, v) {
+  state[k] = v || (k === 'a' || k === 'b' ? null : '');
   if (k === 'a' && state.b === state.a) state.b = null;
+  if (k === 'a') state.pl = '';                                           // a new team: the old pick no longer applies
+  if (k === 'b') { state.autoB = false; if (plIn() && ownerOf(state.pl) !== state.b) state.pl = ''; } // partner changed away from his owner
+  if (k === 'pl') {
+    if (plIn()) { if (state.b !== ownerOf(state.pl)) { state.b = ownerOf(state.pl); state.autoB = true; } } // trading for him = trading with his team
+    else if (state.autoB) { state.b = null; state.autoB = false; }       // undo a partner the previous pick set
+  }
   renderAll();
+}
+document.addEventListener('change', e => { const t = e.target; if (t.matches('select[data-f]')) applyFilter(t.dataset.f, t.value); });
+document.addEventListener('input', e => { if (e.target.id === 'f-pl') { psActive = -1; renderSuggest(); } });
+document.addEventListener('keydown', e => {
+  if (e.target.id !== 'f-pl') return;
+  const opts = [...document.querySelectorAll('.tf-ps-opt')];
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!opts.length) return; psActive = (psActive + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length; renderSuggest(); }
+  else if (e.key === 'Enter') { e.preventDefault(); const o = opts[psActive >= 0 ? psActive : 0]; if (o) applyFilter('pl', o.dataset.pickpl); }
+  else if (e.key === 'Escape') { document.getElementById('f-pl-list').hidden = true; }
+});
+document.addEventListener('mousedown', e => { if (e.target.closest('[data-pickpl]')) e.preventDefault(); }); // keep focus so the click lands
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-pickpl]'); if (o) { applyFilter('pl', o.dataset.pickpl); return; }
+  if (e.target.closest('[data-clearpl]')) { applyFilter('pl', ''); setTimeout(() => document.getElementById('f-pl')?.focus(), 0); return; }
+  const list = document.getElementById('f-pl-list'); if (list && !e.target.closest('.tf-ps')) list.hidden = true;
 });
 
 function methodology() {
@@ -457,7 +522,7 @@ function methodology() {
     <p><strong>Strength of schedule.</strong> For every remaining week, a player's matchup is the fantasy points his opponent allows per game to his position (ESPN, league scoring), compared with the league average. That ratio is shrunk halfway toward average, because a few weeks of defensive data is noisy, and capped at ±20%. A bye counts as zero. Head Coaches only get the bye adjustment. Injured players are discounted in the weeks right ahead, because ESPN's per-game projection assumes they play: OUT counts as 0 this week, doubtful 25%, questionable 80%, IR 0 for the next 4 weeks, suspended 0 for 2. That discount depends on the record of the team holding him: a winning team takes half of it (it can wait out an injury, so it buys low), and a losing team counts the absence twice as long (it can't wait, so it's happy to move injured players). ${SHOW_SCHEDULE ? 'Green chips are matchups at least 4% easier than average, red at least 4% tougher.' : ''}</p>
     <p><strong>What each team wants.</strong> A player's points per game are reweighted by his matchups over three windows: the next ${NOW_WEEKS} weeks, the rest of the regular season, and ${po}. Chasing teams weigh them 70/30/0 (wins now), Bubble teams 20/60/20, and Contenders 0/40/60 (playoff schedules). ${SHOW_SCHEDULE ? 'Week chips on each player show the window that matters most to the team receiving him.' : ''}</p>
     <p><strong>Needs.</strong> Each position group's starters are rated the same way the Trade Calculator rates lineups, over two horizons. <em>Rest of season</em> ignores injuries and counts each player as the average of his ESPN rest-of-season points per game and the points per game his consensus ROS rank implies (rank N at a position = the Nth-best ESPN projection there), because one projection can be an outlier. <em>Now</em> rebuilds the lineup for each of the next ${NOW_WEEKS} weeks with injured players' expected missed games taken out (scaled by the team's record), so whoever actually fills in counts (byes are ignored, since waivers cover a bye). Each group gets one league rank from ${NEED_W.ros * 100}% rest of season + ${NEED_W.short * 100}% now. A position group is a need when its starters rank 8th or worse in the league on that blend, or, at RB/WR, when there's no healthy backup. Needs are ordered by the gap to the league median. Surplus means a bench player who'd start for most teams. A trade earns a bonus when it lifts one of a team's top two needs by 2+ league spots.</p>
-    <p><strong>Search.</strong> Each team's top ${TOP_ASSETS} tradeable players by market value are considered (no Head Coaches, no waiver-level players), with 3-player packages drawn from the top ${TRIPLE_ASSETS}. Every 1-for-1, 2-for-1, 2-for-2, 3-for-2 and 3-for-3 combination within ${MARKET_WINDOW * 100}% market value of each other is checked. A trade survives only if both teams' schedule-weighted starting lineups improve. The best ${FULL_PER_SHAPE} of each size (${ANY_PER_SHAPE} per partner when searching every team) are then run through the Trade Calculator, and any trade where either team grades below B, or the market leans more than 25%, is dropped. Filters apply before grading, so the calculator's attention goes to matching trades: <em>Trade for</em> keeps only packages bringing you that position, <em>Key players</em> needs at least one current starter (best lineup on ROS projections) in the deal, and <em>Bench players</em> allows none on either side (pieces come from each bench). Bench swaps rarely move a starting lineup, so there a trade helps a team when it costs the lineup nothing and adds depth at one of its needs.</p>
+    <p><strong>Search.</strong> Each team's top ${TOP_ASSETS} tradeable players by market value are considered (no Head Coaches, no waiver-level players), with 3-player packages drawn from the top ${TRIPLE_ASSETS}. Every 1-for-1, 2-for-1, 2-for-2, 3-for-2 and 3-for-3 combination within ${MARKET_WINDOW * 100}% market value of each other is checked. A trade survives only if both teams' schedule-weighted starting lineups improve. The best ${FULL_PER_SHAPE} of each size (${ANY_PER_SHAPE} per partner when searching every team) are then run through the Trade Calculator, and any trade where either team grades below B, or the market leans more than 25%, is dropped. Filters apply before grading, so the calculator's attention goes to matching trades: <em>Player</em> keeps only deals sending away the player you picked from your roster, or bringing you the one you picked from another team (which searches only his team; he's always considered, even outside his team's top ${TOP_ASSETS}, and is exempt from the magnitude filter); <em>Trade for</em> keeps only packages bringing you that position, <em>Key players</em> needs at least one current starter (best lineup on ROS projections) in the deal, and <em>Bench players</em> allows none on either side (pieces come from each bench). Bench swaps rarely move a starting lineup, so there a trade helps a team when it costs the lineup nothing and adds depth at one of its needs.</p>
     <p><strong>Ranking.</strong> Each team's match = half its Trade Calculator grade score, half its schedule-weighted lineup gain (±4 pts/wk = full). Trades are ranked by the <em>lower</em> of the two teams' matches, so the top trades help both teams. A bigger deal is hidden when a smaller deal inside it ranks higher. With no trade partner filter, every other team is searched and at most ${ANY_PER_PARTNER} trades per partner are shown (${ANY_SHOWN} total). "Open in calculator" loads the trade in the Trade Calculator to tweak.</p>`;
 }
 
@@ -473,6 +538,8 @@ async function init() {
   const u = new URLSearchParams(location.search), ok = m => m && team(m) ? m : null;
   state.a = ok(u.get('a')); state.b = ok(u.get('b')) !== state.a ? ok(u.get('b')) : null;
   state.pos = ['QB', 'RB', 'WR', 'TE'].includes(u.get('pos')) ? u.get('pos') : ''; state.mag = MAGS[u.get('mag')] && u.get('mag') ? u.get('mag') : '';
+  const pl = u.get('pl'); state.pl = pl && D.players[pl] && P(pl).pos !== 'HC' && ownerOf(pl) && state.a ? pl : '';
+  if (plIn() && state.b !== ownerOf(state.pl)) { state.b = ownerOf(state.pl); state.autoB = true; }
   methodology(); renderAll();
 }
 renderNav('trade finder');

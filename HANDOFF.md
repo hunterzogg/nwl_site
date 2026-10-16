@@ -1658,7 +1658,10 @@ Pick your team, then filter: **Trade for** (position; only offers bringing you t
 (default "Any team" searches all 11 others, 10 graded per shape per partner, up to 20 shown with at most 3 per
 partner, each card naming its partner; one partner goes deeper, 40 per shape) and **Magnitude** (Key players = at
 least one current starter changes hands; Bench players = no starters on either side; pieces come from each bench, and "helps" means no lineup loss plus
-+0.3 per net incoming player at one of the team's needs, since bench swaps rarely move a lineup). Filters apply before
++0.3 per net incoming player at one of the team's needs, since bench swaps rarely move a lineup). **Player** (search box with suggestions, `?pl=`): one of your players = only deals sending him away; another
+team's = only deals bringing him to you, which locks the partner to his team (`autoB`, undone if you switch
+back or clear). The picked player is always in his team's asset pool, even outside the top 14, is first so
+he's in triples, and is exempt from the magnitude filter. Filters apply before
 grading, so the grading budget goes to matching trades. Team situation is automatic (no override; the size chips
 and the second team box were removed per feedback). It searches for fair trades that help both sides, grades them with the calculator, and
 links each one to the calculator (`trade-tools.html?a=&b=&ag=&bg=`) for editing. The calculator's actions row has
