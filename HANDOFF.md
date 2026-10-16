@@ -1654,8 +1654,13 @@ with everything:
 ## Trade Finder (rebuilt on the calculator engine, Oct 16 2026)
 
 `pages/trade-finder.html`, nav "Trade Finder" next to Trade Calculator (`NWL_TRADE_FINDER_PAGE`, `shared.js?v=22`).
-Pick your team; the trade partner is optional ("Any team" searches all 11 others, 10 graded per shape per
-partner, up to 20 shown with at most 3 per partner, each card naming its partner). It searches for fair trades that help both sides, grades them with the calculator, and
+Pick your team, then filter: **Trade for** (position; only offers bringing you that position), **Trade partner**
+(default "Any team" searches all 11 others, 10 graded per shape per partner, up to 20 shown with at most 3 per
+partner, each card naming its partner; one partner goes deeper, 40 per shape) and **Magnitude** (Key players = at
+least one current starter changes hands; Bench players = no starters on either side; pieces come from each bench, and "helps" means no lineup loss plus
++0.3 per net incoming player at one of the team's needs, since bench swaps rarely move a lineup). Filters apply before
+grading, so the grading budget goes to matching trades. Team situation is automatic (no override; the size chips
+and the second team box were removed per feedback). It searches for fair trades that help both sides, grades them with the calculator, and
 links each one to the calculator (`trade-tools.html?a=&b=&ag=&bg=`) for editing. The calculator's actions row has
 a "Find trades between these teams" link back to it.
 
@@ -1677,11 +1682,13 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
 
 **Logic (client-side):**
 - **Team mode**: projected wins = W + games left × Φ((best lineup − league avg)/(sd·√2)). Ranks 1–5 Contender,
-  6–8 Bubble, 9–12 Chasing, with a per-team override (`?ma=&mb=`).
+  6–8 Bubble, 9–12 Chasing (automatic). URL state: `?a=&b=&pos=&mag=`.
 - **Matchup multiplier** per player-week = points allowed to his position ÷ league mean, shrunk 50% toward 1,
   clamped 0.8–1.2. A bye is 0. HC gets the bye adjustment only. Injury discount on the weeks right ahead (ESPN's
   per-game ROS projection assumes he plays): OUT 0 this week, doubtful 0.25, questionable 0.8, IR 0 for 4 weeks,
   suspended 0 for 2 (`AVAIL`). Added after Pfaffinger's top "points now" trade was an OUT Zach Charbonnet.
+  Scaled by record (`tolOf`): winning teams take half the discount (buy injured players low), losing teams count
+  the absence twice as long (sell them), even records unchanged. Cards say "Buys low on X" / "Moves X while hurt".
 - **Window weights** (next 4 wks / rest of regular season / playoffs): Chasing 70/30/0, Bubble 20/60/20,
   Contender 0/40/60. Window pts/g = `ros_pg` × weighted mean multiplier.
 - **Needs**: starters rank 8th or worse (flat ROS pts/g), or RB/WR with no healthy backup. Top 2 by gap to the
@@ -1697,6 +1704,11 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
   best of the rest (15 max).
 - Searches take 0.2–1.6 s per pair, 1–2.5 s for all 11 partners, on Oct 16 data. Some pairs legitimately return nothing (Goetz–Conlin: both need WR).
   The empty state names the shared need.
+- **Schedule previews are switched off** (`SHOW_SCHEDULE = false` in trade-finder.html, per Hunter on Oct 16):
+  the per-player week chips, their legend and the "Playoff schedule: X has 2 easy…" line are built but hidden
+  until the fantasy playoffs are closer. Flip the flag to true then (a few weeks out). SoS still feeds the scoring.
+- Each card has a market-value meter (values per side, Fair / Leans X verdict, knob slides toward the team getting
+  more; half the bar = 50% gap, green band = the 8% fair zone). Team situation pills show only on your team's panel.
 - Local testing gotcha: the browser caches `trade_values.json`, so after re-running the builder, refetch it with
   `cache:'reload'` or the page silently runs on the old file (it showed "no schedule data" until refreshed).
 

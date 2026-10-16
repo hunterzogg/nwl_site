@@ -18,6 +18,10 @@
 .tf-team-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tf-team-head label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; color: var(--text-muted); }
 .tf-team select { flex: 1; min-width: 140px; background: var(--bg); color: var(--text); border: 1px solid var(--line-strong); border-radius: 6px; padding: 9px 10px; font: inherit; font-size: 0.95rem; }
+.tf-fgrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.tf-field { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 8px; }
+.tf-field label { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; color: var(--text-muted); }
+@media (max-width: 480px) { .tf-field { grid-template-columns: 1fr; gap: 4px; } }
 .tf-mode-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.84rem; color: var(--text-muted); }
 .tf-mode-row select { flex: 0 1 auto; min-width: 0; padding: 5px 8px; font-size: 0.84rem; }
 .tf-mode { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -31,10 +35,6 @@
 .tf-tag.surplus { border-color: rgba(79,168,118,0.5); }
 .tf-tag small { color: var(--text-muted); font-weight: 500; }
 .tf-bar { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 18px 0 14px; }
-.tf-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.tf-chip { background: var(--bg); border: 1px solid var(--line-strong); color: var(--text-muted); border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-.tf-chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
-.tf-chip small { font-weight: 500; opacity: 0.75; }
 .tf-status { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); }
 .tf-empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 36px 20px; text-align: center; color: var(--text-muted); }
 .tf-list { display: flex; flex-direction: column; gap: 14px; }
@@ -45,7 +45,8 @@
 @media (max-width: 760px) { .tf-sides { grid-template-columns: 1fr; } }
 .tf-side { border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .tf-side-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.tf-gets { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.95rem; }
+.tf-gets { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.95rem; line-height: 1; }
+.tf-gets .manager-tag { font-weight: inherit; }
 .tf-grade { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; min-width: 46px; text-align: center; border-radius: 6px; padding: 1px 8px; }
 .tf-p { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; background: var(--surface-raised); border: 1px solid var(--line); border-radius: 8px; padding: 8px 9px; }
 .tf-pname { font-weight: 600; line-height: 1.25; }
@@ -66,9 +67,20 @@
 .tf-why b { color: var(--text); }
 .tf-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; font-size: 0.8rem; color: var(--text-muted); }
 .tf-foot b { color: var(--text); font-family: var(--font-mono); }
-.tf-chipv { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-.tf-chipv.fair { background: rgba(79,168,118,0.16); color: #4FA876; }
-.tf-chipv.lean { background: var(--live-bg); color: var(--live-bright); }
+.tf-meter { --mc: #4FA876; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; }
+.tf-meter.lean { --mc: var(--live-bright); }
+.tf-meter-vals { display: flex; justify-content: space-between; gap: 10px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 0.95rem; }
+.tf-meter-vals b { font-family: var(--font-mono); font-size: 1.05rem; }
+.tf-meter-verdict { text-align: center; color: var(--mc); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.15rem; font-weight: 600; margin: 4px 0 8px; }
+.tf-meter-verdict small { font-family: var(--font-mono); font-size: 0.85rem; }
+.tf-meter-track { position: relative; height: 10px; border-radius: 5px; background: var(--line); margin: 0 9px; }
+.tf-meter-track .band { position: absolute; top: 0; bottom: 0; left: 42%; width: 16%; background: rgba(79,168,118,0.35); border-radius: 5px; }
+.tf-meter-track .fill { position: absolute; top: 0; bottom: 0; background: var(--mc); border-radius: 5px; }
+.tf-meter-track .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text-muted); }
+.tf-meter-track .knob { position: absolute; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--mc); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--mc); }
+.tf-meter-ends { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 0.72rem; color: var(--text-muted); }
+.tf-meter-ends span:nth-child(2) { text-align: center; } .tf-meter-ends span:last-child { text-align: right; }
+@media (max-width: 480px) { .tf-meter-ends span:nth-child(2) { display: none; } .tf-meter-vals { font-size: 0.85rem; } }
 .tf-open { background: var(--live); color: #0B0F17; border: 0; border-radius: 8px; padding: 8px 14px; font-family: var(--font-display); font-weight: 600; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; }
 .tf-open:hover { background: var(--live-bright); }
 .tf-legend { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 0.74rem; color: var(--text-muted); }
@@ -81,18 +93,18 @@
   <header class="hx-hero live">
     <div class="hx-eyebrow"><span class="nav-live-dot"></span> 2026 Season</div>
     <h1>Trade Finder</h1>
-    <p>Pick your team and it searches every 1-for-1 up to 3-for-3 deal with the rest of the league (or one trade partner) for trades that help both sides, graded by the Trade Calculator. Teams chasing a playoff spot get points now; contenders get players with good fantasy playoff schedules.</p>
+    <p>Pick your team and it searches every 1-for-1 up to 3-for-3 deal with the rest of the league for trades that help both sides, graded by the Trade Calculator. Teams chasing a playoff spot get points now; contenders get players with good fantasy playoff schedules.</p>
     <p class="tf-updated" id="updated" style="margin:12px 0 0"></p>
   </header>
 
   <section class="tf-teams" aria-label="Teams">
     <div class="tf-team" id="teamA"></div>
-    <div class="tf-team" id="teamB"></div>
+    <div class="tf-team" id="filters" aria-label="Filters"></div>
   </section>
 
   <div class="tf-bar">
-    <div class="tf-chips" id="shapes" role="group" aria-label="Trade size"></div>
-    <div class="tf-legend"><span class="tf-wk easy"><b>OPP</b></span> easy matchup <span class="tf-wk hard"><b>OPP</b></span> tough <span class="tf-wk bye"><b>BYE</b></span></div>
+    <span></span>
+    <div class="tf-legend" id="legend" hidden><span class="tf-wk easy"><b>OPP</b></span> easy matchup <span class="tf-wk hard"><b>OPP</b></span> tough <span class="tf-wk bye"><b>BYE</b></span></div>
   </div>
   <p class="tf-status" id="status" style="margin:-4px 0 12px"></p>
   <div id="results"></div>
@@ -111,7 +123,7 @@
 <script src="../assets/js/trade_engine.js?v=1"></script>
 <script>
 let managers = [];
-const state = { a: null, b: null, ma: '', mb: '', shape: 'all' }; // ma/mb = manual mode overrides ('' = auto)
+const state = { a: null, b: null, pos: '', mag: '' }; // b = trade partner filter, pos = incoming position, mag = key/bench
 
 /* ---------- team situation: contender / bubble / chasing ---------- */
 // What each mode cares about: share of weight on the next 4 weeks, the rest of the regular season,
@@ -122,10 +134,14 @@ const MODES = {
   chasing:   { label: 'Chasing', w: { now: 0.7, reg: 0.3, po: 0 }, focus: 'now', blurb: 'Needs wins now: weighs the next 4 weeks of matchups most.' },
 };
 const NOW_WEEKS = 4, SHRINK = 0.5, MULT_MIN = 0.8, MULT_MAX = 1.2;
+// Schedule previews (week-by-week matchup chips on players, the legend, and the "Playoff schedule" line)
+// are built but switched off until the fantasy playoffs are closer; flip to true then. SoS still feeds the scoring.
+const SHOW_SCHEDULE = false;
 const EASY = 1.04, HARD = 0.96;           // matchup multiplier cutoffs for the green / red week chips
 const MARKET_WINDOW = 0.20;               // search only packages within 20% market value of each other
 const TOP_ASSETS = 14, TRIPLE_ASSETS = 10; // tradeable pieces considered per team (triples from the top 10)
-const SHAPES = [['all', 'All'], ['1-1', '1-for-1'], ['2-1', '2-for-1'], ['2-2', '2-for-2'], ['3-2', '3-for-2'], ['3-3', '3-for-3']];
+const SHAPES = ['1-1', '2-1', '2-2', '3-2', '3-3']; // searched sizes; the list mixes them so no one size crowds out the rest
+const MAGS = { '': 'Any players', key: 'Key players', bench: 'Bench players' };
 const PER_SHAPE = 15, FULL_PER_SHAPE = 40;
 const ANY_PER_SHAPE = 10, ANY_SHOWN = 20, ANY_PER_PARTNER = 3; // searching every partner: fewer graded per pair, more shown, max 3 per partner
 
@@ -148,19 +164,28 @@ function mult(p, wk) {
     const v = ((D.def_vs_pos || {})[p.pos] || {})[o];
     if (v != null && dvpMean[p.pos]) m = clamp(1 + SHRINK * (v / dvpMean[p.pos] - 1), MULT_MIN, MULT_MAX);
   }
-  m *= avail(p, wk);
   multCache.set(k, m); return m;
 }
 // ESPN's per-game ROS projection assumes the player plays, so near-term weeks are discounted by injury
 // status: [share of a game expected, for each upcoming week starting now].
 const AVAIL = { OUT: [0], DOUBTFUL: [0.25], QUESTIONABLE: [0.8], INJURY_RESERVE: [0, 0, 0, 0], SUSPENSION: [0, 0] };
-function avail(p, wk) { const a = AVAIL[p.inj]; if (!a) return 1; const i = wk - D.week; return i >= 0 && i < a.length ? a[i] : 1; }
+// How much a team minds the missed games depends on its record: a winning team can ride out an absence
+// (half the discount, so it buys injured players low), a losing team can't wait (the absence counts
+// twice as long, so injured players are worth less to it and it's happy to move them).
+const tolOf = mgr => { const t = team(mgr); return t.w > t.l ? 'patient' : t.w < t.l ? 'urgent' : 'even'; };
+function avail(p, wk, tol) {
+  const a = AVAIL[p.inj]; if (!a) return 1;
+  const i = wk - D.week, len = tol === 'urgent' ? a.length * 2 : a.length;
+  if (i < 0 || i >= len) return 1;
+  const v = a[Math.min(i, a.length - 1)];
+  return tol === 'patient' ? 1 - 0.5 * (1 - v) : v;
+}
 const winMult = (p, weeks) => weeks.length ? weeks.reduce((s, w) => s + mult(p, w), 0) / weeks.length : 1;
 // Schedule-weighted points per game for a team in a given mode.
-function wp(p, mode) {
-  const k = mode + '|' + p.id; if (wpCache.has(k)) return wpCache.get(k);
+function wp(p, mode, tol) {
+  const k = mode + '|' + tol + '|' + p.id; if (wpCache.has(k)) return wpCache.get(k);
   const w = MODES[mode].w; let tot = 0, wsum = 0;
-  for (const key of ['now', 'reg', 'po']) if (w[key] && W[key].length) { tot += w[key] * winMult(p, W[key]); wsum += w[key]; }
+  for (const key of ['now', 'reg', 'po']) if (w[key] && W[key].length) { tot += w[key] * W[key].reduce((s, wk) => s + mult(p, wk) * avail(p, wk, tol), 0) / W[key].length; wsum += w[key]; }
   const v = (p.ros_pg || 0) * (wsum ? tot / wsum : 1);
   wpCache.set(k, v); return v;
 }
@@ -174,9 +199,11 @@ function computeAutoModes() {
   autoModes = {};
   rows.forEach((r, i) => { autoModes[r.t.manager] = { mode: i < 5 ? 'contender' : i < 8 ? 'bubble' : 'chasing', rank: i + 1, proj: r.proj, pts: r.pts, avg }; });
 }
-const modeOf = side => state['m' + side] || (autoModes[state[side]] || {}).mode || 'bubble';
-// mode for any manager: your override if it's one of the picked teams, else the auto mode
-const modeFor = mgr => (mgr === state.a && state.ma) || (mgr === state.b && state.mb) || (autoModes[mgr] || {}).mode || 'bubble';
+const modeFor = mgr => (autoModes[mgr] || {}).mode || 'bubble';
+// Starters on each roster as it stands (best lineup on ROS projections), for the Trade Magnitude filter.
+const _starters = {};
+const starters = mgr => _starters[mgr] || (_starters[mgr] = new Set(lineup(team(mgr).players).st.map(x => x[1])));
+const isStarter = id => { const o = ownerOf(id); return !!o && starters(o).has(id); };
 
 /* ---------- needs ---------- */
 // Needs: position groups whose starters rank 8th or worse in the league (or RB/WR with no healthy
@@ -210,7 +237,8 @@ function posRank(mgr, strength, pos) { return 1 + D.teams.filter(t => t.manager 
 
 /* ---------- search ---------- */
 function assets(mgr) {
-  return team(mgr).players.filter(id => P(id).pos !== 'HC' && mv(id) > 0 && !waiverLevel(id)).sort((x, y) => mv(y) - mv(x)).slice(0, TOP_ASSETS);
+  // bench-players mode draws its pieces from the bench, otherwise the top of the roster is all starters
+  return team(mgr).players.filter(id => P(id).pos !== 'HC' && mv(id) > 0 && !waiverLevel(id) && (state.mag !== 'bench' || !isStarter(id))).sort((x, y) => mv(y) - mv(x)).slice(0, TOP_ASSETS);
 }
 function packages(list) {
   const out = [], t = list.slice(0, TRIPLE_ASSETS);
@@ -226,25 +254,38 @@ async function searchPair(A, B, fullPerShape, token, onGrade) {
   const mA = modeFor(A), mB = modeFor(B);
   const nA = teamNeeds(A), nB = teamNeeds(B);
   const rosA = team(A).players, rosB = team(B).players;
-  const fA = p => wp(p, mA), fB = p => wp(p, mB);
+  const tA = tolOf(A), tB = tolOf(B);
+  const fA = p => wp(p, mA, tA), fB = p => wp(p, mB, tB);
   const baseA = lineup(rosA, fA).pts, baseB = lineup(rosB, fB).pts;
-  const pkA = packages(assets(B)), pkB = packages(assets(A)).sort((x, y) => x.v - y.v); // pkA: what A gets (from B)
+  // filters: incoming position (what A gets must include it) and magnitude (bench = no starters anywhere in the deal)
+  const benchOnly = pk => state.mag !== 'bench' || pk.ids.every(id => !isStarter(id));
+  const pkA = packages(assets(B)).filter(pk => (!state.pos || pk.ids.some(id => P(id).pos === state.pos)) && benchOnly(pk)); // pkA: what A gets (from B)
+  const pkB = packages(assets(A)).filter(benchOnly).sort((x, y) => x.v - y.v);
   const vals = pkB.map(p => p.v);
   const lower = x => { let lo = 0, hi = vals.length; while (lo < hi) { const m = (lo + hi) >> 1; if (vals[m] < x) lo = m + 1; else hi = m; } return lo; };
   // need bonus: +0.4 pts/wk-equivalent per top-need position whose league rank improves 2+ spots
   const needBonus = (mgr, need, after) => { const s = posStrength(after); let b = 0; for (const pos of need.top) if (posRank(mgr, leagueStrength[mgr], pos) - posRank(mgr, s, pos) >= 2) b += 0.4; return b; };
+  const bench = state.mag === 'bench';
+  const depthPos = need => new Set([...need.needs.map(x => x.pos)]);
+  const depthBonus = (need, gets, gives) => { const d = depthPos(need); const inn = gets.filter(id => d.has(P(id).pos)).length, out = gives.filter(id => d.has(P(id).pos)).length; return 0.3 * Math.max(0, inn - out); };
   const best = {}; let tried = 0;
   for (const ga of pkA) {
     if (!ga.v) continue;
     for (let i = lower(ga.v * (1 - MARKET_WINDOW)); i < pkB.length && pkB[i].v <= ga.v / (1 - MARKET_WINDOW); i++) {
       const gb = pkB[i]; // B gets gb (from A)
       if (Math.abs(ga.ids.length - gb.ids.length) > 1) continue;
+      if (state.mag === 'key' && !ga.ids.some(isStarter) && !gb.ids.some(isStarter)) continue;
       tried++;
       const afterA = rosA.filter(id => !gb.ids.includes(id)).concat(ga.ids);
-      const dA = lineup(afterA, fA).pts - baseA; if (dA <= 0.15) continue;
+      // bench deals rarely move a starting lineup, so there "helps" = costs the lineup nothing and adds
+      // depth at one of that team's needs (or a thin RB/WR spot); otherwise the lineup itself must gain
+      const min = bench ? -0.05 : 0.15;
+      const dA = lineup(afterA, fA).pts - baseA; if (dA <= min) continue;
       const afterB = rosB.filter(id => !ga.ids.includes(id)).concat(gb.ids);
-      const dB = lineup(afterB, fB).pts - baseB; if (dB <= 0.15) continue;
-      const fitA = dA + needBonus(A, nA, afterA), fitB = dB + needBonus(B, nB, afterB);
+      const dB = lineup(afterB, fB).pts - baseB; if (dB <= min) continue;
+      const fitA = dA + needBonus(A, nA, afterA) + (bench ? depthBonus(nA, ga.ids, gb.ids) : 0);
+      const fitB = dB + needBonus(B, nB, afterB) + (bench ? depthBonus(nB, gb.ids, ga.ids) : 0);
+      if (bench && (fitA <= 0.15 || fitB <= 0.15)) continue;
       const gap = Math.abs(ga.v - gb.v) / Math.max(ga.v, gb.v);
       const score = Math.min(fitA, fitB) - 5 * Math.max(0, gap - FAIR);
       const shape = shapeOf(ga.ids.length, gb.ids.length);
@@ -306,34 +347,35 @@ function teamOptions(sel, other, placeholder) {
   return `<option value="">${placeholder}</option>` + [...D.teams].sort((a, b) => a.manager.localeCompare(b.manager))
     .map(t => `<option value="${esc(t.manager)}" ${t.manager === sel ? 'selected' : ''} ${t.manager === other ? 'disabled' : ''}>${esc(t.manager)} (${t.w}-${t.l}${t.t ? '-' + t.t : ''})</option>`).join('');
 }
-function renderTeam(side) {
-  const mgr = state[side], other = side === 'a' ? state.b : state.a;
-  const el = document.getElementById(side === 'a' ? 'teamA' : 'teamB');
+function renderTeam() {
+  const mgr = state.a, el = document.getElementById('teamA');
   let body = '';
   if (mgr) {
-    const am = autoModes[mgr], m = modeOf(side), n = teamNeeds(mgr);
+    const am = autoModes[mgr], m = am.mode, n = teamNeeds(mgr);
     const po = W.po.length ? `${W.po[0]}–${W.po[W.po.length - 1]}` : '';
-    body = `<div class="tf-mode-row"><span class="tf-mode ${m}">${MODES[m].label}</span>
-        <select data-mode="${side}" aria-label="Team situation for ${esc(mgr)}"><option value="">Auto (${MODES[am.mode].label})</option>${Object.keys(MODES).map(k => `<option value="${k}" ${state['m' + side] === k ? 'selected' : ''}>${MODES[k].label}</option>`).join('')}</select></div>
-      <p class="tf-mode-why">${esc(MODES[m].blurb.replace('{po}', po))} ${state['m' + side] ? '(set by you)' : `Projected ${am.proj.toFixed(1)} wins, ${ord(am.rank)} in the league (top 6 make the playoffs).`}</p>
+    body = `<div class="tf-mode-row"><span class="tf-mode ${m}">${MODES[m].label}</span></div>
+      <p class="tf-mode-why">${esc(MODES[m].blurb.replace('{po}', po))} Projected ${am.proj.toFixed(1)} wins, ${ord(am.rank)} in the league (top 6 make the playoffs).</p>
       <div class="tf-tags">Needs ${n.needs.length ? n.needs.map(x => `<span class="tf-tag need">${x.pos} <small>${x.noDepth && x.rank < 8 ? 'no depth' : ord(x.rank)}</small></span>`).join('') : '<span class="tf-tag"><small>none major</small></span>'}</div>
       <div class="tf-tags">Surplus ${n.surplus.length ? n.surplus.map(x => `<span class="tf-tag surplus" title="${esc(P(x.id).name)} (${P(x.id).ros_pg.toFixed(1)} pts/g) would start for most teams">${x.pos} <small>${esc(P(x.id).name.split(' ').slice(-1)[0])}</small></span>`).join('') : '<span class="tf-tag"><small>none</small></span>'}</div>`;
   }
-  if (!mgr && side === 'b') body = `<p class="tf-mode-why">${state.a ? `Searching all ${D.teams.length - 1} other teams for ${esc(state.a)}.` : 'Searches every other team.'} Pick one to narrow it down.</p>`;
-  el.innerHTML = `<div class="tf-team-head"><label for="sel-${side}">${side === 'a' ? 'Your team' : 'Trade partner'}</label><select id="sel-${side}" data-side="${side}">${teamOptions(mgr, other, side === 'a' ? 'Choose your team' : 'Any team (optional)')}</select></div>${body}`;
+  el.innerHTML = `<div class="tf-team-head"><label for="sel-a">Your team</label><select id="sel-a" data-f="a">${teamOptions(mgr, null, 'Choose your team')}</select></div>${body}`;
 }
-function renderShapes() {
-  const counts = {}; results.forEach(r => counts[r.shape] = (counts[r.shape] || 0) + 1);
-  document.getElementById('shapes').innerHTML = SHAPES.map(([k, l]) => `<button class="tf-chip" type="button" data-shape="${k}" aria-pressed="${state.shape === k}">${l}${results.length ? ` <small>${k === 'all' ? results.length : counts[k] || 0}</small>` : ''}</button>`).join('');
+function renderFilters() {
+  const need = state.a ? teamNeeds(state.a).top : [];
+  const posOpt = ['', 'QB', 'RB', 'WR', 'TE'].map(p => `<option value="${p}" ${state.pos === p ? 'selected' : ''}>${p ? p + (need.includes(p) ? ' (a need)' : '') : 'Any position'}</option>`).join('');
+  document.getElementById('filters').innerHTML = `<div class="tf-fgrid">
+    <div class="tf-field"><label for="f-pos">Trade for</label><select id="f-pos" data-f="pos">${posOpt}</select></div>
+    <div class="tf-field"><label for="f-b">Trade partner</label><select id="f-b" data-f="b">${teamOptions(state.b, state.a, 'Any team')}</select></div>
+    <div class="tf-field"><label for="f-mag">Magnitude</label><select id="f-mag" data-f="mag">${Object.entries(MAGS).map(([k, l]) => `<option value="${k}" ${state.mag === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <p class="tf-mode-why">Trade for: only offers that bring you that position. Key players: at least one starter changes hands. Bench players: no starters on either side.</p></div>`;
 }
 function visible() {
   // Searching every partner: show more, but at most 3 per partner so one team can't fill the list
   const any = !state.b, cap = any ? ANY_SHOWN : PER_SHAPE, per = {};
   const fits = r => !any || (per[r.b] || 0) < ANY_PER_PARTNER, take = (r, out) => { out.push(r); per[r.b] = (per[r.b] || 0) + 1; };
   const pick = [], seen = new Set();
-  if (state.shape !== 'all') { for (const r of results) if (r.shape === state.shape && pick.length < cap && fits(r)) take(r, pick); return pick; }
-  // All: up to 3 of each size first so one size can't crowd out the rest, then the best of what's left
-  SHAPES.slice(1).forEach(([k]) => { let n = 0; for (const r of results) if (r.shape === k && n < 3 && fits(r)) { take(r, pick); seen.add(r); n++; } });
+  // up to 3 of each size first so one size can't crowd out the rest, then the best of what's left
+  SHAPES.forEach(k => { let n = 0; for (const r of results) if (r.shape === k && n < 3 && pick.length < cap && fits(r)) { take(r, pick); seen.add(r); n++; } });
   for (const r of results) if (!seen.has(r) && pick.length < cap && fits(r)) take(r, pick);
   return pick.sort((x, y) => y.match - x.match).slice(0, cap);
 }
@@ -346,7 +388,7 @@ function strip(p, weeks) {
 function playerRow(id, mode) {
   const p = P(id), weeks = MODES[mode].focus === 'po' && W.po.length ? W.po : W.now;
   return `<div class="tf-p"><div><div class="tf-pname">${posTag(p.pos)} ${esc(p.name)}</div>
-    <div class="tf-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div>${hasSos() ? strip(p, weeks) : ''}</div>
+    <div class="tf-psub">${esc(p.team)} · ${p.ros_pg.toFixed(1)} proj pts/g${p.inj ? ` · <span style="color:#E0524A">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</div>${SHOW_SCHEDULE && hasSos() ? strip(p, weeks) : ''}</div>
     <div class="tc-pval">${trendIcon(id)}${fmt(tv(id))}<small>value</small></div>${rankCell(id)}</div>`;
 }
 function schedNote(ids, mode) {
@@ -362,7 +404,11 @@ function whyLines(mgr, I, gets, gives, mode, need) {
   const out = [];
   const before = leagueStrength[mgr], after = posStrength(I.T.players.filter(id => !gives.includes(id)).concat(gets));
   need.top.forEach(pos => { const r0 = posRank(mgr, before, pos), r1 = posRank(mgr, after, pos); if (r1 < r0) out.push(`Fills the <b>${pos}</b> need (${ord(r0)} → ${ord(r1)})`); });
-  const s = schedNote(gets, mode); if (s) out.push(s);
+  const s = SHOW_SCHEDULE && schedNote(gets, mode); if (s) out.push(s);
+  const t = team(mgr), rec = `${t.w}-${t.l}${t.t ? '-' + t.t : ''}`, hurt = ids => ids.filter(id => AVAIL[P(id).inj]);
+  const lbl = id => `${esc(P(id).name)} (${esc(P(id).inj.replace('_', ' ').toLowerCase())})`;
+  if (tolOf(mgr) === 'patient' && hurt(gets).length) out.push(`Buys low on ${hurt(gets).map(lbl).join(', ')}: at ${rec}, ${esc(mgr)} can wait out the injury`);
+  if (tolOf(mgr) === 'urgent' && hurt(gives).length) out.push(`Moves ${hurt(gives).map(lbl).join(', ')} while hurt: at ${rec}, ${esc(mgr)} can't wait`);
   out.push(`Lineup ${sgn(I.dppg)} pts/wk on ROS projections${Math.abs(I.dppg - (I._fit || 0)) > 0.3 ? `, ${sgn(I._fit)} weighted for a ${MODES[mode].label.toLowerCase()}'s schedule` : ''}`);
   return out;
 }
@@ -370,56 +416,61 @@ function tradeCard(c, i) {
   const A = state.a, B = c.b, mA = modeFor(A), mB = modeFor(B), R = c.R;
   R.ia._fit = c.dA; R.ib._fit = c.dB;
   const nA = teamNeeds(A), nB = teamNeeds(B);
-  const side = (mgr, I, gets, gives, mode, need) => `<div class="tf-side"><div class="tf-side-head"><div class="tf-gets">${managerTag(managers, mgr)} gets</div>
+  const side = (mgr, I, gets, gives, mode, need) => `<div class="tf-side"><div class="tf-side-head"><div class="tf-gets">${managerTag(managers, mgr)}<span>gets</span></div>
       <span class="tf-grade" style="color:${gradeColor(I.grade)};background:${gradeColor(I.grade)}22" title="Trade Calculator grade">${I.grade}</span></div>
     ${gets.map(id => playerRow(id, mode)).join('')}
     <ul class="tf-why">${whyLines(mgr, I, gets, gives, mode, need).map(x => `<li>${x}</li>`).join('')}</ul></div>`;
   const abs = Math.abs(R.diff), fav = R.diff > 0 ? A : B;
-  const chip = abs <= FAIR ? '<span class="tf-chipv fair">Fair</span>' : `<span class="tf-chipv lean">Leans ${esc(fav)} ${(abs * 100).toFixed(0)}%</span>`;
+  // value meter: knob slides toward the team receiving more market value (half the bar = a 50% gap)
+  const fair = abs <= FAIR, pos = 50 - clamp(R.diff / 0.5, -1, 1) * 50;
+  const fill = `left:${Math.min(50, pos)}%;width:${Math.abs(50 - pos)}%`;
+  const meter = `<div class="tf-meter ${fair ? 'fair' : 'lean'}" role="img" aria-label="${fair ? 'Fair trade' : 'Leans ' + esc(fav)}: ${esc(A)} gets ${fmt(R.vA)}, ${esc(B)} gets ${fmt(R.vB)}">
+      <div class="tf-meter-vals"><span>${esc(A)}: <b>${fmt(R.vA)}</b></span><span>${esc(B)}: <b>${fmt(R.vB)}</b></span></div>
+      <div class="tf-meter-verdict">${fair ? 'Fair trade' : `Leans ${esc(fav)} <small>${(abs * 100).toFixed(0)}%</small>`}</div>
+      <div class="tf-meter-track"><div class="band"></div><div class="fill" style="${fill}"></div><div class="mid"></div><div class="knob" style="left:${pos}%"></div></div>
+      <div class="tf-meter-ends"><span>${esc(A)} gets more</span><span>Market value</span><span>${esc(B)} gets more</span></div></div>`;
   const href = `trade-tools.html?${new URLSearchParams({ a: A, b: B, ag: c.aGets.join(','), bg: c.bGets.join(',') })}`;
-  return `<article class="tf-card"><div class="tf-card-top"><span class="tf-rank">#${i + 1} · ${c.aGets.length}-for-${c.bGets.length}${state.b ? '' : ` with ${esc(B)} <span class="tf-mode ${mB}" style="margin-left:4px">${MODES[mB].label}</span>`}</span>${chip}</div>
+  return `<article class="tf-card"><div class="tf-card-top"><span class="tf-rank">#${i + 1} · ${c.aGets.length}-for-${c.bGets.length}${state.b ? '' : ` with ${esc(B)}`}</span></div>
     <div class="tf-sides">${side(A, R.ia, c.aGets, c.bGets, mA, nA)}${side(B, R.ib, c.bGets, c.aGets, mB, nB)}</div>
-    <div class="tf-foot"><span>Market ${esc(A)} <b>${fmt(R.vA)}</b> · ${esc(B)} <b>${fmt(R.vB)}</b></span><a class="tf-open" href="${href}">Open in calculator</a></div></article>`;
+    ${meter}
+    <div class="tf-foot"><span>Edit it, add players or check the details</span><a class="tf-open" href="${href}">Open in calculator</a></div></article>`;
 }
 function renderResults() {
-  renderShapes();
   const el = document.getElementById('results');
   if (!state.a) { el.innerHTML = `<div class="tf-empty">Pick your team to search for trades.</div>`; document.getElementById('status').textContent = ''; return; }
-  if (!results.length && !state.b) { el.innerHTML = searching ? '' : `<div class="tf-empty">No trade with any team helps both sides and grades B or better for each. Try overriding your team's situation.</div>`; return; }
+  const filt = [state.pos && `bring you a ${state.pos}`, state.mag && `involve only ${state.mag === 'key' ? 'key' : 'bench'} players`.replace('only key', 'key')].filter(Boolean).join(' and ');
+  if (!results.length && !state.b) { el.innerHTML = searching ? '' : `<div class="tf-empty">No trade${filt ? ` that would ${filt}` : ''} helps both sides and grades B or better for each.${filt ? ' Try loosening a filter.' : ''}</div>`; return; }
   if (!results.length) {
     const shared = teamNeeds(state.a).top.filter(p => teamNeeds(state.b).top.includes(p));
-    el.innerHTML = searching ? '' : `<div class="tf-empty">No trade between these two rosters helps both teams and grades B or better for each.${shared.length ? ` Both teams' top needs include <b>${shared.join(' and ')}</b>, so they're chasing the same players.` : ''} Try overriding a team's situation, or another pair.</div>`; return;
+    el.innerHTML = searching ? '' : `<div class="tf-empty">No trade between these two rosters helps both teams and grades B or better for each.${shared.length ? ` Both teams' top needs include <b>${shared.join(' and ')}</b>, so they're chasing the same players.` : ''} Try another trade partner${filt ? ' or loosen a filter' : ''}.</div>`; return;
   }
   const v = visible();
-  el.innerHTML = v.length ? `<div class="tf-list">${v.map(tradeCard).join('')}</div>` : `<div class="tf-empty">No ${SHAPES.find(s => s[0] === state.shape)[1]} trades found. Try another size.</div>`;
+  el.innerHTML = `<div class="tf-list">${v.map(tradeCard).join('')}</div>`;
 }
 
 /* ---------- state, url, wiring ---------- */
 function syncUrl() {
   const u = new URLSearchParams();
-  for (const k of ['a', 'b', 'ma', 'mb']) if (state[k]) u.set(k, state[k]);
+  for (const k of ['a', 'b', 'pos', 'mag']) if (state[k]) u.set(k, state[k]);
   history.replaceState(null, '', location.pathname + (u.toString() ? '?' + u : ''));
 }
-function renderAll(run = true) { renderTeam('a'); renderTeam('b'); syncUrl(); if (run) search(); else renderResults(); }
+function renderAll() { renderTeam(); renderFilters(); syncUrl(); search(); }
 document.addEventListener('change', e => {
-  const t = e.target;
-  if (t.matches('select[data-side]')) { const s = t.dataset.side; state[s] = t.value || null; state['m' + s] = ''; renderAll(); }
-  else if (t.matches('select[data-mode]')) { state['m' + t.dataset.mode] = t.value; renderAll(); }
-});
-document.addEventListener('click', e => {
-  const t = e.target.closest('[data-shape]'); if (!t) return;
-  state.shape = t.dataset.shape; renderResults();
+  const t = e.target; if (!t.matches('select[data-f]')) return;
+  const k = t.dataset.f; state[k] = t.value || (k === 'a' || k === 'b' ? null : '');
+  if (k === 'a' && state.b === state.a) state.b = null;
+  renderAll();
 });
 
 function methodology() {
   const po = W.po.length ? `weeks ${W.po[0]}–${W.po[W.po.length - 1]}` : 'the fantasy playoffs';
   document.getElementById('methodology').innerHTML = `
-    <p><strong>Team situation.</strong> Each team's projected final wins = current wins + games left × the chance its best lineup (ESPN rest-of-season projections) beats a league-average lineup in a given week. The top 5 are <em>Contenders</em>, 6th–8th are <em>Bubble</em> teams, and 9th–12th are <em>Chasing</em>. You can override any team's situation.</p>
-    <p><strong>Strength of schedule.</strong> For every remaining week, a player's matchup is the fantasy points his opponent allows per game to his position (ESPN, league scoring), compared with the league average. That ratio is shrunk halfway toward average, because a few weeks of defensive data is noisy, and capped at ±20%. A bye counts as zero. Head Coaches only get the bye adjustment. Injured players are discounted in the weeks right ahead, because ESPN's per-game projection assumes they play: OUT counts as 0 this week, doubtful 25%, questionable 80%, IR 0 for the next 4 weeks, suspended 0 for 2. Green chips are matchups at least 4% easier than average, red at least 4% tougher.</p>
-    <p><strong>What each team wants.</strong> A player's points per game are reweighted by his matchups over three windows: the next ${NOW_WEEKS} weeks, the rest of the regular season, and ${po}. Chasing teams weigh them 70/30/0 (wins now), Bubble teams 20/60/20, and Contenders 0/40/60 (playoff schedules). Week chips on each player show the window that matters most to the team receiving him.</p>
+    <p><strong>Team situation.</strong> Each team's projected final wins = current wins + games left × the chance its best lineup (ESPN rest-of-season projections) beats a league-average lineup in a given week. The top 5 are <em>Contenders</em>, 6th–8th are <em>Bubble</em> teams, and 9th–12th are <em>Chasing</em>.</p>
+    <p><strong>Strength of schedule.</strong> For every remaining week, a player's matchup is the fantasy points his opponent allows per game to his position (ESPN, league scoring), compared with the league average. That ratio is shrunk halfway toward average, because a few weeks of defensive data is noisy, and capped at ±20%. A bye counts as zero. Head Coaches only get the bye adjustment. Injured players are discounted in the weeks right ahead, because ESPN's per-game projection assumes they play: OUT counts as 0 this week, doubtful 25%, questionable 80%, IR 0 for the next 4 weeks, suspended 0 for 2. That discount depends on the record of the team holding him: a winning team takes half of it (it can wait out an injury, so it buys low), and a losing team counts the absence twice as long (it can't wait, so it's happy to move injured players). ${SHOW_SCHEDULE ? 'Green chips are matchups at least 4% easier than average, red at least 4% tougher.' : ''}</p>
+    <p><strong>What each team wants.</strong> A player's points per game are reweighted by his matchups over three windows: the next ${NOW_WEEKS} weeks, the rest of the regular season, and ${po}. Chasing teams weigh them 70/30/0 (wins now), Bubble teams 20/60/20, and Contenders 0/40/60 (playoff schedules). ${SHOW_SCHEDULE ? 'Week chips on each player show the window that matters most to the team receiving him.' : ''}</p>
     <p><strong>Needs.</strong> A position group is a need when its starters rank 8th or worse in the league by projected points, or, at RB/WR, when there's no healthy backup. Needs are ordered by the gap to the league median. Surplus means a bench player who'd start for most teams. A trade earns a bonus when it lifts one of a team's top two needs by 2+ league spots.</p>
-    <p><strong>Search.</strong> Each team's top ${TOP_ASSETS} tradeable players by market value are considered (no Head Coaches, no waiver-level players), with 3-player packages drawn from the top ${TRIPLE_ASSETS}. Every 1-for-1, 2-for-1, 2-for-2, 3-for-2 and 3-for-3 combination within ${MARKET_WINDOW * 100}% market value of each other is checked. A trade survives only if both teams' schedule-weighted starting lineups improve. The best ${FULL_PER_SHAPE} of each size (${ANY_PER_SHAPE} per partner when searching every team) are then run through the Trade Calculator, and any trade where either team grades below B, or the market leans more than 25%, is dropped.</p>
-    <p><strong>Ranking.</strong> Each team's match = half its Trade Calculator grade score, half its schedule-weighted lineup gain (±4 pts/wk = full). Trades are ranked by the <em>lower</em> of the two teams' matches, so the top trades help both teams. A bigger deal is hidden when a smaller deal inside it ranks higher. With no trade partner picked, every other team is searched and at most ${ANY_PER_PARTNER} trades per partner are shown (${ANY_SHOWN} total). "Open in calculator" loads the trade in the Trade Calculator to tweak.</p>`;
+    <p><strong>Search.</strong> Each team's top ${TOP_ASSETS} tradeable players by market value are considered (no Head Coaches, no waiver-level players), with 3-player packages drawn from the top ${TRIPLE_ASSETS}. Every 1-for-1, 2-for-1, 2-for-2, 3-for-2 and 3-for-3 combination within ${MARKET_WINDOW * 100}% market value of each other is checked. A trade survives only if both teams' schedule-weighted starting lineups improve. The best ${FULL_PER_SHAPE} of each size (${ANY_PER_SHAPE} per partner when searching every team) are then run through the Trade Calculator, and any trade where either team grades below B, or the market leans more than 25%, is dropped. Filters apply before grading, so the calculator's attention goes to matching trades: <em>Trade for</em> keeps only packages bringing you that position, <em>Key players</em> needs at least one current starter (best lineup on ROS projections) in the deal, and <em>Bench players</em> allows none on either side (pieces come from each bench). Bench swaps rarely move a starting lineup, so there a trade helps a team when it costs the lineup nothing and adds depth at one of its needs.</p>
+    <p><strong>Ranking.</strong> Each team's match = half its Trade Calculator grade score, half its schedule-weighted lineup gain (±4 pts/wk = full). Trades are ranked by the <em>lower</em> of the two teams' matches, so the top trades help both teams. A bigger deal is hidden when a smaller deal inside it ranks higher. With no trade partner filter, every other team is searched and at most ${ANY_PER_PARTNER} trades per partner are shown (${ANY_SHOWN} total). "Open in calculator" loads the trade in the Trade Calculator to tweak.</p>`;
 }
 
 async function init() {
@@ -427,12 +478,13 @@ async function init() {
   if (!D) { document.getElementById('results').innerHTML = `<div class="tf-empty">Trade data isn't available yet. Run scripts/build_trade_values.py.</div>`; return; }
   document.getElementById('updated').textContent = `Week ${D.week} · values updated ${new Date(D.updated_at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}${hasSos() ? '' : ' · no schedule data yet, matchups count as neutral'}`;
   W = windows();
+  document.getElementById('legend').hidden = !SHOW_SCHEDULE;
   for (const pos of POS4) { const v = Object.values((D.def_vs_pos || {})[pos] || {}); if (v.length) dvpMean[pos] = v.reduce((s, x) => s + x, 0) / v.length; }
   D.teams.forEach(t => leagueStrength[t.manager] = posStrength(t.players));
   computeAutoModes();
   const u = new URLSearchParams(location.search), ok = m => m && team(m) ? m : null;
   state.a = ok(u.get('a')); state.b = ok(u.get('b')) !== state.a ? ok(u.get('b')) : null;
-  state.ma = MODES[u.get('ma')] ? u.get('ma') : ''; state.mb = MODES[u.get('mb')] ? u.get('mb') : '';
+  state.pos = ['QB', 'RB', 'WR', 'TE'].includes(u.get('pos')) ? u.get('pos') : ''; state.mag = MAGS[u.get('mag')] && u.get('mag') ? u.get('mag') : '';
   methodology(); renderAll();
 }
 renderNav('trade finder');
