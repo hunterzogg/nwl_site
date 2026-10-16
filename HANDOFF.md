@@ -1559,7 +1559,13 @@ with everything:
     (`/api/v1/player/all/today`, which also provides the ESPN/MFL/Sleeper id crosswalk).
   - Rank-only sources are converted with FantasyCalc's curve: positional rank N = FantasyCalc's Nth-best
     player at that position (exponential tail past its list).
-- `market[espnId]` = median of the available sources. HCs have no market value.
+- `market[espnId]` = **weighted median** of the sources, FantasyPros ECR counting double (`SOURCE_WEIGHT`,
+  also written to the JSON as `source_weights` for the page's ROS-rank median). HCs have no market value.
+- **Missing = past the end of the list, not "no opinion"**: when a source doesn't list a player, rank sources
+  count him one spot below their deepest-ranked player at his position (recorded in `unranked`), value
+  sources at 80% of their lowest listed value. Added after Marvin Harrison Jr. (FanDuel didn't rank him)
+  showed a higher value than Rome Odunze (1,107 vs 1,066) despite ranking WR47 vs WR36: the missing source
+  shifted his median onto FantasyCalc's outlier. Now 467 vs 1,212.
 - Python 3.7 locally can't negotiate KTC's TLS; `get()` falls back to `curl` (Actions uses 3.11, fine).
 
 **Logic (all client-side in `trade-tools.html`):**

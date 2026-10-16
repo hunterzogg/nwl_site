@@ -25,7 +25,8 @@ rebuild). Everything the calculator needs in one file:
      worth whatever FantasyCalc's Nth-best player at that position is worth (extrapolated past the
      end of FantasyCalc's list). A source that fails to load is simply left out; the page grades
      with whatever sources are present.
-  3. market: the consensus value per player = median of the available source values.
+  3. market: the consensus value per player = weighted median of the source values (FantasyPros counts
+     double). A source that doesn't list a player counts him just past the end of its list at his position.
   4. ranks: each player's raw rest-of-season positional ranks per rank source (fantasypros, espn,
      fanduel, fantasyguys); the page shows their median as the player's ROS rank.
 
@@ -65,6 +66,22 @@ PRO_TEAM = {1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: "DEN"
             19: "NYG", 20: "NYJ", 21: "PHI", 22: "ARI", 23: "PIT", 24: "LAC", 25: "SF", 26: "SEA", 27: "TB",
             28: "WSH", 29: "CAR", 30: "JAX", 33: "BAL", 34: "HOU"}
 FREE_AGENT_POOL = 300  # top available players by % owned
+# FantasyPros ECR (a multi-expert consensus) counts double in the consensus value and the ROS rank.
+SOURCE_WEIGHT = {"fantasypros": 2}
+
+
+def weighted_median(pairs):
+    """pairs: [(value, weight)] -> weighted median (averages the two middle values on an exact tie)."""
+    pairs = sorted(pairs)
+    total = sum(w for _, w in pairs)
+    acc = 0
+    for i, (v, w) in enumerate(pairs):
+        acc += w
+        if acc * 2 > total:
+            return v
+        if acc * 2 == total:
+            return (v + pairs[i + 1][0]) / 2
+    return pairs[-1][0]
 
 try:
     import certifi
@@ -231,10 +248,13 @@ def main():
     # ---- market sources ----
     sources, notes = {}, {}
     ranks = {}  # espnId -> {source: rest-of-season positional rank}
+    max_rank = {}   # rank source -> {pos: deepest rank it lists}
+    min_value = {}  # value source -> {pos: lowest value it lists}
     fc = None
     try:
         fc = src_fantasycalc()
         sources["fantasycalc"] = {pid: fc["by_espn"][pid] for pid in players if pid in fc["by_espn"]}
+        min_value["fantasycalc"] = {pos: v[-1] for pos, v in fc["by_pos"].items() if v}
     except Exception as e:  # noqa: BLE001 - a missing source just drops out of the verdicts
         notes["fantasycalc"] = f"failed: {e}"
     dd = []
@@ -259,7 +279,10 @@ def main():
     try:
         ktc = src_ktc()
         sources["ktc"] = {}
+        min_value["ktc"] = {}
         for p in ktc:
+            if p["value"] and p["pos"] in ("QB", "RB", "WR", "TE"):
+                min_value["ktc"][p["pos"]] = min(min_value["ktc"].get(p["pos"], 10 ** 9), p["value"])
             pid = match(p["name"], p["pos"], p["mfl"])
             if pid in players and p["value"]:
                 sources["ktc"][pid] = p["value"]
@@ -270,7 +293,9 @@ def main():
         try:
             fp, experts = src_fantasypros()
             sources["fantasypros"] = {}
+            max_rank["fantasypros"] = {}
             for p in fp:
+                max_rank["fantasypros"][p["pos"]] = max(max_rank["fantasypros"].get(p["pos"], 0), p["pos_rank"])
                 pid = match(p["name"], p["pos"])
                 if pid in players:
                     sources["fantasypros"][pid] = rank_to_value(fc["by_pos"], p["pos"], p["pos_rank"])
@@ -281,7 +306,10 @@ def main():
             notes["fantasypros"] = f"failed: {e}"
         for key, label in (("espn_ros", "espn"), ("fanduel_ros", "fanduel"), ("fantasyguys_ros", "fantasyguys")):
             vals = {}
+            max_rank[label] = {}
             for x in dd:
+                if x.get(key) and x.get("position") in ("QB", "RB", "WR", "TE"):
+                    max_rank[label][x["position"]] = max(max_rank[label].get(x["position"], 0), int(x[key]))
                 pid = str(x.get("espn_id") or "")
                 if pid in players and x.get(key):
                     vals[pid] = rank_to_value(fc["by_pos"], x["position"], int(x[key]))
@@ -289,11 +317,31 @@ def main():
             if vals:
                 sources[label] = vals
 
+    # A source that leaves a player out isn't neutral: it didn't think he was worth listing. So a missing
+    # player counts as just past the end of that source's list at his position: rank sources -> one spot
+    # below their deepest ranked player (converted like any other rank), value sources -> 80% of their
+    # lowest listed value. Imputed ranks are recorded in `unranked` so the page can say so.
+    unranked = {}
+    for pid, p in players.items():
+        if p["pos"] not in ("QB", "RB", "WR", "TE"):
+            continue
+        for src, vals in sources.items():
+            if vals.get(pid):
+                continue
+            if src in max_rank and max_rank[src].get(p["pos"]):
+                r = max_rank[src][p["pos"]] + 1
+                vals[pid] = rank_to_value(fc["by_pos"], p["pos"], r) if fc else None
+                ranks.setdefault(pid, {})[src] = r
+                unranked.setdefault(pid, []).append(src)
+            elif src in min_value and min_value[src].get(p["pos"]):
+                vals[pid] = round(min_value[src][p["pos"]] * 0.8)
+
+    # Consensus = weighted median, FantasyPros ECR counting double (SOURCE_WEIGHT).
     market = {}
     for pid, p in players.items():
-        vals = [s[pid] for s in sources.values() if s.get(pid)]
-        if vals:
-            market[pid] = round(statistics.median(vals))
+        pairs = [(s[pid], SOURCE_WEIGHT.get(k, 1)) for k, s in sources.items() if s.get(pid)]
+        if pairs:
+            market[pid] = round(weighted_median(pairs))
 
     # ---- weekly score spread, for points/week -> expected wins ----
     sd_team = 25.0
@@ -314,7 +362,8 @@ def main():
         "slots": {str(k): v for k, v in slots.items() if k not in (BENCH_SLOT, IR_SLOT)},
         "score_sd": sd_team,
         "teams": teams, "free_agents": fa_ids, "players": players,
-        "sources": sources, "source_notes": notes, "market": market, "ranks": ranks,
+        "sources": sources, "source_notes": notes, "market": market, "ranks": ranks, "unranked": unranked,
+        "source_weights": SOURCE_WEIGHT,
     }
     OUTPUT_PATH.write_text(json.dumps(out, separators=(",", ":")))
     counts = ", ".join(f"{k} {len(v)}" for k, v in sources.items())

@@ -192,11 +192,16 @@ const ownerOf = id => (D.teams.find(t => t.players.includes(id) || t.ir.includes
 const adj = vals => Math.pow(vals.reduce((s, v) => s + Math.pow(Math.max(0, v), EXP), 0), 1 / EXP);
 // Rest-of-season positional rank: median of the rank sources (FantasyPros ECR, ESPN, FanDuel, FantasyGuys).
 const RANK_LABEL = { fantasypros: 'FantasyPros', espn: 'ESPN', fanduel: 'FanDuel', fantasyguys: 'FantasyGuys' };
+function wMedian(pairs) { // [(value, weight)] -> weighted median, same rule as build_trade_values.py
+  pairs = [...pairs].sort((a, b) => a[0] - b[0]); const total = pairs.reduce((t, x) => t + x[1], 0); let acc = 0;
+  for (let i = 0; i < pairs.length; i++) { acc += pairs[i][1]; if (acc * 2 > total) return pairs[i][0]; if (acc * 2 === total) return (pairs[i][0] + pairs[i + 1][0]) / 2; }
+  return pairs[pairs.length - 1][0];
+}
 function rosRank(id) {
-  const r = (D.ranks || {})[id]; if (!r) return null;
-  const v = Object.values(r).sort((a, b) => a - b); if (!v.length) return null;
-  const m = v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
-  return { rank: Math.round(m), detail: Object.entries(r).map(([k, x]) => `${RANK_LABEL[k] || k} ${P(id).pos}${x}`).join(' · ') };
+  const r = (D.ranks || {})[id]; if (!r || !Object.keys(r).length) return null;
+  const W = D.source_weights || {}, miss = (D.unranked || {})[id] || [];
+  const m = wMedian(Object.entries(r).map(([k, x]) => [x, W[k] || 1]));
+  return { rank: Math.round(m), detail: Object.entries(r).map(([k, x]) => `${RANK_LABEL[k] || k} ${miss.includes(k) ? 'unranked (counted as ' + P(id).pos + x + ')' : P(id).pos + x}${W[k] > 1 ? ' ×' + W[k] : ''}`).join(' · ') };
 }
 const rankCell = id => { const r = rosRank(id); return r ? `<div class="tc-prank" title="ROS rank: ${esc(r.detail)}">${esc(P(id).pos)}${r.rank}<small>ROS</small></div>` : `<div class="tc-prank" title="Not ranked by the ROS sources">—<small>ROS</small></div>`; };
 // Waiver-level: a traded player whose production is freely available. Measured against a sturdy
@@ -373,7 +378,7 @@ function marketCard(R) {
   const giver = d > 0 ? a : b, taker = d > 0 ? b : a;
   const wv = R.waived.length ? ` <b>${R.waived.map(id => esc(P(id).name)).join(', ')}</b> ${R.waived.length === 1 ? 'counts' : 'count'} at half value: projected and ranked no better than what's on waivers at ${R.waived.length === 1 ? 'his' : 'their'} position (the other half keeps any upside the market prices in, like a handcuff).` : '';
   return `<section class="tc-card"><h2>Market value (on paper)</h2>
-    <p class="tc-note">Consensus redraft value (median of six sources). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.${wv}</p>
+    <p class="tc-note">Consensus redraft value (weighted median of six sources, FantasyPros counting double). Bigger pieces count for more than several small ones, so two 3,000s don't equal one 6,000.${wv}</p>
     <div class="tc-verdict ${cls}">${head}</div>
     <div class="tc-meter" role="img" aria-label="${head}">${'<div class="fairband"></div>'}${fill}<div class="mid"></div></div>
     <div class="tc-meter-labels"><span>${esc(a)} gets <b>${fmt(R.vA)}</b></span><span>${(abs * 100).toFixed(0)}% gap</span><span>${esc(b)} gets <b>${fmt(R.vB)}</b></span></div>
@@ -499,10 +504,10 @@ document.getElementById('shareBtn').addEventListener('click', async e => {
 function methodology() {
   const notes = D.source_notes || {};
   document.getElementById('methodology').innerHTML = `
-    <p><strong>Market value.</strong> Each player's value is the median of six redraft sources, all on a 0–10,000 scale: FantasyCalc (half PPR, 12-team 1QB), KeepTradeCut redraft, FantasyPros rest-of-season consensus ranks (half PPR${notes.fantasypros ? ', ' + esc(notes.fantasypros) : ''}), and ESPN, FanDuel and FantasyGuys rest-of-season ranks (via Dynasty Daddy). Rank-only sources take FantasyCalc's value for the player at that same positional rank. Head Coaches have no market value.</p>
+    <p><strong>Market value.</strong> Each player's value is the weighted median of six redraft sources (FantasyPros counts double), all on a 0–10,000 scale: FantasyCalc (half PPR, 12-team 1QB), KeepTradeCut redraft, FantasyPros rest-of-season consensus ranks (half PPR${notes.fantasypros ? ', ' + esc(notes.fantasypros) : ''}), and ESPN, FanDuel and FantasyGuys rest-of-season ranks (via Dynasty Daddy). Rank-only sources take FantasyCalc's value for the player at that same positional rank. A source that doesn't list a player counts him just past the end of its list at his position (not as "no opinion"). Head Coaches have no market value.</p>
     <p><strong>Consolidation.</strong> A side is worth (Σ value<sup>1.5</sup>)<sup>1/1.5</sup>, so stacking small pieces doesn't buy a star: two players worth 3,000 total about 4,760, not 6,000. Within ${FAIR * 100}% is called fair. "Even it out" solves for the single player value that closes the gap on that same scale.</p>
     <p><strong>Value add.</strong> For each team, the best legal lineup (QB, 2 RB, 2 WR, W/T, TE, FLEX, HC) is built from ESPN rest-of-season points per game, before and after the trade. If the team ends up with more than ${D.roster_size} players it drops whoever costs the lineup least (never its only Head Coach); with open spots it claims the free agents that help most. That happens before and after, so a trade only earns credit for the spot it opens or fills. Expected wins = games left × (Φ(Δ ÷ (sd·√2)) − ½), with sd the league's 2026 weekly score spread.</p>
-    <p><strong>ROS rank.</strong> The amber number next to each value is the player's rest-of-season positional rank: the median of FantasyPros ECR (half PPR), ESPN, FanDuel and FantasyGuys. Hover it for each source's rank.</p>
+    <p><strong>ROS rank.</strong> The amber number next to each value is the player's rest-of-season positional rank: the weighted median of FantasyPros ECR (half PPR, counts double), ESPN, FanDuel and FantasyGuys. A source that doesn't rank a player counts him just below its last-ranked player. Hover it for each source's rank.</p>
     <p><strong>Grade.</strong> Half market (the value gap, capped at ±100%) and half lineup change (±4 pts/wk = full credit), mapped to A+ through F. B means about even.</p>
     <p><strong>Free agents.</strong> The waiver bar at each position is the ${REPL_DEPTH}rd-best healthy free agent (no OUT, IR or doubtful players), by projection and by consensus ROS rank separately. A traded player is <em>waiver-level</em> only if both agree: projected within ${WAIVER_MARGIN} pts/g of that bar <em>and</em> ranked no better than it. his production is free on the wire, so he counts at ${WAIVER_DISCOUNT * 100}% of his market value in every source's totals (not zero, because market value also prices contingent upside like a handcuff RB's), and he's never suggested in "Even it out". In the lineup math, free agents also fill any roster spot a trade opens.</p>
     <p><strong>Verdict.</strong> The team with the higher grade score wins the trade; the summary spells out where the market and the lineup math agree or disagree.</p>`;
