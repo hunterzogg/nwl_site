@@ -6,22 +6,8 @@
 <title>2026 Hub — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=10">
+<link rel="stylesheet" href="../assets/css/style.css?v=13">
 <style>
-.tab-row { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-.tab-btn {
-  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-  color: var(--text-muted); cursor: pointer;
-}
-.tab-btn.active { color: var(--live-bright); border-color: var(--live); background: var(--live-bg); }
-.panel { display: none; }
-.panel.active { display: block; }
-.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.controls-row select {
-  background: var(--surface); border: 1px solid var(--line); color: var(--text);
-  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 140px;
-}
 .empty-state {
   background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
   padding: 48px 24px; text-align: center; color: var(--text-muted);
@@ -113,17 +99,13 @@
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <div class="season-banner">
-    <div>
-      <div class="season-banner-label"><span class="nav-live-dot"></span>2026 Hub</div>
-      <h1>Weekly Hub</h1>
-    </div>
-    <p style="color: var(--text-muted); margin: 0; max-width: 300px; font-size: 0.82rem;">
-      This week's matchups, standings, power rankings, and commentary. Updated by Hunter throughout the season — separate from the historical archive.
-    </p>
-  </div>
+  <header class="hx-hero live compact">
+    <div class="hx-eyebrow"><span class="nav-live-dot"></span> 2026 Hub</div>
+    <h1>Weekly Hub</h1>
+    <p>This week's matchups, standings, power rankings, recap and Brian's Fun Facts. Updated throughout the season.</p>
+  </header>
 
-  <div class="tab-row">
+  <div class="tab-row live">
     <button class="tab-btn active" data-tab="matchups">Matchups</button>
     <button class="tab-btn" data-tab="standings">Standings</button>
     <button class="tab-btn" data-tab="power">Power Rankings</button>
@@ -184,7 +166,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=18"></script>
+<script src="../assets/js/shared.js?v=19"></script>
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];

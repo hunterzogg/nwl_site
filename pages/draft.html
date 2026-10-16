@@ -6,35 +6,15 @@
 <title>Draft History — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=10">
+<link rel="stylesheet" href="../assets/css/style.css?v=13">
 <style>
-.tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
-.tab-btn {
-  font-family: var(--font-display); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase;
-  padding: 10px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-  color: var(--text-muted); cursor: pointer;
-}
-.tab-btn.active { color: var(--text); border-color: var(--blue-bright); background: var(--surface-raised); }
-.panel { display: none; }
-.panel.active { display: block; }
-.controls-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.controls-row select, .controls-row input {
-  background: var(--surface); border: 1px solid var(--line); color: var(--text);
-  padding: 8px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 0.9rem; min-width: 150px;
-}
 .pos-tag { font-family: var(--font-mono); font-size: 0.78rem; }
 .records-group-title {
   font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
 }
 .records-group-title:first-child { margin-top: 0; }
-.methodology {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-  padding: 16px 20px; margin-bottom: 24px; font-size: 0.88rem; color: var(--text-muted);
-}
-.methodology strong { color: var(--text); }
 .methodology .caveat { margin-top: 8px; font-size: 0.82rem; }
-.methodology details summary { cursor: pointer; color: var(--blue-bright); font-size: 0.85rem; margin-top: 8px; }
 .grade-badge {
   display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
@@ -210,7 +190,6 @@
   font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-muted); margin: -10px 0 8px;
 }
-.tab-row-2026 .tab-btn.active { border-color: var(--live-bright); }
 .a26 .grade-lead { flex-wrap: wrap; }
 .a26 .grade-lead .mgr-body { min-width: 180px; }
 .a26 .grade-detail { padding: 12px 18px 16px; }
@@ -247,8 +226,12 @@
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <h1 style="margin-bottom: 6px;">Draft History</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Every pick since 2013.</p>
+  <header class="hx-hero">
+    <div class="hx-eyebrow">League History</div>
+    <h1>Draft History</h1>
+    <p>Every pick since 2013: the full board, strategy and slot analysis, graded picks, position deep-dives, and the 2026 draft.</p>
+    <div class="hx-stats" id="draftHeroStats"></div>
+  </header>
 
   <div class="tab-row">
     <button class="tab-btn active" data-tab="board">Draft Board</button>
@@ -261,7 +244,7 @@
     <button class="tab-btn" data-tab="qb">QB Analysis</button>
   </div>
   <div class="tab-group-label">2026 Draft</div>
-  <div class="tab-row tab-row-2026">
+  <div class="tab-row tab-row-2026 live">
     <button class="tab-btn" data-tab="a26-grades">2026 Grades</button>
     <button class="tab-btn" data-tab="a26-contender">Contender Profile</button>
     <button class="tab-btn" data-tab="a26-superlatives">Superlatives</button>
@@ -382,7 +365,7 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/draft_analysis_2026.js?v=1"></script>
-<script src="../assets/js/shared.js?v=18"></script>
+<script src="../assets/js/shared.js?v=19"></script>
 <script>
 let picks = [], managers = [], teamSeasons = [];
 
@@ -1904,6 +1887,19 @@ async function init() {
   seasonGrades = built.seasons;
   managerGrades = built.managersRolled;
   renderManagerGradesLeaderboard();
+
+  // Header stats
+  const draftSeasons = [...new Set(picks.map(p => +p.season))];
+  const firsts = picks.filter(p => +p.overall_pick === 1).sort((a, b) => b.season - a.season);
+  const posCount = {}; picks.filter(p => +p.round === 1).forEach(p => posCount[p.position] = (posCount[p.position] || 0) + 1);
+  const topPos = Object.entries(posCount).sort((a, b) => b[1] - a[1])[0];
+  const bestDrafter = managerGrades[0];
+  document.getElementById('draftHeroStats').innerHTML = [
+    ['Picks made', picks.length.toLocaleString(), `${draftSeasons.length} drafts, ${Math.min(...draftSeasons)}–${Math.max(...draftSeasons)}`],
+    ['Last No. 1 pick', firsts[0] ? firsts[0].player : '—', firsts[0] ? `${firsts[0].manager}, ${firsts[0].season}` : ''],
+    ['Top 1st-round pos.', topPos ? topPos[0] : '—', topPos ? `${topPos[1]} first-rounders` : ''],
+    ['Best drafter', bestDrafter ? bestDrafter.manager : '—', bestDrafter ? `grade ${bestDrafter.grade} across ${bestDrafter.seasons.length} drafts` : ''],
+  ].map(([k, v, sub]) => `<div class="hx-stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`).join('');
   renderGradesSeasonTable();
 
   draftGrades2026 = await loadDataSafe('season_2026/draft_grades_2026', null);

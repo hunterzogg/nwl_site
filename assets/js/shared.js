@@ -15,73 +15,80 @@ const NWL_TRADE_TOOLS_PAGE = { href: 'pages/trade-tools.html', label: 'Trade Cal
 const NWL_IN_SEASON_PAGES = [NWL_LIVE_PAGE, NWL_PICKEM_PAGE, NWL_TRADE_TOOLS_PAGE];
 
 const NWL_PAGES = [
-  { href: 'pages/hall-of-fame.html', label: 'Hall of Fame' },
-  { href: 'pages/managers.html', label: 'Managers' },
-  { href: 'pages/scorigami.html', label: 'Scorigami' },
-  { href: 'pages/rankings.html', label: 'Team Rankings' },
-  { href: 'pages/draft.html', label: 'Draft' },
-  { href: 'pages/transactions.html', label: 'Transactions' },
+  { href: 'pages/hall-of-fame.html', label: 'Hall of Fame', desc: 'Records, rivalries and champions' },
+  { href: 'pages/managers.html', label: 'Managers', desc: 'Career cards for every manager' },
+  { href: 'pages/scorigami.html', label: 'Scorigami', desc: 'Every final score ever posted' },
+  { href: 'pages/rankings.html', label: 'Team Rankings', desc: 'Every season, ranked all-time' },
+  { href: 'pages/draft.html', label: 'Draft', desc: 'Every pick since 2013, graded' },
+  { href: 'pages/transactions.html', label: 'Transactions', desc: 'Waivers, FAAB and trades' },
 ];
 
+// Header: brand on the left; Home, the In Season pages (amber pills) and a "League History"
+// dropdown on the right. Under 900px everything collapses into a full-width grouped menu behind
+// the hamburger. This is the only place nav markup is generated.
 function renderNav(activeHref) {
   const inPages = isInPagesDir();
-  const nav = document.createElement('div');
+  const nav = document.createElement('header');
   nav.className = 'topnav';
   const homeHref = inPages ? '../index.html' : 'index.html';
-
   const resolveHref = (p) => {
     if (p.href === 'index.html') return homeHref;
     const filename = p.href.split('/').pop();
     return inPages ? filename : p.href;
   };
+  const isActive = p => activeHref === p.label.toLowerCase();
+  const activeHistory = NWL_PAGES.find(isActive);
 
-  const homeActive = activeHref === NWL_HOME.label.toLowerCase();
-  const homeLink = `<a href="${homeHref}" class="${homeActive ? 'active' : ''}">${NWL_HOME.label}</a>`;
-
-  const inSeasonLinks = NWL_IN_SEASON_PAGES.map(p => {
-    const isActive = activeHref === p.label.toLowerCase();
-    const isHub = p === NWL_LIVE_PAGE;
-    return `<a href="${resolveHref(p)}" class="nav-live ${isActive ? 'active' : ''}">${isHub ? '<span class="nav-live-dot"></span>' : ''}${p.label}</a>`;
-  }).join('');
+  const liveLinks = NWL_IN_SEASON_PAGES.map(p => `<a href="${resolveHref(p)}" class="nav-pill nav-live${isActive(p) ? ' active' : ''}"${isActive(p) ? ' aria-current="page"' : ''}>${p === NWL_LIVE_PAGE ? '<span class="nav-live-dot"></span>' : ''}${p.label}</a>`).join('');
+  const historyLinks = NWL_PAGES.map(p => `<a href="${resolveHref(p)}" class="nav-dd-item${isActive(p) ? ' active' : ''}"${isActive(p) ? ' aria-current="page"' : ''}><span class="t">${p.label}</span><span class="d">${p.desc}</span></a>`).join('');
 
   nav.innerHTML = `
-    <div class="nav-top-row">
-      <a href="${homeHref}" class="brand">
-        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="NWL" style="height:88px;"> NWL
+    <div class="nav-inner">
+      <a href="${homeHref}" class="brand" aria-label="NWL home">
+        <img src="${inPages ? '../assets/img/nwl_logo.png' : 'assets/img/nwl_logo.png'}" alt="">
+        <span class="brand-text"><b>NWL</b><small>National Wayzata League</small></span>
       </a>
-      <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMain">
         <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
       </button>
-    </div>
-    <div class="nav-links">
-      ${homeLink}
-      <span class="nav-divider"></span>
-      <span class="nav-group-label">In Season</span>
-      ${inSeasonLinks}
-      <span class="nav-divider"></span>
-      <span class="nav-group-label">League History</span>
-      ${NWL_PAGES.map(p => {
-        const isActive = activeHref === p.label.toLowerCase();
-        return `<a href="${resolveHref(p)}" class="${isActive ? 'active' : ''}">${p.label}</a>`;
-      }).join('')}
-    </div>
-  `;
+      <nav class="nav-main nav-links" id="navMain" aria-label="Main">
+        <a href="${homeHref}" class="nav-pill${isActive(NWL_HOME) ? ' active' : ''}">Home</a>
+        <span class="nav-group-label">In Season</span>
+        <div class="nav-group nav-group-live">${liveLinks}</div>
+        <span class="nav-group-label">League History</span>
+        <div class="nav-dd">
+          <button class="nav-pill nav-dd-btn${activeHistory ? ' active' : ''}" type="button" aria-expanded="false" aria-haspopup="true">
+            ${activeHistory ? `History <span class="nav-dd-cur">· ${activeHistory.label}</span>` : 'League History'}<span class="chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="nav-dd-menu" role="menu">${historyLinks}</div>
+        </div>
+      </nav>
+    </div>`;
   document.body.prepend(nav);
 
-  // Mobile-only hamburger toggle - on desktop the toggle button is hidden via CSS and
-  // .nav-links is always visible, so this listener is harmless dead weight there.
   const toggleBtn = nav.querySelector('.nav-toggle');
+  const ddBtn = nav.querySelector('.nav-dd-btn');
+  const closeAll = () => {
+    nav.classList.remove('nav-open', 'dd-open');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    ddBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-locked');
+  };
   toggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isOpen = nav.classList.toggle('nav-open');
-    toggleBtn.setAttribute('aria-expanded', String(isOpen));
+    const open = nav.classList.toggle('nav-open');
+    nav.querySelector('.nav-main').style.top = nav.getBoundingClientRect().bottom + 'px'; // drawer starts under the header
+    toggleBtn.setAttribute('aria-expanded', String(open));
+    toggleBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.classList.toggle('nav-locked', open);
   });
-  document.addEventListener('click', (e) => {
-    if (nav.classList.contains('nav-open') && !nav.contains(e.target)) {
-      nav.classList.remove('nav-open');
-      toggleBtn.setAttribute('aria-expanded', 'false');
-    }
+  ddBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = nav.classList.toggle('dd-open');
+    ddBtn.setAttribute('aria-expanded', String(open));
   });
+  document.addEventListener('click', (e) => { if (!nav.contains(e.target)) closeAll(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
 }
 
 function isInPagesDir() {

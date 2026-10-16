@@ -294,7 +294,7 @@ function buildTabs() {
   if (archivedWeeks.length) {
     archiveSection.innerHTML = `
       <div class="tab-row-label">Past Batches</div>
-      <div class="tab-row">
+      <div class="tab-row live">
         ${archivedWeeks.map(week => `<button class="tab-btn" data-tab="week-${week}">${weekLabel(week)}</button>`).join('')}
       </div>
     `;

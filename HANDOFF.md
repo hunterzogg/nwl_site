@@ -112,6 +112,24 @@ Ainsworth `#D65151`, Conlin `#C37222`, Glaser `#D6D651`, Goetz `#72C322`, Hagan 
 Larson `#22C372`, Muenchow `#51D6D6`, Palaia `#2272C3`, Pfaffinger `#5151D6`,
 Prodahl `#9B4FE8`, Stover `#D651D6`, Stowe `#9A9A9A` (gray — former manager), Zogg `#C32272`
 
+**Site-wide redesign (Oct 2026), all pages on the new look (`style.css?v=13`, `shared.js?v=19`).**
+- **Header/nav** (`renderNav()` in shared.js, "Top nav" block in style.css): slim sticky header with a blurred
+  background and a blue→red bottom rule; brand = crest + "NWL / National Wayzata League". Desktop: Home,
+  amber In Season pills (active = filled amber), and a **League History dropdown** (each page has a one-line
+  `desc` in `NWL_PAGES`; the button shows "History · <current page>"). Under 900px: hamburger → full-screen
+  grouped menu. Gotcha: `backdrop-filter` makes the header the containing block for `position: fixed`
+  children, so `.topnav.nav-open` turns the blur off, or the drawer renders clipped behind the page.
+- **Shared components** now live only in style.css (the per-page copies were deleted): `.tab-row`/`.tab-btn`
+  (segmented control; add `.live` to the row for the amber in-season active state), `.panel`, `.controls-row`,
+  `.methodology`, table header styling, `.hx-hero.live` (amber hero) and `.hx-hero.compact` (short header
+  for 2026 Hub and Pick'em, kept short per the earlier "too much space" feedback).
+- **Per page:** every page now opens with an `hx-hero` (history pages have stat tiles computed from data they
+  already load: Draft picks/best drafter, Transactions totals/biggest FAAB, Scorigami counts, Managers
+  leaders). Managers cards got a manager-colored band, titles/record/PPG on the closed card, and an expanded
+  card spans the full grid with its sections in columns. The homepage is a split hero (pitch + crest), stat
+  tiles, a live 2026 card (week, leader, power #1 from the season_2026 files) and archive cards with a stat each.
+- Not restyled: `mock-draft.html` (archived, its own design) and `pickem-admin.html` (hidden admin page).
+
 **History UI kit (Oct 2026 redesign, `style.css?v=10`).** The League History pages are moving from plain
 record tables to a shared set of `hx-` components at the end of `style.css`: `hx-hero` (gradient header +
 `hx-stats` stat tiles), `hx-tabs` (segmented tab bar, toggle with `aria-selected` + the `hidden` attribute),
@@ -122,8 +140,7 @@ A global `[hidden]{display:none!important}` lives there too. Done so far: **Hall
 cards, champions timeline, rivalry-style Head-to-Head with win-share bar and recent form, Seasons with year
 chips, champion card, score heatmap and division standing cards; "Lowest score" is now regular season only,
 since late playoff/consolation weeks have unset lineups, 2.2/2.4 pts) and **Team Rankings** (podium + bar rows,
-25 at a time, factor bar chart in "How seasons are compared"). Still on the old look: Managers, Scorigami, Draft,
-Transactions. Use the kit when converting them.
+25 at a time, factor bar chart in "How seasons are compared"). All history pages now use it (see the site-wide redesign note above).
 
 **Responsive tables** (`.table-wide` / `.table-cards` in style.css): any table with too many columns to fit a phone screen renders twice — once as the normal `<table>` wrapped in `.table-wide`, once as a stack of `.table-card` divs wrapped in `.table-cards` — and a `@media (max-width: 640px)` rule toggles which one is visible, no JS involved. Used on rankings, draft (board/strategy/slots/grades), transactions (log/trades/summary), and season-2026 standings. Deliberately *not* used on genuine data grids like the Hall of Fame weekly-scores matrix, where a card would just restate the same wide row — that one stays an intentionally scrollable table. When adding a new wide table, follow this pattern rather than introducing a new one.
 

@@ -6,12 +6,8 @@
 <title>Scorigami — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=10">
+<link rel="stylesheet" href="../assets/css/style.css?v=13">
 <style>
-.stat-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-.stat-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 20px; min-width: 160px; }
-.stat-box .v { font-family: var(--font-mono); font-size: 1.6rem; color: var(--text); }
-.stat-box .l { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
 .zoom-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .zoom-btn {
   width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
@@ -36,9 +32,6 @@
 #grid { display: block; }
 .combo-cell { cursor: pointer; }
 @media (max-width: 640px) {
-  .stat-row { gap: 10px; }
-  .stat-box { flex: 1 1 44%; min-width: 0; padding: 12px 14px; }
-  .stat-box .v { font-size: 1.25rem; }
 }
 .axis-label {
   font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
@@ -56,10 +49,12 @@
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <h1 style="margin-bottom: 6px;">Scorigami</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">Every final score combination in NWL history, zoomed out to fit on one screen. Winning score across the top, losing score down the side &mdash; both stay in view as you scroll. Zoom in to find a specific score and tap or hover a square for detail.</p>
-
-  <div id="statRow" class="stat-row"></div>
+  <header class="hx-hero">
+    <div class="hx-eyebrow">League History</div>
+    <h1>Scorigami</h1>
+    <p>Every final score in NWL history on one grid: winning score across the top, losing score down the side. Zoom in to find a specific score, and tap or hover a square for details.</p>
+    <div class="hx-stats" id="statRow"></div>
+  </header>
 
   <div class="zoom-row">
     <button id="zoomOut" class="zoom-btn" aria-label="Zoom out">&minus;</button>
@@ -85,7 +80,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=18"></script>
+<script src="../assets/js/shared.js?v=19"></script>
 <script>
 async function init() {
   const combos = await (isInPagesDir() ?
@@ -103,10 +98,10 @@ async function init() {
   let highestCombined = combos.reduce((a,b) => (b.w+b.l) > (a.w+a.l) ? b : a);
 
   document.getElementById('statRow').innerHTML = `
-    <div class="stat-box"><div class="v">${uniqueCount}</div><div class="l">Unique scores</div></div>
-    <div class="stat-box"><div class="v">${onceCount}</div><div class="l">Happened only once</div></div>
-    <div class="stat-box"><div class="v">${mostCommon.w}-${mostCommon.l}</div><div class="l">Most common (${mostCommon.count}&times;)</div></div>
-    <div class="stat-box"><div class="v">${highestCombined.w}-${highestCombined.l}</div><div class="l">Highest combined score</div></div>
+    <div class="hx-stat"><div class="k">Unique scores</div><div class="v">${uniqueCount}</div><div class="s">winning × losing combos</div></div>
+    <div class="hx-stat"><div class="k">Happened once</div><div class="v">${onceCount}</div><div class="s">true scorigamis</div></div>
+    <div class="hx-stat"><div class="k">Most common</div><div class="v">${mostCommon.w}–${mostCommon.l}</div><div class="s">${mostCommon.count} times</div></div>
+    <div class="hx-stat"><div class="k">Highest combined</div><div class="v">${highestCombined.w}–${highestCombined.l}</div><div class="s">${highestCombined.w + highestCombined.l} total points</div></div>
   `;
 
   // grid geometry (cellSize-independent)

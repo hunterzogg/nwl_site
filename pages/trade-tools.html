@@ -6,7 +6,7 @@
 <title>Trade Calculator — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=10">
+<link rel="stylesheet" href="../assets/css/style.css?v=13">
 <style>
 /* Layout: two "gets" columns side by side (stacked on phones), then a results stack:
    market meter -> per-team value add -> market verdicts -> free agent check -> even-it-out. */
@@ -135,9 +135,12 @@
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <h1 style="margin-bottom: 6px;">Trade Calculator</h1>
-  <p class="tc-intro">Build a trade between two NWL teams. It weighs what the redraft markets say each side is worth (with waiver-level players counting for nothing) against how much each team's starting lineup actually improves, and shows how six market tools would grade it.</p>
-  <p class="tc-updated" id="updated"></p>
+  <header class="hx-hero live">
+    <div class="hx-eyebrow"><span class="nav-live-dot"></span> 2026 Season</div>
+    <h1>Trade Calculator</h1>
+    <p>Build a trade between two NWL teams. It weighs what the redraft markets say each side is worth against how much each team's starting lineup actually improves, and shows how six market tools would grade it.</p>
+    <p class="tc-updated" id="updated" style="margin:12px 0 0"></p>
+  </header>
 
   <section class="tc-sides" aria-label="Trade sides">
     <div class="tc-side" id="sideA"></div>
@@ -171,7 +174,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=18"></script>
+<script src="../assets/js/shared.js?v=19"></script>
 <script>
 let managers = [], D = null;
 const state = { a: null, b: null, aGets: [], bGets: [] }; // aGets = players team A receives (from B's roster)

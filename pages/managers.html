@@ -6,21 +6,28 @@
 <title>Managers — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=10">
+<link rel="stylesheet" href="../assets/css/style.css?v=13">
 <style>
-.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.mgr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 16px; align-items: start; }
 .mgr-card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; position: relative;
   overflow: hidden; transition: border-color 0.15s, transform 0.15s, background-color 0.15s;
 }
-.mgr-card.expanded { border-color: var(--blue-bright); }
+.mgr-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 64px; background: linear-gradient(135deg, var(--mc) 0%, transparent 85%); opacity: 0.22; pointer-events: none; }
+.mgr-card.expanded { border-color: var(--mc); grid-column: 1 / -1; }
+.mgr-quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 18px 16px; }
+.mgr-quick div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.mgr-quick .k { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.mgr-quick .v { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.mgr-card.expanded .mgr-quick { display: none; }
+.mgr-body-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 0 28px; }
 @media (hover: hover) {
   .mgr-card:not(.expanded):hover { transform: translateY(-2px); border-color: var(--line-strong); background-color: var(--surface-raised); }
 }
 .mgr-card-header {
-  display: flex; align-items: center; gap: 14px; padding: 16px 18px; cursor: pointer;
+  position: relative; display: flex; align-items: center; gap: 14px; padding: 18px 18px 14px; cursor: pointer;
 }
-.mgr-avatar-wrap { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+.mgr-avatar-wrap { position: relative; width: 58px; height: 58px; flex-shrink: 0; box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--mc); border-radius: 50%; }
 .mgr-avatar-fallback {
   width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center;
   justify-content: center; font-family: var(--font-display); font-weight: 700;
@@ -42,8 +49,8 @@
 .mgr-card-body { display: none; padding: 4px 18px 20px; border-top: 1px solid var(--line); }
 .mgr-card.expanded .mgr-card-body { display: block; }
 .mgr-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 16px 0; }
-.mgr-stat { background: var(--surface-raised); border-radius: 6px; padding: 10px 8px; text-align: center; }
-.mgr-stat-value { font-family: var(--font-mono); font-size: 1.25rem; }
+.mgr-stat { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 8px; text-align: center; }
+.mgr-stat-value { font-family: var(--font-display); font-size: 1.45rem; font-weight: 600; }
 .mgr-stat-label { font-size: 0.64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
 .mgr-subsection-title {
   font-family: var(--font-display); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
@@ -62,17 +69,19 @@
 <body>
 
 <div class="container" style="padding-top: 24px;">
-  <h1 style="margin-bottom: 6px;">Managers</h1>
-  <p style="color: var(--text-muted); margin-bottom: 24px;">
-    Every manager to ever field a team in the NWL. Click a card for career stats and biggest moves.
-  </p>
+  <header class="hx-hero">
+    <div class="hx-eyebrow">League History</div>
+    <h1>Managers</h1>
+    <p>Every manager to field a team in the NWL. Open a card for career stats, team names and biggest moves.</p>
+    <div class="hx-stats" id="heroStats"></div>
+  </header>
 
   <div class="mgr-grid" id="mgrGrid"></div>
 </div>
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=18"></script>
+<script src="../assets/js/shared.js?v=19"></script>
 <script>
 const MANAGER_INITIALS = {
   Ainsworth: 'LA', Conlin: 'JC', Glaser: 'EG', Goetz: 'NG', Hagan: 'MH',
@@ -183,7 +192,7 @@ async function init() {
   mgrData.sort((a,b) => (a.isFormer - b.isFormer) || a.manager.localeCompare(b.manager));
 
   document.getElementById('mgrGrid').innerHTML = mgrData.map(d => `
-    <div class="mgr-card" data-manager="${d.manager}">
+    <div class="mgr-card" data-manager="${d.manager}" style="--mc:${d.color}">
       <div class="mgr-card-header">
         <div class="mgr-avatar-wrap">
           <div class="mgr-avatar-fallback" style="background:${d.color}">${initials(d.manager)}</div>
@@ -196,6 +205,11 @@ async function init() {
         </div>
         <div class="mgr-chevron">&#9660;</div>
       </div>
+      <div class="mgr-quick">
+        <div><div class="k">Titles</div><div class="v">${d.championships ? '🏆 ' + d.championships : '0'}</div></div>
+        <div><div class="k">Record</div><div class="v">${d.wins}–${d.losses}</div></div>
+        <div><div class="k">PPG</div><div class="v">${d.regPpg.toFixed(1)}</div></div>
+      </div>
       <div class="mgr-card-body">
         <div class="mgr-stat-grid">
           <div class="mgr-stat"><div class="mgr-stat-value">${d.championships}</div><div class="mgr-stat-label">Titles</div></div>
@@ -206,28 +220,44 @@ async function init() {
           <div class="mgr-stat"><div class="mgr-stat-value">${d.playoffPpg ? d.playoffPpg.toFixed(1) : '&mdash;'}</div><div class="mgr-stat-label">Playoff PPG</div></div>
         </div>
 
+        <div class="mgr-body-cols"><div>
         <div class="mgr-subsection-title">Team Name History</div>
         ${d.profile.team_names.length ? d.profile.team_names.map(t => `
           <div class="mgr-list-item"><span>${t.name}</span><span class="r">${t.seasons}</span></div>
         `).join('') : `<p class="mgr-empty-note">Not added yet.</p>`}
 
+        </div><div>
         <div class="mgr-subsection-title">Favorite Players</div>
         ${d.favoritePlayers.length ? d.favoritePlayers.map(p => `
           <div class="mgr-list-item"><span>${posTag(p.position)} ${p.player}</span><span class="r">${p.count}&times; on roster</span></div>
         `).join('') : `<p class="mgr-empty-note">No roster history recorded.</p>`}
 
+        </div><div>
         <div class="mgr-subsection-title">Biggest Waiver / FA Pickups</div>
         ${d.topAdds.length ? d.topAdds.map(t => `
           <div class="mgr-list-item"><span>${posTag(t.position)} ${t.player}</span><span class="r">${t.bid_amount ? '$' + t.bid_amount : '&mdash;'} &middot; ${t.season}</span></div>
         `).join('') : `<p class="mgr-empty-note">No waiver/FA pickups recorded.</p>`}
 
+        </div><div>
         <div class="mgr-subsection-title">Most Recent Trade Acquisitions</div>
         ${d.tradeAcquisitions.length ? d.tradeAcquisitions.map(t => `
           <div class="mgr-list-item"><span>${t.position ? posTag(t.position) + ' ' : ''}${t.player}</span><span class="r">${t.date}</span></div>
         `).join('') : `<p class="mgr-empty-note">No trades recorded.</p>`}
+        </div></div>
       </div>
     </div>
   `).join('');
+
+  const active = mgrData.filter(d => !d.isFormer);
+  const lead = (key, fmt) => { const top = mgrData.slice().sort((a, b) => b[key] - a[key])[0]; return [fmt(top[key]), top.manager]; };
+  const [t1, tw] = lead('championships', v => v), [p1, pw] = lead('regPpg', v => v.toFixed(1)), [w1, ww] = lead('wins', v => v);
+  const winPct = d => d.wins / Math.max(1, d.wins + d.losses);
+  const bestPct = mgrData.slice().sort((a, b) => winPct(b) - winPct(a))[0];
+  document.getElementById('heroStats').innerHTML = [
+    ['Managers', mgrData.length, `${active.length} active · ${mgrData.length - active.length} former`],
+    ['Most titles', t1, tw], ['Most wins', w1, ww],
+    ['Best win %', (winPct(bestPct) * 100).toFixed(1) + '%', bestPct.manager], ['Best career PPG', p1, pw],
+  ].map(([k, v, sub]) => `<div class="hx-stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`).join('');
 
   document.querySelectorAll('.mgr-card-header').forEach(header => {
     header.addEventListener('click', () => header.closest('.mgr-card').classList.toggle('expanded'));
