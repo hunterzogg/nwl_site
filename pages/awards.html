@@ -39,8 +39,8 @@
     <details>
       <summary>Show methodology</summary>
       <div style="margin-top: 8px;">
-        <p><strong>Every season.</strong> Champion and Sacko are the final standings. Most points is the regular-season total. Highest score, biggest blowout and closest loss include every game (ties aren't losses). <em>Luck</em> compares a team's actual regular-season win rate with its all-play win rate (its record if it had played every other team every week): the biggest gap below is the unluckiest team, above is the luckiest.</p>
-        <p><strong>Draft.</strong> Steal: the drafted player who finished highest at his position compared with where he was taken (top-12 finishers only). Bust: the round 1–3 pick who finished furthest below his draft slot. Best draft: the most combined half-PPR points from a team's QB, RB, WR and TE picks.</p>
+        <p><strong>Every season.</strong> Champion and Sacko are the final standings. Most points is the regular-season total. Highest score, biggest blowout and closest loss include every game (ties aren't losses). <em>Luck</em> compares a manager's actual regular-season win rate with his all-play win rate (his record if he had played every other team every week): the biggest gap below is the unluckiest manager, above is the luckiest.</p>
+        <p><strong>Draft.</strong> Steal: the drafted player who finished highest at his position compared with where he was taken (top-12 finishers only). Bust: the round 1–3 pick who finished furthest below his draft slot. Best draft: the most combined half-PPR points from a manager's QB, RB, WR and TE picks.</p>
         <p><strong>2022 on</strong> (ESPN box scores). MVP: the most points a player was started for one team in the regular season. Best pickup: the most started points for the team that claimed him, from the week he was added until he left. Bench blunder: the biggest gap, in a regular-season loss, between a benched player and the lowest-scoring starter at his position, flagged when it would have flipped the result. Best and worst trade come from the Trade Grades tab on the Transactions page. Most active counts adds and trades.</p>
         <p>Seasons appear once they're complete; 2026 shows up after week 17.</p>
       </div>
@@ -92,7 +92,7 @@ function scoreAwards(season) {
   if (luck.length) {
     const u = luck[0], l = luck[luck.length - 1];
     out.push(card('Unluckiest', u.m, `${(u.d * act[u.m].n).toFixed(1).replace('-', '−')} wins`, `Went <b>${u.rec}</b> but scored like a <b>${u.apw.toFixed(1)}-win</b> team against the whole league.`, { icon: '🍀' }));
-    out.push(card('Luckiest', l.m, `+${(l.d * act[l.m].n).toFixed(1)} wins`, `Went <b>${l.rec}</b>, but its scores were good for only <b>${l.apw.toFixed(1)}</b> wins against the whole league.`, { icon: '🎲' }));
+    out.push(card('Luckiest', l.m, `+${(l.d * act[l.m].n).toFixed(1)} wins`, `Went <b>${l.rec}</b>, but his scores were good for only <b>${l.apw.toFixed(1)}</b> wins against the whole league.`, { icon: '🎲' }));
   }
   return out;
 }
@@ -105,7 +105,7 @@ function draftAwards(season) {
   if (bust) out.push(card('Biggest bust', bust.manager, `${esc(bust.position)}${bust.position_finish_rank}`, `<b>${esc(bust.player)}</b>, a round ${bust.round} pick (${esc(bust.position)}${bust.position_draft_rank}), finished ${esc(bust.position)}${bust.position_finish_rank}.`, { icon: '🧱' }));
   const by = {}; picks.forEach(p => { by[p.manager] = (by[p.manager] || 0) + p.half_ppr_points; });
   const best = Object.entries(by).sort((a, b) => b[1] - a[1])[0];
-  if (best) out.push(card('Best draft', best[0], f1(best[1]), 'Most combined half-PPR points from its QB, RB, WR and TE picks.', { icon: '📋' }));
+  if (best) out.push(card('Best draft', best[0], f1(best[1]), 'Most combined half-PPR points from his QB, RB, WR and TE picks.', { icon: '📋' }));
   return out;
 }
 function boxAwards(season) {

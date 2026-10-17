@@ -127,7 +127,10 @@
 .odds-table th:first-child, .odds-table td:first-child { text-align: left; }
 .odds-table td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: right; font-family: var(--font-mono); white-space: nowrap; }
 .odds-table td.team { font-family: var(--font-body); }
-.odds-table tr.cut td { border-bottom: 2px dashed var(--live); }
+.odds-line td { padding: 0; border-bottom: 0; }
+.odds-line > div, .odds-line td > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 10px 0; padding: 5px 10px; border-top: 2px solid var(--live); background: var(--live-bg); border-radius: 0 0 6px 6px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.74rem; }
+.odds-line-in { color: var(--live-bright); } .odds-line-out { color: var(--text-muted); }
+.odds-table tr.out td, .odds-card.out { opacity: 0.72; }
 .odds-pct { position: relative; display: block; min-width: 64px; padding: 3px 6px; border-radius: 4px; z-index: 0; background: var(--bg); text-align: right; }
 .odds-pct::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: var(--p); background: rgba(79,168,118,0.35); border-radius: 4px; z-index: -1; }
 .odds-pct.title::before { background: rgba(242,183,5,0.26); }
@@ -184,7 +187,7 @@
   <div class="tab-row live">
     <button class="tab-btn active" data-tab="matchups">Matchups</button>
     <button class="tab-btn" data-tab="standings">Standings</button>
-    <button class="tab-btn" data-tab="odds">Playoff Odds</button>
+    <button class="tab-btn" data-tab="odds">Playoff Race</button>
     <button class="tab-btn" data-tab="power">Power Rankings</button>
     <button class="tab-btn" data-tab="commentary">Commentary</button>
     <button class="tab-btn" data-tab="funfacts">Brian's Fun Facts</button>
@@ -259,8 +262,8 @@
 
 <script src="../assets/js/shared.js?v=23"></script>
 <script src="../assets/js/trade_engine.js?v=2"></script>
-<script src="../assets/js/nwl_sim.js?v=1"></script>
-<script src="../assets/js/nwl_records.js?v=2"></script>
+<script src="../assets/js/nwl_sim.js?v=2"></script>
+<script src="../assets/js/nwl_records.js?v=3"></script>
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];
@@ -612,8 +615,12 @@ document.addEventListener('toggle', e => {
   }, 10);
 }, true);
 
-/* ---------- Playoff Odds (simulator in assets/js/nwl_sim.js) ---------- */
+/* ---------- Playoff Race tab (simulator in assets/js/nwl_sim.js) ---------- */
 let oddsBase = null, oddsPrev = null, oddsLocks = {}, oddsWeek = null;
+// The What-if picker is archived until the playoff race tightens: it comes back by itself once ESPN's
+// current week reaches this (per Hunter, Oct 17). The code below is unchanged, just not shown before then.
+const WHATIF_FROM_WEEK = 12;
+const whatIfOpen = () => schedule && (schedule.current_week || 0) >= WHATIF_FROM_WEEK;
 const pct = x => x >= 0.995 && x < 1 ? '>99%' : x > 0 && x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
 function oddsReady() { return schedule && schedule.games && schedule.games.length && D; }
 function computeOddsBase() {
@@ -627,7 +634,7 @@ function computeOddsBase() {
 }
 function renderOdds() {
   const el = document.getElementById('oddsContent');
-  if (!oddsReady()) { el.innerHTML = emptyState('Playoff odds aren\'t available yet', 'They appear once the weekly data pull has saved the season schedule.'); return; }
+  if (!oddsReady()) { el.innerHTML = emptyState('The playoff race isn\'t available yet', 'They appear once the weekly data pull has saved the season schedule.'); return; }
   if (!oddsBase) computeOddsBase();
   const locked = Object.keys(oddsLocks).length;
   const odds = locked ? NWL_SIM.run(10000, oddsLocks) : oddsBase;
@@ -635,25 +642,31 @@ function renderOdds() {
   const rec = {}; S.teams.forEach(t => rec[t] = [0, 0, 0]);
   S.played.forEach(g => { if (g.winner === 'HOME') { rec[g.home][0]++; rec[g.away][1]++; } else if (g.winner === 'AWAY') { rec[g.away][0]++; rec[g.home][1]++; } else { rec[g.home][2]++; rec[g.away][2]++; } });
   const recStr = t => rec[t][0] + '-' + rec[t][1] + (rec[t][2] ? '-' + rec[t][2] : '');
-  const rows = [...S.teams].sort((a, b) => odds[b].playoff - odds[a].playoff || odds[b].title - odds[a].title || odds[b].wins - odds[a].wins);
+  const seedOf = NWL_SIM.projectedSeeds(odds);
+  const rows = [...S.teams].sort((a, b) => seedOf[a] - seedOf[b]);
   const ref = locked ? oddsBase : (oddsPrev && oddsPrev.odds);
   const delta = (t, k) => { if (!ref) return ''; const d = Math.round((odds[t][k] - ref[t][k]) * 100); return `<span class="odds-delta ${d > 0 ? 'up' : d < 0 ? 'down' : 'flat'}">${d > 0 ? '▲' + d : d < 0 ? '▼' + Math.abs(d) : '—'}</span>`; };
-  const likely = t => { const sd = odds[t].seeds; let best = 1; for (let k = 1; k < sd.length; k++) if (sd[k] > sd[best]) best = k; return best <= S.poTeams ? `#${best} seed` : `${ord(best)} place`; };
+  const likely = t => `#${seedOf[t]} seed`;
   const cell = (t, k, cls = '') => `<span class="odds-pct ${cls}" style="--p:${(odds[t][k] * 100).toFixed(1)}%">${pct(odds[t][k])}</span>${delta(t, k)}`;
   const deltaLabel = locked ? 'vs. no picks' : oddsPrev ? `vs. before week ${oddsPrev.week}` : '';
   el.innerHTML = `<div class="odds-head"><p>${(10000).toLocaleString()} simulated seasons${locked ? ` with your ${locked} pick${locked === 1 ? '' : 's'}` : ''} · ${S.remaining.length} regular-season games left${deltaLabel ? ' · arrows ' + deltaLabel : ''}</p></div>
-    <div class="odds-wide" style="overflow-x:auto"><table class="odds-table"><thead><tr><th>Team</th><th>Record</th><th>Proj. W</th><th>Playoffs</th><th>Bye</th><th>Division</th><th>#1 seed</th><th>Final</th><th>Title</th><th>Most likely</th></tr></thead><tbody>
-      ${rows.map((t, i) => `<tr class="${i === S.poTeams - 1 ? 'cut' : ''}"><td class="team">${managerTagWithDivision(managers, t)}</td><td>${recStr(t)}</td><td>${odds[t].wins.toFixed(1)}</td><td>${cell(t, 'playoff')}</td><td>${cell(t, 'bye')}</td><td>${cell(t, 'divWin')}</td><td>${cell(t, 'seed1')}</td><td>${cell(t, 'final')}</td><td>${cell(t, 'title', 'title')}</td><td class="odds-sub">${likely(t)}</td></tr>`).join('')}
+    <div class="odds-wide" style="overflow-x:auto"><table class="odds-table"><thead><tr><th>Team</th><th>Record</th><th>Proj. W</th><th>Playoffs</th><th>Bye</th><th>Division</th><th>#1 seed</th><th>Final</th><th>Title</th><th>Proj. seed</th></tr></thead><tbody>
+      ${rows.map((t, i) => `${i === S.poTeams ? playoffLine('tr') : ''}<tr class="${i >= S.poTeams ? 'out' : ''}"><td class="team">${managerTagWithDivision(managers, t)}</td><td>${recStr(t)}</td><td>${odds[t].wins.toFixed(1)}</td><td>${cell(t, 'playoff')}</td><td>${cell(t, 'bye')}</td><td>${cell(t, 'divWin')}</td><td>${cell(t, 'seed1')}</td><td>${cell(t, 'final')}</td><td>${cell(t, 'title', 'title')}</td><td class="odds-sub">${likely(t)}</td></tr>`).join('')}
     </tbody></table></div>
-    <div class="odds-cards">${rows.map(t => `<div class="odds-card"><div>${managerTagWithDivision(managers, t)} <span class="odds-sub">${recStr(t)} · proj ${odds[t].wins.toFixed(1)} W</span></div><div class="odds-sub">${likely(t)}</div>
+    <div class="odds-cards">${rows.map((t, i) => `${i === S.poTeams ? playoffLine('div') : ''}<div class="odds-card${i >= S.poTeams ? ' out' : ''}"><div>${managerTagWithDivision(managers, t)} <span class="odds-sub">${recStr(t)} · proj ${odds[t].wins.toFixed(1)} W</span></div><div class="odds-sub">${likely(t)}</div>
       <div class="nums"><div><small>Playoffs</small>${cell(t, 'playoff')}</div><div><small>Bye</small>${cell(t, 'bye')}</div><div><small>Division</small>${cell(t, 'divWin')}</div><div><small>Title</small>${cell(t, 'title', 'title')}</div></div></div>`).join('')}</div>
     ${whatIfHTML()}`;
-  document.getElementById('oddsMethod').innerHTML = `<p><strong>Model.</strong> Each team's weekly score is drawn from a normal distribution. Its average blends the team's actual 2026 points per game with its projected starting lineup (the same rest-of-season blend the Trade Calculator uses, scaled to the league's real scoring level), with the projection counting ${Math.round(S.wProj * 100)}% right now. It counts more early in the season and less as games are played. The spread is the league's ${S.sd}-point weekly score spread.</p>
-    <p><strong>Seeding.</strong> The three division winners take seeds 1–3 by record, then the three best remaining records are the wild cards (seeds 4–6). Total points break ties. Seeds 1 and 2 get the week ${S.playoffWeeks[0]} bye. Week ${S.playoffWeeks[0]}: 3 vs 6 and 4 vs 5. Week ${S.playoffWeeks[1]}: #1 plays the lowest remaining seed, #2 the other. Week ${S.playoffWeeks[2]}: the final.</p>
-    <p><strong>Arrows</strong> compare with the same model before last week's games were played, or with no picks when you've picked winners below. Games in progress are simulated from scratch. The random numbers are fixed, so the odds only change when results or rosters do.</p>`;
+  document.getElementById('oddsMethod').innerHTML = `<p><strong>Model.</strong> Each manager's weekly score is drawn from a normal distribution. Its average blends his actual 2026 points per game with his projected starting lineup (the same rest-of-season blend the Trade Calculator uses, scaled to the league's real scoring level), with the projection counting ${Math.round(S.wProj * 100)}% right now. It counts more early in the season and less as games are played. The spread is the league's ${S.sd}-point weekly score spread.</p>
+    <p><strong>Seeding.</strong> The three division winners take seeds 1–3 by record, then the three best remaining records are the wild cards (seeds 4–6). Seeds 7–12 are the remaining teams by record. Total points break ties. <em>Proj. seed</em> applies these same rules to each team's projected wins and points, so every seed from 1 to 12 appears once; the table is sorted by it, with the dashed line after the last playoff seed. Seeds 1 and 2 get the week ${S.playoffWeeks[0]} bye. Week ${S.playoffWeeks[0]}: 3 vs 6 and 4 vs 5. Week ${S.playoffWeeks[1]}: #1 plays the lowest remaining seed, #2 the other. Week ${S.playoffWeeks[2]}: the final.</p>
+    <p><strong>Arrows</strong> compare with the same model before last week's games were played${whatIfOpen() ? ', or with no picks when you\'ve picked winners below' : ''}. Games in progress are simulated from scratch. The random numbers are fixed, so the odds only change when results or rosters do.</p>`;
+}
+// the break between the last playoff seed and the first team out
+function playoffLine(kind) {
+  const label = `<span class="odds-line-in">▲ In the playoffs</span><span class="odds-line-out">Out ▼</span>`;
+  return kind === 'tr' ? `<tr class="odds-line" aria-hidden="true"><td colspan="10"><div>${label}</div></td></tr>` : `<div class="odds-line" aria-hidden="true"><div>${label}</div></div>`;
 }
 function whatIfHTML() {
-  const S = NWL_SIM.state(); if (!S.remaining.length) return '';
+  const S = NWL_SIM.state(); if (!S.remaining.length || !whatIfOpen()) return '';
   const weeks = [...new Set(S.remaining.map(g => g.week))].sort((a, b) => a - b);
   const games = S.remaining.filter(g => g.week === oddsWeek);
   const btn = (g, side) => { const mgr = side === 'HOME' ? g.home : g.away, on = oddsLocks[NWL_SIM.key(g)] === side;

@@ -48,7 +48,7 @@ nwl_site/
 │   ├── css/style.css             # All global styles + design tokens (incl. --live amber accent)
 │   ├── js/shared.js              # Nav renderer, data loader, managerTag(), posTag(), loadDataSafe()
 │   ├── js/trade_engine.js        # Trade valuation engine shared by the Trade Calculator and Trade Finder (evaluateTrade, lineup, settle, ...)
-│   ├── js/nwl_sim.js             # Playoff Odds simulator (2026 Hub)
+│   ├── js/nwl_sim.js             # Playoff simulator (2026 Hub Playoff Race tab)
 │   ├── js/nwl_records.js         # Record watch + This week in NWL history (homepage, Hub)
 │   ├── img/nwl_logo.png          # Shield logo, background-removed PNG (see img/nwl_logo_source.jpeg)
 │   ├── img/nwl_logo_source.jpeg  # Original flat (white-bg) logo Hunter supplied - reprocess from this if the logo changes
@@ -1729,7 +1729,7 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
 - Local testing gotcha: the browser caches `trade_values.json`, so after re-running the builder, refetch it with
   `cache:'reload'` or the page silently runs on the old file (it showed "no schedule data" until refreshed).
 
-## Six features added Oct 17 2026 (playoff odds, previews, record watch, history card, trade grades, awards)
+## Six features added Oct 17 2026 (playoff race, previews, record watch, history card, trade grades, awards)
 
 **New data and scripts**
 - `data/season_2026/schedule.json` (from `fetch_espn_week.py`, committed by the weekly Action): every 2026
@@ -1755,12 +1755,16 @@ questions for Hunter: ESPN shows **two more trades accepted by Palaia on 2022-11
 and the grader warns on **two 2025 Zogg–Conlin rows** (trades 30 and 31), where the one matched player moved the
 opposite way.
 
-**Playoff Odds tab (2026 Hub)**, `assets/js/nwl_sim.js`: 10,000 seeded-random seasons. Team mean = blend of
+**Playoff Race tab (2026 Hub; first built as "Playoff Odds", renamed per Hunter)**, `assets/js/nwl_sim.js`: 10,000 seeded-random seasons. Team mean = blend of
 actual PPG and the projected lineup (trade engine `settle().pts`, scaled to the league's real scoring), with
 projection weight = games left ÷ 14, clamped to 0.35-0.75. sd = `score_sd`. Seeding per Hunter: division winners
 are seeds 1-3, then wild cards, with points for as the tiebreak; top 2 get byes; 3v6, 4v5, then #1 vs the lowest
 remaining seed. The arrows compare with the same model before last week's games (computed in the browser; there is
-no stored snapshot). What-if picks lock game results. Checked: playoff odds sum to 6.000, byes to 2, division
+no stored snapshot). The **Proj. seed** column applies the seeding rules to projected wins and points
+(`NWL_SIM.projectedSeeds`), so seeds 1-12 each appear once, and the table is sorted by it. (It first showed each
+team's most likely seed, which duplicated seeds and mixed in "Nth place"; Hunter asked for seeds 1-12 only.)
+What-if picks lock game results. **The What-if section is archived until week 12** (`WHATIF_FROM_WEEK` in
+season-2026.html, per Hunter). It reappears by itself once `schedule.json`'s `current_week` reaches 12. Checked: playoff odds sum to 6.000, byes to 2, division
 titles to 3, the title to 1, wins to 84.
 
 **Matchup previews (2026 Hub Matchups):** a "Preview" expander on undecided games, all computed: win probability
@@ -1770,7 +1774,12 @@ include consolation games), last meeting, last-3 form and power rank, top 3 proj
 
 **Record watch banner (homepage + Hub)** and **This week in NWL history (homepage card + Hub Matchups strip)** live
 in `assets/js/nwl_records.js`, using Hall of Fame definitions: streaks across all games and seasons, season records
-regular season only, lowest score regular season only. Record watch shows at most 3 items, one per manager:
+regular season only, lowest score regular season only. Win/loss pace = current record + remaining games at the
+manager's **all-play rate** (how often his weekly score beat every other team's), not the raw record stretched to
+14 games. A plain 0-5 pace said Pfaffinger was headed for 14 losses; on his scoring it's about 11.5, and the
+simulator says about 10.5. Scoring-pace items need a top-3 (or bottom-3) season. Managers in the same spot share
+one sentence ("Muenchow and Goetz are both 3-2 and project to..."). Site copy refers to managers as "him"/"his"
+(Hunter's preference), with "their" only when a sentence covers several. Record watch shows at most 3 items, one per manager:
 season pace (PPG high/low, wins, losses), streaks within 2 of the record, projections within 15 of the
 highest/lowest score, and career milestones reachable this week. It hides itself when nothing qualifies. The history
 card shows the best team moment, a rotating second one, 2 player games from different seasons, and a trade or a

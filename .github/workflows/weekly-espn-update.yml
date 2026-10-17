@@ -5,6 +5,10 @@ name: Weekly ESPN Update
 # automatically. See scripts/fetch_espn_week.py, scripts/build_trade_values.py, and
 # scripts/fetch_espn_transactions.py for the actual pull logic and
 # .claude/skills/weekly-espn-update/SKILL.md for the manual-run version of this same workflow.
+# These files also drive the 2026 Hub's computed features (Playoff Race tab, matchup previews,
+# Record Watch, This week in NWL history), which update with every run: schedule.json (full
+# schedule + playoff format), matchups.json (incl. live scores for the week in progress),
+# trade_values.json and power_rankings.json.
 #
 # Schedule is a handful of runs on real NFL game days (Thu/Sun/Mon) plus one daily catch-all on
 # the other four days (to pick up projection movement from injury news / waiver moves). All times

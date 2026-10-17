@@ -102,7 +102,7 @@
         <div style="margin-top: 8px;">
           <p><strong>What counts.</strong> Every player a team received is followed from the week the trade went through (read from ESPN's weekly rosters) to the end of that season, for as long as that team kept him. Weeks after he was dropped or traded away don't count. Points are real NWL scoring from ESPN box scores.</p>
           <p><strong>Points over replacement.</strong> Each week a player earns his points minus what a waiver-level player at his position scored that week (the average of the players ranked just past the league's starters among everyone rostered: 13th–18th at QB, TE and HC, 31st–36th at RB and WR), never below zero. So adding bodies doesn't win a trade by itself. Fantasy playoff weeks (15–17) count 1.5× because they decide titles.</p>
-          <p><strong>Grades.</strong> Each side's total minus the other side's: A+ at +80 or more, A +50, A− +30, B+ +15, B within 15 of even, C down to −40, D down to −80, F beyond. Started points (what the team actually put in its lineup) are shown but don't change the grade. FAAB dollars and draft picks in a trade are listed, not graded.</p>
+          <p><strong>Grades.</strong> Each side's total minus the other side's: A+ at +80 or more, A +50, A− +30, B+ +15, B within 15 of even, C down to −40, D down to −80, F beyond. Started points (what the manager actually put in his lineup) are shown but don't change the grade. FAAB dollars and draft picks in a trade are listed, not graded.</p>
           <p><strong>Coverage.</strong> ESPN box scores are only available to the site's ESPN account from 2022 on, so trades before 2022 can't be graded. Two 2022 trades (Prodahl–Stover and Hagan–Goetz) were recorded with the sides swapped; ESPN's rosters show every player moving the other way, so they were corrected.</p>
         </div>
       </details>
@@ -435,7 +435,7 @@ const tgEsc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<':
 const tgSgn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(0);
 function tgSide(s) {
   return `<div class="tg-side"><div class="tg-side-head"><span class="tg-who">${managerTag(managers, s.manager)} <span>got</span></span><span class="tg-grade" style="color:${tgColor(s.grade)};background:${tgColor(s.grade)}22">${s.grade}</span></div>
-    <ul class="tg-players">${s.players.map(p => `<li><span>${posTag(p.pos)} ${tgEsc(p.name)}</span><span class="tg-nums" title="${p.weeks} week${p.weeks === 1 ? '' : 's'} on the team · ${p.pts} pts · ${p.started} started · ${p.por} over replacement">${p.weeks ? `${p.pts.toFixed(1)} pts <small>${p.started.toFixed(1)} started · ${p.weeks} wk</small>` : `<small>${p.matched ? 'never played for them' : 'no ESPN data'}</small>`}</span></li>`).join('')}
+    <ul class="tg-players">${s.players.map(p => `<li><span>${posTag(p.pos)} ${tgEsc(p.name)}</span><span class="tg-nums" title="${p.weeks} week${p.weeks === 1 ? '' : 's'} on the team · ${p.pts} pts · ${p.started} started · ${p.por} over replacement">${p.weeks ? `${p.pts.toFixed(1)} pts <small>${p.started.toFixed(1)} started · ${p.weeks} wk</small>` : `<small>${p.matched ? 'never played for him' : 'no ESPN data'}</small>`}</span></li>`).join('')}
       ${s.extras.map(x => `<li class="tg-extra"><span>${tgEsc(x)}</span><span class="tg-nums"><small>not graded</small></span></li>`).join('')}</ul>
     <div class="tg-total">Over replacement <b>${s.value.toFixed(0)}</b> · net <b style="color:${s.net > 0 ? '#4FA876' : s.net < 0 ? '#E0524A' : 'inherit'}">${tgSgn(s.net)}</b></div></div>`;
 }

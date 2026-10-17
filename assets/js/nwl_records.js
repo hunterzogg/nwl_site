@@ -63,17 +63,28 @@ const NWL_REC = (() => {
     const lossRows = {}; games.filter(m => m.season < SEASON && m.week < (poStart[m.season] || 99) && !m.tie).forEach(m => { const k = m.season + '|' + m.loser; lossRows[k] = (lossRows[k] || 0) + 1; });
     const mostLosses = Object.entries(lossRows).map(([k, l]) => ({ season: +k.split('|')[0], manager: k.split('|')[1], l })).sort((a, b) => b.l - a.l);
     const holders = (rows, k) => { const top = rows.filter(r => r[k] === rows[0][k]); return `${escH(top[0].manager)} ${top[0].season}${top.length > 1 ? ` and ${top.length - 1} other${top.length > 2 ? 's' : ''}` : ''}`; };
+    // All-play win rate so far: how often each team's weekly score beat every other team's that week.
+    // Win/loss pace projects the rest of the season at that rate instead of stretching the current
+    // record (a 0-5 team that scores like a 2-win team isn't really on pace for 14 losses).
+    const weekScores = {}, ap = {};
+    played26.forEach(x => { (weekScores[x.week] ||= []).push([x.home, x.home_score], [x.away, x.away_score]); });
+    Object.values(weekScores).forEach(rows => rows.forEach(([t, sc]) => { const a = (ap[t] ||= { w: 0, n: 0 }); rows.forEach(([o, os]) => { if (o !== t) { a.n++; a.w += sc > os ? 1 : sc === os ? 0.5 : 0; } }); }));
+    const names = list => list.length === 1 ? list[0] : list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
     teams.forEach(t => {
       const mine = played26.filter(x => x.home === t || x.away === t); if (mine.length < 4) return;
       const pts = mine.reduce((s, x) => s + (x.home === t ? x.home_score : x.away_score), 0), ppg = pts / mine.length;
       const w = mine.filter(x => (x.winner === 'HOME' && x.home === t) || (x.winner === 'AWAY' && x.away === t)).length, l = mine.length - w;
       const rank = 1 + byPpg.filter(s => s.ppg > ppg).length;
-      if (ppg >= byPpg[2].ppg * 0.95) items.push({ m: t, score: 60 - rank, html: `${who(t)} is scoring <b>${f1(ppg)}</b> a game, on pace for the <b>${rank === 1 ? 'best' : ordn(rank) + '-best'}</b> regular season ever (record: ${f1(byPpg[0].ppg)}, ${escH(byPpg[0].manager)} ${byPpg[0].season}).` });
+      if (rank <= 3) items.push({ m: t, score: 60 - rank, html: `${who(t)} is scoring <b>${f1(ppg)}</b> a game, on pace for the <b>${rank === 1 ? 'best' : ordn(rank) + '-best'}</b> regular season ever (record: ${f1(byPpg[0].ppg)}, ${escH(byPpg[0].manager)} ${byPpg[0].season}).` });
       const rankLow = 1 + byPpgLow.filter(s => s.ppg < ppg).length;
-      if (ppg <= byPpgLow[2].ppg * 1.05) items.push({ m: t, score: 55 - rankLow, html: `${who(t)} is averaging just <b>${f1(ppg)}</b>, on pace for the <b>${rankLow === 1 ? 'lowest' : ordn(rankLow) + '-lowest'}</b> scoring season ever (${f1(byPpgLow[0].ppg)}, ${escH(byPpgLow[0].manager)} ${byPpgLow[0].season}).` });
-      const winPace = w / mine.length * reg, lossPace = l / mine.length * reg;
-      if (winsRows[0] && winPace >= winsRows[0].w - 1) items.push({ m: t, score: 50 + w, html: `${who(t)} is ${w}-${l}, on pace for <b>${winPace.toFixed(0)} wins</b> (regular-season record: ${winsRows[0].w}, ${holders(winsRows, 'w')}).` });
-      if (mostLosses[0] && lossPace >= mostLosses[0].l - 1) items.push({ m: t, score: 50 + l, html: `${who(t)} is ${w}-${l}, on pace for <b>${lossPace.toFixed(0)} losses</b> (most ever in a regular season: ${mostLosses[0].l}, ${holders(mostLosses, 'l')}).` });
+      if (rankLow <= 3) items.push({ m: t, score: 55 - rankLow, html: `${who(t)} is averaging just <b>${f1(ppg)}</b>, on pace for the <b>${rankLow === 1 ? 'lowest' : ordn(rankLow) + '-lowest'}</b> scoring season ever (${f1(byPpgLow[0].ppg)}, ${escH(byPpgLow[0].manager)} ${byPpgLow[0].season}).` });
+      const left = reg - mine.length, apPct = ap[t] && ap[t].n ? ap[t].w / ap[t].n : w / mine.length;
+      const projW = Math.round(w + left * apPct), projL = Math.round(l + left * (1 - apPct));
+      // grp + tpl let teams in the same spot share one sentence ("Ainsworth and Glaser are both 4-1...")
+      if (winsRows[0] && projW >= winsRows[0].w - 1) items.push({ m: t, score: 50 + w, grp: `w|${w}-${l}|${projW}`,
+        tpl: (ws, many) => `${ws} ${many ? 'are both' : 'is'} ${w}-${l} and ${many ? 'project' : 'projects'} to <b>${projW} wins</b> on ${many ? 'their' : 'his'} scoring so far (regular-season record: ${winsRows[0].w}, ${holders(winsRows, 'w')}).` });
+      if (mostLosses[0] && projL >= mostLosses[0].l - 1) items.push({ m: t, score: 50 + l, grp: `l|${w}-${l}|${projL}`,
+        tpl: (ws, many) => `${ws} ${many ? 'are both' : 'is'} ${w}-${l} and ${many ? 'project' : 'projects'} to <b>${projL} losses</b> on ${many ? 'their' : 'his'} scoring so far (most ever in a regular season: ${mostLosses[0].l}, ${holders(mostLosses, 'l')}).` });
     });
 
     // --- streaks (all games, carry over between seasons) ---
@@ -108,7 +119,15 @@ const NWL_REC = (() => {
 
     // most notable first; one item per manager, at most 3
     const seen = new Set(), out = [];
-    items.sort((a, b) => b.score - a.score).forEach(it => { if (out.length < 3 && !seen.has(it.m)) { seen.add(it.m); out.push(it); } });
+    items.sort((a, b) => b.score - a.score);
+    // merge items that say the same thing about several teams into one sentence
+    const merged = [], byGrp = {};
+    items.forEach(it => {
+      if (it.grp && byGrp[it.grp]) { byGrp[it.grp].ms.push(it.m); return; }
+      const x = { ...it, ms: [it.m] }; if (it.grp) byGrp[it.grp] = x; merged.push(x);
+    });
+    merged.forEach(it => { if (it.tpl) it.html = it.tpl(names(it.ms.map(who)), it.ms.length > 1); });
+    merged.forEach(it => { if (out.length < 3 && !it.ms.some(m => seen.has(m))) { it.ms.forEach(m => seen.add(m)); out.push(it); } });
     return out;
   }
 

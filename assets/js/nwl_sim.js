@@ -1,4 +1,4 @@
-// Playoff Odds simulator, shared by the 2026 Hub's Playoff Odds tab and its matchup previews.
+// Playoff simulator, shared by the 2026 Hub's Playoff Race tab and its matchup previews.
 // Needs trade_engine.js loaded with D = trade_values.json (for each roster's projected lineup strength).
 //
 // Model: each team's weekly score ~ Normal(mu, sd). mu blends the team's actual 2026 PPG with its
@@ -86,5 +86,15 @@ const NWL_SIM = (() => {
     return out;
   }
 
-  return { setup, run, key, state: () => S };
+  // Projected seeds 1-12: the seeding rules applied to projected wins and points (division leaders
+  // 1-3, then wild cards, then everyone else by record), so every seed appears exactly once.
+  function projectedSeeds(odds) {
+    const w = {}, pf = {}; S.teams.forEach(t => { w[t] = odds[t].wins; pf[t] = odds[t].pf; });
+    const top = seedTeams(w, pf);
+    const rest = S.teams.filter(t => !top.includes(t)).sort((a, b) => (w[b] - w[a]) || (pf[b] - pf[a]));
+    const out = {}; [...top, ...rest].forEach((t, k) => { out[t] = k + 1; });
+    return out;
+  }
+
+  return { setup, run, key, projectedSeeds, state: () => S };
 })();

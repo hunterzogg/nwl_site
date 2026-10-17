@@ -68,7 +68,18 @@ This writes/updates five files under `data/season_2026/`:
 ## After running — walk through publishing
 
 Matchups and standings are pure facts pulled straight from ESPN — they don't need review, and
-just having run the script is enough for those two files. Power rankings, commentary, and Brian's
+just having run the script is enough for those two files.
+
+**Computed features refresh by themselves.** The 2026 Hub's **Playoff Race** tab, the **matchup
+previews**, the **Record Watch** banner (Hub + homepage) and **This week in NWL history** (homepage
+card + Hub strip) have no files of their own to edit. They're computed in the browser from what the
+pull writes: `schedule.json` (every regular-season game, the current week, divisions and playoff
+format, from `fetch_espn_week.py`), `matchups.json` (projections and, for the week in progress, live
+scores from ESPN's `totalPointsLive`), `trade_values.json` (rosters, this week's projections) and
+`power_rankings.json`, plus the static history files. So after a pull, just sanity-check them: open
+the Hub, confirm the Playoff Race totals look sane (the table's playoff column sums to 6 spots) and
+Record Watch/history show the new week. They're also good commentary and Fun Facts material:
+the biggest playoff-odds swing of the week, a team closing in on a record, or that week's history items. Power rankings, commentary, and Brian's
 Fun Facts are the editorial layer and are deliberately never auto-published, so always do the
 following instead of treating the script's success as "done":
 
