@@ -6,7 +6,7 @@
 <title>2026 Hub — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=15">
+<link rel="stylesheet" href="../assets/css/style.css?v=17">
 <style>
 .empty-state {
   background: var(--surface); border: 1px dashed var(--line); border-radius: 14px;
@@ -120,6 +120,54 @@
   font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--text-muted); margin-bottom: 12px; border-left: 3px solid var(--live); padding-left: 10px;
 }
+.odds-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.odds-head p { margin: 0; color: var(--text-muted); font-size: 0.82rem; }
+.odds-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.odds-table th { text-align: right; font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+.odds-table th:first-child, .odds-table td:first-child { text-align: left; }
+.odds-table td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: right; font-family: var(--font-mono); white-space: nowrap; }
+.odds-table td.team { font-family: var(--font-body); }
+.odds-table tr.cut td { border-bottom: 2px dashed var(--live); }
+.odds-pct { position: relative; display: block; min-width: 64px; padding: 3px 6px; border-radius: 4px; z-index: 0; background: var(--bg); text-align: right; }
+.odds-pct::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: var(--p); background: rgba(79,168,118,0.35); border-radius: 4px; z-index: -1; }
+.odds-pct.title::before { background: rgba(242,183,5,0.26); }
+.odds-delta { display: block; font-size: 0.68rem; } .odds-delta.up { color: #4FA876; } .odds-delta.down { color: #E0524A; } .odds-delta.flat { color: var(--text-muted); }
+.odds-sub { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
+.odds-cards { display: none; }
+@media (max-width: 640px) {
+  .odds-wide { display: none; } .odds-cards { display: flex; flex-direction: column; gap: 8px; }
+  .odds-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; }
+  .odds-card .nums { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-family: var(--font-mono); font-size: 0.85rem; }
+  .odds-card .nums div small { display: block; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+}
+.whatif { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.whatif h3 { margin: 0 0 4px; font-size: 1rem; }
+.whatif p { margin: 0 0 10px; color: var(--text-muted); font-size: 0.82rem; }
+.whatif-games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 8px; margin-top: 10px; }
+.whatif-game { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--bg); border-radius: 8px; padding: 4px; }
+.whatif-game button { font: inherit; font-size: 0.85rem; border: 1px solid transparent; background: none; color: var(--text-muted); border-radius: 6px; padding: 7px 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.whatif-game button:hover { color: var(--text); }
+.whatif-game button[aria-pressed="true"] { background: var(--surface-raised); color: var(--text); border-color: var(--live); }
+.whatif-game button small { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); }
+.whatif-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.whatif-reset { font: inherit; font-size: 0.8rem; background: none; border: 1px solid var(--line-strong); color: var(--text); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.mp { border-top: 1px solid var(--line); padding-top: 8px; font-size: 0.84rem; }
+.mp summary { cursor: pointer; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.78rem; color: var(--live-bright); list-style: none; }
+.mp summary::-webkit-details-marker { display: none; }
+.mp summary::before { content: '▸ '; } .mp[open] summary::before { content: '▾ '; }
+.mp-prob { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; margin: 10px 0; font-size: 0.8rem; }
+.mp-prob b { font-family: var(--font-mono); }
+.mp-probbar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--line); }
+.mp-grid { display: grid; grid-template-columns: 92px 1fr; gap: 6px 10px; }
+.mp-k { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); padding-top: 2px; }
+.mp-two { display: flex; flex-direction: column; gap: 3px; }
+.mp-muted { color: var(--text-muted); }
+.mp-f { display: inline-block; width: 16px; text-align: center; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; border-radius: 3px; margin-left: 2px; }
+.mp-f.W { background: rgba(79,168,118,0.2); color: #4FA876; } .mp-f.L { background: rgba(224,82,74,0.18); color: #E0524A; } .mp-f.T { background: var(--surface-raised); }
+.mp-watch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.mp-watch ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mp-inj { color: #E0524A; font-size: 0.72rem; }
+@media (max-width: 420px) { .mp-grid { grid-template-columns: 1fr; gap: 2px; } .mp-k { padding-top: 6px; } .mp-watch { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -131,9 +179,12 @@
     <p>This week's matchups, standings, power rankings, recap and Brian's Fun Facts. Updated throughout the season.</p>
   </header>
 
+  <div class="rw-banner" id="recordWatch" hidden></div>
+
   <div class="tab-row live">
     <button class="tab-btn active" data-tab="matchups">Matchups</button>
     <button class="tab-btn" data-tab="standings">Standings</button>
+    <button class="tab-btn" data-tab="odds">Playoff Odds</button>
     <button class="tab-btn" data-tab="power">Power Rankings</button>
     <button class="tab-btn" data-tab="commentary">Commentary</button>
     <button class="tab-btn" data-tab="funfacts">Brian's Fun Facts</button>
@@ -143,6 +194,7 @@
     <div class="controls-row">
       <select id="matchupsWeek"></select>
     </div>
+    <section class="twh compact" id="historyWeek" hidden aria-label="This week in NWL history"></section>
     <div id="matchupsContent">
       <div class="matchup-grid">
         <div class="skeleton-block"></div><div class="skeleton-block"></div><div class="skeleton-block"></div>
@@ -154,6 +206,19 @@
     <div id="standingsContent">
       <div class="skeleton-line short"></div>
       <div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-odds">
+    <div id="oddsContent">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div>
+    </div>
+    <div class="methodology" style="margin-top: 18px;">
+      <details>
+        <summary>Show methodology</summary>
+        <div style="margin-top: 8px;" id="oddsMethod"></div>
+      </details>
     </div>
   </div>
 
@@ -192,11 +257,15 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=22"></script>
+<script src="../assets/js/shared.js?v=23"></script>
+<script src="../assets/js/trade_engine.js?v=2"></script>
+<script src="../assets/js/nwl_sim.js?v=1"></script>
+<script src="../assets/js/nwl_records.js?v=2"></script>
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];
 let managerDivision = {};
+let schedule = null, history = [], weeklyHist = [], seasonsHist = [];
 const DIVISION_ORDER = ['Gold', 'Silver', 'Bronze'];
 
 function emptyState(headline, sub) {
@@ -264,6 +333,7 @@ function renderMatchups() {
               <span class="hx-pill">O/U <b>${g.line.over_under.toFixed(1)}</b></span>
             </div>
           ` : ''}
+          ${!done && g.away_manager ? previewHTML(g, entry.week) : ''}
         </div>
       `;
       }).join('')}
@@ -479,6 +549,127 @@ function renderCommentary() {
   document.getElementById('giscus-container').appendChild(script);
 }
 
+/* ---------- Matchup previews (all computed, nothing hand-written) ---------- */
+let _playoffStart = null;
+function playoffStart(season) { // first playoff week of a past season, from weekly_scores game_type
+  if (!_playoffStart) { _playoffStart = {}; weeklyHist.forEach(r => { if (r.game_type === 'playoff') { const w = +r.week; if (!_playoffStart[r.season] || w < _playoffStart[r.season]) _playoffStart[r.season] = w; } }); }
+  return _playoffStart[season] || 99;
+}
+// a playoff meeting = a game in the playoff weeks between two teams that both finished top 6 that season
+// (weeks 15-17 also hold consolation games, so the week alone isn't enough)
+const _finish = {};
+function finish(season, m) { const k = season + '|' + m; if (!(k in _finish)) { const r = seasonsHist.find(x => x.season === String(season) && x.manager === m); _finish[k] = r ? +r.final_finish : 99; } return _finish[k]; }
+function h2h(a, b) {
+  const games = history.filter(r => (r.winner === a && r.loser === b) || (r.winner === b && r.loser === a))
+    .map(r => ({ season: +r.season, week: +r.week, winner: r.winner, ws: +r.winning_score, ls: +r.losing_score, playoff: +r.week >= playoffStart(r.season) && finish(r.season, a) <= 6 && finish(r.season, b) <= 6 }));
+  (schedule ? schedule.games : []).filter(g => ['HOME', 'AWAY'].includes(g.winner) && ((g.home === a && g.away === b) || (g.home === b && g.away === a)))
+    .forEach(g => { const hw = g.winner === 'HOME'; games.push({ season: 2026, week: g.week, winner: hw ? g.home : g.away, ws: hw ? g.home_score : g.away_score, ls: hw ? g.away_score : g.home_score, playoff: false }); });
+  games.sort((x, y) => x.season - y.season || x.week - y.week);
+  const w = m => games.filter(x => x.winner === m).length;
+  let streak = 0, holder = null; for (let i = games.length - 1; i >= 0; i--) { if (!holder) holder = games[i].winner; if (games[i].winner !== holder) break; streak++; }
+  return { n: games.length, a: w(a), b: w(b), po: games.filter(x => x.playoff), last: games[games.length - 1], holder, streak };
+}
+function form(m, beforeWeek) {
+  const gs = (schedule ? schedule.games : []).filter(g => g.week < beforeWeek && ['HOME', 'AWAY', 'TIE'].includes(g.winner) && (g.home === m || g.away === m)).slice(-3);
+  return gs.map(g => { const home = g.home === m, pf = home ? g.home_score : g.away_score, pa = home ? g.away_score : g.home_score; return { r: g.winner === 'TIE' ? 'T' : (g.winner === 'HOME') === home ? 'W' : 'L', pf, pa }; });
+}
+function watchList(m) {
+  if (!D || !team(m)) return [];
+  return lineup(team(m).players, p => p.wk || 0).st.filter(x => P(x[1]).pos !== 'HC').sort((x, y) => y[2] - x[2]).slice(0, 3).map(x => P(x[1]));
+}
+function previewHTML(g, week) {
+  const a = g.home_manager, b = g.away_manager;
+  const sd = (D && D.score_sd) || 25;
+  const pA = g.home_projected != null && g.away_projected != null ? Phi((g.home_projected - g.away_projected) / (sd * Math.SQRT2)) : null;
+  const H = h2h(a, b);
+  const latest = powerRankings.filter(p => p.published).slice(-1)[0];
+  const pr = m => latest ? (latest.rankings.find(r => r.manager === m) || {}) : {};
+  const formStr = m => form(m, week).map(f => `<span class="mp-f ${f.r}" title="${f.pf.toFixed(1)}–${f.pa.toFixed(1)}">${f.r}</span>`).join('') || '<span class="mp-muted">—</span>';
+  const watch = m => watchList(m).map(p => `<li>${posTag(p.pos)} ${esc(p.name)} <span class="mp-muted">${(p.wk || 0).toFixed(1)}</span>${p.inj ? ` <span class="mp-inj">${esc(p.inj.replace('_', ' ').toLowerCase())}</span>` : ''}</li>`).join('');
+  const last = H.last ? `${H.last.season} wk ${H.last.week}: ${esc(H.last.winner)} ${H.last.ws.toFixed(H.last.ws % 1 ? 1 : 0)}–${H.last.ls.toFixed(H.last.ls % 1 ? 1 : 0)}${H.last.playoff ? ' (playoffs)' : ''}` : 'First meeting';
+  const key = NWL_SIM.key({ week, home: a });
+  return `<details class="mp" data-mpkey="${key}" data-a="${esc(a)}" data-b="${esc(b)}"><summary>Preview</summary>
+    ${pA != null ? `<div class="mp-prob"><span>${esc(a)} <b>${Math.round(pA * 100)}%</b></span><div class="mp-probbar"><span style="width:${(pA * 100).toFixed(1)}%;background:${managerColor(managers, a)}"></span><span style="width:${(100 - pA * 100).toFixed(1)}%;background:${managerColor(managers, b)}"></span></div><span><b>${Math.round(100 - pA * 100)}%</b> ${esc(b)}</span></div>` : ''}
+    <div class="mp-grid">
+      <div class="mp-k">All-time</div><div>${H.n ? `<b>${esc(a)} ${H.a}–${H.b} ${esc(b)}</b>${H.po.length ? ` · ${H.po.length} playoff meeting${H.po.length === 1 ? '' : 's'}` : ''}${H.streak > 1 ? ` · ${esc(H.holder)} has won ${H.streak} straight` : ''}` : 'Never met'}</div>
+      <div class="mp-k">Last meeting</div><div>${last}</div>
+      <div class="mp-k">Form</div><div class="mp-two"><span>${esc(a)} ${formStr(a)}${pr(a).rank ? ` <span class="mp-muted">· power #${pr(a).rank}</span>` : ''}</span><span>${esc(b)} ${formStr(b)}${pr(b).rank ? ` <span class="mp-muted">· power #${pr(b).rank}</span>` : ''}</span></div>
+      <div class="mp-k">Stakes</div><div class="mp-stakes">${oddsReady() ? '<span class="mp-muted">Simulating…</span>' : '<span class="mp-muted">Playoff odds unavailable</span>'}</div>
+    </div>
+    ${D ? `<div class="mp-watch"><div><div class="mp-k">${esc(a)} to watch</div><ul>${watch(a)}</ul></div><div><div class="mp-k">${esc(b)} to watch</div><ul>${watch(b)}</ul></div></div>` : ''}
+  </details>`;
+}
+// Stakes: playoff odds with a win vs. a loss, simulated the first time a preview is opened
+document.addEventListener('toggle', e => {
+  const d = e.target; if (!d.matches || !d.matches('details.mp') || !d.open || d.dataset.done || !oddsReady()) return;
+  d.dataset.done = 1;
+  setTimeout(() => {
+    if (!oddsBase) computeOddsBase();
+    const k = d.dataset.mpkey, a = d.dataset.a, b = d.dataset.b;
+    const home = NWL_SIM.run(5000, { [k]: 'HOME' }), away = NWL_SIM.run(5000, { [k]: 'AWAY' });
+    const line = (m, win, lose) => `<span><b>${esc(m)}</b> playoffs ${pct(lose[m].playoff)} → <b>${pct(win[m].playoff)}</b> with a win</span>`;
+    d.querySelector('.mp-stakes').innerHTML = `<div class="mp-two">${line(a, home, away)}${line(b, away, home)}</div>`;
+  }, 10);
+}, true);
+
+/* ---------- Playoff Odds (simulator in assets/js/nwl_sim.js) ---------- */
+let oddsBase = null, oddsPrev = null, oddsLocks = {}, oddsWeek = null;
+const pct = x => x >= 0.995 && x < 1 ? '>99%' : x > 0 && x < 0.005 ? '<1%' : Math.round(x * 100) + '%';
+function oddsReady() { return schedule && schedule.games && schedule.games.length && D; }
+function computeOddsBase() {
+  // "before" odds: the same model with the last completed week's games treated as unplayed
+  const lastDone = Math.max(0, ...schedule.games.filter(g => ['HOME', 'AWAY', 'TIE'].includes(g.winner)).map(g => g.week));
+  if (lastDone > 1) { NWL_SIM.setup(schedule, lastDone); oddsPrev = { week: lastDone, odds: NWL_SIM.run(6000) }; }
+  NWL_SIM.setup(schedule);
+  oddsBase = NWL_SIM.run(10000);
+  const rem = NWL_SIM.state().remaining;
+  oddsWeek = rem.length ? Math.min(...rem.map(g => g.week)) : null;
+}
+function renderOdds() {
+  const el = document.getElementById('oddsContent');
+  if (!oddsReady()) { el.innerHTML = emptyState('Playoff odds aren\'t available yet', 'They appear once the weekly data pull has saved the season schedule.'); return; }
+  if (!oddsBase) computeOddsBase();
+  const locked = Object.keys(oddsLocks).length;
+  const odds = locked ? NWL_SIM.run(10000, oddsLocks) : oddsBase;
+  const S = NWL_SIM.state();
+  const rec = {}; S.teams.forEach(t => rec[t] = [0, 0, 0]);
+  S.played.forEach(g => { if (g.winner === 'HOME') { rec[g.home][0]++; rec[g.away][1]++; } else if (g.winner === 'AWAY') { rec[g.away][0]++; rec[g.home][1]++; } else { rec[g.home][2]++; rec[g.away][2]++; } });
+  const recStr = t => rec[t][0] + '-' + rec[t][1] + (rec[t][2] ? '-' + rec[t][2] : '');
+  const rows = [...S.teams].sort((a, b) => odds[b].playoff - odds[a].playoff || odds[b].title - odds[a].title || odds[b].wins - odds[a].wins);
+  const ref = locked ? oddsBase : (oddsPrev && oddsPrev.odds);
+  const delta = (t, k) => { if (!ref) return ''; const d = Math.round((odds[t][k] - ref[t][k]) * 100); return `<span class="odds-delta ${d > 0 ? 'up' : d < 0 ? 'down' : 'flat'}">${d > 0 ? '▲' + d : d < 0 ? '▼' + Math.abs(d) : '—'}</span>`; };
+  const likely = t => { const sd = odds[t].seeds; let best = 1; for (let k = 1; k < sd.length; k++) if (sd[k] > sd[best]) best = k; return best <= S.poTeams ? `#${best} seed` : `${ord(best)} place`; };
+  const cell = (t, k, cls = '') => `<span class="odds-pct ${cls}" style="--p:${(odds[t][k] * 100).toFixed(1)}%">${pct(odds[t][k])}</span>${delta(t, k)}`;
+  const deltaLabel = locked ? 'vs. no picks' : oddsPrev ? `vs. before week ${oddsPrev.week}` : '';
+  el.innerHTML = `<div class="odds-head"><p>${(10000).toLocaleString()} simulated seasons${locked ? ` with your ${locked} pick${locked === 1 ? '' : 's'}` : ''} · ${S.remaining.length} regular-season games left${deltaLabel ? ' · arrows ' + deltaLabel : ''}</p></div>
+    <div class="odds-wide" style="overflow-x:auto"><table class="odds-table"><thead><tr><th>Team</th><th>Record</th><th>Proj. W</th><th>Playoffs</th><th>Bye</th><th>Division</th><th>#1 seed</th><th>Final</th><th>Title</th><th>Most likely</th></tr></thead><tbody>
+      ${rows.map((t, i) => `<tr class="${i === S.poTeams - 1 ? 'cut' : ''}"><td class="team">${managerTagWithDivision(managers, t)}</td><td>${recStr(t)}</td><td>${odds[t].wins.toFixed(1)}</td><td>${cell(t, 'playoff')}</td><td>${cell(t, 'bye')}</td><td>${cell(t, 'divWin')}</td><td>${cell(t, 'seed1')}</td><td>${cell(t, 'final')}</td><td>${cell(t, 'title', 'title')}</td><td class="odds-sub">${likely(t)}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="odds-cards">${rows.map(t => `<div class="odds-card"><div>${managerTagWithDivision(managers, t)} <span class="odds-sub">${recStr(t)} · proj ${odds[t].wins.toFixed(1)} W</span></div><div class="odds-sub">${likely(t)}</div>
+      <div class="nums"><div><small>Playoffs</small>${cell(t, 'playoff')}</div><div><small>Bye</small>${cell(t, 'bye')}</div><div><small>Division</small>${cell(t, 'divWin')}</div><div><small>Title</small>${cell(t, 'title', 'title')}</div></div></div>`).join('')}</div>
+    ${whatIfHTML()}`;
+  document.getElementById('oddsMethod').innerHTML = `<p><strong>Model.</strong> Each team's weekly score is drawn from a normal distribution. Its average blends the team's actual 2026 points per game with its projected starting lineup (the same rest-of-season blend the Trade Calculator uses, scaled to the league's real scoring level), with the projection counting ${Math.round(S.wProj * 100)}% right now. It counts more early in the season and less as games are played. The spread is the league's ${S.sd}-point weekly score spread.</p>
+    <p><strong>Seeding.</strong> The three division winners take seeds 1–3 by record, then the three best remaining records are the wild cards (seeds 4–6). Total points break ties. Seeds 1 and 2 get the week ${S.playoffWeeks[0]} bye. Week ${S.playoffWeeks[0]}: 3 vs 6 and 4 vs 5. Week ${S.playoffWeeks[1]}: #1 plays the lowest remaining seed, #2 the other. Week ${S.playoffWeeks[2]}: the final.</p>
+    <p><strong>Arrows</strong> compare with the same model before last week's games were played, or with no picks when you've picked winners below. Games in progress are simulated from scratch. The random numbers are fixed, so the odds only change when results or rosters do.</p>`;
+}
+function whatIfHTML() {
+  const S = NWL_SIM.state(); if (!S.remaining.length) return '';
+  const weeks = [...new Set(S.remaining.map(g => g.week))].sort((a, b) => a - b);
+  const games = S.remaining.filter(g => g.week === oddsWeek);
+  const btn = (g, side) => { const mgr = side === 'HOME' ? g.home : g.away, on = oddsLocks[NWL_SIM.key(g)] === side;
+    return `<button type="button" data-lock="${NWL_SIM.key(g)}" data-side="${side}" aria-pressed="${on}">${managerTag(managers, mgr)}</button>`; };
+  return `<section class="whatif"><div class="whatif-bar"><div><h3>What if?</h3><p>Pick winners and the odds above re-run with those results locked in.</p></div>
+      ${Object.keys(oddsLocks).length ? `<button type="button" class="whatif-reset" data-resetlocks>Clear ${Object.keys(oddsLocks).length} pick${Object.keys(oddsLocks).length === 1 ? '' : 's'}</button>` : ''}</div>
+    <div class="hx-chips" style="margin:6px 0 0">${weeks.map(w => `<button type="button" class="hx-chip" aria-pressed="${w === oddsWeek}" data-oddsweek="${w}">Week ${w}${S.remaining.some(g => g.week === w && oddsLocks[NWL_SIM.key(g)]) ? ' •' : ''}</button>`).join('')}</div>
+    <div class="whatif-games">${games.map(g => `<div class="whatif-game">${btn(g, 'HOME')}${btn(g, 'AWAY')}</div>`).join('')}</div></section>`;
+}
+document.addEventListener('click', e => {
+  const l = e.target.closest('[data-lock]');
+  if (l) { const k = l.dataset.lock; if (oddsLocks[k] === l.dataset.side) delete oddsLocks[k]; else oddsLocks[k] = l.dataset.side; renderOdds(); return; }
+  const w = e.target.closest('[data-oddsweek]'); if (w) { oddsWeek = +w.dataset.oddsweek; renderOdds(); return; }
+  if (e.target.closest('[data-resetlocks]')) { oddsLocks = {}; renderOdds(); }
+});
+
 async function init() {
   managers = await getManagers();
   [matchups, standings, powerRankings, commentary, funFacts] = await Promise.all([
@@ -488,6 +679,8 @@ async function init() {
     loadDataSafe('season_2026/commentary', []),
     loadDataSafe('season_2026/fun_facts', []),
   ]);
+  [schedule, D, history, weeklyHist] = await Promise.all([loadDataSafe('season_2026/schedule', null), loadDataSafe('season_2026/trade_values', null), loadDataSafe('matchup_results', []), loadDataSafe('weekly_scores', [])]);
+  seasonsHist = await loadDataSafe('team_seasons_regular', []);
 
   managerDivision = {};
   if (standings && standings.standings) {
@@ -511,6 +704,12 @@ async function init() {
   renderPower();
   renderCommentary();
   renderFunFacts();
+  renderOdds();
+  NWL_REC.renderRecordWatch(document.getElementById('recordWatch'), NWL_REC.recordWatch({ weekly: weeklyHist, matchups: history, schedule, live: matchups }));
+  Promise.all([loadDataSafe('player_week_highlights', []), loadDataSafe('trades', []), loadDataSafe('transactions_with_dates', [])]).then(([highlights, trades, tx]) => {
+    const week = (schedule && schedule.current_week) || (matchups.length ? matchups[matchups.length - 1].week : 1);
+    NWL_REC.renderHistory(document.getElementById('historyWeek'), NWL_REC.historyThisWeek({ weekly: weeklyHist, matchups: history, seasons: seasonsHist, highlights, trades, tx, week, today: new Date(), prefix: '../' }), week, true);
+  });
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {

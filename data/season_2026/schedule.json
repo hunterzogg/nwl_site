@@ -1,0 +1,704 @@
+{
+  "updated_at": "2026-10-17T17:11:43.569042+00:00",
+  "current_week": 6,
+  "regular_season_weeks": 14,
+  "playoff_teams": 6,
+  "playoff_weeks": [
+    15,
+    16,
+    17
+  ],
+  "bye_seeds": 2,
+  "seeding": {
+    "division_winners_first": true,
+    "tiebreak": "TOTAL_POINTS_SCORED"
+  },
+  "divisions": {
+    "Ainsworth": "Gold",
+    "Glaser": "Silver",
+    "Muenchow": "Silver",
+    "Goetz": "Bronze",
+    "Larson": "Silver",
+    "Stover": "Gold",
+    "Palaia": "Silver",
+    "Conlin": "Gold",
+    "Prodahl": "Bronze",
+    "Zogg": "Bronze",
+    "Hagan": "Bronze",
+    "Pfaffinger": "Gold"
+  },
+  "games": [
+    {
+      "week": 1,
+      "home": "Goetz",
+      "away": "Stover",
+      "home_score": 108.06,
+      "away_score": 85.46,
+      "winner": "HOME"
+    },
+    {
+      "week": 1,
+      "home": "Hagan",
+      "away": "Conlin",
+      "home_score": 78.02,
+      "away_score": 129.86,
+      "winner": "AWAY"
+    },
+    {
+      "week": 1,
+      "home": "Larson",
+      "away": "Prodahl",
+      "home_score": 101.86,
+      "away_score": 87.92,
+      "winner": "HOME"
+    },
+    {
+      "week": 1,
+      "home": "Muenchow",
+      "away": "Pfaffinger",
+      "home_score": 133.46,
+      "away_score": 95.3,
+      "winner": "HOME"
+    },
+    {
+      "week": 1,
+      "home": "Palaia",
+      "away": "Glaser",
+      "home_score": 104.76,
+      "away_score": 152.9,
+      "winner": "AWAY"
+    },
+    {
+      "week": 1,
+      "home": "Zogg",
+      "away": "Ainsworth",
+      "home_score": 68.5,
+      "away_score": 165.56,
+      "winner": "AWAY"
+    },
+    {
+      "week": 2,
+      "home": "Conlin",
+      "away": "Ainsworth",
+      "home_score": 95.52,
+      "away_score": 118.28,
+      "winner": "AWAY"
+    },
+    {
+      "week": 2,
+      "home": "Glaser",
+      "away": "Muenchow",
+      "home_score": 112.96,
+      "away_score": 76.42,
+      "winner": "HOME"
+    },
+    {
+      "week": 2,
+      "home": "Goetz",
+      "away": "Zogg",
+      "home_score": 75.6,
+      "away_score": 138.86,
+      "winner": "AWAY"
+    },
+    {
+      "week": 2,
+      "home": "Larson",
+      "away": "Palaia",
+      "home_score": 101.68,
+      "away_score": 58.84,
+      "winner": "HOME"
+    },
+    {
+      "week": 2,
+      "home": "Pfaffinger",
+      "away": "Hagan",
+      "home_score": 70.9,
+      "away_score": 105.06,
+      "winner": "AWAY"
+    },
+    {
+      "week": 2,
+      "home": "Stover",
+      "away": "Prodahl",
+      "home_score": 72.98,
+      "away_score": 84.92,
+      "winner": "AWAY"
+    },
+    {
+      "week": 3,
+      "home": "Conlin",
+      "away": "Muenchow",
+      "home_score": 81.06,
+      "away_score": 102.5,
+      "winner": "AWAY"
+    },
+    {
+      "week": 3,
+      "home": "Goetz",
+      "away": "Prodahl",
+      "home_score": 121.34,
+      "away_score": 103.86,
+      "winner": "HOME"
+    },
+    {
+      "week": 3,
+      "home": "Hagan",
+      "away": "Zogg",
+      "home_score": 85.62,
+      "away_score": 68.84,
+      "winner": "HOME"
+    },
+    {
+      "week": 3,
+      "home": "Larson",
+      "away": "Glaser",
+      "home_score": 106.34,
+      "away_score": 113.14,
+      "winner": "AWAY"
+    },
+    {
+      "week": 3,
+      "home": "Palaia",
+      "away": "Pfaffinger",
+      "home_score": 132.16,
+      "away_score": 73.14,
+      "winner": "HOME"
+    },
+    {
+      "week": 3,
+      "home": "Stover",
+      "away": "Ainsworth",
+      "home_score": 101.28,
+      "away_score": 99.1,
+      "winner": "HOME"
+    },
+    {
+      "week": 4,
+      "home": "Glaser",
+      "away": "Ainsworth",
+      "home_score": 73.18,
+      "away_score": 99.34,
+      "winner": "AWAY"
+    },
+    {
+      "week": 4,
+      "home": "Larson",
+      "away": "Hagan",
+      "home_score": 114.2,
+      "away_score": 75.52,
+      "winner": "HOME"
+    },
+    {
+      "week": 4,
+      "home": "Muenchow",
+      "away": "Palaia",
+      "home_score": 82.08,
+      "away_score": 119.58,
+      "winner": "AWAY"
+    },
+    {
+      "week": 4,
+      "home": "Pfaffinger",
+      "away": "Goetz",
+      "home_score": 120.56,
+      "away_score": 138.78,
+      "winner": "AWAY"
+    },
+    {
+      "week": 4,
+      "home": "Prodahl",
+      "away": "Zogg",
+      "home_score": 91.78,
+      "away_score": 121.1,
+      "winner": "AWAY"
+    },
+    {
+      "week": 4,
+      "home": "Stover",
+      "away": "Conlin",
+      "home_score": 100.72,
+      "away_score": 75.62,
+      "winner": "HOME"
+    },
+    {
+      "week": 5,
+      "home": "Ainsworth",
+      "away": "Pfaffinger",
+      "home_score": 94.48,
+      "away_score": 63.42,
+      "winner": "HOME"
+    },
+    {
+      "week": 5,
+      "home": "Glaser",
+      "away": "Hagan",
+      "home_score": 120.04,
+      "away_score": 88.6,
+      "winner": "HOME"
+    },
+    {
+      "week": 5,
+      "home": "Goetz",
+      "away": "Conlin",
+      "home_score": 105.6,
+      "away_score": 117.5,
+      "winner": "AWAY"
+    },
+    {
+      "week": 5,
+      "home": "Muenchow",
+      "away": "Larson",
+      "home_score": 168.22,
+      "away_score": 81.96,
+      "winner": "HOME"
+    },
+    {
+      "week": 5,
+      "home": "Palaia",
+      "away": "Prodahl",
+      "home_score": 99.84,
+      "away_score": 124.06,
+      "winner": "AWAY"
+    },
+    {
+      "week": 5,
+      "home": "Stover",
+      "away": "Zogg",
+      "home_score": 111.5,
+      "away_score": 69.84,
+      "winner": "HOME"
+    },
+    {
+      "week": 6,
+      "home": "Larson",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 6,
+      "home": "Muenchow",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 6,
+      "home": "Palaia",
+      "away": "Goetz",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 6,
+      "home": "Pfaffinger",
+      "away": "Conlin",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 6,
+      "home": "Prodahl",
+      "away": "Hagan",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 6,
+      "home": "Zogg",
+      "away": "Glaser",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Ainsworth",
+      "away": "Prodahl",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Glaser",
+      "away": "Pfaffinger",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Hagan",
+      "away": "Goetz",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Larson",
+      "away": "Conlin",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Palaia",
+      "away": "Zogg",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 7,
+      "home": "Stover",
+      "away": "Muenchow",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Ainsworth",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Conlin",
+      "away": "Zogg",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Glaser",
+      "away": "Goetz",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Hagan",
+      "away": "Palaia",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Pfaffinger",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 8,
+      "home": "Prodahl",
+      "away": "Muenchow",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Ainsworth",
+      "away": "Palaia",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Conlin",
+      "away": "Prodahl",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Glaser",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Goetz",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Muenchow",
+      "away": "Hagan",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 9,
+      "home": "Pfaffinger",
+      "away": "Zogg",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Conlin",
+      "away": "Palaia",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Glaser",
+      "away": "Prodahl",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Goetz",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Muenchow",
+      "away": "Zogg",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Pfaffinger",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 10,
+      "home": "Stover",
+      "away": "Hagan",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Conlin",
+      "away": "Glaser",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Goetz",
+      "away": "Muenchow",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Hagan",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Palaia",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Prodahl",
+      "away": "Pfaffinger",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 11,
+      "home": "Zogg",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Hagan",
+      "away": "Prodahl",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Larson",
+      "away": "Glaser",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Palaia",
+      "away": "Muenchow",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Pfaffinger",
+      "away": "Conlin",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Stover",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 12,
+      "home": "Zogg",
+      "away": "Goetz",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Conlin",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Glaser",
+      "away": "Palaia",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Goetz",
+      "away": "Hagan",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Muenchow",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Pfaffinger",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 13,
+      "home": "Prodahl",
+      "away": "Zogg",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Conlin",
+      "away": "Ainsworth",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Glaser",
+      "away": "Muenchow",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Goetz",
+      "away": "Prodahl",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Palaia",
+      "away": "Larson",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Pfaffinger",
+      "away": "Stover",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    },
+    {
+      "week": 14,
+      "home": "Zogg",
+      "away": "Hagan",
+      "home_score": 0.0,
+      "away_score": 0.0,
+      "winner": "UNDECIDED"
+    }
+  ]
+}

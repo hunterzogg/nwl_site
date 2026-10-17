@@ -529,3 +529,24 @@ th { background: var(--surface-raised); color: var(--text-muted); }
 .hx-hero.compact h1 { grid-column: 1; font-size: 1.5rem; margin: 0; }
 .hx-hero.compact p { grid-column: 2; grid-row: 1 / span 2; font-size: 0.84rem; max-width: 52ch; justify-self: end; }
 @media (max-width: 640px) { .hx-hero.compact { grid-template-columns: 1fr; } .hx-hero.compact p { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 6px; } }
+
+/* Record watch banner (homepage + 2026 Hub; built by assets/js/nwl_records.js) */
+.rw-banner { background: var(--live-bg); border: 1px solid rgba(242, 183, 5, 0.45); border-radius: 12px; padding: 10px 14px; margin: 0 0 18px; display: flex; gap: 6px 14px; align-items: baseline; flex-wrap: wrap; }
+.rw-label { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.8rem; color: var(--live-bright); white-space: nowrap; }
+.rw-banner ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; flex: 1 1 320px; font-size: 0.88rem; }
+.rw-banner li b { color: var(--text); }
+.rw-banner .manager-tag { font-weight: 600; }
+
+/* This week in NWL history (homepage card + 2026 Hub strip; built by assets/js/nwl_records.js) */
+.twh { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 0 0 18px; }
+.twh-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.twh-eyebrow { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; color: var(--text); }
+.twh-wk { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.twh-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; font-size: 0.88rem; color: var(--text-muted); }
+.twh-list li { padding-left: 22px; position: relative; line-height: 1.45; }
+.twh-list li::before { position: absolute; left: 0; top: 0; font-size: 0.85rem; }
+.twh-list li.team::before { content: '🏈'; } .twh-list li.player::before { content: '⭐'; } .twh-list li.move::before { content: '🔁'; }
+.twh-list b { color: var(--text); font-weight: 600; }
+.twh-links { margin-top: 10px; font-size: 0.78rem; color: var(--text-muted); }
+.twh-links a { color: var(--live-bright); }
+.twh.compact { padding: 10px 14px; } .twh.compact .twh-list { font-size: 0.84rem; gap: 5px; }

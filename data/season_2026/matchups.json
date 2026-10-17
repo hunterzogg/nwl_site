@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-17T16:00:04.666636+00:00",
+    "updated_at": "2026-10-17T17:11:43.563871+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-17T16:00:04.666672+00:00",
+    "updated_at": "2026-10-17T17:11:43.563940+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-17T16:00:04.666688+00:00",
+    "updated_at": "2026-10-17T17:11:43.563982+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,7 +199,7 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-17T16:00:04.666703+00:00",
+    "updated_at": "2026-10-17T17:11:43.564023+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -265,7 +265,7 @@
   },
   {
     "week": 5,
-    "updated_at": "2026-10-17T16:00:04.666717+00:00",
+    "updated_at": "2026-10-17T17:11:43.564088+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -331,7 +331,7 @@
   },
   {
     "week": 6,
-    "updated_at": "2026-10-17T16:00:04.666749+00:00",
+    "updated_at": "2026-10-17T17:11:43.564211+00:00",
     "games": [
       {
         "home_manager": "Pfaffinger",
@@ -352,7 +352,7 @@
         "home_score": 0.0,
         "home_projected": 101.8,
         "away_manager": "Hagan",
-        "away_score": 0.0,
+        "away_score": 16.0,
         "away_projected": 102.1,
         "winner": "UNDECIDED",
         "line": {
@@ -363,10 +363,10 @@
       },
       {
         "home_manager": "Zogg",
-        "home_score": 0.0,
+        "home_score": 4.4,
         "home_projected": 86.0,
         "away_manager": "Glaser",
-        "away_score": 0.0,
+        "away_score": 19.4,
         "away_projected": 107.7,
         "winner": "UNDECIDED",
         "line": {
@@ -377,10 +377,10 @@
       },
       {
         "home_manager": "Palaia",
-        "home_score": 0.0,
+        "home_score": 12.1,
         "home_projected": 101.1,
         "away_manager": "Goetz",
-        "away_score": 0.0,
+        "away_score": 0.2,
         "away_projected": 99.2,
         "winner": "UNDECIDED",
         "line": {

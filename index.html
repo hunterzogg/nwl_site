@@ -6,7 +6,7 @@
 <title>National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=15">
+<link rel="stylesheet" href="assets/css/style.css?v=17">
 <style>
 /* Home: split hero (pitch + crest), live season card, archive cards */
 .home-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line);
@@ -79,6 +79,8 @@
 <div class="container" style="padding-top:0">
   <div class="home-stats"><div class="hx-stats" id="homeStats"></div></div>
 
+  <div class="rw-banner" id="recordWatch" hidden></div>
+
   <a class="live-card" href="pages/season-2026.html" id="liveCard">
     <div>
       <div class="lbl"><span class="nav-live-dot"></span>2026 Season · Live</div>
@@ -87,6 +89,8 @@
     </div>
     <div class="live-facts" id="liveFacts"></div>
   </a>
+
+  <section class="twh" id="historyWeek" hidden aria-label="This week in NWL history"></section>
 
   <div class="hx-section-title"><h2>Explore the archive</h2><span>2013 to today</span></div>
   <div class="arch-grid" id="archive">
@@ -101,8 +105,10 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="assets/js/shared.js?v=22"></script>
+<script src="assets/js/shared.js?v=23"></script>
+<script src="assets/js/nwl_records.js?v=2"></script>
 <script>
+let managers = [];
 const stat = (k, v, s) => `<div class="hx-stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
 async function build() {
   const [weekly, matchups, regSeasons, picks, standings, power, combosList] = await Promise.all([
@@ -132,6 +138,13 @@ async function build() {
   const mgrs = new Set(regSeasons.map(t => t.manager));
   const S = { hof: `Record: ${parseFloat(top.score).toFixed(1)} pts, ${top.manager} ${top.season}`, mgr: `${mgrs.size} managers all-time`, sco: `${combosList.length.toLocaleString()} unique scores`, rank: `${regSeasons.length} seasons ranked`, draft: `${picks.length.toLocaleString()} picks`, tx: 'FAAB bids, claims and trades' };
   document.querySelectorAll('[data-stat]').forEach(el => el.textContent = S[el.dataset.stat] || '');
+
+  managers = await getManagers();
+  const [schedule, live] = await Promise.all([loadDataSafe('season_2026/schedule', null), loadDataSafe('season_2026/matchups', [])]);
+  NWL_REC.renderRecordWatch(document.getElementById('recordWatch'), NWL_REC.recordWatch({ weekly, matchups, schedule, live }));
+  const [highlights, trades, tx] = await Promise.all([loadDataSafe('player_week_highlights', []), loadDataSafe('trades', []), loadDataSafe('transactions_with_dates', [])]);
+  const week = (schedule && schedule.current_week) || (live.length ? live[live.length - 1].week : 1);
+  NWL_REC.renderHistory(document.getElementById('historyWeek'), NWL_REC.historyThisWeek({ weekly, matchups, seasons: regSeasons, highlights, trades, tx, week, today: new Date(), prefix: '' }), week);
 }
 renderNav('home');
 build();

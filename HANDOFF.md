@@ -48,6 +48,8 @@ nwl_site/
 │   ├── css/style.css             # All global styles + design tokens (incl. --live amber accent)
 │   ├── js/shared.js              # Nav renderer, data loader, managerTag(), posTag(), loadDataSafe()
 │   ├── js/trade_engine.js        # Trade valuation engine shared by the Trade Calculator and Trade Finder (evaluateTrade, lineup, settle, ...)
+│   ├── js/nwl_sim.js             # Playoff Odds simulator (2026 Hub)
+│   ├── js/nwl_records.js         # Record watch + This week in NWL history (homepage, Hub)
 │   ├── img/nwl_logo.png          # Shield logo, background-removed PNG (see img/nwl_logo_source.jpeg)
 │   ├── img/nwl_logo_source.jpeg  # Original flat (white-bg) logo Hunter supplied - reprocess from this if the logo changes
 │   └── img/managers/             # Drop {name-lowercase}.jpg here for manager photos (empty)
@@ -87,6 +89,7 @@ nwl_site/
     ├── season-2026.html          # Current-season hub - Matchups / Standings / Power Rankings / Commentary
     ├── draft-analysis.html       # 2026 real-draft analysis - Grades / Contender Profile / Superlatives / Reaches & Steals / Upside Ranking tabs
     ├── trade-tools.html          # Trade Calculator (rebuilt Oct 2026) - see "Trade Calculator" section below
+    ├── awards.html               # Year-end awards per season (League History)
     ├── trade-finder.html         # Trade Finder (rebuilt Oct 2026 on the calculator's engine) - see "Trade Finder" section below
     └── mock-draft.html           # 15-round mock draft vs 11 CPU managers - archived from nav (real draft is over), still works if visited directly - own detailed handoff, see below
 ```
@@ -1725,6 +1728,70 @@ Refactor verified: 3 saved trades gave byte-identical values/grades/source gaps 
   more; half the bar = 50% gap, green band = the 8% fair zone). Team situation pills show only on your team's panel.
 - Local testing gotcha: the browser caches `trade_values.json`, so after re-running the builder, refetch it with
   `cache:'reload'` or the page silently runs on the old file (it showed "no schedule data" until refreshed).
+
+## Six features added Oct 17 2026 (playoff odds, previews, record watch, history card, trade grades, awards)
+
+**New data and scripts**
+- `data/season_2026/schedule.json` (from `fetch_espn_week.py`, committed by the weekly Action): every 2026
+  regular-season game, the playoff format (weeks 15-17, 6 teams, 2 byes) and each team's division.
+- `scripts/build_history_points.py` → `data/player_weeks.json` (~400 KB): every NWL roster, every week, 2022-2025,
+  with NWL points and starter/bench/IR slot from ESPN box scores. Team ids are mapped per season by matching week
+  1-3 scores. Checked: starters add up to the real weekly score in 810 of 816 team-weeks (the 6 misses are 2022
+  week 17). **This account has no pre-2022 detail** (2018-2021 return 401, since the account wasn't a member then;
+  2013-2017 return 404, archived). We don't work around ESPN's access control. An optional gitignored
+  `scripts/espn_credentials_legacy.json` (cookies from an account that was a member then) adds 2018-2021.
+- `scripts/build_player_highlights.py` → `data/player_week_highlights.json`: the biggest single-game player
+  performances per week 2013-2025 (nflverse half-PPR from `scripts/.cache`), each with its NWL owner and
+  started/benched status (2022+) or who drafted him.
+- `scripts/build_trade_grades.py` → `data/trade_grades.json`: all 69 trades graded (details below).
+- Rerun all three after each season. They're not in the weekly Action; 2026 needs its own team map, since
+  `weekly_scores.json` has no 2026 rows. Use `scripts/espn_team_map.json` for 2026 when adding it.
+
+**`data/trades.json` corrections.** The 13 2022 rows got real dates from ESPN's 2022 trade log (`precision:
+"espn_accept"`). For trades this account wasn't in, ESPN shows only the acceptance (date and accepting team), and
+the rows match one-to-one in order; the 4 Zogg trades are confirmed by player lists. Two rows had the sides swapped
+(2022 Prodahl–Stover and Hagan–Goetz; every player moved the other way on ESPN's rosters) and were corrected. Open
+questions for Hunter: ESPN shows **two more trades accepted by Palaia on 2022-11-05** that aren't in trades.json,
+and the grader warns on **two 2025 Zogg–Conlin rows** (trades 30 and 31), where the one matched player moved the
+opposite way.
+
+**Playoff Odds tab (2026 Hub)**, `assets/js/nwl_sim.js`: 10,000 seeded-random seasons. Team mean = blend of
+actual PPG and the projected lineup (trade engine `settle().pts`, scaled to the league's real scoring), with
+projection weight = games left ÷ 14, clamped to 0.35-0.75. sd = `score_sd`. Seeding per Hunter: division winners
+are seeds 1-3, then wild cards, with points for as the tiebreak; top 2 get byes; 3v6, 4v5, then #1 vs the lowest
+remaining seed. The arrows compare with the same model before last week's games (computed in the browser; there is
+no stored snapshot). What-if picks lock game results. Checked: playoff odds sum to 6.000, byes to 2, division
+titles to 3, the title to 1, wins to 84.
+
+**Matchup previews (2026 Hub Matchups):** a "Preview" expander on undecided games, all computed: win probability
+from projections, all-time H2H (playoff meetings count only when both teams finished top 6, because weeks 15-17
+include consolation games), last meeting, last-3 form and power rank, top 3 projected starters to watch, and stakes
+(playoff odds with a win vs. a loss, simulated when the preview is opened).
+
+**Record watch banner (homepage + Hub)** and **This week in NWL history (homepage card + Hub Matchups strip)** live
+in `assets/js/nwl_records.js`, using Hall of Fame definitions: streaks across all games and seasons, season records
+regular season only, lowest score regular season only. Record watch shows at most 3 items, one per manager:
+season pace (PPG high/low, wins, losses), streaks within 2 of the record, projections within 15 of the
+highest/lowest score, and career milestones reachable this week. It hides itself when nothing qualifies. The history
+card shows the best team moment, a rotating second one, 2 player games from different seasons, and a trade or a
+$20+ FAAB buy within 3 days of today's date in a past season.
+
+**Trade Grades tab (Transactions):** each received player is followed from the week he actually changed rosters
+(read from ESPN's weekly rosters, falling back to Tuesday-to-Monday weeks from the date) to week 17, while that
+team kept him. Points over replacement each week (vs. the average of ranks 13-18 at QB/TE/HC and 31-36 at RB/WR
+among rostered players, floored at 0), playoff weeks ×1.5. Grades are on the net, calibrated to the 2022-2025
+spread (median |net| about 31): A+ ≥80, A ≥50, A− ≥30, B+ ≥15, B ±15, C ≥−40, D ≥−80, F. Started points are shown
+but not graded; FAAB and picks are listed only. Hand-checked: Kamara 2022 for Hagan 123.5 pts over 11 weeks, Maye
+2025 for Prodahl 239.6 (212.3 started). Name aliases for trades.json spellings are in the script (`ALIASES`).
+
+**Awards page** (`pages/awards.html`, League History nav, `shared.js?v=23`): completed seasons only (a season shows
+once it has a champion). Every year: Champion, Sacko, Most points, Highest score, Biggest blowout, Closest loss,
+Unluckiest/Luckiest (actual vs. all-play wins), Steal/Bust/Best draft (draft_grades). 2022+: MVP (most points
+started for one team, regular season), Best pickup (started points while held), Bench blunder (benched player vs.
+the lowest starter at his position in a loss, flagged when it flips the result), Best/Worst trade, Most active,
+Biggest FAAB splash.
+
+Versions: `style.css?v=17`, `shared.js?v=23`, `trade_engine.js?v=2`, `nwl_sim.js?v=1`, `nwl_records.js?v=2`.
 
 ## Known Bugs & Data Issues
 

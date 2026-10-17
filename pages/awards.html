@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Awards — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=17">
+<style>
+/* Year chips, then award cards grouped by kind. Every award is computed from the league data. */
+.aw-group { margin-top: 22px; }
+.aw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 12px; }
+.aw-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; min-width: 0; }
+.aw-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent, var(--line-strong)); }
+.aw-card .t { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); display: flex; gap: 6px; align-items: center; }
+.aw-card .who { font-family: var(--font-display); font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.1; }
+.aw-card .big { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 600; color: var(--text); }
+.aw-card .ctx { font-size: 0.84rem; color: var(--text-muted); line-height: 1.4; }
+.aw-card .ctx b { color: var(--text); font-weight: 600; }
+.aw-card.feature { grid-column: span 2; }
+@media (max-width: 600px) { .aw-card.feature { grid-column: auto; } }
+.aw-note { color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0; }
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <header class="hx-hero">
+    <div class="hx-eyebrow">League History</div>
+    <h1>Year-End Awards</h1>
+    <p>Every completed season's awards, from the champion to the most painful bench decision. All computed from the league's own scores, drafts, transactions and ESPN box scores.</p>
+  </header>
+
+  <div class="hx-chips" id="years" role="group" aria-label="Season"></div>
+  <div id="awards"><div class="skeleton-block"></div></div>
+
+  <div class="methodology" style="margin-top: 22px;">
+    <details>
+      <summary>Show methodology</summary>
+      <div style="margin-top: 8px;">
+        <p><strong>Every season.</strong> Champion and Sacko are the final standings. Most points is the regular-season total. Highest score, biggest blowout and closest loss include every game (ties aren't losses). <em>Luck</em> compares a team's actual regular-season win rate with its all-play win rate (its record if it had played every other team every week): the biggest gap below is the unluckiest team, above is the luckiest.</p>
+        <p><strong>Draft.</strong> Steal: the drafted player who finished highest at his position compared with where he was taken (top-12 finishers only). Bust: the round 1–3 pick who finished furthest below his draft slot. Best draft: the most combined half-PPR points from a team's QB, RB, WR and TE picks.</p>
+        <p><strong>2022 on</strong> (ESPN box scores). MVP: the most points a player was started for one team in the regular season. Best pickup: the most started points for the team that claimed him, from the week he was added until he left. Bench blunder: the biggest gap, in a regular-season loss, between a benched player and the lowest-scoring starter at his position, flagged when it would have flipped the result. Best and worst trade come from the Trade Grades tab on the Transactions page. Most active counts adds and trades.</p>
+        <p>Seasons appear once they're complete; 2026 shows up after week 17.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=23"></script>
+<script>
+let managers = [], A = {};
+const f1 = x => (+x).toFixed(1);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const norm = n => (n || '').toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g, '').replace(/[^a-z]/g, '');
+const KICKOFF = { 2022: '2022-09-08', 2023: '2023-09-07', 2024: '2024-09-05', 2025: '2025-09-04', 2026: '2026-09-10' };
+function weekOf(season, d) { // NFL weeks run Tuesday-Monday; same rule as scripts/build_trade_grades.py
+  const k = new Date(KICKOFF[season] + 'T12:00:00'), x = new Date(d + 'T12:00:00');
+  return Math.max(1, Math.floor((x - k + 2 * 864e5) / (7 * 864e5)) + 1);
+}
+const card = (title, mgr, big, ctx, opts = {}) => `<article class="aw-card${opts.feature ? ' feature' : ''}" style="--accent:${mgr ? managerColor(managers, mgr) : 'var(--line-strong)'}">
+  <div class="t">${opts.icon || ''} ${title}</div>${mgr ? `<div class="who" style="color:${managerColor(managers, mgr)}">${esc(mgr)}</div>` : ''}${big ? `<div class="big">${big}</div>` : ''}<div class="ctx">${ctx}</div></article>`;
+
+function scoreAwards(season) {
+  const out = [], s = String(season);
+  const fin = A.seasons.filter(r => r.season === s).sort((a, b) => a.final_finish - b.final_finish);
+  if (fin.length) {
+    const champ = fin[0], sacko = fin[fin.length - 1];
+    out.push(card('Champion', champ.manager, `${f1(champ.ppg)} PPG`, `Won the ${season} NWL title.`, { icon: '🏆', feature: true }));
+    out.push(card('Sacko', sacko.manager, `${f1(sacko.ppg)} PPG`, `Finished ${fin.length}th of ${fin.length}.`, { icon: '🚽' }));
+  }
+  const wk = A.weekly.filter(r => r.season === s), reg = wk.filter(r => r.game_type === 'regular');
+  const tot = {}; reg.forEach(r => { tot[r.manager] = (tot[r.manager] || 0) + +r.score; });
+  const most = Object.entries(tot).sort((a, b) => b[1] - a[1])[0];
+  if (most) out.push(card('Most points', most[0], f1(most[1]), 'Regular-season total.', { icon: '📈' }));
+  const hi = [...wk].sort((a, b) => b.score - a.score)[0];
+  if (hi) out.push(card('Highest score', hi.manager, f1(hi.score), `Week ${hi.week}${hi.game_type === 'playoff' ? ' (playoffs)' : ''}.`, { icon: '🔥' }));
+  const games = A.matchups.filter(m => m.season === s).map(m => ({ ...m, margin: +m.winning_score - +m.losing_score }));
+  const blow = [...games].sort((a, b) => b.margin - a.margin)[0];
+  if (blow) out.push(card('Biggest blowout', blow.winner, `+${f1(blow.margin)}`, `Beat <b>${esc(blow.loser)}</b> ${f1(blow.winning_score)}–${f1(blow.losing_score)} in week ${blow.week}.`, { icon: '💥' }));
+  const close = games.filter(g => g.margin > 0).sort((a, b) => a.margin - b.margin)[0];
+  if (close) out.push(card('Closest loss', close.loser, `−${close.margin.toFixed(2)}`, `Lost to <b>${esc(close.winner)}</b> ${f1(close.winning_score)}–${f1(close.losing_score)} in week ${close.week}.`, { icon: '😬' }));
+  // luck: actual regular-season win% minus all-play win%
+  const weeks = {}; reg.forEach(r => (weeks[r.week] ||= []).push(r));
+  const ap = {}; Object.values(weeks).forEach(rows => rows.forEach(r => { const a = (ap[r.manager] ||= { w: 0, n: 0 }); rows.forEach(o => { if (o !== r) { a.n++; if (+r.score > +o.score) a.w++; else if (+r.score === +o.score) a.w += 0.5; } }); }));
+  const regWeeks = new Set(reg.map(r => r.week));
+  const act = {}; games.filter(g => regWeeks.has(g.week)).forEach(g => { (act[g.winner] ||= { w: 0, n: 0 }); (act[g.loser] ||= { w: 0, n: 0 }); act[g.winner].n++; act[g.loser].n++; act[g.winner].w += g.margin === 0 ? 0.5 : 1; if (g.margin === 0) act[g.loser].w += 0.5; });
+  const luck = Object.keys(ap).filter(m => act[m]).map(m => ({ m, d: act[m].w / act[m].n - ap[m].w / ap[m].n, rec: `${act[m].w}-${act[m].n - act[m].w}`, apw: ap[m].w / ap[m].n * act[m].n })).sort((a, b) => a.d - b.d);
+  if (luck.length) {
+    const u = luck[0], l = luck[luck.length - 1];
+    out.push(card('Unluckiest', u.m, `${(u.d * act[u.m].n).toFixed(1).replace('-', '−')} wins`, `Went <b>${u.rec}</b> but scored like a <b>${u.apw.toFixed(1)}-win</b> team against the whole league.`, { icon: '🍀' }));
+    out.push(card('Luckiest', l.m, `+${(l.d * act[l.m].n).toFixed(1)} wins`, `Went <b>${l.rec}</b>, but its scores were good for only <b>${l.apw.toFixed(1)}</b> wins against the whole league.`, { icon: '🎲' }));
+  }
+  return out;
+}
+function draftAwards(season) {
+  const out = [], picks = A.draft.filter(p => p.season === season && p.matched);
+  if (!picks.length) return out;
+  const steal = picks.filter(p => p.position_finish_rank <= 12).sort((a, b) => (b.position_draft_rank - b.position_finish_rank) - (a.position_draft_rank - a.position_finish_rank))[0];
+  if (steal) out.push(card('Steal of the draft', steal.manager, `${esc(steal.position)}${steal.position_finish_rank}`, `<b>${esc(steal.player)}</b>, taken ${esc(steal.position)}${steal.position_draft_rank} in round ${steal.round}, finished ${esc(steal.position)}${steal.position_finish_rank} (${f1(steal.half_ppr_points)} half-PPR).`, { icon: '💎' }));
+  const bust = picks.filter(p => p.round <= 3).sort((a, b) => (b.position_finish_rank - b.position_draft_rank) - (a.position_finish_rank - a.position_draft_rank))[0];
+  if (bust) out.push(card('Biggest bust', bust.manager, `${esc(bust.position)}${bust.position_finish_rank}`, `<b>${esc(bust.player)}</b>, a round ${bust.round} pick (${esc(bust.position)}${bust.position_draft_rank}), finished ${esc(bust.position)}${bust.position_finish_rank}.`, { icon: '🧱' }));
+  const by = {}; picks.forEach(p => { by[p.manager] = (by[p.manager] || 0) + p.half_ppr_points; });
+  const best = Object.entries(by).sort((a, b) => b[1] - a[1])[0];
+  if (best) out.push(card('Best draft', best[0], f1(best[1]), 'Most combined half-PPR points from its QB, RB, WR and TE picks.', { icon: '📋' }));
+  return out;
+}
+function boxAwards(season) {
+  const out = [], S = A.pw && A.pw.seasons[String(season)];
+  if (!S) return out;
+  const P = A.pw.players, poStart = Math.min(...A.weekly.filter(r => r.season === String(season) && r.game_type === 'playoff').map(r => +r.week));
+  const reg = Object.entries(S.weeks).filter(([w]) => +w < poStart);
+  // MVP
+  const st = {}; reg.forEach(([, rows]) => rows.forEach(([m, pid, slot, pts]) => { if (slot === 'S') { const k = m + '|' + pid; st[k] = (st[k] || 0) + pts; } }));
+  const mvp = Object.entries(st).sort((a, b) => b[1] - a[1])[0];
+  if (mvp) { const [m, pid] = mvp[0].split('|'); out.push(card('MVP', m, f1(mvp[1]), `<b>${esc(P[pid][0])}</b> (${esc(P[pid][1])}): the most points started for one team in the regular season.`, { icon: '⭐', feature: true })); }
+  // best pickup: started points from the add week until he left that team
+  const adds = A.tx.filter(t => t.season === String(season) && ['waiver', 'free_agent'].includes(t.acquisition_type) && t.bid_outcome !== 'lost' && /^\d{4}-\d\d-\d\d$/.test(t.date));
+  const ids = {}; Object.entries(P).forEach(([pid, [n]]) => { (ids[norm(n)] ||= []).push(pid); });
+  let bestAdd = null;
+  adds.forEach(a => {
+    const w0 = weekOf(season, a.date);
+    for (const pid of ids[norm(a.player)] || []) {
+      let pts = 0, held = 0;
+      for (let w = w0; w <= 17; w++) { const r = (S.weeks[w] || []).find(x => x[1] === pid); if (!r || r[0] !== a.manager) { if (held) break; continue; } held++; if (r[2] === 'S') pts += r[3]; }
+      if (held && (!bestAdd || pts > bestAdd.pts)) bestAdd = { a, pid, pts, held, w0 };
+    }
+  });
+  if (bestAdd) out.push(card('Best pickup', bestAdd.a.manager, f1(bestAdd.pts), `<b>${esc(P[bestAdd.pid][0])}</b>, ${bestAdd.a.acquisition_type === 'waiver' ? `claimed for $${bestAdd.a.bid_amount || 0}` : 'a free-agent add'} in week ${bestAdd.w0}: points started over ${bestAdd.held} weeks.`, { icon: '🛒' }));
+  // bench blunder: benched player vs the lowest starter at his position, in a regular-season loss
+  const res = {}; A.matchups.filter(m => m.season === String(season)).forEach(m => { res[m.week + '|' + m.loser] = { opp: m.winner, margin: +m.winning_score - +m.losing_score }; });
+  let blunder = null;
+  reg.forEach(([w, rows]) => {
+    const by = {}; rows.forEach(r => (by[r[0]] ||= []).push(r));
+    for (const [m, rs] of Object.entries(by)) {
+      const lost = res[w + '|' + m]; if (!lost) continue;
+      rs.filter(r => r[2] === 'B').forEach(b => {
+        const pos = P[b[1]][1], starters = rs.filter(r => r[2] === 'S' && P[r[1]][1] === pos);
+        if (!starters.length) return;
+        const low = starters.sort((x, y) => x[3] - y[3])[0], gap = b[3] - low[3];
+        if (!blunder || gap > blunder.gap) blunder = { m, w, b, low, gap, lost };
+      });
+    }
+  });
+  if (blunder && blunder.gap > 0) out.push(card('Bench blunder', blunder.m, `${f1(blunder.gap)} pts`, `Benched <b>${esc(P[blunder.b[1]][0])}</b> (${f1(blunder.b[3])}) for ${esc(P[blunder.low[1]][0])} (${f1(blunder.low[3])}) in week ${blunder.w}, and lost to ${esc(blunder.lost.opp)} by ${f1(blunder.lost.margin)}.${blunder.gap > blunder.lost.margin ? ' <b>Starting him wins it.</b>' : ''}`, { icon: '🪑' }));
+  // trades
+  const T = (A.grades ? A.grades.trades : []).filter(t => t.season === season);
+  const sides = T.flatMap(t => t.sides.map((s, k) => ({ t, s, o: t.sides[1 - k] })));
+  if (sides.length) {
+    const best = sides.sort((a, b) => b.s.net - a.s.net)[0], worst = sides[sides.length - 1];
+    const got = x => x.s.players.map(p => esc(p.name)).join(', ') || esc(x.s.extras.join(', '));
+    out.push(card('Best trade', best.s.manager, `+${f1(best.s.net)}`, `Got <b>${got(best)}</b> from ${esc(best.o.manager)} (grade ${best.s.grade}).`, { icon: '🤝' }));
+    out.push(card('Worst trade', worst.s.manager, f1(worst.s.net), `Got <b>${got(worst)}</b> from ${esc(worst.o.manager)} (grade ${worst.s.grade}).`, { icon: '🙈' }));
+  }
+  // activity
+  const moves = {}; A.tx.filter(t => t.season === String(season) && t.bid_outcome !== 'lost').forEach(t => { moves[t.manager] = (moves[t.manager] || 0) + 1; });
+  const act = Object.entries(moves).sort((a, b) => b[1] - a[1])[0];
+  if (act) out.push(card('Most active', act[0], `${act[1]} moves`, 'Waiver claims, free-agent adds and trades.', { icon: '📞' }));
+  const splash = A.tx.filter(t => t.season === String(season) && t.bid_outcome === 'won').sort((a, b) => b.bid_amount - a.bid_amount)[0];
+  if (splash) out.push(card('Biggest FAAB splash', splash.manager, `$${splash.bid_amount}`, `On <b>${esc(splash.player)}</b>${splash.date.length > 4 ? ` (${new Date(splash.date + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })})` : ''}.`, { icon: '💸' }));
+  return out;
+}
+function render(season) {
+  document.querySelectorAll('#years .hx-chip').forEach(b => b.setAttribute('aria-pressed', +b.dataset.y === season));
+  const groups = [['The season', scoreAwards(season)], ['The draft', draftAwards(season)], ['Moves and lineups', boxAwards(season)]];
+  document.getElementById('awards').innerHTML = groups.filter(([, c]) => c.length).map(([t, c]) => `<section class="aw-group"><div class="hx-section-title"><h2>${t}</h2></div><div class="aw-grid">${c.join('')}</div></section>`).join('')
+    + (season < 2022 ? `<p class="aw-note">Pickup, lineup and trade awards start in 2022, the first season with ESPN box scores and a full transaction log.</p>` : '');
+  history.replaceState(null, '', '#' + season);
+}
+async function init() {
+  [managers, A.weekly, A.matchups, A.seasons, A.draft, A.tx, A.grades, A.pw] = await Promise.all([getManagers(), loadData('weekly_scores'), loadData('matchup_results'), loadData('team_seasons_regular'),
+    loadData('draft_grades'), loadData('transactions_with_dates'), loadDataSafe('trade_grades', null), loadDataSafe('player_weeks', null)]);
+  // completed seasons only: a season counts once it has a champion
+  const done = [...new Set(A.seasons.filter(r => +r.final_finish === 1).map(r => +r.season))].sort((a, b) => b - a);
+  document.getElementById('years').innerHTML = done.map(y => `<button type="button" class="hx-chip" data-y="${y}" aria-pressed="false">${y}</button>`).join('');
+  document.getElementById('years').addEventListener('click', e => { const b = e.target.closest('[data-y]'); if (b) render(+b.dataset.y); });
+  const h = +location.hash.slice(1);
+  render(done.includes(h) ? h : done[0]);
+}
+renderNav('awards');
+init();
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@ Never commit or share espn_credentials.json - it's your personal login session.
 """
 import argparse
 import json
+import math
 import ssl
 import sys
 import urllib.request
@@ -78,9 +79,9 @@ def load_credentials():
     return creds
 
 
-def fetch_league_raw(league_id, season, views, creds):
+def fetch_league_raw(league_id, season, views, creds, extra_query=""):
     path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}"
-    query = "&".join(f"view={v}" for v in views)
+    query = "&".join(f"view={v}" for v in views) + (f"&{extra_query}" if extra_query else "")
     url = f"{API_HOST}{path}?{query}"
     req = urllib.request.Request(url)
     req.add_header("Cookie", f"espn_s2={creds['espn_s2']}; SWID={creds['swid']}")
@@ -431,6 +432,22 @@ def cmd_fetch_week(args, creds):
     # future weeks haven't got games loaded yet, so don't waste a call fetching them.
     slots = starting_slots(data.get("settings", {}).get("rosterSettings", {}).get("lineupSlotCounts", {}))
     projected_by_team = fetch_projected_points(args.league_id, args.season, current_week, creds, slots) if current_week else {}
+    # Live scores for the week in progress: ESPN leaves totalPoints at 0 until a week is final and keeps
+    # the running score in totalPointsLive, which it only returns when asked for that scoring period.
+    live_by_team = {}
+    if current_week:
+        live = fetch_league_raw(args.league_id, args.season, ["mMatchupScore", "mScoreboard"], creds, f"scoringPeriodId={current_week}")
+        for m in live.get("schedule", []):
+            if m.get("matchupPeriodId") == current_week:
+                for side in ("home", "away"):
+                    if side in m and m[side].get("totalPointsLive") is not None:
+                        live_by_team[m[side]["teamId"]] = round(m[side]["totalPointsLive"], 2)
+    def score_of(m, side):
+        t = m.get(side) or {}
+        pts = t.get("totalPoints", 0)
+        if m.get("matchupPeriodId") == current_week and m.get("winner") == "UNDECIDED" and not pts:
+            pts = live_by_team.get(t.get("teamId"), pts)
+        return pts
 
     # ---- Matchups ----
     # Rebuild EVERY played-or-current week's entry from the schedule ESPN just returned, not just
@@ -468,10 +485,10 @@ def cmd_fetch_week(args, creds):
 
             wk_matchups.append({
                 "home_manager": resolve_manager(home.get("teamId"), team_map),
-                "home_score": home.get("totalPoints", 0),
+                "home_score": score_of(m, "home"),
                 "home_projected": home_proj,
                 "away_manager": resolve_manager(away.get("teamId"), team_map) if away else None,
-                "away_score": away.get("totalPoints", 0) if away else None,
+                "away_score": score_of(m, "away") if away else None,
                 "away_projected": away_proj,
                 "winner": m.get("winner"),  # HOME / AWAY / UNDECIDED / TIE
                 "line": line,
@@ -511,6 +528,42 @@ def cmd_fetch_week(args, creds):
         "standings": standings,
     })
     print(f"Wrote standings as of week {week} -> {standings_path}")
+
+    # ---- Full regular-season schedule + playoff format (for the Playoff Odds simulator and the
+    # matchup previews, which need every future week; matchups.json only holds played/current weeks) ----
+    sched_settings = data.get("settings", {}).get("scheduleSettings", {})
+    reg_weeks = sched_settings.get("matchupPeriodCount") or 14
+    po_teams = sched_settings.get("playoffTeamCount") or 6
+    rounds = math.ceil(math.log2(max(2, po_teams)))
+    po_len = sched_settings.get("playoffMatchupPeriodLength") or 1
+    schedule_rows = []
+    for m in data.get("schedule", []):
+        wk = m.get("matchupPeriodId")
+        if not wk or wk > reg_weeks or not m.get("away"):
+            continue
+        schedule_rows.append({
+            "week": wk,
+            "home": resolve_manager(m["home"].get("teamId"), team_map),
+            "away": resolve_manager(m["away"].get("teamId"), team_map),
+            "home_score": m["home"].get("totalPoints", 0),
+            "away_score": m["away"].get("totalPoints", 0),
+            "winner": m.get("winner"),  # HOME / AWAY / TIE / UNDECIDED
+        })
+    schedule_rows.sort(key=lambda r: (r["week"], r["home"]))
+    _write_json(SITE_DIR / "data" / "season_2026" / "schedule.json", {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "current_week": current_week,
+        "regular_season_weeks": reg_weeks,
+        "playoff_teams": po_teams,
+        "playoff_weeks": list(range(reg_weeks + 1, reg_weeks + 1 + rounds * po_len)),
+        "bye_seeds": 2 ** rounds - po_teams,  # 6 teams in an 8-slot bracket = top 2 seeds get a bye
+        # NWL seeding (confirmed by Hunter): division winners take seeds 1-3 by record, then wild cards
+        # by record; total points break ties (ESPN playoffSeedingRule).
+        "seeding": {"division_winners_first": True, "tiebreak": sched_settings.get("playoffSeedingRule", "TOTAL_POINTS_SCORED")},
+        "divisions": {s["manager"]: s["division"] for s in standings},
+        "games": schedule_rows,
+    })
+    print(f"Wrote {len(schedule_rows)} regular-season games -> data/season_2026/schedule.json")
 
     # ---- Power rankings (computed draft) / commentary stub (editorial - blurbs are factual,
     # never opinion; still requires Hunter's review before publishing) ----

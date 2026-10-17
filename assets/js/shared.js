@@ -22,6 +22,7 @@ const NWL_PAGES = [
   { href: 'pages/rankings.html', label: 'Team Rankings', desc: 'Every season, ranked all-time' },
   { href: 'pages/draft.html', label: 'Draft', desc: 'Every pick since 2013, graded' },
   { href: 'pages/transactions.html', label: 'Transactions', desc: 'Waivers, FAAB and trades' },
+  { href: 'pages/awards.html', label: 'Awards', desc: 'Year-end awards for every season' },
 ];
 
 // Header: brand on the left (it links home, so there's no separate Home link); the In Season pages (amber pills) and a "League History"
