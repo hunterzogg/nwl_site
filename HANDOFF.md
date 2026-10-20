@@ -382,6 +382,19 @@ hash. The nav's In Season group is now 2026 Hub / Pick'em / Trade Tools (`shared
 ### hall-of-fame.html ✅ (formerly lookup.html)
 Three tabs: League Records (single-game, season, streaks), Head-to-Head (pick 2 managers → full matchup history), Seasons (weekly scores + standings + a top-3/last-place header, per year). Career Stats tab removed — moved to Managers page. Seasons tab shows two weekly-score tables — Regular Season and Playoffs (playoff weeks/managers vary correctly by era) — and standings grouped by division, sorted by wins.
 
+**More all-time records (Oct 20 2026).** The League Records tab went from 11 to 31 record cards (same `recordCard()` top-5 style):
+- **Single game:** most points in a loss, fewest points in a win (regular season), and the highest- and lowest-scoring games (combined, lowest regular season only).
+- **Season:** most and fewest points against, plus unluckiest and luckiest season (actual wins minus all-play expected wins).
+- **New Career section:**
+  - playoff trips (top-6 finish), title-game trips (top 2), runner-up finishes (Palaia 5)
+  - longest playoff streak (Palaia 8, 2017-24) and drought
+  - most Sackos (Glaser 3: 2018, 2020, 2024)
+  - most 150-point games
+- **New Rivalries section (12+ games):** most lopsided and most even.
+- **New Player games section** (from `player_weeks.json`, 2022 on, loaded after the other cards): biggest game started, biggest game benched, most points started in a season.
+
+History only (2013-2025); 2026 games aren't in these files until the season is archived.
+
 ### managers.html ✅
 One card per manager (13 total), click to expand. Tenure + season count computed dynamically (no hardcoded dates). Former managers (Stowe, 2013-2016) get a badge and sort last. Expanded view shows: career stats (titles, sackos, W-L record, career/playoff PPG, playoff trips — trips only count top-6 finishes), full team name history (all 13 managers, extracted from All Time Team Ranks), Favorite Players (highest total roster-appearance count across draft + waiver/FA + trades — not draft capital), top 5 waiver/FA pickups by FAAB bid, 5 most recent trade acquisitions. Profile picture support via `assets/img/managers/{name}.jpg` (falls back to colored initials circle, no photos added yet). **Favorite NFL team is still empty for everyone** — not in NWL_Master.xlsx anywhere, hand-edit `data/manager_profiles.json` to add it.
 

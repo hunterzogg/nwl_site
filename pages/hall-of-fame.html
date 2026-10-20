@@ -165,6 +165,45 @@ function buildRecords() {
   stretches.sort((a, b) => b.total - a.total);
   const span = r => `${r.start.season} Wk ${r.start.week} – ${r.end.season === r.start.season ? '' : r.end.season + ' '}Wk ${r.end.week}`;
 
+  // ---- added Oct 2026: more single-game, season, career, rivalry and player records ----
+  const poStart = {}; weekly.forEach(r => { if (r.game_type === 'playoff') poStart[r.season] = Math.min(poStart[r.season] || 99, +r.week); });
+  const isReg = m => m.week < (poStart[m.season] || 99);
+  const wins = withMargin.filter(m => m.margin > 0);
+  const lossPts = wins.slice().sort((a, b) => parseFloat(b.losing_score) - parseFloat(a.losing_score));
+  const winLow = wins.filter(isReg).sort((a, b) => parseFloat(a.winning_score) - parseFloat(b.winning_score));
+  const combined = withMargin.map(m => ({ ...m, total: parseFloat(m.winning_score) + parseFloat(m.losing_score) }));
+  const combHi = combined.slice().sort((a, b) => b.total - a.total), combLo = combined.filter(isReg).sort((a, b) => a.total - b.total);
+  // points against + all-play luck (regular season)
+  const sa = {};
+  const get = (season, m) => (sa[season + '|' + m] ||= { season, manager: m, pa: 0, w: 0, g: 0, apW: 0, apN: 0 });
+  matchups.filter(isReg).forEach(m => { const t = isTie(m), W = get(m.season, m.winner), L = get(m.season, m.loser);
+    W.pa += parseFloat(m.losing_score); L.pa += parseFloat(m.winning_score); W.g++; L.g++; W.w += t ? 0.5 : 1; L.w += t ? 0.5 : 0; });
+  const byWeek = {}; regular.forEach(r => (byWeek[r.season + '|' + r.week] ||= []).push(r));
+  Object.values(byWeek).forEach(rows => rows.forEach(r => { const x = get(r.season, r.manager); rows.forEach(o => { if (o !== r) { x.apN++; x.apW += r.score > o.score ? 1 : r.score === o.score ? 0.5 : 0; } }); }));
+  const seasonRows = Object.values(sa).filter(x => x.g && x.apN).map(x => ({ ...x, exp: x.apW / x.apN * x.g })).map(x => ({ ...x, luck: x.w - x.exp }));
+  const rec = x => `${x.w % 1 ? x.w : x.w}-${x.g - x.w}`;
+  // career: playoff trips (top 6), finals (top 2), Sackos (last place), streaks and droughts by season
+  const lastPlace = {}; regSeasons.forEach(t => { lastPlace[t.season] = Math.max(lastPlace[t.season] || 0, t.final_finish); });
+  const car = {};
+  regSeasons.slice().sort((a, b) => a.season - b.season).forEach(t => {
+    const c = (car[t.manager] ||= { manager: t.manager, trips: 0, finals: 0, sackos: 0, streak: 0, best: { len: 0 }, dry: 0, worst: { len: 0 }, cur: null, curDry: null });
+    if (t.final_finish <= 6) { c.trips++; c.cur = c.cur && c.cur.end === t.season - 1 ? { ...c.cur, end: t.season, len: c.cur.len + 1 } : { start: t.season, end: t.season, len: 1 }; if (c.cur.len > c.best.len) c.best = c.cur; c.curDry = null; }
+    else { c.curDry = c.curDry && c.curDry.end === t.season - 1 ? { ...c.curDry, end: t.season, len: c.curDry.len + 1 } : { start: t.season, end: t.season, len: 1 }; if (c.curDry.len > c.worst.len) c.worst = c.curDry; c.cur = null; }
+    if (t.final_finish <= 2) c.finals++;
+    if (t.final_finish === 2) { c.seconds = (c.seconds || 0) + 1; (c.secondYears ||= []).push(t.season); }
+    if (t.final_finish === lastPlace[t.season]) { c.sackos++; (c.sackoYears ||= []).push(t.season); }
+  });
+  const careers = Object.values(car);
+  const yrs = r => r.len ? (r.start === r.end ? `${r.start}` : `${r.start}–${r.end}`) : '';
+  const c150 = {}; weekly.forEach(r => { if (r.score >= 150) c150[r.manager] = (c150[r.manager] || 0) + 1; });
+  const big = Object.entries(c150).map(([manager, n]) => ({ manager, n })).sort((a, b) => b.n - a.n);
+  // rivalries (12+ meetings)
+  const pairs = {};
+  matchups.forEach(m => { if (isTie(m)) return; const [a, b] = [m.winner, m.loser].sort(); const p = (pairs[a + '|' + b] ||= { a, b, aw: 0, bw: 0 }); if (m.winner === a) p.aw++; else p.bw++; });
+  const series = Object.values(pairs).map(p => ({ ...p, n: p.aw + p.bw, lead: p.aw >= p.bw ? p.a : p.b, lw: Math.max(p.aw, p.bw), ll: Math.min(p.aw, p.bw), other: p.aw >= p.bw ? p.b : p.a })).filter(p => p.n >= 12);
+  const lopsided = series.slice().sort((x, y) => y.lw / y.n - x.lw / x.n || y.n - x.n);
+  const evenest = series.slice().sort((x, y) => (x.lw - x.ll) - (y.lw - y.ll) || y.n - x.n);
+
   document.getElementById('panel-records').innerHTML = `
     ${championsHTML()}
     <div class="hx-section-title"><h2>Single game</h2><span>Regular season and playoffs</span></div>
@@ -173,6 +212,10 @@ function buildRecords() {
       ${recordCard('Lowest score (regular season)', byScoreAsc, x => f1(x.score), 'pts', x => x.manager, x => `Week ${x.week}, ${x.season}`)}
       ${recordCard('Biggest blowout', blowouts, x => f1(x.margin), 'pt margin', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
       ${recordCard('Closest game', closest, x => x.margin.toFixed(2), 'pt margin', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Most points in a loss', lossPts, x => f1(x.losing_score), 'pts', x => x.loser, x => `lost to ${esc(x.winner)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Fewest points in a win (regular season)', winLow, x => f1(x.winning_score), 'pts', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Highest-scoring game', combHi, x => f1(x.total), 'combined', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Lowest-scoring game (regular season)', combLo, x => f1(x.total), 'combined', x => x.winner, x => `over ${esc(x.loser)}, ${x.winning_score}–${x.losing_score} · Wk ${x.week} ${x.season}`)}
     </div>
     <div class="hx-section-title"><h2>Season</h2><span>Regular season</span></div>
     <div class="hx-grid">
@@ -180,12 +223,56 @@ function buildRecords() {
       ${recordCard('Fewest points', seasons.slice().sort((a, b) => a.total - b.total), x => fmt(x.total), 'pts', x => x.manager, x => x.season)}
       ${recordCard('Most wins', mostWins, x => x.w, 'wins', x => x.manager, x => x.season)}
       ${recordCard('Most consistent', consistent, x => '±' + f1(x.sd), 'pts std dev', x => x.manager, x => x.season)}
+      ${recordCard('Most points against', seasonRows.slice().sort((a, b) => b.pa - a.pa), x => fmt(x.pa), 'pts', x => x.manager, x => `${x.season} · went ${rec(x)}`)}
+      ${recordCard('Fewest points against', seasonRows.slice().sort((a, b) => a.pa - b.pa), x => fmt(x.pa), 'pts', x => x.manager, x => `${x.season} · went ${rec(x)}`)}
+      ${recordCard('Unluckiest season', seasonRows.slice().sort((a, b) => a.luck - b.luck), x => f1(x.luck).replace('-', '−'), 'wins vs. expected', x => x.manager, x => `${x.season} · went ${rec(x)}, scored like ${f1(x.exp)} wins`)}
+      ${recordCard('Luckiest season', seasonRows.slice().sort((a, b) => b.luck - a.luck), x => '+' + f1(x.luck), 'wins vs. expected', x => x.manager, x => `${x.season} · went ${rec(x)}, scored like ${f1(x.exp)} wins`)}
+    </div>
+    <p class="hx-ctx" style="margin:-4px 0 0">Expected wins come from the all-play record: how often a team's weekly score beat every other team's that week.</p>
+    <div class="hx-section-title"><h2>Career</h2><span>2013–${Math.max(...regSeasons.map(t => t.season))}</span></div>
+    <div class="hx-grid">
+      ${recordCard('Most playoff trips', careers.slice().sort((a, b) => b.trips - a.trips || b.finals - a.finals), x => x.trips, 'seasons', x => x.manager, x => `top 6 finish · ${x.finals} final${x.finals === 1 ? '' : 's'}`)}
+      ${recordCard('Most title-game trips', careers.slice().sort((a, b) => b.finals - a.finals || b.trips - a.trips), x => x.finals, 'finals', x => x.manager, x => `finished 1st or 2nd`)}
+      ${recordCard('Most runner-up finishes', careers.slice().sort((a, b) => (b.seconds || 0) - (a.seconds || 0)), x => x.seconds || 0, 'second places', x => x.manager, x => (x.secondYears || []).join(', '))}
+      ${recordCard('Longest playoff streak', careers.slice().sort((a, b) => b.best.len - a.best.len), x => x.best.len, 'seasons', x => x.manager, x => yrs(x.best))}
+      ${recordCard('Longest playoff drought', careers.slice().sort((a, b) => b.worst.len - a.worst.len), x => x.worst.len, 'seasons', x => x.manager, x => yrs(x.worst))}
+      ${recordCard('Most Sackos', careers.slice().sort((a, b) => b.sackos - a.sackos), x => x.sackos, 'last-place finishes', x => x.manager, x => (x.sackoYears || []).join(', '))}
+      ${recordCard('Most 150-point games', big, x => x.n, 'games', x => x.manager, x => 'regular season and playoffs')}
+    </div>
+    <div class="hx-section-title"><h2>Rivalries</h2><span>Series of 12+ games</span></div>
+    <div class="hx-grid">
+      ${recordCard('Most lopsided rivalry', lopsided, x => `${x.lw}-${x.ll}`, 'all-time', x => x.lead, x => `over ${esc(x.other)} (${Math.round(x.lw / x.n * 100)}%)`)}
+      ${recordCard('Most even rivalry', evenest, x => `${x.lw}-${x.ll}`, 'all-time', x => x.lead, x => `vs ${esc(x.other)}, ${x.n} games`)}
     </div>
     <div class="hx-section-title"><h2>Streaks</h2></div>
     <div class="hx-grid">
       ${recordCard('Longest win streak', runs.W, x => x.len, 'games', x => x.name, span)}
       ${recordCard('Longest losing streak', runs.L, x => x.len, 'games', x => x.name, span)}
       ${recordCard('Best 3-week stretch', stretches, x => f1(x.total), 'pts', x => x.manager, x => `${x.season}, Wks ${x.weeks}`)}
+    </div>
+    <div id="playerRecords"></div>`;
+  playerRecords();
+}
+// Player records from ESPN box scores (data/player_weeks.json, 2022 on; earlier weekly lineups aren't available)
+async function playerRecords() {
+  const pw = await loadDataSafe('player_weeks', null); if (!pw) return;
+  const P = pw.players, started = [], benched = [], season = {};
+  for (const [y, S] of Object.entries(pw.seasons)) {
+    const po = Math.min(...weekly.filter(r => r.season === +y && r.game_type === 'playoff').map(r => +r.week));
+    for (const [w, rows] of Object.entries(S.weeks)) for (const [m, pid, slot, pts] of rows) {
+      const [name, pos] = P[pid] || []; if (!name || pos === 'HC') continue;
+      const row = { manager: m, name, pos, pts, season: +y, week: +w };
+      if (slot === 'S') { started.push(row); if (+w < po) { const k = y + '|' + m + '|' + pid; (season[k] ||= { manager: m, name, pos, season: +y, pts: 0 }).pts += pts; } }
+      else if (slot === 'B') benched.push(row);
+    }
+  }
+  const yrs = Object.keys(pw.seasons).map(Number);
+  document.getElementById('playerRecords').innerHTML = `
+    <div class="hx-section-title"><h2>Player games</h2><span>${Math.min(...yrs)}–${Math.max(...yrs)} · ESPN box scores, NWL scoring</span></div>
+    <div class="hx-grid">
+      ${recordCard('Biggest game started', started.sort((a, b) => b.pts - a.pts), x => f1(x.pts), 'pts', x => x.manager, x => `${esc(x.name)} (${x.pos}) · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Biggest game benched', benched.sort((a, b) => b.pts - a.pts), x => f1(x.pts), 'pts', x => x.manager, x => `${esc(x.name)} (${x.pos}) · Wk ${x.week} ${x.season}`)}
+      ${recordCard('Most points started in a season', Object.values(season).sort((a, b) => b.pts - a.pts), x => f1(x.pts), 'pts', x => x.manager, x => `${esc(x.name)} (${x.pos}) · ${x.season} regular season`)}
     </div>`;
 }
 function champions() {
