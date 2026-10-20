@@ -565,6 +565,12 @@ def cmd_fetch_week(args, creds):
     })
     print(f"Wrote {len(schedule_rows)} regular-season games -> data/season_2026/schedule.json")
 
+    # ---- Shotgun counter (zero / negative starters per completed week) ----
+    try:
+        fetch_zero_starts(args.league_id, args.season, schedule_rows, creds, team_map)
+    except Exception as e:  # noqa: BLE001 - never let this break the main pull
+        print(f"WARNING: shotgun counter not updated: {e}")
+
     # ---- Power rankings (computed draft) / commentary stub (editorial - blurbs are factual,
     # never opinion; still requires Hunter's review before publishing) ----
     power_path = SITE_DIR / "data" / "season_2026" / "power_rankings.json"
@@ -587,6 +593,51 @@ def cmd_fetch_week(args, creds):
     print("Power rankings are computed (see POWER_WEIGHTS at the top of this script to tune the "
           "methodology) and commentary is a blank stub - both are published: false until you "
           "review/edit them and flip that flag to true.")
+
+
+def fetch_zero_starts(league_id, season, schedule_rows, creds, team_map):
+    """Shotgun counter data (2026 Hub Standings tab): every non-Head-Coach starter who scored 0 or less in a
+    completed week. League lingo (Hunter): a zero is a "shotgun", a negative is a "snorkel", and two zeros in
+    one week is a "double barrel". Starters hurt during their game still count but are flagged `hurt` (same
+    play-by-play detection as compute_best_ball.py). Completed weeks are kept as they are, except the latest
+    one, which is refetched each run to pick up stat corrections."""
+    import compute_best_ball as cbb  # lazy: it imports this module
+    path = SITE_DIR / "data" / "season_2026" / "zero_starts.json"
+    data = json.loads(path.read_text()) if path.exists() else {"weeks": {}}
+    done = sorted({r["week"] for r in schedule_rows} - {r["week"] for r in schedule_rows if r["winner"] == "UNDECIDED"})
+    if not done:
+        return
+    for wk in done:
+        if str(wk) in data["weeks"] and wk != done[-1]:
+            continue
+        box = fetch_league_raw(league_id, season, ["mMatchupScore", "mBoxscore"], creds, f"scoringPeriodId={wk}")
+        try:
+            hurt = cbb.injured_out(season, wk)
+        except Exception as e:  # noqa: BLE001 - injury flags are a nice-to-have
+            print(f"  (couldn't check mid-game injuries for week {wk}: {e})")
+            hurt = set()
+        rows = []
+        for m in box.get("schedule", []):
+            if m.get("matchupPeriodId") != wk:
+                continue
+            for side in ("home", "away"):
+                if side not in m:
+                    continue
+                mgr = resolve_manager(m[side]["teamId"], team_map)
+                for e in (m[side].get("rosterForCurrentScoringPeriod") or {}).get("entries", []):
+                    slot, pl = e["lineupSlotId"], e["playerPoolEntry"]["player"]
+                    if slot in (cbb.BENCH, cbb.IR, cbb.HC) or pl.get("id", 0) < 0:
+                        continue
+                    pts = round(e["playerPoolEntry"].get("appliedStatTotal") or 0, 2)
+                    if pts <= 0:
+                        team = cbb.PRO_TEAM_ABBR.get(pl.get("proTeamId"))
+                        rows.append({"manager": mgr, "player": pl.get("fullName"), "team": team, "points": pts,
+                                     "hurt": bool(team and cbb._short_key(team, pl.get("fullName", "")) in hurt)})
+        data["weeks"][str(wk)] = rows
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    data["through_week"] = done[-1]
+    _write_json(path, data)
+    print(f"Wrote zero starts through week {done[-1]} -> data/season_2026/zero_starts.json")
 
 
 def _load_json_list(path):

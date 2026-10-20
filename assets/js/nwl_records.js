@@ -167,7 +167,8 @@ const NWL_REC = (() => {
     for (const { r } of pg) {
       if (out.player.length >= 2 || used.has(r.season)) continue; used.add(r.season); // two different seasons
       const n = r.nwl || {};
-      const owner = n.manager ? (n.started ? ` for <b>${escH(n.manager)}</b>` : `, <b>on ${escH(n.manager)}'s bench</b>`) : n.drafted_by ? ` (drafted by ${escH(n.drafted_by)})` : n.free_agent ? ', <b>a free agent in the NWL</b>' : '';
+      // name only the NWL team he scored for (known from 2022 on); never who drafted him (Hunter, Oct 20)
+      const owner = n.manager ? (n.started ? ` for <b>${escH(n.manager)}</b>` : `, <b>on ${escH(n.manager)}'s bench</b>`) : '';
       out.player.push({ html: `<b>${r.season}:</b> ${escH(r.player)} (${escH(r.pos)}, ${escH(r.team)}) went off for ${f1(n.manager ? n.points : r.pts)}${n.manager ? '' : ' half-PPR'} vs ${escH(r.opp)}: ${escH(r.line)}${owner}.${r.pos_alltime_top10 ? ` One of the 10 best ${escH(r.pos)} games since 2013.` : ''}` });
     }
 

@@ -696,7 +696,270 @@
   {
     "week": 7,
     "published": false,
-    "title": "",
-    "body": ""
+    "title": "Pfaffinger Wins One, Glaser Wins With Two Zeros",
+    "body": "Pfaffinger is off the schneid. He beat Conlin 110-89 for his first win of the season, with Bhayshul Tuten (23), Bryce Young (20), and DeMario Douglas (16) doing the work. That keeps him out of the 0-6 club. Only two teams have started 0-6, and neither stopped there: Larson (2015) went to 0-7, and Goetz (2025) to 0-8, the worst start in NWL history. The bad news: 17 teams have been 1-5 after six games, and none of them made the playoffs.\n\nWeek 6 was ugly for everybody. The league averaged 89.9 points, 9.5% below the 2026 average of 99.3, and only three teams reached 100. Prodahl's 115 was the top score. Measured against its own season's average (the fair way to compare across scoring eras), that's the 13th-worst week of 185 since 2013. The worst is still Week 1 of 2023, when the league averaged 79.1, 18.6% below that season, and nobody reached 100. Week 6 of 2022 was 13.1% below its season, and only one team reached 100 that week. By raw average this week was only 47th-lowest, because scoring before 2018 was so much lower: the 2013 season averaged 84.1.\n\n{{visual:low-weeks}}\n\n{{visual:week6-scores}}\n\nGlaser won with two starters at zero. Cam Skattebo and Juwan Johnson both played and scored 0 (Johnson was targeted twice and caught nothing), and the Colts Head Coach added -5. Glaser still beat Zogg 81-61 because Trevor Lawrence scored 27. From 2022-2025, a team started two zero-point players (not counting Head Coaches) 11 times in the regular season and won three of them. Glaser is the fourth. He also had Stefon Diggs (13), Blake Corum (13), and Keenan Allen (12) on the bench, and has left 140 points on the bench this season, the most in the league. Zogg's 61.1 is the second-lowest score of 2026, just above Palaia's 58.8 in Week 2.\n\nStover beat Larson 81-73 for his fourth straight win, the longest active streak in the league. His 81.0 is the lowest winning score of 2026, just under Glaser's 81.1 from the same week. Stover is 4-2 but has the fewest expected wins of any team with a winning record (2.2), and he's played the hardest schedule so far. He has been very good at being lucky.\n\nAinsworth beat Muenchow 107-98 and is back to #1 in the power rankings. Kenneth Walker III scored 27 and D'Andre Swift 21, and Ainsworth won despite Tyler Shough scoring 27 on his bench (Jordan Love started and scored 20). Ainsworth and Glaser are both 5-1. From 2013-2025, 14 teams started 5-1, 13 made the playoffs, and 4 won the title.\n\nElsewhere: Prodahl beat Hagan 115-84 behind Drake Maye (24) and Germie Bernard (20). It's Prodahl's second straight win, and his playoff odds jumped 16 points to 65%, the biggest gain of the week. Hagan has lost three straight and started Darren Waller, who was targeted twice and scored 0, with Ryan Flournoy (14) on the bench. Goetz beat Palaia 91.9-87.4, the closest game of the week, behind Malik Nabers (23). That evened their all-time series at 12-12, and at 24 games it's now the most-played tied rivalry in league history. Pfaffinger's win did the same to his series with Conlin, now 11-11. Larson's playoff odds fell 14 points to 34%, the biggest drop.\n\nOnly five of the twelve Head Coaches in lineups won this week. Conlin and Palaia both started a coach whose team was on bye, the Lions and the Vikings, for 0 points each. Detroit and Minnesota were two of the four teams with Week 6 byes.\n\nBest-ball standings didn't change this week. Through six weeks, four teams have a different best-ball record: Prodahl would be 4-2 and Pfaffinger 2-4, while Goetz would be 3-3 and Zogg 1-5.\n\n{{visual:best-ball}}\n\nIn Week 7, #1 Ainsworth plays #5 Prodahl in the game of the week. It's projected as the highest-scoring game (224), and Prodahl is favored by 1. Prodahl also leads the all-time series 14-2. Conlin has Buffalo on bye, which takes out Josh Allen and James Cook III, so Larson is favored by 26.5, the biggest spread of the week. Hagan and Goetz is a pick'em (Goetz by 0.5), and Goetz leads that series 13-3. Buffalo, Jacksonville, the Chargers, and Washington are on bye.",
+    "visuals": [
+      {
+        "id": "low-weeks",
+        "type": "bar",
+        "title": "Lowest-Scoring Weeks, Compared With Their Own Season",
+        "legend": [
+          {
+            "label": "Past weeks",
+            "tone": ""
+          },
+          {
+            "label": "This week",
+            "tone": "hot"
+          }
+        ],
+        "bars": [
+          {
+            "label": "2023 Wk 1",
+            "value": 18.6,
+            "display": "\u221218.6% \u00b7 79.1",
+            "tone": ""
+          },
+          {
+            "label": "2021 Wk 9",
+            "value": 15.7,
+            "display": "\u221215.7% \u00b7 91.2",
+            "tone": ""
+          },
+          {
+            "label": "2020 Wk 10",
+            "value": 15.5,
+            "display": "\u221215.5% \u00b7 89.8",
+            "tone": ""
+          },
+          {
+            "label": "2016 Wk 14",
+            "value": 13.8,
+            "display": "\u221213.8% \u00b7 78.7",
+            "tone": ""
+          },
+          {
+            "label": "2022 Wk 6",
+            "value": 13.1,
+            "display": "\u221213.1% \u00b7 84.9",
+            "tone": ""
+          },
+          {
+            "label": "2026 Wk 6",
+            "value": 9.5,
+            "display": "\u22129.5% \u00b7 89.9",
+            "tone": "hot"
+          }
+        ],
+        "note": "Each week's league average compared with that season's average. Week 6 of 2026 is 13th-worst of 185 weeks since 2013. Value shown: % below the season, then the week's average."
+      },
+      {
+        "id": "week6-scores",
+        "type": "bar",
+        "title": "Week 6 Scores",
+        "legend": [
+          {
+            "label": "Won",
+            "tone": ""
+          },
+          {
+            "label": "Lost",
+            "tone": "muted"
+          }
+        ],
+        "bars": [
+          {
+            "manager": "Prodahl",
+            "value": 114.6,
+            "display": "115",
+            "tone": ""
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 110.04,
+            "display": "110",
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 107.24,
+            "display": "107",
+            "tone": ""
+          },
+          {
+            "manager": "Muenchow",
+            "value": 98.48,
+            "display": "98",
+            "tone": "muted"
+          },
+          {
+            "manager": "Goetz",
+            "value": 91.92,
+            "display": "92",
+            "tone": ""
+          },
+          {
+            "manager": "Conlin",
+            "value": 88.8,
+            "display": "89",
+            "tone": "muted"
+          },
+          {
+            "manager": "Palaia",
+            "value": 87.4,
+            "display": "87",
+            "tone": "muted"
+          },
+          {
+            "manager": "Hagan",
+            "value": 83.56,
+            "display": "84",
+            "tone": "muted"
+          },
+          {
+            "manager": "Glaser",
+            "value": 81.14,
+            "display": "81.1",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 80.98,
+            "display": "81.0",
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 72.98,
+            "display": "73",
+            "tone": "muted"
+          },
+          {
+            "manager": "Zogg",
+            "value": 61.12,
+            "display": "61",
+            "tone": "muted"
+          }
+        ]
+      },
+      {
+        "id": "best-ball",
+        "type": "table",
+        "title": "Best-Ball Standings Through Week 6",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "act",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "bb",
+            "label": "Best Ball",
+            "num": true
+          },
+          {
+            "key": "left",
+            "label": "Bench Pts Left",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Ainsworth",
+            "act": "5-1",
+            "bb": "5-1",
+            "left": "82"
+          },
+          {
+            "mgr": "Glaser",
+            "act": "5-1",
+            "bb": "5-1",
+            "left": "140"
+          },
+          {
+            "mgr": "Stover",
+            "act": "4-2",
+            "bb": "4-2",
+            "left": "85"
+          },
+          {
+            "mgr": "Prodahl",
+            "act": "3-3",
+            "bb": "4-2",
+            "left": "90",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Goetz",
+            "act": "4-2",
+            "bb": "3-3",
+            "left": "37",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Larson",
+            "act": "3-3",
+            "bb": "3-3",
+            "left": "92"
+          },
+          {
+            "mgr": "Muenchow",
+            "act": "3-3",
+            "bb": "3-3",
+            "left": "96"
+          },
+          {
+            "mgr": "Conlin",
+            "act": "2-4",
+            "bb": "2-4",
+            "left": "71"
+          },
+          {
+            "mgr": "Hagan",
+            "act": "2-4",
+            "bb": "2-4",
+            "left": "101"
+          },
+          {
+            "mgr": "Palaia",
+            "act": "2-4",
+            "bb": "2-4",
+            "left": "39"
+          },
+          {
+            "mgr": "Pfaffinger",
+            "act": "1-5",
+            "bb": "2-4",
+            "left": "66",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Zogg",
+            "act": "2-4",
+            "bb": "1-5",
+            "left": "72",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          }
+        ],
+        "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
+      }
+    ]
   }
 ]

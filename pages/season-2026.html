@@ -170,6 +170,25 @@
 .mp-watch ul { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
 .mp-inj { color: #E0524A; font-size: 0.72rem; }
 @media (max-width: 420px) { .mp-grid { grid-template-columns: 1fr; gap: 2px; } .mp-k { padding-top: 6px; } .mp-watch { grid-template-columns: 1fr; } }
+.sg-card { margin-top: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.sg-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sg-head h3 { margin: 0; font-size: 1rem; }
+.sg-key { margin: 4px 0 10px; font-size: 0.78rem; color: var(--text-muted); }
+.sg-key b { color: var(--text); }
+.sg-rows { display: flex; flex-direction: column; }
+.sg-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 28px 200px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.88rem; }
+.sg-row:last-child { border-bottom: 0; }
+.sg-row.clean { opacity: 0.85; }
+.sg-icons { font-size: 0.95rem; letter-spacing: 1px; overflow: hidden; white-space: nowrap; }
+.sg-n { font-family: var(--font-mono); font-weight: 600; text-align: right; }
+.sg-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.sg-calls { margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid var(--line); list-style: none; display: flex; flex-direction: column; gap: 5px; font-size: 0.84rem; color: var(--text-muted); }
+.sg-calls b { color: var(--text); }
+.sg-kind { display: inline-block; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; }
+.sg-kind.double { background: rgba(224,82,74,0.15); color: #E0524A; }
+.sg-kind.snorkel { background: var(--live-bg); color: var(--live-bright); }
+.sg-hurt { font-size: 0.7rem; color: var(--text-muted); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; }
+@media (max-width: 560px) { .sg-row { grid-template-columns: minmax(0, 1fr) auto 24px; } .sg-tags { grid-column: 1 / -1; justify-content: flex-start; } .sg-tags:empty { display: none; } }
 </style>
 </head>
 <body>
@@ -262,12 +281,12 @@
 <script src="../assets/js/shared.js?v=23"></script>
 <script src="../assets/js/trade_engine.js?v=2"></script>
 <script src="../assets/js/nwl_sim.js?v=2"></script>
-<script src="../assets/js/nwl_records.js?v=3"></script>
+<script src="../assets/js/nwl_records.js?v=4"></script>
 <script>
 let managers = [];
 let matchups = [], standings = null, powerRankings = [], commentary = [], funFacts = [];
 let managerDivision = {};
-let schedule = null, history = [], weeklyHist = [], seasonsHist = [];
+let schedule = null, history = [], weeklyHist = [], seasonsHist = [], zeroStarts = null;
 const DIVISION_ORDER = ['Gold', 'Silver', 'Bronze'];
 
 function emptyState(headline, sub) {
@@ -378,7 +397,43 @@ function renderStandings() {
     `).join('')}
     </div>
     <p class="hx-muted" style="font-size:.74rem;margin-top:10px">Bars show points for, relative to the league's top scorer.</p>
+    ${shotgunHTML()}
   `;
+}
+
+// Shotgun counter. League lingo: a starter who scores exactly 0 is a shotgun, a negative score is a snorkel,
+// and two zeros in one week is a double barrel. Head Coaches don't count. Data: data/season_2026/zero_starts.json,
+// written by the weekly ESPN pull (scripts/fetch_espn_week.py).
+function shotgunHTML() {
+  if (!zeroStarts || !zeroStarts.weeks) return '';
+  const T = {}, calls = [];
+  const blank = () => ({ shotgunWeeks: 0, shotguns: 0, doubles: 0, snorkels: 0 });
+  (standings.standings || []).forEach(s => { T[s.manager] = blank(); });
+  const hurtTag = z => z.hurt ? ' <span class="sg-hurt">hurt in game</span>' : '';
+  Object.entries(zeroStarts.weeks).sort((a, b) => a[0] - b[0]).forEach(([wk, rows]) => {
+    const by = {};
+    rows.forEach(z => (by[z.manager] ||= []).push(z));
+    Object.entries(by).forEach(([m, zs]) => {
+      const t = (T[m] ||= blank());
+      const zeros = zs.filter(z => z.points === 0), negs = zs.filter(z => z.points < 0);
+      if (zeros.length) { t.shotgunWeeks++; t.shotguns += zeros.length; }
+      if (zeros.length >= 2) { t.doubles++; calls.push({ wk: +wk, kind: 'double', m, html: `${zeros.map(z => esc(z.player) + hurtTag(z)).join(zeros.length > 2 ? ', ' : ' and ')}${zeros.length > 2 ? ` (${zeros.length} zeros)` : ''}` }); }
+      negs.forEach(z => { t.snorkels++; calls.push({ wk: +wk, kind: 'snorkel', m, html: `${esc(z.player)} (${z.points.toFixed(1).replace('-', '−')})${hurtTag(z)}` }); });
+    });
+  });
+  const rows = Object.entries(T).sort((a, b) => b[1].shotgunWeeks - a[1].shotgunWeeks || b[1].snorkels - a[1].snorkels || b[1].doubles - a[1].doubles || a[0].localeCompare(b[0]));
+  const icons = n => n ? '🍺'.repeat(Math.min(n, 8)) + (n > 8 ? ` ×${n}` : '') : '<span class="hx-muted">—</span>';
+  const label = { double: 'Double barrel', snorkel: 'Snorkel' };
+  return `<section class="sg-card">
+    <div class="sg-head"><h3>Shotgun Counter</h3><span class="hx-muted">through week ${zeroStarts.through_week}</span></div>
+    <p class="sg-key"><b>Shotgun</b>: starting a player who scores 0. <b>Double barrel</b>: two zeros in one week. <b>Snorkel</b>: a negative score. Head Coaches don't count.</p>
+    <div class="sg-rows">${rows.map(([m, t]) => `<div class="sg-row${t.shotgunWeeks || t.snorkels ? '' : ' clean'}">
+        <span>${managerTag(managers, m)}</span><span class="sg-icons" title="${t.shotgunWeeks} week${t.shotgunWeeks === 1 ? '' : 's'} with a shotgun">${icons(t.shotgunWeeks)}</span>
+        <span class="sg-n">${t.shotgunWeeks}</span>
+        <span class="sg-tags">${t.doubles ? `<span class="hx-pill down">${t.doubles > 1 ? t.doubles + '× ' : ''}double barrel</span>` : ''}${t.snorkels ? `<span class="hx-pill gold">${t.snorkels > 1 ? t.snorkels + '× ' : ''}snorkel</span>` : ''}</span>
+      </div>`).join('')}</div>
+    ${calls.length ? `<ul class="sg-calls">${calls.sort((a, b) => b.wk - a.wk).map(c => `<li><span class="sg-kind ${c.kind}">${label[c.kind]}</span> <b>${esc(c.m)}</b>, week ${c.wk}: ${c.html}</li>`).join('')}</ul>` : ''}
+  </section>`;
 }
 
 function renderPower() {
@@ -693,6 +748,7 @@ async function init() {
   ]);
   [schedule, D, history, weeklyHist] = await Promise.all([loadDataSafe('season_2026/schedule', null), loadDataSafe('season_2026/trade_values', null), loadDataSafe('matchup_results', []), loadDataSafe('weekly_scores', [])]);
   seasonsHist = await loadDataSafe('team_seasons_regular', []);
+  zeroStarts = await loadDataSafe('season_2026/zero_starts', null);
 
   managerDivision = {};
   if (standings && standings.standings) {

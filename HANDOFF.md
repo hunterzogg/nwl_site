@@ -355,7 +355,7 @@ Week 5 only; earlier weeks hide the line, since their "remaining" schedule can't
 - Caveat: a resubmit refreshes `submitted_at` on every pick in the batch, so "submitted after" means the last save.
 - Reuse the `void:` prefix to zero out specific picks without deleting them.
 
-**Injury rule for bench criticism + `scripts/compute_best_ball.py` (Week 6).** Commentary never
+**Injury rule for bench criticism + `scripts/compute_best_ball.py` (Week 6).** *(Updated Oct 20: best ball no longer locks injured starters in. It's pure hindsight, per Hunter; `--lock-injured` keeps the old behavior. The no-criticism rule still applies to commentary. Play-by-play team codes are aliased in `PBP_TEAM` (WAS→WSH, LA→LAR, JAC→JAX): Washington injuries were never detected before, which missed Terry McLaurin in Week 6 and Jayden Daniels in Week 2.)* Commentary never
 suggests a team should have started a worse player over one who got hurt during the game. The
 new read-only `scripts/compute_best_ball.py` locks mid-game-injured starters into the optimal
 lineup, detected from ESPN NFL play-by-play. It also prints zero-point starters and started-HC
@@ -1782,7 +1782,8 @@ one sentence ("Muenchow and Goetz are both 3-2 and project to..."). Site copy re
 (Hunter's preference), with "their" only when a sentence covers several. Record watch shows at most 3 items, one per manager:
 season pace (PPG high/low, wins, losses), streaks within 2 of the record, projections within 15 of the
 highest/lowest score, and career milestones reachable this week. It hides itself when nothing qualifies. The history
-card shows the best team moment, a rotating second one, 2 player games from different seasons, and a trade or a
+card shows the best team moment, a rotating second one, 2 player games from different seasons (naming only the NWL
+team he scored for, known from 2022 on; never who drafted him, per Hunter), and a trade or a
 $20+ FAAB buy within 3 days of today's date in a past season.
 
 **Trade Grades tab (Transactions):** each received player is followed from the week he actually changed rosters
@@ -1801,6 +1802,20 @@ the lowest starter at his position in a loss, flagged when it flips the result),
 Biggest FAAB splash.
 
 Versions: `style.css?v=17`, `shared.js?v=23`, `trade_engine.js?v=2`, `nwl_sim.js?v=1`, `nwl_records.js?v=2`.
+
+## Shotgun Counter (2026 Hub Standings tab, added Oct 20 2026)
+
+League lingo (Hunter): a starter who scores exactly **0** is a **shotgun**, a **negative** score is a **snorkel**,
+and **two zeros in one week** is a **double barrel**. Head Coaches never count. The Standings tab's "Shotgun
+Counter" card lists every manager by number of weeks with a shotgun (beer icons), with double-barrel and
+snorkel pills and a callout line for each (newest first). Starters hurt during their game still count but are
+tagged "hurt in game".
+
+Data: `data/season_2026/zero_starts.json` (`weeks: {week: [{manager, player, team, points, hurt}]}`), written by
+`fetch_zero_starts()` in `scripts/fetch_espn_week.py` on every pull and committed by the Action. It reads ESPN
+box scores (`mBoxscore`) for completed weeks, keeps saved weeks, and refetches only the latest completed week for
+stat corrections. Injury flags reuse `compute_best_ball.injured_out()`. Checked against `compute_best_ball.py`'s
+zero-or-negative starters for weeks 1-6: identical.
 
 ## Known Bugs & Data Issues
 

@@ -5,25 +5,25 @@
     "facts": [
       {
         "label": "Highest Score",
-        "headline": "{{num}} — Ainsworth",
+        "headline": "{{num}} \u2014 Ainsworth",
         "num": "165.56",
-        "sub": "Week 1, in a 97-point demolition of Zogg. The 2nd-highest Week 1-2 score in 13+ years of NWL history — trails only Muenchow's 172.30 in 2018.",
+        "sub": "Week 1, in a 97-point demolition of Zogg. The 2nd-highest Week 1-2 score in 13+ years of NWL history \u2014 trails only Muenchow's 172.30 in 2018.",
         "tone": "hot",
         "wide": false
       },
       {
         "label": "Biggest Season-Opening Blowout Ever",
-        "headline": "Ainsworth by {{num}} 🔥",
+        "headline": "Ainsworth by {{num}} \ud83d\udd25",
         "num": "97.06",
-        "sub": "The biggest Week 1-2 margin specifically in 13 years of NWL history — the old Week 1-2 mark was Muenchow's 67.98-point win over Stover in 2022, beaten by 29 points. It's not the biggest blowout ever, though — that's still Conlin's 127.6-point demolition of Zogg (202.4-74.8) in Week 3, 2019.",
+        "sub": "The biggest Week 1-2 margin specifically in 13 years of NWL history \u2014 the old Week 1-2 mark was Muenchow's 67.98-point win over Stover in 2022, beaten by 29 points. It's not the biggest blowout ever, though \u2014 that's still Conlin's 127.6-point demolition of Zogg (202.4-74.8) in Week 3, 2019.",
         "tone": "red",
         "wide": false
       },
       {
         "label": "Lowest Score",
-        "headline": "{{num}} — Palaia",
+        "headline": "{{num}} \u2014 Palaia",
         "num": "58.84",
-        "sub": "Week 2 loss to Larson. The 5th-lowest Week 1-2 score since 2013 — and Palaia's also 0-2 with the league's worst points against (254.6).",
+        "sub": "Week 2 loss to Larson. The 5th-lowest Week 1-2 score since 2013 \u2014 and Palaia's also 0-2 with the league's worst points against (254.6).",
         "tone": "cold",
         "wide": false
       },
@@ -39,7 +39,7 @@
         "label": "Larson's Rare Hot Start",
         "headline": "Only the {{num}} time in 13 years",
         "num": "3rd",
-        "sub": "Larson has started 2-0 just twice before (2013-2025). Glaser and Ainsworth — the other two current 2-0 teams — have each done it 3 times; Palaia leads the league all-time with 7, one ahead of Conlin's 6.",
+        "sub": "Larson has started 2-0 just twice before (2013-2025). Glaser and Ainsworth \u2014 the other two current 2-0 teams \u2014 have each done it 3 times; Palaia leads the league all-time with 7, one ahead of Conlin's 6.",
         "tone": "green",
         "wide": true
       },
@@ -55,7 +55,7 @@
         "label": "Nailbiter of the Season",
         "headline": "Prodahl by {{num}}",
         "num": "11.94",
-        "sub": "Edged Stover 84.92–72.98 in Week 2 — the closest game either week.",
+        "sub": "Edged Stover 84.92\u201372.98 in Week 2 \u2014 the closest game either week.",
         "tone": "green",
         "wide": false
       },
@@ -71,7 +71,7 @@
         "label": "League-Wide Waiver Activity",
         "headline": "{{num}} total pickups, $240 in FAAB spent",
         "num": "61",
-        "sub": "37 came free off the wire with no bid at all — including 8 Head Coach swaps as managers chase a better bye-week matchup. Palaia leads the league with 14 moves, more than double the next-busiest manager (Goetz, 9).",
+        "sub": "37 came free off the wire with no bid at all \u2014 including 8 Head Coach swaps as managers chase a better bye-week matchup. Palaia leads the league with 14 moves, more than double the next-busiest manager (Goetz, 9).",
         "tone": "",
         "wide": true
       }
@@ -99,7 +99,7 @@
       },
       {
         "label": "Highest Score",
-        "headline": "{{num}} — Palaia",
+        "headline": "{{num}} \u2014 Palaia",
         "num": "132.16",
         "sub": "Week 3's top score, powered by Bijan Robinson (34.3) and Brock Bowers (22.6). The 59.02-point win over Pfaffinger was also the week's biggest margin.",
         "tone": "hot",
@@ -107,7 +107,7 @@
       },
       {
         "label": "Lowest Score",
-        "headline": "{{num}} — Zogg",
+        "headline": "{{num}} \u2014 Zogg",
         "num": "68.84",
         "sub": "Zogg's second sub-70 game in three weeks (68.50 in Week 1), with the Week 2 high score of 138.86 in between. That's 7 sub-70 regular-season games for Zogg since 2022, the start of the current scoring era.",
         "tone": "cold",
@@ -117,7 +117,7 @@
         "label": "Nailbiter of the Season",
         "headline": "Stover by {{num}}",
         "num": "2.18",
-        "sub": "101.28–99.10 over Ainsworth, the closest game of 2026 so far (the old mark was Prodahl's 11.94 in Week 2). Ainsworth's Ravens Head Coach scored +5 on the bench, enough to flip the result.",
+        "sub": "101.28\u201399.10 over Ainsworth, the closest game of 2026 so far (the old mark was Prodahl's 11.94 in Week 2). Ainsworth's Ravens Head Coach scored +5 on the bench, enough to flip the result.",
         "tone": "green",
         "wide": false
       },
@@ -125,7 +125,7 @@
         "label": "Benched: Most Points",
         "headline": "{{num}} from Brock Purdy, on Hagan's bench",
         "num": "31.3",
-        "sub": "The most points by any QB in the league in Week 3. Hagan started Jalen Hurts (12.6) instead and still beat Zogg 85.62–68.84. At 2-1, Hagan has scored less than he's allowed (268.7 PF vs. 269.6 PA).",
+        "sub": "The most points by any QB in the league in Week 3. Hagan started Jalen Hurts (12.6) instead and still beat Zogg 85.62\u201368.84. At 2-1, Hagan has scored less than he's allowed (268.7 PF vs. 269.6 PA).",
         "tone": "hot",
         "wide": false
       },
@@ -157,7 +157,7 @@
         "label": "Week 4 Game of the Week",
         "headline": "The all-time series is tied {{num}}",
         "num": "12-12",
-        "sub": "#1 Glaser (3-0) vs. #2 Ainsworth (2-1, league-high 382.9 points for). ESPN has Glaser favored by 11. Their last meeting, Week 10 of 2025, went to Ainsworth 113.54–112.20.",
+        "sub": "#1 Glaser (3-0) vs. #2 Ainsworth (2-1, league-high 382.9 points for). ESPN has Glaser favored by 11. Their last meeting, Week 10 of 2025, went to Ainsworth 113.54\u2013112.20.",
         "tone": "",
         "wide": true
       }
@@ -177,7 +177,7 @@
       },
       {
         "label": "Highest Score",
-        "headline": "{{num}} — Goetz",
+        "headline": "{{num}} \u2014 Goetz",
         "num": "138.78",
         "sub": "Chuba Hubbard (25.4) and Emanuel Wilson (25.5, from the flex) led the way in a win over Pfaffinger. Goetz started 0-4 last year and finished 12th. This year he's 3-1.",
         "tone": "hot",
@@ -185,7 +185,7 @@
       },
       {
         "label": "Lowest Score",
-        "headline": "{{num}} — Glaser",
+        "headline": "{{num}} \u2014 Glaser",
         "num": "73.18",
         "sub": "Glaser's perfect start ended against Ainsworth (99.34), who now leads the all-time series 13-12. Glaser is 3-1 after four weeks for the second straight year.",
         "tone": "cold",
@@ -251,7 +251,7 @@
         "label": "Week 5 Game of the Week",
         "headline": "#12 is favored over #1 by {{num}}",
         "num": "5.5",
-        "sub": "0-4 Pfaffinger hosts 3-1 Ainsworth. Pfaffinger leads the all-time series 12-5 and won the last meeting, 82.06–65.06 in Week 14 of 2025.",
+        "sub": "0-4 Pfaffinger hosts 3-1 Ainsworth. Pfaffinger leads the all-time series 12-5 and won the last meeting, 82.06\u201365.06 in Week 14 of 2025.",
         "tone": "",
         "wide": true
       }
@@ -263,7 +263,7 @@
     "facts": [
       {
         "label": "Highest Score",
-        "headline": "{{num}} — Muenchow",
+        "headline": "{{num}} \u2014 Muenchow",
         "num": "168.22",
         "sub": "The highest score in any NWL game since the current scoring era began in 2022, and 7th-highest in league history. Muenchow's best is still 172.30, from Week 1 of 2018.",
         "tone": "hot",
@@ -279,7 +279,7 @@
       },
       {
         "label": "Lowest Score",
-        "headline": "{{num}} — Pfaffinger",
+        "headline": "{{num}} \u2014 Pfaffinger",
         "num": "63.42",
         "sub": "Tetairoa McMillan and Bryce Young were on Carolina's bye, and Rashee Rice was on Kansas City's.",
         "tone": "cold",
@@ -335,7 +335,7 @@
       },
       {
         "label": "Most Points Left on the Bench",
-        "headline": "{{num}} — Glaser",
+        "headline": "{{num}} \u2014 Glaser",
         "num": "115.7",
         "sub": "Through five weeks, compared with Glaser's best possible lineup each week. He's 4-1 anyway. Goetz has left the fewest (31.9).",
         "tone": "",
@@ -345,8 +345,86 @@
         "label": "Week 6 Game of the Week",
         "headline": "Muenchow leads the series {{num}}",
         "num": "12-7",
-        "sub": "#4 Muenchow, coming off 168.22, hosts #2 Ainsworth. Based on each team's best projected lineup, Ainsworth is favored by 9.5. Muenchow won their last meeting, 124.48–102.72 in Week 5 of 2025.",
+        "sub": "#4 Muenchow, coming off 168.22, hosts #2 Ainsworth. Based on each team's best projected lineup, Ainsworth is favored by 9.5. Muenchow won their last meeting, 124.48\u2013102.72 in Week 5 of 2025.",
         "tone": "",
+        "wide": true
+      }
+    ]
+  },
+  {
+    "week": 7,
+    "published": false,
+    "facts": [
+      {
+        "label": "Owned",
+        "headline": "Prodahl leads Ainsworth {{num}}, the most lopsided rivalry in NWL history",
+        "num": "14-2",
+        "sub": "They meet this week, with Prodahl favored by 1. Hagan and Goetz also play, and Goetz's 13-3 lead is the third-most lopsided series ever, behind Muenchow's 16-3 over Larson (series of 12+ games).",
+        "tone": "hot",
+        "wide": true
+      },
+      {
+        "label": "Dodged It",
+        "headline": "Pfaffinger avoids {{num}}",
+        "num": "0-6",
+        "sub": "Only two teams have ever started 0-6, and neither stopped there: Larson (2015) went to 0-7, and Goetz (2025) to 0-8, the worst start in NWL history. The bad news: 17 teams have been 1-5 after six games, and none made the playoffs.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "A Rough Week for Everyone",
+        "headline": "League average: {{num}}",
+        "num": "89.9",
+        "sub": "9.5% below the 2026 average, the 13th-worst week of 185 since 2013 measured against its own season. The worst: Week 1 of 2023, 18.6% below, when nobody reached 100.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Won With Two Zeros",
+        "headline": "Glaser started {{num}} zero-point players and won",
+        "num": "2",
+        "sub": "Cam Skattebo and Juwan Johnson both played and scored 0. From 2022-2025, teams did that 11 times in the regular season and won three of them.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Sub-70 Club",
+        "headline": "Zogg has {{num}} games under 70 in six weeks",
+        "num": "4",
+        "sub": "68.5, 68.8, 69.8 and now 61.1. That ties 2017 Ainsworth for the most sub-70 games through six weeks in league history.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "All Square",
+        "headline": "Week 6 evened {{num}} of the league's longest rivalries",
+        "num": "two",
+        "sub": "Pfaffinger's first win tied his series with Conlin at 11-11 (Conlin led 11-10). Goetz's 4.5-point win tied Goetz vs. Palaia at 12-12, now the most-played tied series in league history at 24 games.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Coaching on Bye",
+        "headline": "{{num}} Head Coaches started on a bye",
+        "num": "2",
+        "sub": "Conlin started the Lions coach and Palaia the Vikings coach. Detroit and Minnesota both had Week 6 off, so both scored 0.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Lucky Streak",
+        "headline": "Stover's {{num}}-game win streak",
+        "num": "4",
+        "sub": "The longest active streak in the league. His 81.0 was the lowest winning score of 2026, and his 2.2 expected wins are the fewest of any team with a winning record.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Playoff Race",
+        "headline": "Prodahl's odds: {{num}}",
+        "num": "+16",
+        "sub": "Up to 65%, the biggest jump of the week. Larson had the biggest drop, 14 points, to 34%.",
+        "tone": "green",
         "wide": true
       }
     ]

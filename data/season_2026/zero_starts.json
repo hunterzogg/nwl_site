@@ -1,0 +1,101 @@
+{
+  "weeks": {
+    "1": [
+      {
+        "manager": "Stover",
+        "player": "Colston Loveland",
+        "team": "CHI",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Conlin",
+        "player": "Jordan Addison",
+        "team": "MIN",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Ainsworth",
+        "player": "Kyle Pitts Sr.",
+        "team": "ATL",
+        "points": 0,
+        "hurt": false
+      }
+    ],
+    "2": [
+      {
+        "manager": "Conlin",
+        "player": "Marvin Harrison Jr.",
+        "team": "HOU",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Palaia",
+        "player": "DJ Moore",
+        "team": "BUF",
+        "points": -0.1,
+        "hurt": true
+      }
+    ],
+    "3": [],
+    "4": [
+      {
+        "manager": "Pfaffinger",
+        "player": "Rashee Rice",
+        "team": "KC",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Conlin",
+        "player": "Ladd McConkey",
+        "team": "LAC",
+        "points": 0,
+        "hurt": false
+      }
+    ],
+    "5": [
+      {
+        "manager": "Glaser",
+        "player": "Kenyon Sadiq",
+        "team": "NYJ",
+        "points": -0.7,
+        "hurt": false
+      },
+      {
+        "manager": "Goetz",
+        "player": "Brian Thomas Jr.",
+        "team": "JAX",
+        "points": 0,
+        "hurt": false
+      }
+    ],
+    "6": [
+      {
+        "manager": "Hagan",
+        "player": "Darren Waller",
+        "team": "CAR",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Glaser",
+        "player": "Cam Skattebo",
+        "team": "NYG",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Glaser",
+        "player": "Juwan Johnson",
+        "team": "NO",
+        "points": 0,
+        "hurt": false
+      }
+    ]
+  },
+  "updated_at": "2026-10-20T22:29:33.166708+00:00",
+  "through_week": 6
+}

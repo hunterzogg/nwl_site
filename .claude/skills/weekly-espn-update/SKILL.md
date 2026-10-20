@@ -119,7 +119,18 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    `playerPoolEntry.appliedStatTotal`. Bench-vs-starter swaps that would have flipped a result are
    reliably the best material. The jokes can be opinionated, but every number and "first/most ever"
    claim has to come from real data. Don't infer why a player scored 0.0 (bye vs. injury) without
-   checking. Use he/him for managers (the league's stated preference). Always draft it, show it, and leave it unpublished for
+   checking. Use he/him for managers (the league's stated preference). **League lingo:** a starter who scores exactly 0 is a
+   **shotgun**, a negative score is a **snorkel**, and two zeros in one week is a **double barrel** (Head Coaches
+   don't count). The Standings tab's Shotgun Counter tracks them automatically from `zero_starts.json`, and they're
+   good commentary and Fun Facts material. **Round scores to whole numbers**
+   (team and player points: "beat Conlin 110-89", "Tuten (23)"). Use one decimal when two scores are within
+   a few points of each other or would round to the same number ("91.9-87.4", "81.0 vs. 81.1"), and two
+   decimals only when there's a specific reason (e.g. a game decided by hundredths). Lines, averages,
+   percentages and expected wins keep their usual precision (26.5, 89.9, 9.5%, 2.2). The same rounding goes
+   in the visuals and in Fun Facts. **When a week is unusually high- or low-scoring**, compare it with the
+   league's other extreme weeks both by raw league average and against that season's own average (scoring
+   rules changed over the eras, so the season-relative rank is the fair one; e.g. Week 6 of 2026 was 9.5%
+   below its season, 13th-worst of 185 weeks). Always draft it, show it, and leave it unpublished for
    review.
    **Add visuals where they help** (tables and bar charts, not decoration): a commentary entry can
    carry an optional `visuals` array, each placed in `body` by a paragraph that is exactly
@@ -136,12 +147,14 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    per-week flips, zero-or-negative starters (a negative score counts as a zero-point game; Head
    Coaches excluded), started-HC wins (for grading those props), and the
    **starters who got hurt mid-game**. **Never suggest a team should have started someone else over
-   a player who got injured during the game** - the script locks those starters into the optimal
-   lineup (so best ball and "bench points left" don't count them either), and any bench-decision
-   line in commentary/Fun Facts must skip them. Detection comes from ESPN's NFL play-by-play
-   ("KC-R.Rice was injured during the play" with no later "has returned to the game"). It's
-   name-matched, so if a starter's low score looks like an injury and isn't listed, spot-check
-   that game before writing the line.
+   a player who got injured during the game.** That rule is for commentary and Fun Facts only: best ball itself is
+   pure hindsight and *does* swap injured starters out (Hunter, Oct 20 2026; the script used to lock them in, and
+   `--lock-injured` still does). The script prints each week's **starters who got hurt mid-game**, and any
+   bench-decision line must skip them. Detection comes from ESPN's NFL play-by-play ("KC-R.Rice was injured during
+   the play" with no later "has returned to the game"). It's name-matched, and the play-by-play's team codes can
+   differ from the fantasy ones (Washington is WAS there, WSH in fantasy; mapped in `PBP_TEAM`, a gap that let Terry
+   McLaurin's Week 6 knee injury slip through). If a starter's low score looks like an injury and isn't listed,
+   spot-check that game before writing the line.
 4. **Draft "Brian's Fun Facts"** for the upcoming week (same look-back convention). Unlike commentary, no script writes
    `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
    (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing
@@ -151,10 +164,15 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    number), `wide: true` spans both grid columns. Ground every fact in real data the same way the
    Week 4 Pick'em props were (this week's matchups.json, recent-weeks trends, and real league
    history from the data files - see "Weekly Pick'em props" below for where that history lives) -
-   never invent a stat. 8-10 facts is a reasonable batch size (see the week 2 and week 4
-   entries; week 4 is the first under the look-back convention and shows the usual mix: high/low
-   score, nailbiter, costliest bench decision, historical-start odds, and a "Game of the Week" card
-   with the all-time head-to-head for the upcoming week). `matchup_results.json` was rebuilt from
+   never invent a stat. **Fun Facts should be creative and novel, about the week and league history in
+   general.** Don't include the week's highest or lowest score (or a routine nailbiter or game-of-the-week card)
+   unless it's notable for league history, e.g. a top-10 all-time score or a record. Look for angles like: the most
+   lopsided rivalries in league history meeting this week, a record a team just tied, an exact final score that has
+   happened before (and to whom), a streak or start nobody has had in years. Check that a "rare" thing really is
+   rare before using it: 4 never-before-seen final scores in a week sounds novel, but since 2022 the league averages
+   4.5 per week. 8-10 facts is a reasonable batch size (see the week 2 and week 4
+   entries; week 7 is the model for the creative mix: lopsided rivalries meeting, a tied record, a repeated exact
+   final, plus the costliest bench decision and historical-start odds). `matchup_results.json` was rebuilt from
    ESPN's real schedules in late September 2026. It has exact decimal scores and correct pairings
    for every season back to 2013, so records, streaks, "N-0 starts", points against, and
    head-to-head can be computed from it directly. Before that rebuild, most pre-2023 pairings were

@@ -9,11 +9,11 @@ Pulls each played week's ESPN box scores and prints, for the weekly recap:
     (+5) - both used for weekly Pick'em props.
   - Optional --json PATH dumps everything (incl. each team's optimal lineup) for further digging.
 
-Mid-game injuries: a starter who got hurt during their NFL game and never returned is LOCKED into
-their lineup slot in the optimal lineup - hindsight shouldn't "bench" a player for getting hurt in
-favor of a worse one. Detected from ESPN's NFL play-by-play ("KC-R.Rice was injured during the
-play" with no later "has returned to the game"); every such starter is printed per week so the
-commentary never criticizes starting them either.
+Mid-game injuries: best ball is pure hindsight, so it does NOT protect a starter who got hurt during his
+game: the optimal lineup can swap him out like anyone else (Hunter, Oct 20 2026; this used to lock
+injured starters in). Those starters are still detected from ESPN's NFL play-by-play ("KC-R.Rice was
+injured during the play" with no later "has returned to the game") and printed per week, because
+commentary and Fun Facts must never criticize starting them. Pass --lock-injured for the old behavior.
 
 Usage:
   python3 scripts/compute_best_ball.py              # weeks 1 .. last fully played week
@@ -39,6 +39,9 @@ PRO_TEAM_ABBR = {1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: 
                  19: "NYG", 20: "NYJ", 21: "PHI", 22: "ARI", 23: "PIT", 24: "LAC", 25: "SF", 26: "SEA", 27: "TB",
                  28: "WSH", 29: "CAR", 30: "JAX", 33: "BAL", 34: "HOU"}
 NFL_API = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
+# Play-by-play team codes that differ from the ESPN fantasy codes above (Week 6 of 2026: "WAS-T.McLaurin was
+# injured during the play" never matched the WSH key, so McLaurin wasn't locked into Larson's lineup).
+PBP_TEAM = {"WAS": "WSH", "LA": "LAR", "JAC": "JAX"}
 SUFFIX = re.compile(r"\s+(jr\.?|sr\.?|ii|iii|iv|v)$", re.I)
 
 
@@ -67,9 +70,9 @@ def injured_out(season, week):
         for play in plays:
             text = play.get("text", "")
             for team, nm in hurt_re.findall(text):
-                status[f"{team}-{nm}".lower().replace(" ", "")] = "out"
+                status[f"{PBP_TEAM.get(team, team)}-{nm}".lower().replace(" ", "")] = "out"
             for team, nm in back_re.findall(text):
-                status[f"{team}-{nm}".lower().replace(" ", "")] = "back"
+                status[f"{PBP_TEAM.get(team, team)}-{nm}".lower().replace(" ", "")] = "back"
         out |= {k for k, v in status.items() if v == "out"}
     return out
 
@@ -80,6 +83,7 @@ def main():
     ap.add_argument("--season", type=int, default=2026)
     ap.add_argument("--through", type=int, help="last week to include (default: last fully played week)")
     ap.add_argument("--json", help="also write full results to this path")
+    ap.add_argument("--lock-injured", action="store_true", help="keep starters hurt mid-game in the optimal lineup (old behavior)")
     args = ap.parse_args()
 
     creds = f.load_credentials()
@@ -126,7 +130,7 @@ def main():
                         locked.append((e["lineupSlotId"], j))
                         week["injured_starters"].append({"manager": mgr, "player": pl["fullName"],
                                                          "points": e["playerPoolEntry"].get("appliedStatTotal", 0)})
-                opt_pts, opt = f.optimal_lineup(pool, tuple(slots), tuple(locked))
+                opt_pts, opt = f.optimal_lineup(pool, tuple(slots), tuple(locked) if args.lock_injured else ())
                 for e in entries:
                     if e["lineupSlotId"] in (BENCH, IR):
                         continue
@@ -162,7 +166,7 @@ def main():
         print(f"Week {w['week']}: zero-or-negative starters {len(w['zero_starters'])} "
               f"{[z['manager'] + ': ' + z['player'] + ' ' + format(z['points'], '.1f') for z in w['zero_starters']]}")
         print(f"         HCs started {len(w['hc_started'])}, won {hc_wins}")
-        print(f"         starters hurt mid-game (locked in, don't second-guess): "
+        print(f"         starters hurt mid-game (never second-guess these in commentary): "
               f"{[i['manager'] + ': ' + i['player'] + ' ' + format(i['points'], '.1f') for i in w['injured_starters']]}")
         print(f"         biggest bench miss: {biggest['manager']} {biggest['optimal'] - biggest['actual']:.2f}")
         for g in flips:
