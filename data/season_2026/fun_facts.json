@@ -353,7 +353,7 @@
   },
   {
     "week": 7,
-    "published": false,
+    "published": true,
     "facts": [
       {
         "label": "Owned",
