@@ -11,7 +11,10 @@ Per season and week it keeps the top 5 games plus the best game at each position
 whose NWL team the player was on:
   - 2022+: from data/player_weeks.json (ESPN box scores): the manager, whether he was started, and
     his real NWL points that week
-  - 2013-2021: weekly NWL rosters aren't available, so who drafted him that season (draft_picks.json)
+  - 2013-2021: weekly NWL rosters aren't available, so who drafted him that season (draft_picks.json),
+    plus `end_owner`: whose roster he was on at the end of that season (ESPN leagueHistory mRoster, which
+    only has end-of-season rosters). The site names the drafter unless the end-of-season roster shows he
+    finished the year on another team (then he changed hands at an unknown time and no one is named).
 pos_alltime_top10 marks a top-10 half-PPR game ever at that position (2013 on).
 
 Usage: python3 scripts/build_player_highlights.py   (rerun after each season)
@@ -58,10 +61,57 @@ def stat_line(r, pos):
     return " · ".join(bits)
 
 
+LH = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/leagueHistory/39276?seasonId={y}&view={v}"
+
+
+def end_of_season_owners(weekly):
+    """{season: {normalized name: manager}} from ESPN leagueHistory end-of-season rosters (2013-2021).
+    Team ids are mapped to managers per season by matching week 1-6 scores to weekly_scores.json.
+    Returns {} if ESPN can't be reached; the site then just names the drafter."""
+    try:
+        import build_trade_values as btv
+        creds = json.loads((SCRIPT_DIR / "espn_credentials.json").read_text())
+        ck = {"Cookie": f"espn_s2={creds['espn_s2']}; SWID={creds['swid']}"}
+    except Exception as e:  # noqa: BLE001
+        print(f"  (no ESPN access, skipping end-of-season rosters: {e})")
+        return {}
+    out = {}
+    for y in range(2013, 2022):
+        try:
+            sch = btv.get(LH.format(y=y, v="mMatchupScore"), ck)[0]["schedule"]
+            ws = [r for r in weekly if r["season"] == str(y)]
+            votes = {}
+            for m in sch:
+                wk = m.get("matchupPeriodId")
+                if wk not in range(1, 7):
+                    continue
+                for side in ("home", "away"):
+                    if side not in m:
+                        continue
+                    hits = [r["manager"] for r in ws if r["week"] == str(wk) and abs(float(r["score"]) - m[side]["totalPoints"]) < 0.6]
+                    if len(hits) == 1:
+                        votes.setdefault(m[side]["teamId"], {}).setdefault(hits[0], 0)
+                        votes[m[side]["teamId"]][hits[0]] += 1
+            tm = {tid: max(v, key=v.get) for tid, v in votes.items()}
+            ros = btv.get(LH.format(y=y, v="mRoster"), ck)[0]
+            out[y] = {}
+            for t in ros.get("teams", []):
+                mgr = tm.get(t["id"])
+                for e in (t.get("roster") or {}).get("entries", []):
+                    if mgr:
+                        out[y][normalize_name(e["playerPoolEntry"]["player"].get("fullName", ""))] = mgr
+            print(f"  {y}: end-of-season rosters for {len(tm)} teams")
+        except Exception as e:  # noqa: BLE001
+            print(f"  {y}: end-of-season rosters unavailable ({e})")
+    return out
+
+
 def main():
     pw = json.loads((SITE / "data" / "player_weeks.json").read_text()) if (SITE / "data" / "player_weeks.json").exists() else {"players": {}, "seasons": {}}
     picks = json.loads((SITE / "data" / "draft_picks.json").read_text())
     drafted = {(p["season"], normalize_name(p["player"])): p["manager"] for p in picks}
+    weekly = json.loads((SITE / "data" / "weekly_scores.json").read_text())
+    end_owner = end_of_season_owners(weekly)
     # NWL roster lookup for 2022+: (season, week, normalized name, pos) -> (manager, slot, points)
     roster = {}
     for season, s in pw["seasons"].items():
@@ -117,6 +167,8 @@ def main():
                 row["nwl"] = {"free_agent": True}
             elif (str(season), normalize_name(g["player"])) in drafted:
                 row["nwl"] = {"drafted_by": drafted[(str(season), normalize_name(g["player"]))]}
+                if season in end_owner:  # None = not on any roster at season's end
+                    row["nwl"]["end_owner"] = end_owner[season].get(normalize_name(g["player"]))
             out.append(row)
     OUT.write_text(json.dumps(out, separators=(",", ":")))
     print(f"Wrote {OUT} - {len(out)} highlight games from {len(by_week)} season-weeks "

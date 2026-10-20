@@ -159,7 +159,12 @@ const NWL_REC = (() => {
     if (cands.length > 1) out.team.push(cands[1 + (wk % (cands.length - 1))]);
 
     // player games: points, with bonuses for all-time top-10 games and for 2022+ benched or clutch games
-    const pg = (h.highlights || []).filter(r => r.week === wk && r.season < SEASON).map(r => {
+    // Every highlight names the manager who had him (Hunter, Oct 20). 2022 on: ESPN box scores say who rostered
+    // him that week and whether he started. Before 2022 weekly rosters aren't available, so it's the manager who
+    // drafted him, unless ESPN's end-of-season roster shows he finished the year on another team (then he
+    // changed hands at an unknown time and the game is skipped). Undrafted pre-2022 games are skipped too.
+    const ownerOf = n => n.manager ? n.manager : n.drafted_by && (!n.end_owner || n.end_owner === n.drafted_by) ? n.drafted_by : null;
+    const pg = (h.highlights || []).filter(r => r.week === wk && r.season < SEASON && r.nwl && ownerOf(r.nwl)).map(r => {
       const n = r.nwl || {}; let s = r.pts + (r.pos_alltime_top10 ? 8 : 0) + (n.manager && !n.started ? 5 : 0) + (n.manager ? 2 : 0);
       return { r, s };
     }).sort((a, b) => b.s - a.s);
@@ -168,8 +173,8 @@ const NWL_REC = (() => {
       if (out.player.length >= 2 || used.has(r.season)) continue; used.add(r.season); // two different seasons
       const n = r.nwl || {};
       // name only the NWL team he scored for (known from 2022 on); never who drafted him (Hunter, Oct 20)
-      const owner = n.manager ? (n.started ? ` for <b>${escH(n.manager)}</b>` : `, <b>on ${escH(n.manager)}'s bench</b>`) : '';
-      out.player.push({ html: `<b>${r.season}:</b> ${escH(r.player)} (${escH(r.pos)}, ${escH(r.team)}) went off for ${f1(n.manager ? n.points : r.pts)}${n.manager ? '' : ' half-PPR'} vs ${escH(r.opp)}: ${escH(r.line)}${owner}.${r.pos_alltime_top10 ? ` One of the 10 best ${escH(r.pos)} games since 2013.` : ''}` });
+      const owner = n.manager ? (n.started ? ` for ${escH(n.manager)}` : `, on ${escH(n.manager)}'s bench`) : ` on ${escH(ownerOf(n))}'s team`;
+      out.player.push({ html: `<b>${r.season}:</b> ${escH(r.player)} (${escH(r.pos)}, ${escH(r.team)}) went off for ${f1(n.manager ? n.points : r.pts)}${n.manager ? '' : ' half-PPR'}${owner} vs ${escH(r.opp)}: ${escH(r.line)}.${r.pos_alltime_top10 ? ` One of the 10 best ${escH(r.pos)} games since 2013.` : ''}` });
     }
 
     // a move from around today's date in a past season: a trade, or the biggest winning FAAB bid

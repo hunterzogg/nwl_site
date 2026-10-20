@@ -1782,8 +1782,12 @@ one sentence ("Muenchow and Goetz are both 3-2 and project to..."). Site copy re
 (Hunter's preference), with "their" only when a sentence covers several. Record watch shows at most 3 items, one per manager:
 season pace (PPG high/low, wins, losses), streaks within 2 of the record, projections within 15 of the
 highest/lowest score, and career milestones reachable this week. It hides itself when nothing qualifies. The history
-card shows the best team moment, a rotating second one, 2 player games from different seasons (naming only the NWL
-team he scored for, known from 2022 on; never who drafted him, per Hunter), and a trade or a
+card shows the best team moment, a rotating second one, 2 player games from different seasons, each naming the manager who had him
+(plain text, not bold). 2022 on: from ESPN box scores ("for Glaser" / "on Hagan's bench"). Before 2022: the manager
+who drafted him ("on Larson's team"), unless ESPN's end-of-season roster (leagueHistory mRoster, the only roster
+ESPN keeps for those years; `end_owner` in player_week_highlights.json) shows he finished the year elsewhere, in which
+case the game is skipped, as are undrafted pre-2022 games (per Hunter). Sanity check: 55-70% of drafted players are
+still with their drafter at season's end in 2013-2021, the same as the known 2022-2025 rosters (55-62%), and a trade or a
 $20+ FAAB buy within 3 days of today's date in a past season.
 
 **Trade Grades tab (Transactions):** each received player is followed from the week he actually changed rosters
