@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-19T09:17:13.191346+00:00",
+    "updated_at": "2026-10-20T08:51:45.086742+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-19T09:17:13.191381+00:00",
+    "updated_at": "2026-10-20T08:51:45.086778+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-19T09:17:13.191399+00:00",
+    "updated_at": "2026-10-20T08:51:45.086796+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,7 +199,7 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-19T09:17:13.191415+00:00",
+    "updated_at": "2026-10-20T08:51:45.086813+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -265,7 +265,7 @@
   },
   {
     "week": 5,
-    "updated_at": "2026-10-19T09:17:13.191431+00:00",
+    "updated_at": "2026-10-20T08:51:45.086829+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -331,90 +331,156 @@
   },
   {
     "week": 6,
-    "updated_at": "2026-10-19T09:17:13.191469+00:00",
+    "updated_at": "2026-10-20T08:51:45.086845+00:00",
     "games": [
       {
         "home_manager": "Pfaffinger",
         "home_score": 110.04,
-        "home_projected": 84.9,
+        "home_projected": null,
         "away_manager": "Conlin",
         "away_score": 88.8,
-        "away_projected": 109.5,
-        "winner": "UNDECIDED",
-        "line": {
-          "favorite": "Conlin",
-          "spread": 24.5,
-          "over_under": 194.5
-        }
+        "away_projected": null,
+        "winner": "HOME",
+        "line": null
       },
       {
         "home_manager": "Prodahl",
-        "home_score": 99.2,
-        "home_projected": 102.5,
+        "home_score": 114.6,
+        "home_projected": null,
         "away_manager": "Hagan",
-        "away_score": 40.0,
-        "away_projected": 102.8,
-        "winner": "UNDECIDED",
-        "line": {
-          "favorite": "Hagan",
-          "spread": 0.5,
-          "over_under": 205.5
-        }
+        "away_score": 83.56,
+        "away_projected": null,
+        "winner": "HOME",
+        "line": null
       },
       {
         "home_manager": "Zogg",
         "home_score": 61.12,
-        "home_projected": 85.8,
+        "home_projected": null,
         "away_manager": "Glaser",
         "away_score": 81.14,
-        "away_projected": 105.4,
+        "away_projected": null,
+        "winner": "AWAY",
+        "line": null
+      },
+      {
+        "home_manager": "Palaia",
+        "home_score": 87.4,
+        "home_projected": null,
+        "away_manager": "Goetz",
+        "away_score": 91.92,
+        "away_projected": null,
+        "winner": "AWAY",
+        "line": null
+      },
+      {
+        "home_manager": "Larson",
+        "home_score": 72.98,
+        "home_projected": null,
+        "away_manager": "Stover",
+        "away_score": 80.98,
+        "away_projected": null,
+        "winner": "AWAY",
+        "line": null
+      },
+      {
+        "home_manager": "Muenchow",
+        "home_score": 98.48,
+        "home_projected": null,
+        "away_manager": "Ainsworth",
+        "away_score": 107.24,
+        "away_projected": null,
+        "winner": "AWAY",
+        "line": null
+      }
+    ]
+  },
+  {
+    "week": 7,
+    "updated_at": "2026-10-20T08:51:45.086881+00:00",
+    "games": [
+      {
+        "home_manager": "Larson",
+        "home_score": 0.0,
+        "home_projected": 93.6,
+        "away_manager": "Conlin",
+        "away_score": 0.0,
+        "away_projected": 67.3,
         "winner": "UNDECIDED",
         "line": {
-          "favorite": "Glaser",
-          "spread": 19.5,
-          "over_under": 191.0
+          "favorite": "Larson",
+          "spread": 26.5,
+          "over_under": 161.0
+        }
+      },
+      {
+        "home_manager": "Glaser",
+        "home_score": 0.0,
+        "home_projected": 86.4,
+        "away_manager": "Pfaffinger",
+        "away_score": 0.0,
+        "away_projected": 87.4,
+        "winner": "UNDECIDED",
+        "line": {
+          "favorite": "Pfaffinger",
+          "spread": 1.0,
+          "over_under": 174.0
+        }
+      },
+      {
+        "home_manager": "Stover",
+        "home_score": 0.0,
+        "home_projected": 108.1,
+        "away_manager": "Muenchow",
+        "away_score": 0.0,
+        "away_projected": 109.2,
+        "winner": "UNDECIDED",
+        "line": {
+          "favorite": "Muenchow",
+          "spread": 1.0,
+          "over_under": 217.5
         }
       },
       {
         "home_manager": "Palaia",
-        "home_score": 52.7,
-        "home_projected": 100.5,
-        "away_manager": "Goetz",
-        "away_score": 91.92,
-        "away_projected": 98.8,
+        "home_score": 0.0,
+        "home_projected": 103.1,
+        "away_manager": "Zogg",
+        "away_score": 0.0,
+        "away_projected": 96.1,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Palaia",
-          "spread": 1.5,
-          "over_under": 199.5
+          "spread": 7.0,
+          "over_under": 199.0
         }
       },
       {
-        "home_manager": "Larson",
-        "home_score": 69.78,
-        "home_projected": 104.4,
-        "away_manager": "Stover",
-        "away_score": 75.98,
-        "away_projected": 109.5,
-        "winner": "UNDECIDED",
-        "line": {
-          "favorite": "Stover",
-          "spread": 5.0,
-          "over_under": 214.0
-        }
-      },
-      {
-        "home_manager": "Muenchow",
-        "home_score": 87.58,
-        "home_projected": 103.8,
-        "away_manager": "Ainsworth",
-        "away_score": 107.24,
-        "away_projected": 107.3,
+        "home_manager": "Ainsworth",
+        "home_score": 0.0,
+        "home_projected": 111.4,
+        "away_manager": "Prodahl",
+        "away_score": 0.0,
+        "away_projected": 110.7,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Ainsworth",
-          "spread": 3.5,
-          "over_under": 211.0
+          "spread": 0.5,
+          "over_under": 222.0
+        }
+      },
+      {
+        "home_manager": "Hagan",
+        "home_score": 0.0,
+        "home_projected": 103.7,
+        "away_manager": "Goetz",
+        "away_score": 0.0,
+        "away_projected": 105.4,
+        "winner": "UNDECIDED",
+        "line": {
+          "favorite": "Goetz",
+          "spread": 1.5,
+          "over_under": 209.0
         }
       }
     ]
