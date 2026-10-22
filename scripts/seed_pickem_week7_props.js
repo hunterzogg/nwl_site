@@ -5,6 +5,11 @@
 //
 // Inserted with published: false per the skill's two-checkpoint rule.
 //
+// Oct 22: the descriptions of #72, #73, #74 and #76 were updated in the database (questions and options
+// unchanged, picks kept) because Wednesday's waivers moved the lines: Glaser became a 21.5-point favorite over
+// Pfaffinger, Ainsworth-Prodahl went to even, Larson's spread fell from 26.5 to 12.5, and Hagan became a 3.5-point
+// favorite over Goetz. The prompts below are the original Tuesday text.
+//
 // Usage:
 //   cd ~/Sites/nwl_site
 //   export $(grep -v '^#' .env.local | xargs)

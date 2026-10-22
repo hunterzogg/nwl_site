@@ -258,7 +258,11 @@ Once real data exists for the upcoming week (run the data pull above first if it
 this needs that week's `matchups.json` entry, which carries a projected spread/over-under per
 game computed from each team's *best possible projected lineup*, not the lineup currently set -
 on Tuesday most managers haven't moved bye-week/injured starters yet, so the set lineup's
-projection is meaningless; see `fetch_projected_points()` in `fetch_espn_week.py`), draft that week's weekly Pick'em props. **Always show the drafted props to the user and
+projection is meaningless; see `fetch_projected_points()` in `fetch_espn_week.py`), draft that week's weekly Pick'em props. **Lines move after Wednesday's waivers** (Week 7 of 2026: Pfaffinger
+went from a 1.0 favorite on Tuesday to a 21.5-point underdog after Glaser's waiver adds). So either draft props
+after the Wednesday-morning pull, or phrase any line in the prompt as "as of Tuesday" and re-check the lines
+before Thursday's lock (`matchups.json` refreshes on every Action run); update the prompt text if they moved,
+but never change a prop's answer options or threshold once picks are in. **Always show the drafted props to the user and
 get explicit sign-off before writing anything to the database** - this is a hard rule, not a
 default that can be skipped because the props look obviously fine. Unlike matchups/standings/
 rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment call (which
