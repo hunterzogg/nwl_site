@@ -61,7 +61,7 @@ nwl_site/
 │   ├── draft_picks.json          # 2,526 rows: every pick since 2013
 │   ├── draft_slots.json          # 154 rows: draft slot + finish + PPG per manager-season
 │   ├── transactions_with_dates.json  # 1,857 rows: all transactions; 2023-2025 100% exact-dated
-│   ├── trades.json               # 69 rows: completed trades 2022-2025 with position prefixes
+│   ├── trades.json               # completed trades 2022-2025 + 2026 (auto from ESPN) with position prefixes
 │   ├── league_season_tx.json     # 13 rows: total league transactions per season (authoritative)
 │   ├── manager_season_tx.json    # 154 rows: per-manager transaction counts per season
 │   ├── team_seasons_regular.json # 154 rows: manager-season PPG/finish/opp_ppg (regular season)
@@ -1833,6 +1833,23 @@ Data: `data/season_2026/zero_starts.json` (`weeks: {week: [{manager, player, tea
 box scores (`mBoxscore`) for completed weeks, keeps saved weeks, and refetches only the latest completed week for
 stat corrections. Injury flags reuse `compute_best_ball.injured_out()`. Checked against `compute_best_ball.py`'s
 zero-or-negative starters for weeks 1-6: identical.
+
+## 2026 trades in the Transaction Log, Trade Database and Trade Grades (added Oct 22 2026)
+
+- **Detection** (`scripts/fetch_espn_transactions.py`: `detect_trades` / `write_trades`, run by the daily Action):
+  ESPN's mTransactions2 only lists the items of trades that involve the account's own team (Zogg). For
+  other teams' trades the moved players are inferred from per-period rosters (mRoster): the roster before
+  the trade (with adds/drops made earlier that day applied, e.g. Conlin's same-day waiver claim of Kendrick
+  Bourne) vs. the roster after, ignoring later adds by the receiving team. Draft-pick trades show as "Pick N"
+  and the Trade Database adds who the pick was used on (`picks_used_on`, from the 2026 draft data).
+- **FAAB is traded outside ESPN**, so it can't be detected. Add it by hand to `data/trade_extras.json`
+  (season, date, manager who received it, items like "2 FAAB"); it then shows in trades.json and the log.
+- `write_trades` rebuilds the season's rows in `data/trades.json` and adds `acquisition_type: "trade"` rows
+  to `transactions_with_dates.json` each run.
+- **Grades:** `build_history_points.py --seasons 2026` adds completed 2026 weeks to `player_weeks.json`, then
+  `build_trade_grades.py` grades 2026 trades as `in_progress` (with `weeks_counted`). The tab shows "Too early
+  to grade" (no completed weeks), "X leads by" / "Even so far", or "Draft picks only"; in-progress and
+  pick-only trades are left out of leaderboards and the most-lopsided list until the season ends.
 
 ## Known Bugs & Data Issues
 

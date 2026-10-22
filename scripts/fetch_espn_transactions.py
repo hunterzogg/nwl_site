@@ -55,6 +55,10 @@ SITE_DIR = SCRIPT_DIR.parent
 CREDENTIALS_PATH = SCRIPT_DIR / "espn_credentials.json"
 TEAM_MAP_PATH = SCRIPT_DIR / "espn_team_map.json"
 TRANSACTIONS_PATH = SITE_DIR / "data" / "transactions_with_dates.json"
+TRADES_PATH = SITE_DIR / "data" / "trades.json"
+# Pieces ESPN doesn't record (FAAB is traded outside ESPN): [{season, date, manager, items: ["2 FAAB"]}]
+TRADE_EXTRAS_PATH = SITE_DIR / "data" / "trade_extras.json"
+DRAFT_2026_PATH = SITE_DIR / "data" / "season_2026" / "draft_grades_2026.json"
 
 DEFAULT_LEAGUE_ID = 39276
 API_HOST = "https://lm-api-reads.fantasy.espn.com"
@@ -169,6 +173,110 @@ def find_losing_bids(all_tx):
     return losers
 
 
+def fetch_roster_owners(league_id, season, period, creds, team_map):
+    """{playerId: manager} for every rostered player (incl. IR) in a scoring period."""
+    data = http_get(f"{API_HOST}/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}?view=mRoster&scoringPeriodId={period}", creds)
+    return {e["playerPoolEntry"]["player"]["id"]: team_map.get(str(t["id"])) for t in data.get("teams", []) for e in t["roster"]["entries"]}
+
+
+def detect_trades(all_tx, args, current_week, creds, team_map):
+    """Completed trades for the season, as trades.json-style dicts with player ids/picks still unresolved.
+
+    ESPN shows a trade's players only to the teams in it. For other trades it returns just the acceptance
+    (time and accepting team), so those are reconstructed from rosters: a player who belonged to one team
+    right before the trade (the previous scoring period's roster, updated by waiver/free-agent adds and drops
+    made before the trade) and is on another team in the trade's scoring period, without that team having
+    added him, changed hands in the trade. That catches same-day waiver pickups that were traded right away
+    (Week 6 of 2026: Conlin claimed Kendrick Bourne at 3:58am ET and traded him to Palaia for Makai Lemon that
+    afternoon, so Bourne was never on Conlin's roster in any scoring period)."""
+    ms = lambda t: t.get("processDate") or t.get("proposedDate") or 0
+    accepts = [t for t in all_tx if t.get("type") == "TRADE_ACCEPT" and t.get("status") == "EXECUTED"]
+    by_id = {t["id"]: t for t in all_tx}
+    groups = {}
+    for t in accepts:  # proposer and accepter each get an acceptance row; group by the proposal
+        groups.setdefault(t.get("relatedTransactionId") or t["id"], []).append(t)
+    moves = [(ms(t), t["teamId"], i) for t in all_tx if t.get("status") == "EXECUTED" and t.get("type") in ("WAIVER", "FREEAGENT")
+             for i in t.get("items", []) if i.get("type") in ("ADD", "DROP")]
+    rosters = {}
+    def roster(period):
+        if period not in rosters:
+            rosters[period] = fetch_roster_owners(args.league_id, args.season, period, creds, team_map)
+        return rosters[period]
+    trades, explained = [], set()
+    for key, rows in sorted(groups.items(), key=lambda kv: min(ms(t) for t in kv[1])):
+        when = min(ms(t) for t in rows)
+        items = next((t["items"] for t in rows if t.get("items")), None) or (by_id.get(key) or {}).get("items") or []
+        legs = [(i["fromTeamId"], i["toTeamId"], ("player", i["playerId"]) if i["type"] == "TRADE" else ("pick", i["overallPickNumber"]))
+                for i in items if i.get("type") in ("TRADE", "DRAFT_TRADE")]
+        if legs:
+            for _, _, (kind, v) in legs:
+                if kind == "player":
+                    explained.add(v)
+            teams = sorted({team_map.get(str(a)) for a, b, _ in legs} | {team_map.get(str(b)) for a, b, _ in legs})
+            received = {m: [x for a, b, x in legs if team_map.get(str(b)) == m] for m in teams}
+        else:
+            period = max(1, rows[0].get("scoringPeriodId") or 1)
+            before = dict(roster(max(0, period - 1)))
+            for t_ms, team_id, i in sorted(moves, key=lambda m: m[0]):
+                if t_ms <= when and i.get("playerId") in before or (t_ms <= when and i["type"] == "ADD"):
+                    before[i["playerId"]] = team_map.get(str(team_id)) if i["type"] == "ADD" else None
+            after = roster(min(period, current_week))
+            added_later = {(team_map.get(str(team_id)), i["playerId"]) for t_ms, team_id, i in moves if t_ms > when and i["type"] == "ADD"}
+            accepter = team_map.get(str(rows[0]["teamId"]))
+            moved = [(pid, before[pid], after[pid]) for pid in before
+                     if before[pid] and after.get(pid) and after[pid] != before[pid] and pid not in explained
+                     and (after[pid], pid) not in added_later and accepter in (before[pid], after[pid])]
+            if not moved:
+                print(f"  WARNING: couldn't reconstruct the trade accepted by {accepter} on "
+                      f"{datetime.fromtimestamp(when / 1000, tz=timezone.utc):%Y-%m-%d}; add it to trades.json by hand")
+                continue
+            partner = max({b if a == accepter else a for _, a, b in moved}, key=lambda m: sum(1 for _, a, b in moved if m in (a, b)))
+            teams = sorted([accepter, partner])
+            received = {m: [("player", pid) for pid, a, b in moved if b == m and a in teams] for m in teams}
+            explained |= {pid for pid, _, _ in moved}
+        trades.append({"when": when, "teams": teams, "received": received})
+    return trades
+
+
+def write_trades(trades, args, creds):
+    """Rebuilds this season's rows in trades.json from detect_trades(); returns transaction-log rows."""
+    ids = {v for t in trades for legs in t["received"].values() for kind, v in legs if kind == "player"}
+    lookup = resolve_players(ids, args.season, creds)
+    picks = {}
+    if DRAFT_2026_PATH.exists() and args.season == 2026:  # which player each traded pick became
+        for m in json.loads(DRAFT_2026_PATH.read_text()).get("managers", []):
+            for p in m.get("picks", []):
+                picks[p.get("pick")] = p.get("player")
+    label = lambda kind, v: (lambda n, pos: f"{pos} - {n}")(*resolve_player(v, lookup)) if kind == "player" else f"Pick {v}" if kind == "pick" else v
+    extras = json.loads(TRADE_EXTRAS_PATH.read_text()) if TRADE_EXTRAS_PATH.exists() else []
+    rows, tx_rows = [], []
+    for t in trades:
+        date = datetime.fromtimestamp(t["when"] / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
+        for x in extras:
+            if x["season"] == str(args.season) and x["date"] == date and x["manager"] in t["received"]:
+                t["received"][x["manager"]] += [("extra", item) for item in x["items"]]
+        a, b = t["teams"][0], t["teams"][1]
+        rows.append({"season": str(args.season), "date": date, "precision": "exact_date",
+                     "team1": a, "team1_received": "; ".join(label(k, v) for k, v in t["received"][a]),
+                     "team2": b, "team2_received": "; ".join(label(k, v) for k, v in t["received"][b]),
+                     **({"picks_used_on": {f"Pick {v}": picks[v] for legs in t["received"].values() for k, v in legs if k == "pick" and v in picks}}
+                        if any(k == "pick" for legs in t["received"].values() for k, _ in legs) else {})})
+        for m, legs in t["received"].items():
+            for k, v in legs:
+                if k == "extra" and v.endswith("FAAB"):
+                    tx_rows.append({"season": str(args.season), "player": v, "position": "FAAB", "manager": m, "bid_amount": "",
+                                    "acquisition_type": "trade", "bid_outcome": "", "date": date})
+                if k == "player":
+                    name, pos = resolve_player(v, lookup)
+                    tx_rows.append({"season": str(args.season), "player": name, "position": pos, "manager": m, "bid_amount": "",
+                                    "acquisition_type": "trade", "bid_outcome": "", "date": date})
+    existing = json.loads(TRADES_PATH.read_text()) if TRADES_PATH.exists() else []
+    existing = [r for r in existing if r.get("season") != str(args.season)] + rows
+    TRADES_PATH.write_text(json.dumps(existing, separators=(", ", ": "), ensure_ascii=False))
+    print(f"Wrote {len(rows)} {args.season} trades -> {TRADES_PATH}")
+    return tx_rows
+
+
 def cmd_fetch_transactions(args, creds):
     team_map = load_team_map()
     data = http_get(
@@ -206,6 +314,10 @@ def cmd_fetch_transactions(args, creds):
 
     rows = [build_row(t, add, "won") for t, add in executed]
     rows += [build_row(t, add, "lost") for t, add in losing_bids]
+    try:
+        rows += write_trades(detect_trades(all_tx, args, current_week, creds, team_map), args, creds)
+    except Exception as e:  # noqa: BLE001 - never let trade detection break the waiver log
+        print(f"WARNING: trades not updated: {e}")
 
     existing = json.loads(TRANSACTIONS_PATH.read_text()) if TRANSACTIONS_PATH.exists() else []
     existing = [r for r in existing if r.get("season") != str(args.season)]

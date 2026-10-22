@@ -55,6 +55,11 @@ jobs:
       - name: Run free agent/waiver transactions fetch
         run: python3 scripts/fetch_espn_transactions.py
 
+      - name: Grade this season's trades (box scores for completed weeks, then grades)
+        run: |
+          python3 scripts/build_history_points.py --seasons 2026
+          python3 scripts/build_trade_grades.py
+
       - name: Commit and push if data changed
         run: |
           git config user.name "nwl-site-bot"
@@ -63,7 +68,8 @@ jobs:
                   data/season_2026/power_rankings.json data/season_2026/commentary.json \
                   data/season_2026/trade_values.json data/season_2026/trade_value_history.json \
                   data/season_2026/schedule.json data/season_2026/zero_starts.json \
-                  data/transactions_with_dates.json
+                  data/transactions_with_dates.json data/trades.json \
+                  data/player_weeks.json data/trade_grades.json
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

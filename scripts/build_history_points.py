@@ -84,9 +84,16 @@ def slot_code(slot):
 
 
 def build_season(year, ck, weekly, players):
-    tm = team_map(year, ck, weekly)
+    if year == 2026:  # the current season: the live team map, and only weeks whose games are all final
+        tm = {int(k): v for k, v in json.loads((SCRIPT_DIR / "espn_team_map.json").read_text()).items()}
+        sched = json.loads((SITE / "data" / "season_2026" / "schedule.json").read_text())
+        done = sorted({g["week"] for g in sched["games"]} - {g["week"] for g in sched["games"] if g["winner"] == "UNDECIDED"})
+        week_list = [w for w in done if w <= LAST_WEEK]
+    else:
+        tm = team_map(year, ck, weekly)
+        week_list = range(1, LAST_WEEK + 1)
     weeks = {}
-    for wk in range(1, LAST_WEEK + 1):
+    for wk in week_list:
         d = fetch(year, wk, ck)
         rows = []
         for m in d.get("schedule", []):

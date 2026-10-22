@@ -21,6 +21,7 @@
   color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
 }
 .records-group-title:first-child { margin-top: 0; }
+.tg-live { color: var(--live-bright); }
 .tg-intro { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 6px; max-width: 75ch; }
 .tg-list { display: flex; flex-direction: column; gap: 12px; }
 .tg-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
@@ -84,7 +85,7 @@
     <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
       All completed trades that could be reliably extracted from the league records. No trade records
       exist for 2013-2021 (not tracked that way back then). 2022 dates come from ESPN's trade log (the day
-      each trade was accepted); 2023-2025 dates are from the year-end reports.
+      each trade was accepted); 2023-2025 dates are from the year-end reports; 2026 trades come straight from ESPN and update automatically.
     </p>
     <div class="controls-row">
       <select id="tradeSeasonFilter"></select>
@@ -226,6 +227,8 @@ function renderLog() {
   `;
 }
 
+// "Pick 41" -> "Pick 41 (Jaylen Waddle)" when the trade records which player the pick was used on
+const withPicks = (t, txt) => !t.picks_used_on ? txt : txt.replace(/Pick \d+/g, p => t.picks_used_on[p] ? `${p} <span class="precision-note">(${t.picks_used_on[p]})</span>` : p);
 function renderTrades() {
   const season = document.getElementById('tradeSeasonFilter').value;
   const manager = document.getElementById('tradeManagerFilter').value;
@@ -248,9 +251,9 @@ function renderTrades() {
           <tr>
             <td class="num">${t.date} ${t.precision === 'year_only' ? '<span class="precision-note">(year only)</span>' : ''}</td>
             <td>${managerTag(managers, t.team1)}</td>
-            <td>${t.team1_received}</td>
+            <td>${withPicks(t, t.team1_received)}</td>
             <td>${t.team2 ? managerTag(managers, t.team2) : ''}</td>
-            <td>${t.team2_received}</td>
+            <td>${withPicks(t, t.team2_received)}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -263,8 +266,8 @@ function renderTrades() {
             <span class="grow mono" style="font-weight:400;">${t.date}</span>
             ${t.precision === 'year_only' ? '<span class="precision-note">(year only)</span>' : ''}
           </div>
-          <div class="table-card-sub">${managerTag(managers, t.team1)} got: ${t.team1_received}</div>
-          ${t.team2 ? `<div class="table-card-sub">${managerTag(managers, t.team2)} got: ${t.team2_received}</div>` : ''}
+          <div class="table-card-sub">${managerTag(managers, t.team1)} got: ${withPicks(t, t.team1_received)}</div>
+          ${t.team2 ? `<div class="table-card-sub">${managerTag(managers, t.team2)} got: ${withPicks(t, t.team2_received)}</div>` : ''}
         </div>
       `).join('')}
     </div>
@@ -433,32 +436,36 @@ async function init() {
 const tgColor = g => g[0] === 'A' ? '#4FA876' : g[0] === 'B' ? '#4F86D6' : g[0] === 'C' ? '#D9B23C' : '#E0524A';
 const tgEsc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const tgSgn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(0);
-function tgSide(s) {
-  return `<div class="tg-side"><div class="tg-side-head"><span class="tg-who">${managerTag(managers, s.manager)} <span>got</span></span><span class="tg-grade" style="color:${tgColor(s.grade)};background:${tgColor(s.grade)}22">${s.grade}</span></div>
-    <ul class="tg-players">${s.players.map(p => `<li><span>${posTag(p.pos)} ${tgEsc(p.name)}</span><span class="tg-nums" title="${p.weeks} week${p.weeks === 1 ? '' : 's'} on the team · ${p.pts} pts · ${p.started} started · ${p.por} over replacement">${p.weeks ? `${p.pts.toFixed(1)} pts <small>${p.started.toFixed(1)} started · ${p.weeks} wk</small>` : `<small>${p.matched ? 'never played for him' : 'no ESPN data'}</small>`}</span></li>`).join('')}
-      ${s.extras.map(x => `<li class="tg-extra"><span>${tgEsc(x)}</span><span class="tg-nums"><small>not graded</small></span></li>`).join('')}</ul>
-    <div class="tg-total">Over replacement <b>${s.value.toFixed(0)}</b> · net <b style="color:${s.net > 0 ? '#4FA876' : s.net < 0 ? '#E0524A' : 'inherit'}">${tgSgn(s.net)}</b></div></div>`;
+function tgSide(s, t) {
+  return `<div class="tg-side"><div class="tg-side-head"><span class="tg-who">${managerTag(managers, s.manager)} <span>got</span></span>${t && !t.gradable ? '<span class="hx-pill">not graded</span>' : `<span class="tg-grade" style="color:${tgColor(s.grade)};background:${tgColor(s.grade)}22">${s.grade}</span>`}</div>
+    <ul class="tg-players">${s.players.map(p => `<li><span>${posTag(p.pos)} ${tgEsc(p.name)}</span><span class="tg-nums" title="${p.weeks} week${p.weeks === 1 ? '' : 's'} on the team · ${p.pts} pts · ${p.started} started · ${p.por} over replacement">${p.weeks ? `${p.pts.toFixed(1)} pts <small>${p.started.toFixed(1)} started · ${p.weeks} wk</small>` : `<small>${!p.matched ? 'no ESPN data' : t && t.in_progress && !t.weeks_counted ? 'no completed games yet' : 'never played for him'}</small>`}</span></li>`).join('')}
+      ${s.extras.map(x => `<li class="tg-extra"><span>${tgEsc(x)}${t && t.picks_used_on && t.picks_used_on[x] ? ` <small>(${tgEsc(t.picks_used_on[x])})</small>` : ''}</span><span class="tg-nums"><small>not graded</small></span></li>`).join('')}</ul>
+    ${t && !t.gradable ? '' : `<div class="tg-total">Over replacement <b>${s.value.toFixed(0)}</b> · net <b style="color:${s.net > 0 ? '#4FA876' : s.net < 0 ? '#E0524A' : 'inherit'}">${tgSgn(s.net)}</b></div>`}</div>`;
 }
 function tgCard(t) {
   const d = t.precision === 'year_only' ? t.date : new Date(t.date + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-  const verdict = t.winner ? `${tgEsc(t.winner)} won it by ${Math.abs(t.sides[0].net).toFixed(0)}` : 'Even trade';
-  return `<article class="tg-card"><div class="tg-top"><span>${d} · from week ${t.start_week}</span><b>${verdict}</b></div><div class="tg-sides">${tgSide(t.sides[0])}${tgSide(t.sides[1])}</div></article>`;
+  const onlyPicks = t.sides.every(s => !s.players.length);
+  const verdict = !t.gradable ? (onlyPicks ? 'Draft picks only' : 'Too early to grade')
+    : (t.winner ? `${tgEsc(t.winner)} ${t.in_progress ? 'leads' : 'won it'} by ${Math.abs(t.sides[0].net).toFixed(0)}` : (t.in_progress ? 'Even so far' : 'Even trade'));
+  const status = t.in_progress && !onlyPicks ? ` · <span class="tg-live">in progress, ${t.weeks_counted} week${t.weeks_counted === 1 ? '' : 's'} so far</span>` : '';
+  return `<article class="tg-card"><div class="tg-top"><span>${d} · from week ${t.start_week}${status}</span><b>${verdict}</b></div><div class="tg-sides">${tgSide(t.sides[0], t)}${tgSide(t.sides[1], t)}</div></article>`;
 }
 function renderGrades() {
   const el = document.getElementById('gradesContent');
   if (!tradeGrades || !tradeGrades.trades.length) { el.innerHTML = '<p class="hx-ctx">Trade grades aren\'t available yet. Run scripts/build_history_points.py, then scripts/build_trade_grades.py.</p>'; return; }
   const T = tradeGrades.trades;
+  const done = T.filter(t => !t.in_progress && t.gradable); // leaderboards use completed seasons only
   // trader leaderboard
   const by = {};
-  T.forEach(t => t.sides.forEach(s => { const b = (by[s.manager] ||= { n: 0, w: 0, l: 0, net: 0 }); b.n++; b.net += s.net; if (t.winner === s.manager) b.w++; else if (t.winner) b.l++; }));
+  done.forEach(t => t.sides.forEach(s => { const b = (by[s.manager] ||= { n: 0, w: 0, l: 0, net: 0 }); b.n++; b.net += s.net; if (t.winner === s.manager) b.w++; else if (t.winner) b.l++; }));
   const lb = Object.entries(by).sort((a, b) => b[1].net - a[1].net);
   const max = Math.max(...lb.map(([, b]) => Math.abs(b.net))) || 1;
-  const lopsided = [...T].sort((a, b) => Math.abs(b.sides[0].net) - Math.abs(a.sides[0].net)).slice(0, 4);
+  const lopsided = [...done].sort((a, b) => Math.abs(b.sides[0].net) - Math.abs(a.sides[0].net)).slice(0, 4);
   const seasons = [...new Set(T.map(t => t.season))].sort((a, b) => b - a);
   const list = T.filter(t => (!tgState.season || String(t.season) === tgState.season) && (!tgState.manager || t.sides.some(s => s.manager === tgState.manager)))
     .sort((a, b) => b.date.localeCompare(a.date));
-  el.innerHTML = `<div class="tg-intro">${T.length} trades from ${Math.min(...seasons)}–${Math.max(...seasons)}, graded on what each side's players actually scored for that team the rest of the season, over a waiver-level replacement.</div>
-    <div class="hx-section-title"><h2>Best traders</h2><span>net points over replacement, all trades</span></div>
+  el.innerHTML = `<div class="tg-intro">${T.length} trades from ${Math.min(...seasons)}–${Math.max(...seasons)}, graded on what each side's players actually scored for that team the rest of the season, over a waiver-level replacement. Trades from the current season are graded on the weeks played so far and join the leaderboards once the season ends.</div>
+    <div class="hx-section-title"><h2>Best traders</h2><span>net points over replacement, completed seasons</span></div>
     <div class="hx-card">${lb.map(([m, b], i) => `<div class="hx-bar-row"><span class="rk">${i + 1}</span><div><div class="tg-lb-name">${managerTag(managers, m)} <span class="hx-ctx">${b.n} trade${b.n === 1 ? '' : 's'} · ${b.w}W ${b.l}L ${b.n - b.w - b.l} even</span></div><div class="tg-bar"><span style="${b.net >= 0 ? 'left:50%' : 'right:50%'};width:${(Math.abs(b.net) / max * 50).toFixed(1)}%;background:${b.net >= 0 ? '#4FA876' : '#E0524A'}"></span></div></div><span class="tg-lb-v" style="color:${b.net >= 0 ? '#4FA876' : '#E0524A'}">${tgSgn(b.net)}</span></div>`).join('')}</div>
     <div class="hx-section-title"><h2>Most lopsided</h2><span>biggest net margins</span></div>
     <div class="tg-list">${lopsided.map(tgCard).join('')}</div>
