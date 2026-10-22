@@ -330,7 +330,7 @@ function buildH2H() {
     <div class="form">${games.slice(-10).map(m => { const r = isTie(m) ? 'T' : m.winner === a ? 'W' : 'L'; return `<span title="${m.season} Wk ${m.week}: ${m.winning_score}–${m.losing_score}" style="background:${r === 'W' ? color(a) : r === 'L' ? color(b) : 'var(--line-strong)'}">${r}</span>`; }).join('')}</div>
     <details class="hx-card" style="margin-top:16px"><summary style="cursor:pointer;color:var(--blue-bright)">Every meeting (${games.length})</summary>
       <div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Season</th><th class="num">Week</th><th>Winner</th><th class="num">Score</th></tr></thead><tbody>
-      ${games.slice().reverse().map(g => `<tr><td>${g.season}</td><td class="num">${g.week}${g.week > 14 ? ' <span class="hx-pill gold">PO</span>' : ''}</td><td>${isTie(g) ? '<span class="hx-muted">Tie</span>' : managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}–${g.losing_score}</td></tr>`).join('')}
+      ${games.slice().reverse().map(g => `<tr><td>${g.season}</td><td class="num">${g.week}${g.week > 14 ? ' <span class="hx-pill gold">Playoffs</span>' : ''}</td><td>${isTie(g) ? '<span class="hx-muted">Tie</span>' : managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}–${g.losing_score}</td></tr>`).join('')}
       </tbody></table></div></details>`;
 }
 
