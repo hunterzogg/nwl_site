@@ -269,7 +269,9 @@ rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment 
 storyline, which line, how many questions) that only the user should finalize, and once a manager
 picks it and it locks, a bad line can't be quietly fixed.
 
-**Ground every prop in real data, never invent a line.** The established pattern (see
+**Use one decimal place for numbers in prop descriptions** (past highs, margins, lines: "165.6", "4.5",
+"Larson by 12.5"). Use two only when the prop's line itself needs it to settle the answer, e.g. a line set
+between two hundredths. **Ground every prop in real data, never invent a line.** The established pattern (see
 `scripts/seed_pickem_week3_props.js` for a full worked example) pulls from:
 - That week's own `matchups.json` entries - the real projected spread and over/under per game
   (e.g. "will the week's biggest spread get covered," "will the week's highest-projected game go
