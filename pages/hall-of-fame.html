@@ -30,6 +30,10 @@
 .vs-table td.lbl { font-family: var(--font-body); color: var(--text-muted); font-size: 0.8rem; }
 .vs-table td.win { color: var(--text); font-weight: 600; }
 .vs-table tr:hover td { background: transparent; }
+/* Every-meeting table: small playoff badge and tighter cells so it fits a phone without scrolling */
+.h2h-games .po { font-size: 0.6rem; padding: 1px 5px; margin-left: 2px; }
+@media (max-width: 640px) { .h2h-games th, .h2h-games td { padding-left: 4px; padding-right: 4px; } .h2h-games td { font-size: 0.78rem; } .h2h-games td:last-child { white-space: nowrap; font-size: 0.74rem; } .h2h-games .po { font-size: 0.5rem; padding: 1px 3px; margin-left: 0; } }
+@media (max-width: 370px) { .h2h-games td:last-child { white-space: normal; } }
 .form { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
 .form span { width: 26px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; color: #0B0F17; }
 /* Season */
@@ -329,8 +333,8 @@ function buildH2H() {
     <div class="hx-section-title"><h2>Recent form</h2><span>Last ${Math.min(10, games.length)} meetings, oldest first, from ${esc(a)}'s side</span></div>
     <div class="form">${games.slice(-10).map(m => { const r = isTie(m) ? 'T' : m.winner === a ? 'W' : 'L'; return `<span title="${m.season} Wk ${m.week}: ${m.winning_score}–${m.losing_score}" style="background:${r === 'W' ? color(a) : r === 'L' ? color(b) : 'var(--line-strong)'}">${r}</span>`; }).join('')}</div>
     <details class="hx-card" style="margin-top:16px"><summary style="cursor:pointer;color:var(--blue-bright)">Every meeting (${games.length})</summary>
-      <div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Season</th><th class="num">Week</th><th>Winner</th><th class="num">Score</th></tr></thead><tbody>
-      ${games.slice().reverse().map(g => `<tr><td>${g.season}</td><td class="num">${g.week}${g.week > 14 ? ' <span class="hx-pill gold">Playoffs</span>' : ''}</td><td>${isTie(g) ? '<span class="hx-muted">Tie</span>' : managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}–${g.losing_score}</td></tr>`).join('')}
+      <div style="overflow-x:auto;margin-top:10px"><table class="h2h-games"><thead><tr><th>Season</th><th class="num">Week</th><th>Winner</th><th class="num">Score</th></tr></thead><tbody>
+      ${games.slice().reverse().map(g => `<tr><td>${g.season}</td><td class="num">${g.week}${g.week > 14 ? ' <span class="hx-pill gold po">Playoffs</span>' : ''}</td><td>${isTie(g) ? '<span class="hx-muted">Tie</span>' : managerTag(managers, g.winner)}</td><td class="num">${g.winning_score}–${g.losing_score}</td></tr>`).join('')}
       </tbody></table></div></details>`;
 }
 
