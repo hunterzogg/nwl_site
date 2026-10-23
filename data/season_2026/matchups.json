@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-23T08:43:01.819919+00:00",
+    "updated_at": "2026-10-23T17:31:28.740997+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-23T08:43:01.819944+00:00",
+    "updated_at": "2026-10-23T17:31:28.741028+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-23T08:43:01.819954+00:00",
+    "updated_at": "2026-10-23T17:31:28.741044+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,7 +199,7 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-23T08:43:01.819964+00:00",
+    "updated_at": "2026-10-23T17:31:28.741060+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -265,7 +265,7 @@
   },
   {
     "week": 5,
-    "updated_at": "2026-10-23T08:43:01.819973+00:00",
+    "updated_at": "2026-10-23T17:31:28.741075+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -331,7 +331,7 @@
   },
   {
     "week": 6,
-    "updated_at": "2026-10-23T08:43:01.819982+00:00",
+    "updated_at": "2026-10-23T17:31:28.741090+00:00",
     "games": [
       {
         "home_manager": "Pfaffinger",
@@ -397,7 +397,7 @@
   },
   {
     "week": 7,
-    "updated_at": "2026-10-23T08:43:01.820006+00:00",
+    "updated_at": "2026-10-23T17:31:28.741124+00:00",
     "games": [
       {
         "home_manager": "Larson",
@@ -405,7 +405,7 @@
         "home_projected": 96.2,
         "away_manager": "Conlin",
         "away_score": 0.0,
-        "away_projected": 82.1,
+        "away_projected": 82.2,
         "winner": "UNDECIDED",
         "line": {
           "favorite": "Larson",
