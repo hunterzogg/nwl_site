@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "updated_at": "2026-10-25T22:31:24.306630+00:00",
+    "updated_at": "2026-10-26T01:31:56.988004+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -67,7 +67,7 @@
   },
   {
     "week": 2,
-    "updated_at": "2026-10-25T22:31:24.306662+00:00",
+    "updated_at": "2026-10-26T01:31:56.988035+00:00",
     "games": [
       {
         "home_manager": "Conlin",
@@ -133,7 +133,7 @@
   },
   {
     "week": 3,
-    "updated_at": "2026-10-25T22:31:24.306675+00:00",
+    "updated_at": "2026-10-26T01:31:56.988052+00:00",
     "games": [
       {
         "home_manager": "Goetz",
@@ -199,7 +199,7 @@
   },
   {
     "week": 4,
-    "updated_at": "2026-10-25T22:31:24.306690+00:00",
+    "updated_at": "2026-10-26T01:31:56.988066+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -265,7 +265,7 @@
   },
   {
     "week": 5,
-    "updated_at": "2026-10-25T22:31:24.306701+00:00",
+    "updated_at": "2026-10-26T01:31:56.988080+00:00",
     "games": [
       {
         "home_manager": "Muenchow",
@@ -331,7 +331,7 @@
   },
   {
     "week": 6,
-    "updated_at": "2026-10-25T22:31:24.306712+00:00",
+    "updated_at": "2026-10-26T01:31:56.988093+00:00",
     "games": [
       {
         "home_manager": "Pfaffinger",
@@ -397,14 +397,14 @@
   },
   {
     "week": 7,
-    "updated_at": "2026-10-25T22:31:24.306743+00:00",
+    "updated_at": "2026-10-26T01:31:56.988127+00:00",
     "games": [
       {
         "home_manager": "Larson",
-        "home_score": 40.2,
+        "home_score": 48.02,
         "home_projected": 94.9,
         "away_manager": "Conlin",
-        "away_score": 54.98,
+        "away_score": 70.28,
         "away_projected": 85.7,
         "winner": "UNDECIDED",
         "line": {
@@ -415,7 +415,7 @@
       },
       {
         "home_manager": "Glaser",
-        "home_score": 56.18,
+        "home_score": 86.78,
         "home_projected": 103.6,
         "away_manager": "Pfaffinger",
         "away_score": 94.02,
@@ -429,10 +429,10 @@
       },
       {
         "home_manager": "Stover",
-        "home_score": 113.08,
+        "home_score": 119.08,
         "home_projected": 107.9,
         "away_manager": "Muenchow",
-        "away_score": 66.08,
+        "away_score": 75.3,
         "away_projected": 108.7,
         "winner": "UNDECIDED",
         "line": {
@@ -443,10 +443,10 @@
       },
       {
         "home_manager": "Palaia",
-        "home_score": 83.94,
+        "home_score": 95.62,
         "home_projected": 108.9,
         "away_manager": "Zogg",
-        "away_score": 13.4,
+        "away_score": 17.7,
         "away_projected": 90.4,
         "winner": "UNDECIDED",
         "line": {
@@ -457,10 +457,10 @@
       },
       {
         "home_manager": "Ainsworth",
-        "home_score": 92.56,
+        "home_score": 96.86,
         "home_projected": 106.5,
         "away_manager": "Prodahl",
-        "away_score": 94.34,
+        "away_score": 99.34,
         "away_projected": 116.7,
         "winner": "UNDECIDED",
         "line": {
@@ -471,10 +471,10 @@
       },
       {
         "home_manager": "Hagan",
-        "home_score": 82.22,
+        "home_score": 92.22,
         "home_projected": 108.8,
         "away_manager": "Goetz",
-        "away_score": 75.1,
+        "away_score": 87.6,
         "away_projected": 106.6,
         "winner": "UNDECIDED",
         "line": {
