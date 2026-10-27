@@ -155,14 +155,19 @@ async function submitAllPicks() {
   }
 }
 
+// number_guess picks count within +/-2 of the answer unless the question sets its own tolerance
+const guessTolerance = q => (q.tolerance != null ? Number(q.tolerance) : 2);
+
 function renderGuessBody(q, mine, graded, disabled) {
-  const withinRange = graded && mine !== undefined && Math.abs(Number(mine) - Number(q.correct_option)) <= 2;
+  const tol = guessTolerance(q);
+  const withinRange = graded && mine !== undefined && Math.abs(Number(mine) - Number(q.correct_option)) <= tol;
   return `
     <div class="guess-row">
       <input type="number" class="guess-input" id="guess-${q.id}" data-qid="${q.id}" value="${mine !== undefined ? mine : ''}" placeholder="Your guess" ${disabled ? 'disabled' : ''}>
+      <span class="guess-tol">within &plusmn;${tol} counts</span>
     </div>
     ${graded ? `<div class="guess-result ${mine !== undefined ? (withinRange ? 'correct' : 'incorrect') : ''}">
-        Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${withinRange ? 'within ±2 — point!' : 'no point'})` : ''}
+        Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${withinRange ? `within ±${tol} — ${q.points} point${q.points === 1 ? '' : 's'}!` : 'no points'})` : ''}
       </div>` : ''}
   `;
 }
@@ -195,7 +200,7 @@ function questionCardHTML(q, idx) {
   // Status pill: graded (right/wrong for the logged-in manager), locked, or open with its lock time
   let status;
   if (graded && mine !== undefined && mine !== '') {
-    const right = q.type === 'number_guess' ? Math.abs(Number(mine) - Number(q.correct_option)) <= 2 : mine === q.correct_option;
+    const right = q.type === 'number_guess' ? Math.abs(Number(mine) - Number(q.correct_option)) <= guessTolerance(q) : mine === q.correct_option;
     status = `<span class="q-status ${right ? 'right' : 'wrong'}">${right ? '✓ Correct' : '✗ Missed'}</span>`;
   } else if (graded) status = '<span class="q-status locked">Graded</span>';
   else if (locked) status = '<span class="q-status locked">🔒 Locked</span>';

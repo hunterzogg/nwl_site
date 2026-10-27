@@ -2,7 +2,7 @@ const { sql } = require('./lib/db');
 
 // A pick is correct if it exactly matches the graded answer - except number_guess questions,
 // which are "correct" within +/-2 of the real number (e.g. "how many tendies get eaten"),
-// not an exact match. The regex guards let malformed choice/correct_option values (shouldn't
+// not an exact match. A question's own `tolerance` overrides the 2 (the weekly longshot uses 5). The regex guards let malformed choice/correct_option values (shouldn't
 // happen given write-time validation, but defensive) fall through to a normal string compare
 // instead of erroring the whole query on a bad ::numeric cast.
 const CORRECT_CASE = `
@@ -10,7 +10,7 @@ const CORRECT_CASE = `
     WHEN q.type = 'number_guess'
       AND p.choice ~ '^-?[0-9]+(\\.[0-9]+)?$'
       AND q.correct_option ~ '^-?[0-9]+(\\.[0-9]+)?$'
-    THEN ABS(p.choice::numeric - q.correct_option::numeric) <= 2
+    THEN ABS(p.choice::numeric - q.correct_option::numeric) <= COALESCE(q.tolerance, 2)
     ELSE p.choice = q.correct_option
   END
 `;

@@ -385,8 +385,10 @@ no QB behind Brock Purdy (49ers bye), and Geno Smith's 18.5 took Palaia's spread
 **Weekly 3-point longshot prop (from Week 8, per Hunter).** Every weekly Pick'em batch gets one
 `points = 3` prop that's hard for everyone to hit but not impossible, roughly a 5-15% chance whichever
 answer a manager picks. A one-sided `this_or_that` doesn't qualify, since anyone can take the safe side.
-Week 8's (#84) is a `number_guess` on the game of the week's combined score, graded within ±2 (2026 game
-totals have an SD of about 29, so even a perfect guess hits about 5% of the time). See the skill's
+Week 8's (#84) is a `number_guess` on the game of the week's combined score. Hunter widened its window from
+±2 to ±5, so `questions` got a nullable `tolerance` column (null = the old ±2): `api/leaderboard.js` grades with
+`COALESCE(q.tolerance, 2)`, `api/questions.js` returns it, and `pickem.js` shows "within ±N counts" and grades
+the card with it. At ±5 a perfect guess hits about 14% of the time (2026 game totals have an SD of about 29). See the skill's
 "Weekly Pick'em props" section.
 
 **Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a

@@ -65,7 +65,8 @@ const QUESTIONS = [
   {
     type: 'number_guess',
     points: 3,
-    prompt: "LONGSHOT (3 points): Guess the combined score of Goetz vs. Glaser, the game of the week. It's projected at 213.5 as of Tuesday, and this season's games have totaled anywhere from 142.3 to 259.3. Within 2 points of the real total counts.",
+    tolerance: 5,
+    prompt: "LONGSHOT (3 points): Guess the combined score of Goetz vs. Glaser, the game of the week. It's projected at 213.5 as of Tuesday, and this season's games have totaled anywhere from 142.3 to 259.3. Within 5 points of the real total counts.",
   },
 ];
 
@@ -73,8 +74,8 @@ async function main() {
   console.log(`Inserting ${QUESTIONS.length} Week 8 props (week=${WEEK}, season=${SEASON}, lock_at=${LOCK_AT})...\n`);
   for (const q of QUESTIONS) {
     const { rows } = await sql`
-      INSERT INTO questions (week, season, type, prompt, option_a, option_b, points, lock_at, published)
-      VALUES (${WEEK}, ${SEASON}, ${q.type}, ${q.prompt}, ${q.option_a || null}, ${q.option_b || null}, ${q.points || 1}, ${LOCK_AT}, false)
+      INSERT INTO questions (week, season, type, prompt, option_a, option_b, points, tolerance, lock_at, published)
+      VALUES (${WEEK}, ${SEASON}, ${q.type}, ${q.prompt}, ${q.option_a || null}, ${q.option_b || null}, ${q.points || 1}, ${q.tolerance || null}, ${LOCK_AT}, false)
       RETURNING id
     `;
     console.log(`  #${rows[0].id} [${q.type}] ${q.prompt}`);

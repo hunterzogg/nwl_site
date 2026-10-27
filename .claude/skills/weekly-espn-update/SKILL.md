@@ -275,11 +275,12 @@ picks it and it locks, a bad line can't be quietly fixed.
 **Every week includes one 3-point longshot** (per Hunter, from Week 8): one prop with `points = 3` whose prompt
 starts "LONGSHOT (3 points):". It should be hard for everyone to get right but not impossible: roughly a 5-15%
 chance whichever answer a manager picks. A lopsided `this_or_that` doesn't work, since anyone can take the safe
-side. Good shapes: a `number_guess` graded within ±2 (the combined score of the game of the week: 2026 game totals
-have an SD of about 29, so even a perfect guess hits about 5%), or a `pick_manager` on something spread across many
+side. Good shapes: a `number_guess` with a wider window (the combined score of the game of the week, `tolerance = 5`:
+2026 game totals have an SD of about 29, so even a perfect guess hits about 14%; at the default ±2 it was about 5%), or a `pick_manager` on something spread across many
 managers (e.g. who scores the fewest). Ground it in real numbers like any other prop, give the real range in the
-prompt, and estimate the hit rate from the data before proposing it. Set `points: 3` in the seed script's question
-(the insert uses `q.points || 1`); every other weekly prop stays 1.
+prompt, and estimate the hit rate from the data before proposing it. Set `points: 3` (and `tolerance` for a wider `number_guess` window) in the seed script's question
+(the insert uses `q.points || 1` and `q.tolerance || null`); every other weekly prop stays 1, and a
+`number_guess` without a tolerance counts within ±2. Say the window in the prompt.
 
 **Use one decimal place for numbers in prop descriptions** (past highs, margins, lines: "165.6", "4.5",
 "Larson by 12.5"). Use two only when the prop's line itself needs it to settle the answer, e.g. a line set

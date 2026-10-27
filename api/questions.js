@@ -6,9 +6,9 @@ module.exports = async (req, res) => {
 
   const week = req.query.week;
   const rows = week
-    ? (await sql`SELECT id, week, season, type, prompt, option_a, option_b, points, lock_at, correct_option
+    ? (await sql`SELECT id, week, season, type, prompt, option_a, option_b, points, lock_at, correct_option, tolerance
                  FROM questions WHERE published = true AND week = ${week} ORDER BY id`).rows
-    : (await sql`SELECT id, week, season, type, prompt, option_a, option_b, points, lock_at, correct_option
+    : (await sql`SELECT id, week, season, type, prompt, option_a, option_b, points, lock_at, correct_option, tolerance
                  FROM questions WHERE published = true ORDER BY week DESC, id`).rows;
 
   res.status(200).json(rows);

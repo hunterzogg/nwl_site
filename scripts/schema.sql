@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS questions (
   option_a TEXT,                   -- null for 'pick_manager' - choices are every manager instead
   option_b TEXT,
   points INT NOT NULL DEFAULT 1,
+  tolerance NUMERIC,               -- number_guess only: +/- window that counts as correct (null = 2)
   lock_at TIMESTAMPTZ NOT NULL,
   correct_option TEXT,             -- null until graded; 'a' | 'b'
   published BOOLEAN NOT NULL DEFAULT false
