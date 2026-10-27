@@ -258,7 +258,10 @@ Once real data exists for the upcoming week (run the data pull above first if it
 this needs that week's `matchups.json` entry, which carries a projected spread/over-under per
 game computed from each team's *best possible projected lineup*, not the lineup currently set -
 on Tuesday most managers haven't moved bye-week/injured starters yet, so the set lineup's
-projection is meaningless; see `fetch_projected_points()` in `fetch_espn_week.py`), draft that week's weekly Pick'em props. **Lines move after Wednesday's waivers** (Week 7 of 2026: Pfaffinger
+projection is meaningless; see `fetch_projected_points()` in `fetch_espn_week.py`. A slot a team can't fill from
+its own roster that week, e.g. its only QB is on bye, is filled with the top available free agent's projection, so
+the line reflects the pickup the manager would make; the script prints each fill, so mention it in a prop when it
+moves a line), draft that week's weekly Pick'em props. **Lines move after Wednesday's waivers** (Week 7 of 2026: Pfaffinger
 went from a 1.0 favorite on Tuesday to a 21.5-point underdog after Glaser's waiver adds). So either draft props
 after the Wednesday-morning pull, or phrase any line in the prompt as "as of Tuesday" and re-check the lines
 before Thursday's lock (`matchups.json` refreshes on every Action run); update the prompt text if they moved,
@@ -268,6 +271,15 @@ default that can be skipped because the props look obviously fine. Unlike matchu
 rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment call (which
 storyline, which line, how many questions) that only the user should finalize, and once a manager
 picks it and it locks, a bad line can't be quietly fixed.
+
+**Every week includes one 3-point longshot** (per Hunter, from Week 8): one prop with `points = 3` whose prompt
+starts "LONGSHOT (3 points):". It should be hard for everyone to get right but not impossible: roughly a 5-15%
+chance whichever answer a manager picks. A lopsided `this_or_that` doesn't work, since anyone can take the safe
+side. Good shapes: a `number_guess` graded within ±2 (the combined score of the game of the week: 2026 game totals
+have an SD of about 29, so even a perfect guess hits about 5%), or a `pick_manager` on something spread across many
+managers (e.g. who scores the fewest). Ground it in real numbers like any other prop, give the real range in the
+prompt, and estimate the hit rate from the data before proposing it. Set `points: 3` in the seed script's question
+(the insert uses `q.points || 1`); every other weekly prop stays 1.
 
 **Use one decimal place for numbers in prop descriptions** (past highs, margins, lines: "165.6", "4.5",
 "Larson by 12.5"). Use two only when the prop's line itself needs it to settle the answer, e.g. a line set
@@ -288,10 +300,10 @@ between two hundredths. **Ground every prop in real data, never invent a line.**
 `published: false` until explicitly approved (Claude never types the `ADMIN_PASSCODE`, so every
 step below is a direct Postgres write via `.env.local` + `node`, same as every prior Pick'em
 change):
-1. Copy the most recent weekly seed script (e.g. `scripts/seed_pickem_week3_props.js`) to a new
+1. Copy the most recent weekly seed script (e.g. `scripts/seed_pickem_week8_props.js`, the first with a longshot) to a new
    one for this week's number, update its `QUESTIONS` array with the newly drafted props.
 2. Set `WEEK` to the real week number, `points = 1` (the established weekly-prop tier - draft-day
-   and weekly props are both 1, season-long batches are 3), and `LOCK_AT` to that week's *real*
+   and weekly props are both 1, season-long batches are 3), except the weekly longshot, which is 3, and `LOCK_AT` to that week's *real*
    Thursday-night kickoff - pull it from ESPN's public scoreboard, not a guess:
    `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?week=N&seasontype=2&year=2026`
    (no auth needed), take the earliest `date` in the response. Set `published: false` in the

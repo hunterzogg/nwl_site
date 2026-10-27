@@ -964,8 +964,290 @@
   },
   {
     "week": 8,
-    "published": false,
-    "title": "",
-    "body": ""
+    "published": true,
+    "title": "Five Straight for Stover, and Four Wins Left on the Bench",
+    "body": "Stover is the hottest team in the league. He beat Muenchow 119-77 for his fifth straight win, behind Joe Burrow (29) and Bucky Irving (24), and he did it with Tony Pollard's 35 points on his bench, the most on any bench this week. Five straight is the longest single-season win streak of his NWL career. Only two other teams have started 0-2 and then won five in a row: Prodahl (2020) and Pfaffinger (2024), and both finished 4th. The win tied his all-time series with Muenchow at 8-8, and it was the biggest playoff-odds swing of the week: Stover jumped 15 points to 88%, and Muenchow fell 15 to 58%.\n\nFour teams lost this week with the winning move sitting on their bench.\n\n{{visual:bench-flips}}\n\nZogg started Roschon Johnson (1) at running back over Rhamondre Stevenson (20) and lost to Palaia 96-79. Stevenson would have made it 98-96, and Zogg's Texans Head Coach added -5. That's three straight losses for Zogg. Prodahl lost to Ainsworth 106.5-99.3 with Tucker Kraft (13) on his bench and Germie Bernard (4) at FLEX. Kraft would have won it 107.9-106.5. It's only Ainsworth's third win over Prodahl in 17 meetings.\n\nGlaser lost to Pfaffinger 101-96, and Juwan Johnson did it again: one week after scoring 0, he scored 1 at tight end while Colby Parkinson scored 7 on the bench. Parkinson would have flipped it, 102.4-101.3. Glaser has now left 149 points on his bench this season, still the most in the league. Conlin lost to Larson 74.8-70.3. He started Ted Hurst III, who was targeted once and scored 0, and benched Marvin Harrison Jr., who scored 7. Harrison would have won it 77.4-74.8. In Week 2, Conlin started Harrison and he scored 0.\n\nLarson won that game anyway, with the lowest winning score of 2026 (74.8). Patrick Mahomes scored 6 while Jacoby Brissett scored 16 on his bench, Jake Ferguson was targeted once and scored 0, and his Jaguars Head Coach scored 0 because Jacksonville was on bye. So the Larson-Conlin game had a shotgun on each side: Ferguson and Hurst. Larson now leads that series 9-8, and his playoff odds rose 8 points to 41%.\n\nAinsworth is 6-1, the best record in the league. Zay Flowers (24) and Amon-Ra St. Brown (20) led the way, and he won with nobody in his Head Coach slot (the Cowboys coach scored 5 on his bench) and Caleb Douglas's 20 on the bench. From 2013-2025, 11 teams started 6-1: 10 made the playoffs and 2 won the title.\n\n{{visual:week7-scores}}\n\nElsewhere: Goetz had the top score, beating Hagan 120-106 behind Luther Burden III (22) and Emanuel Wilson (18). Goetz leads that series 14-3, and his odds of a first-round bye jumped 18 points to 57%, the biggest bye gain of the week. Hagan has lost four straight. Pfaffinger has won two straight after his 0-5 start, behind Jameson Williams (24) and Quinshon Judkins (23). Palaia beat Zogg behind Tee Higgins (24), now leads that series 13-11, and his playoff odds rose 9 points to 46%.\n\nFour teams are 2-5: Conlin, Hagan, Pfaffinger, and Zogg. From 2013-2025, 25 teams were 2-5 after seven games, and exactly one made the playoffs: Muenchow in 2023, who went on to win the title.\n\nBest ball flipped one game this week: with both lineups maxed out, Zogg beats Palaia 107-101. Through seven weeks, four teams have a different best-ball record. Prodahl and Pfaffinger would each be a game better (4-3 and 3-4), and Goetz and Palaia a game worse (4-3 and 2-5).\n\n{{visual:best-ball}}\n\nIn Week 8, #2 Goetz plays #3 Glaser, with Glaser favored by 2 as of Tuesday, and Goetz leads that series 12-5. Prodahl and Muenchow is a dead-even pick'em. Ainsworth is a 15-point favorite over Larson in the highest-projected game (221.5). Stover goes for six straight as a 24.5-point favorite over Pfaffinger, the biggest spread of the week. Hagan has San Francisco (Christian McCaffrey and Brock Purdy) on bye and no other quarterback, so Palaia is favored by 12 even after counting the best free-agent QB. Houston, New Orleans, the Giants, and San Francisco are on bye. Lines are as of Tuesday and will move after Wednesday's waivers.",
+    "visuals": [
+      {
+        "id": "bench-flips",
+        "type": "table",
+        "title": "Week 7: Bench Swaps That Flip the Result",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "started",
+            "label": "Started"
+          },
+          {
+            "key": "benched",
+            "label": "Benched"
+          },
+          {
+            "key": "actual",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "swap",
+            "label": "With Swap",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Zogg",
+            "started": "Roschon Johnson (1)",
+            "benched": "Rhamondre Stevenson (20)",
+            "actual": "L 79-96",
+            "swap": "W 98-96",
+            "_em": [
+              "swap"
+            ]
+          },
+          {
+            "mgr": "Prodahl",
+            "started": "Germie Bernard (4)",
+            "benched": "Tucker Kraft (13)",
+            "actual": "L 99.3-106.5",
+            "swap": "W 107.9-106.5",
+            "_em": [
+              "swap"
+            ]
+          },
+          {
+            "mgr": "Conlin",
+            "started": "Ted Hurst III (0)",
+            "benched": "Marvin Harrison Jr. (7)",
+            "actual": "L 70.3-74.8",
+            "swap": "W 77.4-74.8",
+            "_em": [
+              "swap"
+            ]
+          },
+          {
+            "mgr": "Glaser",
+            "started": "Juwan Johnson (1)",
+            "benched": "Colby Parkinson (7)",
+            "actual": "L 96.3-101.3",
+            "swap": "W 102.4-101.3",
+            "_em": [
+              "swap"
+            ]
+          }
+        ],
+        "note": "One lineup change each, against the opponent's actual score. Starters who got hurt during their game are never counted as a bad decision."
+      },
+      {
+        "id": "week7-scores",
+        "type": "bar",
+        "title": "Week 7 Scores",
+        "legend": [
+          {
+            "label": "Won",
+            "tone": ""
+          },
+          {
+            "label": "Lost",
+            "tone": "muted"
+          }
+        ],
+        "bars": [
+          {
+            "manager": "Goetz",
+            "value": 119.8,
+            "display": "119.8",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 119.08,
+            "display": "119.1",
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 106.46,
+            "display": "106.5",
+            "tone": ""
+          },
+          {
+            "manager": "Hagan",
+            "value": 106.32,
+            "display": "106.3",
+            "tone": "muted"
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 101.32,
+            "display": "101",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 99.34,
+            "display": "99",
+            "tone": "muted"
+          },
+          {
+            "manager": "Glaser",
+            "value": 96.28,
+            "display": "96.3",
+            "tone": "muted"
+          },
+          {
+            "manager": "Palaia",
+            "value": 95.62,
+            "display": "95.6",
+            "tone": ""
+          },
+          {
+            "manager": "Zogg",
+            "value": 79.08,
+            "display": "79",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 77.2,
+            "display": "77",
+            "tone": "muted"
+          },
+          {
+            "manager": "Larson",
+            "value": 74.8,
+            "display": "75",
+            "tone": ""
+          },
+          {
+            "manager": "Conlin",
+            "value": 70.28,
+            "display": "70",
+            "tone": "muted"
+          }
+        ]
+      },
+      {
+        "id": "best-ball",
+        "type": "table",
+        "title": "Best-Ball Standings Through Week 7",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "act",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "bb",
+            "label": "Best Ball",
+            "num": true
+          },
+          {
+            "key": "left",
+            "label": "Bench Pts Left",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Ainsworth",
+            "act": "6-1",
+            "bb": "6-1",
+            "left": "103"
+          },
+          {
+            "mgr": "Glaser",
+            "act": "5-2",
+            "bb": "5-2",
+            "left": "149"
+          },
+          {
+            "mgr": "Stover",
+            "act": "5-2",
+            "bb": "5-2",
+            "left": "119"
+          },
+          {
+            "mgr": "Goetz",
+            "act": "5-2",
+            "bb": "4-3",
+            "left": "37",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Larson",
+            "act": "4-3",
+            "bb": "4-3",
+            "left": "113"
+          },
+          {
+            "mgr": "Prodahl",
+            "act": "3-4",
+            "bb": "4-3",
+            "left": "113",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Muenchow",
+            "act": "3-4",
+            "bb": "3-4",
+            "left": "118"
+          },
+          {
+            "mgr": "Palaia",
+            "act": "3-4",
+            "bb": "2-5",
+            "left": "45",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Pfaffinger",
+            "act": "2-5",
+            "bb": "3-4",
+            "left": "76",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Conlin",
+            "act": "2-5",
+            "bb": "2-5",
+            "left": "78"
+          },
+          {
+            "mgr": "Hagan",
+            "act": "2-5",
+            "bb": "2-5",
+            "left": "111"
+          },
+          {
+            "mgr": "Zogg",
+            "act": "2-5",
+            "bb": "2-5",
+            "left": "100"
+          }
+        ],
+        "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
+      }
+    ]
   }
 ]

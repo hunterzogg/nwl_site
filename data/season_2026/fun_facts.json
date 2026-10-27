@@ -428,5 +428,91 @@
         "wide": true
       }
     ]
+  },
+  {
+    "week": 8,
+    "published": true,
+    "facts": [
+      {
+        "label": "The Precedent",
+        "headline": "{{num}} of 25 teams that started 2-5 made the playoffs",
+        "num": "1",
+        "sub": "Muenchow in 2023, and he won the title. Four teams are 2-5 right now: Conlin, Hagan, Pfaffinger, and Zogg.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Career Best",
+        "headline": "Stover has won {{num}} straight",
+        "num": "5",
+        "sub": "The longest single-season win streak of his NWL career. Only two other teams have started 0-2 and then won five in a row: Prodahl (2020) and Pfaffinger (2024). Both finished 4th.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "So Close, Other Way",
+        "headline": "Prodahl's other bench swap loses by {{num}}",
+        "num": "0.02",
+        "sub": "Tucker Kraft (12.8) at FLEX beats Ainsworth. Dameon Pierce (11.3) in the same spot makes it 106.44 to 106.46.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Owned, Part 2",
+        "headline": "Goetz leads Glaser {{num}}",
+        "num": "12-5",
+        "sub": "They meet this week as #2 and #3 in the power rankings, with Glaser favored by 2. Palaia, who plays Hagan, leads that series 8-3.",
+        "tone": "hot",
+        "wide": true
+      },
+      {
+        "label": "Even Again",
+        "headline": "Stover and Muenchow are {{num}} all-time",
+        "num": "8-8",
+        "sub": "Muenchow led 8-7 going into Week 7. Stover's 119-77 win was the biggest margin of the week, and it swung both teams' playoff odds by 15 points.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Shotgun Both Ways",
+        "headline": "{{num}} shotguns, one game",
+        "num": "2",
+        "sub": "Jake Ferguson (Larson) and Ted Hurst III (Conlin) were each targeted once and scored 0. Larson won 74.8-70.3, the lowest winning score of 2026.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Deja Vu",
+        "headline": "Closest game, two weeks running: {{num}}",
+        "num": "4.52",
+        "sub": "Goetz beat Palaia 91.92-87.40 in Week 6. Larson beat Conlin 74.80-70.28 in Week 7. Same margin to the hundredth.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Wrong Week, Twice",
+        "headline": "Marvin Harrison Jr.: {{num}}",
+        "num": "0, then 7.1",
+        "sub": "Conlin started him in Week 2 and he scored 0. Conlin benched him in Week 7 and he scored 7.1, enough to beat Larson.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Empty Chair",
+        "headline": "Two teams started {{num}} Head Coach",
+        "num": "no",
+        "sub": "It cost Ainsworth 5 points (the Cowboys coach scored 5 on his bench) and saved Pfaffinger 5 (the Chiefs coach scored -5 on his). Pfaffinger would still have beaten Glaser, by 0.04.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Milestone Watch",
+        "headline": "Stover needs {{num}} for 15,000 career points",
+        "num": "85.5",
+        "sub": "He projects to 110.5 against Pfaffinger. He'd be the 12th manager to get there. Palaia leads everyone with 23,240.",
+        "tone": "green",
+        "wide": false
+      }
+    ]
   }
 ]

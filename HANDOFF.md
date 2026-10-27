@@ -372,6 +372,23 @@ the starting slots optimally from every non-IR player's ESPN weekly projection, 
 `optimal_lineup()`/`starting_slots()` helpers, which now live in `fetch_espn_week.py`; the best-ball
 script imports them from there. The Week 6 lines moved a lot: Muenchow by 26 became Ainsworth by 9.5.
 
+**Bye-week holes are filled with the top free agent (Week 8, per Hunter).** If a team can't cover a
+starting slot from its roster (every eligible player projects to exactly 0, i.e. bye or OUT, or there's
+no eligible player at all), `fetch_projected_points()` adds the best-projected available free agent for
+that slot (`fetch_free_agent_projections()`: FREEAGENT + WAIVERS, top 300 by % owned, starting positions
+and HC). Rostered backups always come first, however low their projection, and a negative projection (a
+Head Coach expected to lose) still counts as a real start. Each team picks independently, so several
+teams can lean on the same free agent (in Week 8 three teams used the Bengals coach). The script prints a
+`projected line: team N has no X to start, using free agent ...` line for each fill. First run: Hagan had
+no QB behind Brock Purdy (49ers bye), and Geno Smith's 18.5 took Palaia's spread from 30.5 to 12.
+
+**Weekly 3-point longshot prop (from Week 8, per Hunter).** Every weekly Pick'em batch gets one
+`points = 3` prop that's hard for everyone to hit but not impossible, roughly a 5-15% chance whichever
+answer a manager picks. A one-sided `this_or_that` doesn't qualify, since anyone can take the safe side.
+Week 8's (#84) is a `number_guess` on the game of the week's combined score, graded within ±2 (2026 game
+totals have an SD of about 29, so even a perfect guess hits about 5% of the time). See the skill's
+"Weekly Pick'em props" section.
+
 **Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a
 redirect to `draft.html#a26-grades`. Its five tabs are a labeled "2026 Draft" tab row on
 `draft.html` (`a26-*` tab ids, `.a26`-scoped CSS), with the JS moved to

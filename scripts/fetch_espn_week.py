@@ -377,6 +377,11 @@ def fetch_projected_points(league_id, season, week, creds, slots):
     statSplitTypeId 1 = that single scoring period) for every non-IR roster player, fills `slots`
     (see starting_slots) with optimal_lineup, and returns {team_id: projected_points}. Players ESPN
     hasn't projected (bye weeks, OUT) count as 0, so they never make the optimal lineup.
+
+    A starting slot the roster can't cover (every eligible player is projected at 0 - on bye or OUT -
+    or there's no eligible player at all) is filled with the best-projected available free agent for that slot,
+    since that's who the manager would pick up. Rostered backups always come first, however low their
+    projection. Each team picks independently, so two teams can lean on the same free agent.
     """
     path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}"
     url = f"{API_HOST}{path}?view=mRoster&scoringPeriodId={week}"
@@ -389,6 +394,14 @@ def fetch_projected_points(league_id, season, week, creds, slots):
     except urllib.error.HTTPError:
         return {}  # projections are a nice-to-have; don't hard-fail the whole fetch over them
 
+    def week_proj(player):
+        for s in player.get("stats", []):
+            if (s.get("scoringPeriodId") == week and s.get("seasonId") == season
+                    and s.get("statSourceId") == 1 and s.get("statSplitTypeId") == 1):
+                return round(s.get("appliedTotal", 0.0), 2)
+        return 0.0
+
+    free_agents = fetch_free_agent_projections(league_id, season, week, creds, slots, week_proj)
     projected = {}
     for t in data.get("teams", []):
         pool = []
@@ -396,16 +409,52 @@ def fetch_projected_points(league_id, season, week, creds, slots):
             if entry.get("lineupSlotId") == 21:  # IR can't be started
                 continue
             player = entry.get("playerPoolEntry", {}).get("player", {})
-            proj = 0.0
-            for s in player.get("stats", []):
-                if (s.get("scoringPeriodId") == week and s.get("seasonId") == season
-                        and s.get("statSourceId") == 1 and s.get("statSplitTypeId") == 1):
-                    proj = s.get("appliedTotal", 0.0)
-                    break
-            pool.append((round(proj, 2), tuple(player.get("eligibleSlots", [])), player.get("fullName", "")))
-        total, _ = optimal_lineup(tuple(pool), tuple(slots))
+            pool.append((week_proj(player), tuple(player.get("eligibleSlots", [])), player.get("fullName", "")))
+        total, lineup = optimal_lineup(tuple(pool), tuple(slots))
+        # A player projected at exactly 0 is on bye/OUT; a negative projection (a Head Coach expected to
+        # lose) is still a real start, so it isn't replaced.
+        filled = {(slot, name) for slot, name, pts in lineup if pts != 0}
+        uncovered = list(slots)
+        for slot, name in filled:
+            uncovered.remove(slot)
+        used = set()
+        for slot in uncovered:
+            fa = next((f for f in free_agents if slot in f[1] and f[2] not in used), None)
+            if fa:
+                used.add(fa[2])
+                total += fa[0]
+                print(f"  projected line: team {t['id']} has no {SLOT_NAMES.get(slot, slot)} to start, using free agent {fa[2]} ({fa[0]})")
         projected[t["id"]] = round(total, 1)
     return projected
+
+
+SLOT_NAMES = {0: "QB", 2: "RB", 4: "WR", 6: "TE", 5: "WR/TE", 19: "HC", 23: "FLEX"}
+
+
+def fetch_free_agent_projections(league_id, season, week, creds, slots, week_proj, limit=300):
+    """Available players (free agents + waivers) at the starting positions, as (projected points,
+    eligible slots, name) sorted best first, for filling bye-week holes in fetch_projected_points."""
+    path = f"/apis/v3/games/ffl/seasons/{season}/segments/0/leagues/{league_id}"
+    url = f"{API_HOST}{path}?view=kona_player_info&scoringPeriodId={week}"
+    flt = {"players": {"filterStatus": {"value": ["FREEAGENT", "WAIVERS"]},
+                       "filterSlotIds": {"value": sorted({s for s in slots if s in (0, 2, 4, 6, 19)})}, "limit": limit,
+                       "sortPercOwned": {"sortPriority": 1, "sortAsc": False}}}
+    req = urllib.request.Request(url)
+    req.add_header("Cookie", f"espn_s2={creds['espn_s2']}; SWID={creds['swid']}")
+    req.add_header("Accept", "application/json")
+    req.add_header("x-fantasy-filter", json.dumps(flt))
+    try:
+        with urllib.request.urlopen(req, context=SSL_CONTEXT) as resp:
+            players = json.loads(resp.read()).get("players", [])
+    except urllib.error.HTTPError:
+        return []
+    out = []
+    for p in players:
+        pl = p.get("player", {})
+        pts = week_proj(pl)
+        if pts > 0:
+            out.append((pts, tuple(pl.get("eligibleSlots", [])), pl.get("fullName", "")))
+    return sorted(out, key=lambda f: -f[0])
 
 
 def _round_half(x):
