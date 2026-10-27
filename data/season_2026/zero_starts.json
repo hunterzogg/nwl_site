@@ -94,8 +94,24 @@
         "points": 0,
         "hurt": false
       }
+    ],
+    "7": [
+      {
+        "manager": "Larson",
+        "player": "Jake Ferguson",
+        "team": "DAL",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Conlin",
+        "player": "Ted Hurst III",
+        "team": "TB",
+        "points": 0,
+        "hurt": false
+      }
     ]
   },
-  "updated_at": "2026-10-26T09:20:29.139543+00:00",
-  "through_week": 6
+  "updated_at": "2026-10-27T09:19:52.231958+00:00",
+  "through_week": 7
 }
