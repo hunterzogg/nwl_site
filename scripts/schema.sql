@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS questions (
   option_b TEXT,
   points INT NOT NULL DEFAULT 1,
   tolerance NUMERIC,               -- number_guess only: +/- window that counts as correct (null = 2)
+  closest_bonus INT,               -- number_guess only: extra points for the closest guess, within the window or not
   lock_at TIMESTAMPTZ NOT NULL,
   correct_option TEXT,             -- null until graded; 'a' | 'b'
   published BOOLEAN NOT NULL DEFAULT false

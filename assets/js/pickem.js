@@ -160,14 +160,18 @@ const guessTolerance = q => (q.tolerance != null ? Number(q.tolerance) : 2);
 
 function renderGuessBody(q, mine, graded, disabled) {
   const tol = guessTolerance(q);
-  const withinRange = graded && mine !== undefined && Math.abs(Number(mine) - Number(q.correct_option)) <= tol;
+  const miss = graded && mine !== undefined ? Math.abs(Number(mine) - Number(q.correct_option)) : null;
+  const withinRange = miss !== null && miss <= tol;
+  const closest = miss !== null && q.closest_diff != null && miss === Number(q.closest_diff);
+  const earned = (withinRange ? q.points : 0) + (closest ? q.closest_bonus : 0);
+  const why = [withinRange && `within ±${tol}`, closest && 'closest guess'].filter(Boolean).join(' + ');
   return `
     <div class="guess-row">
       <input type="number" class="guess-input" id="guess-${q.id}" data-qid="${q.id}" value="${mine !== undefined ? mine : ''}" placeholder="Your guess" ${disabled ? 'disabled' : ''}>
-      <span class="guess-tol">within &plusmn;${tol} counts</span>
+      <span class="guess-tol">within &plusmn;${tol} counts${q.closest_bonus ? ` &middot; closest guess +${q.closest_bonus}` : ''}</span>
     </div>
-    ${graded ? `<div class="guess-result ${mine !== undefined ? (withinRange ? 'correct' : 'incorrect') : ''}">
-        Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${withinRange ? `within ±${tol} — ${q.points} point${q.points === 1 ? '' : 's'}!` : 'no points'})` : ''}
+    ${graded ? `<div class="guess-result ${mine !== undefined ? (earned ? 'correct' : 'incorrect') : ''}">
+        Actual: ${q.correct_option}${mine !== undefined ? ` &middot; Your guess: ${mine} (${earned ? `${why} — ${earned} point${earned === 1 ? '' : 's'}!` : 'no points'})` : ''}
       </div>` : ''}
   `;
 }
@@ -200,7 +204,10 @@ function questionCardHTML(q, idx) {
   // Status pill: graded (right/wrong for the logged-in manager), locked, or open with its lock time
   let status;
   if (graded && mine !== undefined && mine !== '') {
-    const right = q.type === 'number_guess' ? Math.abs(Number(mine) - Number(q.correct_option)) <= guessTolerance(q) : mine === q.correct_option;
+    const miss = Math.abs(Number(mine) - Number(q.correct_option));
+    const right = q.type === 'number_guess'
+      ? miss <= guessTolerance(q) || (q.closest_diff != null && miss === Number(q.closest_diff))
+      : mine === q.correct_option;
     status = `<span class="q-status ${right ? 'right' : 'wrong'}">${right ? '✓ Correct' : '✗ Missed'}</span>`;
   } else if (graded) status = '<span class="q-status locked">Graded</span>';
   else if (locked) status = '<span class="q-status locked">🔒 Locked</span>';
@@ -209,7 +216,7 @@ function questionCardHTML(q, idx) {
     <div class="question-card${submittedClass}">
       <div class="q-head"><div class="q-num">${(idx ?? 0) + 1}</div><div class="q-main">
         <div class="question-prompt">${q.prompt}</div>
-        <div class="question-meta">${status}<span>${weekLabel(q.week)}</span><span>· ${q.points} pt${q.points === 1 ? '' : 's'}</span></div>
+        <div class="question-meta">${status}<span>${weekLabel(q.week)}</span><span>· ${q.points} pt${q.points === 1 ? '' : 's'}${q.closest_bonus ? ` +${q.closest_bonus} closest` : ''}</span></div>
       </div></div>
       ${body}
       ${!currentManager ? '<div class="locked-note">Log in above to submit a pick.</div>' : ''}

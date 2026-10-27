@@ -388,8 +388,15 @@ answer a manager picks. A one-sided `this_or_that` doesn't qualify, since anyone
 Week 8's (#84) is a `number_guess` on the game of the week's combined score. Hunter widened its window from
 ±2 to ±5, so `questions` got a nullable `tolerance` column (null = the old ±2): `api/leaderboard.js` grades with
 `COALESCE(q.tolerance, 2)`, `api/questions.js` returns it, and `pickem.js` shows "within ±N counts" and grades
-the card with it. At ±5 a perfect guess hits about 14% of the time (2026 game totals have an SD of about 29). See the skill's
-"Weekly Pick'em props" section.
+the card with it. At ±5 a perfect guess hits about 14% of the time (2026 game totals have an SD of about 29).
+**Closest-guess bonus** (Hunter, Oct 27): `questions.closest_bonus` (nullable int) gives the closest
+`number_guess` pick(s) that many extra points, whether or not they're inside the tolerance. `api/leaderboard.js`
+works out each question's smallest miss in a `closest` CTE and adds the bonus to every pick that matches it (ties
+all get it); `api/questions.js` returns `closest_bonus` and, once graded, `closest_diff`, which `pickem.js` uses to
+show "closest guess" on the card. #84 is the first, with 1.
+**Each week's longshot has to be a different question** (Hunter, Oct 27): the skill's "Weekly Pick'em props" section has the
+query that lists earlier longshots and a table of candidate stats with measured spreads, windows and hit rates, plus
+a "Used" column to keep current.
 
 **Draft Analysis folded into League History → Draft.** `pages/draft-analysis.html` is now a
 redirect to `draft.html#a26-grades`. Its five tabs are a labeled "2026 Draft" tab row on
