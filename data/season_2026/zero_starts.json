@@ -124,7 +124,7 @@
         "player": "Lamar Jackson",
         "team": "BAL",
         "points": 0,
-        "hurt": false
+        "hurt": true
       },
       {
         "manager": "Ainsworth",
@@ -156,6 +156,6 @@
       }
     ]
   },
-  "updated_at": "2026-11-03T11:18:55.183909+00:00",
+  "updated_at": "2026-11-03T18:36:11.602434+00:00",
   "through_week": 8
 }

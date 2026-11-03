@@ -40,8 +40,9 @@ PRO_TEAM_ABBR = {1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: 
                  28: "WSH", 29: "CAR", 30: "JAX", 33: "BAL", 34: "HOU"}
 NFL_API = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
 # Play-by-play team codes that differ from the ESPN fantasy codes above (Week 6 of 2026: "WAS-T.McLaurin was
-# injured during the play" never matched the WSH key, so McLaurin wasn't locked into Larson's lineup).
-PBP_TEAM = {"WAS": "WSH", "LA": "LAR", "JAC": "JAX"}
+# injured during the play" never matched the WSH key, so McLaurin wasn't locked into Larson's lineup; Week 8:
+# "BLT-L.Jackson was injured during the play" missed Lamar Jackson the same way).
+PBP_TEAM = {"WAS": "WSH", "LA": "LAR", "JAC": "JAX", "BLT": "BAL", "ARZ": "ARI", "CLV": "CLE", "HST": "HOU"}
 SUFFIX = re.compile(r"\s+(jr\.?|sr\.?|ii|iii|iv|v)$", re.I)
 
 

@@ -514,5 +514,91 @@
         "wide": false
       }
     ]
+  },
+  {
+    "week": 9,
+    "published": true,
+    "facts": [
+      {
+        "label": "The Bottom",
+        "headline": "{{num}} of 18 teams that started 2-6 made the playoffs",
+        "num": "0",
+        "sub": "From 2013-2025, nobody has come back from 2-6 after eight weeks. Three teams are there now: Hagan, Pfaffinger, and Zogg, and Pfaffinger plays Zogg this week.",
+        "tone": "red",
+        "wide": true
+      },
+      {
+        "label": "Crowded at the Top",
+        "headline": "{{num}} teams tied at 6-2",
+        "num": "3",
+        "sub": "Ainsworth, Glaser, and Stover. It's the first three-way tie for the best record after eight weeks since 2014. From 2013-2025, 17 of 18 teams that were 6-2 made the playoffs.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Shotgun Season",
+        "headline": "{{num}} shotguns in one week",
+        "num": "6",
+        "sub": "Double the season's previous high (3, in Weeks 1 and 6). Glaser, Larson, and Conlin won anyway.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "One Pass, Two Zeros",
+        "headline": "Lamar Jackson's only pass: {{num}}",
+        "num": "incomplete",
+        "sub": "He was hurt on the play, a short throw to Zay Flowers, in the first quarter. Jackson (Goetz) and Flowers (Ainsworth) both finished with 0, and both of their teams lost.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Basement Record",
+        "headline": "Zogg's {{num}} weekly low",
+        "num": "4th",
+        "sub": "Weeks 1, 3, 6, and 8. No team in league history had more than three through eight weeks. The single-season record is six (Prodahl, 2013).",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Third of His Kind",
+        "headline": "0-2, then {{num}} straight",
+        "num": "6",
+        "sub": "Stover is the third team to start 0-2 and get to 6-2, after Prodahl (2020) and Pfaffinger (2024). Both finished 4th. Next up: Glaser, who leads their series 13-7.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Dead Even",
+        "headline": "Projected tie, decided by {{num}}",
+        "num": "44",
+        "sub": "Prodahl and Muenchow were dead even on Tuesday. Prodahl won 120-75, the biggest margin of the week.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Winning Ugly",
+        "headline": "Larson left {{num}} on his bench and won",
+        "num": "59",
+        "sub": "Tyler Allgeier (34) and Patrick Mahomes (25) both sat. Larson is 5-3 with 93.0 points per game, the fewest of any team with a winning record.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Bench Champ",
+        "headline": "Muenchow: {{num}} bench points",
+        "num": "159",
+        "sub": "The most in the league this season, passing Glaser (151). His 41 this week were the most of anyone, in a game he lost by 44.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Nobody Hit It",
+        "headline": "Longshot total: {{num}}",
+        "num": "193.4",
+        "sub": "Goetz vs. Glaser came in 20 under its 213.5 projection, so no one landed within 5. Ainsworth's 201 was closest, worth the 1-point bonus.",
+        "tone": "",
+        "wide": false
+      }
+    ]
   }
 ]

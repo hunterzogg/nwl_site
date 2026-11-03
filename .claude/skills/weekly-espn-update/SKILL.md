@@ -272,6 +272,8 @@ rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment 
 storyline, which line, how many questions) that only the user should finalize, and once a manager
 picks it and it locks, a bad line can't be quietly fixed.
 
+**Mix the prop types** (per Hunter, Week 9): at most one or two props per week should just pick a game's winner. Fill the rest with other kinds: score over/unders (the week's high and low), counts (shotguns, Head Coach wins, 120+ scores) as over/unders, `pick_manager` questions (most points, biggest bench, top player), spread covers, and yes/no streak questions. Hunter doesn't like game-total over/unders (a game's combined score), so skip those. Each has to be gradable from site data or the box scores.
+
 **Every week includes one 3-point longshot** (per Hunter, from Week 8): one prop with `points = 3` whose prompt
 starts "LONGSHOT (3 points):". It should be hard for everyone to get right but not impossible: roughly a 5-15%
 chance whichever answer a manager picks. A lopsided `this_or_that` doesn't work, since anyone can take the safe
@@ -293,7 +295,7 @@ weeks, the current scoring era; re-measure if the season looks different):
 | The week's lowest score | SD 10 | ±1 | ~8% | |
 | The week's biggest margin of victory | SD 17 | ±2 | ~9% | |
 | League-wide total points for the week | SD 77 | ±10 | ~10% | |
-| A specific manager's exact score (e.g. the hottest or coldest team) | SD ~22 | ±3 | ~11% | |
+| A specific manager's exact score (e.g. the hottest or coldest team) | SD ~22 | ±3 | ~11% | Week 9 (Stover) |
 | `pick_manager`: whose starter is the week's single top-scoring player | check spread | n/a | check | |
 
 Mark the stat as used in this table when you use one, and add new ideas as they come up. Hit rate for a

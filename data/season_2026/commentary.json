@@ -1252,8 +1252,281 @@
   },
   {
     "week": 9,
-    "published": false,
-    "title": "",
-    "body": ""
+    "published": true,
+    "title": "Six Straight for Stover, Six Shotguns for Everyone Else",
+    "body": "Stover is 6-2 and has won six straight. He beat Pfaffinger 143-108 with the week's top score, behind Joe Burrow (39), Tony Pollard (27), Bucky Irving (21), and Josh Jacobs (20). Six straight extends the longest single-season win streak of his NWL career. Only two other teams have started 0-2 and then gotten to 6-2: Prodahl (2020) and Pfaffinger (2024), and both finished 4th. Stover covered the week's biggest spread (24.5) by 11.\n\nThat makes a three-way tie at the top: Ainsworth, Glaser, and Stover are all 6-2. It's the first time three teams have shared the best record after eight weeks since 2014. From 2013-2025, 17 of the 18 teams that were 6-2 after eight weeks made the playoffs.\n\nGlaser won the game of the week, beating Goetz 105-89 behind Jaxon Smith-Njigba (21) and Trevor Lawrence (19), and he did it with a shotgun at tight end again. Colby Parkinson, last week's bench hero, got the start and scored 0. Goetz lost Lamar Jackson to an injury in the first quarter, after one pass attempt, and his Seahawks Head Coach added -5. Goetz still leads that series 12-6.\n\nParkinson had company. Six starters scored 0 this week, double the season's previous high of three.\n\n{{visual:week8-shotguns}}\n\nLarson beat Ainsworth 90-77 while leaving 59 points on his bench. Tyler Allgeier scored 34, the most on any bench this week, while Tez Johnson started at WR/TE and scored 0, and Patrick Mahomes scored 25 behind Dak Prescott (20). Larson has won two straight and is 5-3, but his 93.0 points per game are the fewest of any team with a winning record. Ainsworth got 27 from D'Andre Swift, a 0 from Zay Flowers, and -5 from his Cowboys Head Coach, and he's still No. 1 in the power rankings for the third straight week.\n\n{{visual:week8-scores}}\n\nProdahl and Muenchow were projected dead even on Tuesday. Prodahl won by 44 (120-75), the biggest margin of the week, behind Ja'Marr Chase (26), Drake Maye (22), and Braelon Allen (22). Muenchow has lost three straight. He left 41 points on his bench (Dalton Kincaid's 17 sat behind Tre Tucker's 0), the most of anyone this week, though it wouldn't have changed the result. He now has 159 bench points this season, passing Glaser for the most in the league.\n\nConlin won the battle of the 2-5s, 82-67 over Zogg, behind Josh Allen (27) and James Cook III (17). Zogg's 67 was the week's lowest score, his fourth weekly low of the season (Weeks 1, 3, 6, and 8). No team in league history had more than three through eight weeks. Palaia beat Hagan 110-91 behind Tee Higgins (33) and Brock Bowers (25), covering the 12-point line by 7. Hagan found a quarterback for the 49ers' bye: Kirk Cousins scored 28. But Hagan has lost five straight.\n\nThree teams are now 2-6: Hagan, Pfaffinger, and Zogg. From 2013-2025, 18 teams were 2-6 after eight weeks, and none made the playoffs.\n\nBest ball flipped one game this week: with both lineups maxed out, Goetz beats Glaser 113-106. Through eight weeks, four teams have a different best-ball record: Prodahl and Pfaffinger would each be a game better (5-3 and 3-5), and Glaser and Palaia a game worse (5-3 and 3-5).\n\n{{visual:best-ball}}\n\nIn Week 9, Stover goes for seven straight at Glaser. Stover is favored by 6 as of Tuesday, but Glaser leads that series 13-7. Pfaffinger and Zogg meet in the battle of the 2-6s, with Pfaffinger favored by 6.5. Hagan is an 8-point favorite over Muenchow, counting the best free-agent Head Coach with Pittsburgh on bye. Goetz is favored by 5 over Larson in the highest-projected game (221.5). Pittsburgh and Tennessee are on bye. Lines are as of Tuesday and will move after Wednesday's waivers.",
+    "visuals": [
+      {
+        "id": "week8-shotguns",
+        "type": "table",
+        "title": "Week 8: Six Shotguns",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "player",
+            "label": "Starter"
+          },
+          {
+            "key": "slot",
+            "label": "Slot"
+          },
+          {
+            "key": "res",
+            "label": "Result",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Glaser",
+            "player": "Colby Parkinson",
+            "slot": "TE",
+            "res": "W 105-89"
+          },
+          {
+            "mgr": "Goetz",
+            "player": "Lamar Jackson",
+            "slot": "QB",
+            "res": "L 89-105"
+          },
+          {
+            "mgr": "Ainsworth",
+            "player": "Zay Flowers",
+            "slot": "WR",
+            "res": "L 77-90"
+          },
+          {
+            "mgr": "Larson",
+            "player": "Tez Johnson",
+            "slot": "WR/TE",
+            "res": "W 90-77"
+          },
+          {
+            "mgr": "Muenchow",
+            "player": "Tre Tucker",
+            "slot": "WR/TE",
+            "res": "L 75-120"
+          },
+          {
+            "mgr": "Conlin",
+            "player": "Omar Cooper Jr.",
+            "slot": "WR/TE",
+            "res": "W 82-67"
+          }
+        ],
+        "note": "Starters (not Head Coaches) who scored 0. Lamar Jackson was hurt in the first quarter. The season's previous high was three, in Weeks 1 and 6. Three of the six teams still won."
+      },
+      {
+        "id": "week8-scores",
+        "type": "bar",
+        "title": "Week 8 Scores",
+        "legend": [
+          {
+            "label": "Won",
+            "tone": ""
+          },
+          {
+            "label": "Lost",
+            "tone": "muted"
+          }
+        ],
+        "bars": [
+          {
+            "manager": "Stover",
+            "value": 143.28,
+            "display": "143",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 119.86,
+            "display": "120",
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 109.54,
+            "display": "110",
+            "tone": ""
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 107.66,
+            "display": "108",
+            "tone": "muted"
+          },
+          {
+            "manager": "Glaser",
+            "value": 104.7,
+            "display": "105",
+            "tone": ""
+          },
+          {
+            "manager": "Hagan",
+            "value": 90.88,
+            "display": "91",
+            "tone": "muted"
+          },
+          {
+            "manager": "Larson",
+            "value": 89.8,
+            "display": "90",
+            "tone": ""
+          },
+          {
+            "manager": "Goetz",
+            "value": 88.7,
+            "display": "89",
+            "tone": "muted"
+          },
+          {
+            "manager": "Conlin",
+            "value": 82.06,
+            "display": "82",
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 76.82,
+            "display": "77",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 75.38,
+            "display": "75",
+            "tone": "muted"
+          },
+          {
+            "manager": "Zogg",
+            "value": 67.18,
+            "display": "67",
+            "tone": "muted"
+          }
+        ]
+      },
+      {
+        "id": "best-ball",
+        "type": "table",
+        "title": "Best-Ball Standings Through Week 8",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "act",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "bb",
+            "label": "Best Ball",
+            "num": true
+          },
+          {
+            "key": "left",
+            "label": "Bench Pts Left",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Ainsworth",
+            "act": "6-2",
+            "bb": "6-2",
+            "left": "117"
+          },
+          {
+            "mgr": "Stover",
+            "act": "6-2",
+            "bb": "6-2",
+            "left": "133"
+          },
+          {
+            "mgr": "Glaser",
+            "act": "6-2",
+            "bb": "5-3",
+            "left": "151",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Goetz",
+            "act": "5-3",
+            "bb": "5-3",
+            "left": "61"
+          },
+          {
+            "mgr": "Larson",
+            "act": "5-3",
+            "bb": "5-3",
+            "left": "148"
+          },
+          {
+            "mgr": "Prodahl",
+            "act": "4-4",
+            "bb": "5-3",
+            "left": "113",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Palaia",
+            "act": "4-4",
+            "bb": "3-5",
+            "left": "78",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Conlin",
+            "act": "3-5",
+            "bb": "3-5",
+            "left": "95"
+          },
+          {
+            "mgr": "Muenchow",
+            "act": "3-5",
+            "bb": "3-5",
+            "left": "159"
+          },
+          {
+            "mgr": "Pfaffinger",
+            "act": "2-6",
+            "bb": "3-5",
+            "left": "76",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Hagan",
+            "act": "2-6",
+            "bb": "2-6",
+            "left": "111"
+          },
+          {
+            "mgr": "Zogg",
+            "act": "2-6",
+            "bb": "2-6",
+            "left": "118"
+          }
+        ],
+        "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
+      }
+    ]
   }
 ]
