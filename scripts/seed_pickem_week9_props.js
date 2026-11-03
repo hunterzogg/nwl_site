@@ -6,7 +6,7 @@
 // Inserted with published: false per the skill's two-checkpoint rule. Lines are Tuesday's; re-check them
 // after Wednesday's waivers and update the prompt text (never the options) if they moved.
 //
-// The longshot is a specific manager's exact score (Stover, on a six-game win streak), within 3, plus the
+// The longshot is a specific manager's exact score (Stover, on a six-game win streak), within 4 (widened from 3 on Nov 3), plus the
 // closest-guess bonus.
 //
 // Nov 3, before publishing (no picks yet): #89-#91 were three more pick-the-winner props; per Hunter they were
@@ -65,9 +65,9 @@ const QUESTIONS = [
   {
     type: 'number_guess',
     points: 3,
-    tolerance: 3,
+    tolerance: 4,
     closest_bonus: 1,
-    prompt: "LONGSHOT (3 points): Guess Stover's exact score in Week 9. He's projected for 111.7 as of Tuesday, and his eight scores this season ranged from 73.0 to 143.3. Within 3 points of his real score is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 3.",
+    prompt: "LONGSHOT (3 points): Guess Stover's exact score in Week 9. He's projected for 111.7 as of Tuesday, and his eight scores this season ranged from 73.0 to 143.3. Within 4 points of his real score is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
   },
 ];
 
