@@ -6,7 +6,7 @@
 <title>2026 Hub — National Wayzata League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/style.css?v=17">
+<link rel="stylesheet" href="../assets/css/style.css?v=18">
 <style>
 .empty-state {
   background: var(--surface); border: 1px dashed var(--line); border-radius: 14px;
@@ -278,7 +278,7 @@
 
 <footer>National Wayzata League &middot; est. 2013</footer>
 
-<script src="../assets/js/shared.js?v=23"></script>
+<script src="../assets/js/shared.js?v=24"></script>
 <script src="../assets/js/trade_engine.js?v=2"></script>
 <script src="../assets/js/nwl_sim.js?v=2"></script>
 <script src="../assets/js/nwl_records.js?v=7"></script>
@@ -779,14 +779,15 @@ async function init() {
     NWL_REC.renderHistory(document.getElementById('historyWeek'), NWL_REC.historyThisWeek({ weekly: weeklyHist, matchups: history, seasons: seasonsHist, highlights, trades, tx, week, today: new Date(), prefix: '../' }), week, true);
   });
 
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-    });
-  });
+  const showTab = tab => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+  };
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { showTab(btn.dataset.tab); history.replaceState(null, '', '#' + btn.dataset.tab); }));
+  // #power, #commentary etc. open that tab (the nav menu's Hub shortcuts link here)
+  const fromHash = () => { const h = location.hash.slice(1); if (document.getElementById('panel-' + h)) showTab(h); };
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
 }
 
 renderNav('2026 hub');

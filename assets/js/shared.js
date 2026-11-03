@@ -1,7 +1,16 @@
 // Shared across all pages: nav bar + manager color lookups.
 
 const NWL_HOME = { href: 'index.html', label: 'Home' };
-const NWL_LIVE_PAGE = { href: 'pages/season-2026.html', label: '2026 Hub' };
+const NWL_LIVE_PAGE = {
+  href: 'pages/season-2026.html', label: '2026 Hub',
+  // Shortcuts to Hub tabs, shown under the Hub in the phone menu (the page reads the hash)
+  subs: [
+    { hash: 'odds', label: 'Playoff Race' },
+    { hash: 'power', label: 'Power Rankings' },
+    { hash: 'commentary', label: 'Commentary' },
+    { hash: 'funfacts', label: "Brian's Fun Facts" },
+  ],
+};
 const NWL_MOCK_DRAFT_PAGE = { href: 'pages/mock-draft.html', label: 'Mock Draft' };
 const NWL_PICKEM_PAGE = { href: 'pages/pickem.html', label: "Pick'em" };
 const NWL_TRADE_TOOLS_PAGE = { href: 'pages/trade-tools.html', label: 'Trade Calculator' };
@@ -41,7 +50,8 @@ function renderNav(activeHref) {
   const isActive = p => activeHref === p.label.toLowerCase();
   const activeHistory = NWL_PAGES.find(isActive);
 
-  const liveLinks = NWL_IN_SEASON_PAGES.map(p => `<a href="${resolveHref(p)}" class="nav-pill nav-live${isActive(p) ? ' active' : ''}"${isActive(p) ? ' aria-current="page"' : ''}>${p === NWL_LIVE_PAGE ? '<span class="nav-live-dot"></span>' : ''}${p.label}</a>`).join('');
+  const subLinks = p => (p.subs || []).map(sb => `<a href="${resolveHref(p)}#${sb.hash}" class="nav-sub">${sb.label}</a>`).join('');
+  const liveLinks = NWL_IN_SEASON_PAGES.map(p => `<a href="${resolveHref(p)}" class="nav-pill nav-live${isActive(p) ? ' active' : ''}"${isActive(p) ? ' aria-current="page"' : ''}>${p === NWL_LIVE_PAGE ? '<span class="nav-live-dot"></span>' : ''}${p.label}</a>${subLinks(p)}`).join('');
   const historyLinks = NWL_PAGES.map(p => `<a href="${resolveHref(p)}" class="nav-dd-item${isActive(p) ? ' active' : ''}"${isActive(p) ? ' aria-current="page"' : ''}><span class="t">${p.label}</span><span class="d">${p.desc}</span></a>`).join('');
 
   nav.innerHTML = `
@@ -88,6 +98,7 @@ function renderNav(activeHref) {
     const open = nav.classList.toggle('dd-open');
     ddBtn.setAttribute('aria-expanded', String(open));
   });
+  nav.querySelectorAll('.nav-sub').forEach(a => a.addEventListener('click', closeAll));
   document.addEventListener('click', (e) => { if (!nav.contains(e.target)) closeAll(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
 }
