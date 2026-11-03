@@ -110,8 +110,52 @@
         "points": 0,
         "hurt": false
       }
+    ],
+    "8": [
+      {
+        "manager": "Glaser",
+        "player": "Colby Parkinson",
+        "team": "LAR",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Goetz",
+        "player": "Lamar Jackson",
+        "team": "BAL",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Ainsworth",
+        "player": "Zay Flowers",
+        "team": "BAL",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Larson",
+        "player": "Tez Johnson",
+        "team": "TB",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Muenchow",
+        "player": "Tre Tucker",
+        "team": "LV",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Conlin",
+        "player": "Omar Cooper Jr.",
+        "team": "NYJ",
+        "points": 0,
+        "hurt": false
+      }
     ]
   },
-  "updated_at": "2026-11-02T11:39:35.901907+00:00",
-  "through_week": 7
+  "updated_at": "2026-11-03T11:18:55.183909+00:00",
+  "through_week": 8
 }
