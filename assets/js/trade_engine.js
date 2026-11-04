@@ -20,16 +20,31 @@ const mv = id => D.market[id] || 0;
 const team = mgr => D.teams.find(t => t.manager === mgr);
 const ownerOf = id => (D.teams.find(t => t.players.includes(id) || t.ir.includes(id)) || {}).manager || null;
 const adj = vals => Math.pow(vals.reduce((s, v) => s + Math.pow(Math.max(0, v), EXP), 0), 1 / EXP);
-// Rest-of-season positional rank: median of the rank sources (FantasyPros ECR, ESPN, FanDuel, FantasyGuys).
-const RANK_LABEL = { fantasypros: 'FantasyPros', espn: 'ESPN', fanduel: 'FanDuel', fantasyguys: 'FantasyGuys' };
+// Rest-of-season positional rank: weighted median of ESPN's per-game projection rank and FantasyPros ECR (the two
+// primary inputs, x2 each) plus the ESPN, FanDuel and FantasyGuys ranking lists (x1 each). Nov 4: the ranking lists
+// alone had Chase Brown RB8 while his ESPN per-game projection was RB19; the projection and FantasyPros now lead.
+const RANK_LABEL = { projection: 'ESPN proj pts/g', fantasypros: 'FantasyPros', espn: 'ESPN rank', fanduel: 'FanDuel', fantasyguys: 'FantasyGuys' };
+const RANK_WEIGHT = { projection: 2, fantasypros: 2 };
+let _projRank = null;
+function projRank(id) { // positional rank by ESPN rest-of-season pts/g, across every rostered player and top free agent
+  if (!_projRank) {
+    _projRank = {};
+    for (const pos of ['QB', 'RB', 'WR', 'TE']) {
+      Object.values(D.players).filter(x => x.pos === pos && x.ros_pg > 0).sort((a, b) => b.ros_pg - a.ros_pg)
+        .forEach((x, i) => { _projRank[x.id] = i + 1; });
+    }
+  }
+  return _projRank[id] || null;
+}
 function wMedian(pairs) { // [(value, weight)] -> weighted median, same rule as build_trade_values.py
   pairs = [...pairs].sort((a, b) => a[0] - b[0]); const total = pairs.reduce((t, x) => t + x[1], 0); let acc = 0;
   for (let i = 0; i < pairs.length; i++) { acc += pairs[i][1]; if (acc * 2 > total) return pairs[i][0]; if (acc * 2 === total) return (pairs[i][0] + pairs[i + 1][0]) / 2; }
   return pairs[pairs.length - 1][0];
 }
 function rosRank(id) {
-  const r = (D.ranks || {})[id]; if (!r || !Object.keys(r).length) return null;
-  const W = D.source_weights || {}, miss = (D.unranked || {})[id] || [];
+  const pr = projRank(id), r = { ...(pr ? { projection: pr } : {}), ...((D.ranks || {})[id] || {}) };
+  if (!Object.keys(r).length) return null;
+  const W = RANK_WEIGHT, miss = (D.unranked || {})[id] || [];
   const m = wMedian(Object.entries(r).map(([k, x]) => [x, W[k] || 1]));
   return { rank: Math.round(m), detail: Object.entries(r).map(([k, x]) => `${RANK_LABEL[k] || k} ${miss.includes(k) ? 'unranked (counted as ' + P(id).pos + x + ')' : P(id).pos + x}${W[k] > 1 ? ' ×' + W[k] : ''}`).join(' · ') };
 }
