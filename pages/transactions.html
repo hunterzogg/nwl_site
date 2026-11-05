@@ -126,7 +126,7 @@
         <div style="margin-top: 8px;">
           <p><strong>What counts.</strong> Every player a team received is followed from the week the trade went through (read from ESPN's weekly rosters) to the end of that season, for as long as that team kept him. Weeks after he was dropped or traded away don't count. Points are real NWL scoring from ESPN box scores.</p>
           <p><strong>Points over replacement.</strong> Each week a player earns his points minus what a waiver-level player at his position scored that week (the average of the players ranked just past the league's starters among everyone rostered: 13th–18th at QB, TE and HC, 31st–36th at RB and WR), never below zero. So adding bodies doesn't win a trade by itself. Fantasy playoff weeks (15–17) count 1.5× because they decide titles.</p>
-          <p><strong>Grades.</strong> Each side's total minus the other side's: A+ at +80 or more, A +50, A− +30, B+ +15, B within 15 of even, C down to −40, D down to −80, F beyond. Started points (what the manager actually put in his lineup) are shown but don't change the grade. FAAB dollars and draft picks in a trade are listed, not graded.</p>
+          <p><strong>Grades.</strong> Each side's total minus the other side's: A+ at +80 or more, A +50, A− +30, B+ +15, B within 15 of even, C down to −40, D down to −80, F beyond. Started points (what the manager actually put in his lineup) are shown but don't change the grade. FAAB dollars and draft picks in a trade are listed, not graded. A trade less than 30 days old is marked too early to grade.</p>
           <p><strong>Coverage.</strong> ESPN box scores are only available to the site's ESPN account from 2022 on, so trades before 2022 can't be graded. Two 2022 trades (Prodahl–Stover and Hagan–Goetz) were recorded with the sides swapped; ESPN's rosters show every player moving the other way, so they were corrected.</p>
         </div>
       </details>
@@ -278,11 +278,14 @@ const gradeOf = t => (tradeGrades && tradeGrades.trades.find(x => x.id === t._i 
 // player scored for that team since the trade), and its points over replacement. With a manager filter on,
 // his side comes first and is highlighted, as on the SSDL Trade Review.
 function tradeCard(t, manager) {
-  const g = gradeOf(t), graded = g && g.gradable;
+  // A trade under 30 days old is too early to grade (build_trade_grades.py's MIN_AGE_DAYS; checked here too so
+  // a grades file built before that rule never shows an early grade)
+  const young = (Date.now() - new Date(t.date + 'T12:00:00')) / 864e5 < 30;
+  const g = gradeOf(t), graded = g && g.gradable && !young;
   const flip = manager && t.team2 === manager;
   const order = flip ? [[t.team2, t.team2_received], [t.team1, t.team1_received]] : [[t.team1, t.team1_received], [t.team2, t.team2_received]];
   const onlyPicks = g && g.sides.every(sd => !sd.players.length);
-  const verdict = !g ? '' : !g.gradable ? (onlyPicks ? 'Draft picks only' : 'Too early to grade')
+  const verdict = !g ? '' : !graded ? (onlyPicks ? 'Draft picks only' : 'Too early to grade')
     : (g.winner ? `${tgEsc(g.winner)} ${g.in_progress ? 'leads' : 'won it'} by ${Math.abs(g.sides[0].net).toFixed(0)}` : (g.in_progress ? 'Even so far' : 'Even trade'));
   const status = graded && g.in_progress ? `<span class="td-status">${g.weeks_counted} week${g.weeks_counted === 1 ? '' : 's'} so far</span>` : '';
   const side = ([mgr, got], focus) => {

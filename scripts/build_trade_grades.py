@@ -31,6 +31,9 @@ KICKOFF = {2018: date(2018, 9, 6), 2019: date(2019, 9, 5), 2020: date(2020, 9, 1
            2022: date(2022, 9, 8), 2023: date(2023, 9, 7), 2024: date(2024, 9, 5), 2025: date(2025, 9, 4), 2026: date(2026, 9, 10)}
 LAST_WEEK, PLAYOFF_FROM, PLAYOFF_WEIGHT = 17, 15, 1.5
 CURRENT_SEASON = 2026
+# A trade less than this many days old is too early to grade (per Hunter, Nov 5 2026): one or two weeks of box
+# scores make a lopsided-looking grade out of noise. The page applies the same rule between data pulls.
+MIN_AGE_DAYS = 30
 REPL_RANKS = {"QB": (13, 18), "TE": (13, 18), "HC": (13, 18), "RB": (31, 36), "WR": (31, 36)}
 # calibrated on 2022-2025 (median |net| about 31, 90th percentile about 89): B is within 15 of even, F is losing by 80+
 GRADES = [(80, "A+"), (50, "A"), (30, "A−"), (15, "B+"), (-15, "B"), (-40, "C"), (-80, "D")]
@@ -166,10 +169,12 @@ def main():
         last_final = max(weeks) if weeks else 0
         weeks_counted = max(0, min(LAST_WEEK, last_final) - start + 1)
         graded_players = sum(1 for sd in sides for p in sd["players"])
+        too_early = (date.today() - date.fromisoformat(t["date"])).days < MIN_AGE_DAYS
         out_trades.append({"id": i, "season": season, "date": t["date"], "precision": t["precision"], "start_week": start,
-                           # the current season is graded on the weeks played so far; picks-only trades aren't graded
-                           "in_progress": season >= CURRENT_SEASON, "weeks_counted": weeks_counted,
-                           "gradable": graded_players > 0 and weeks_counted > 0, "picks_used_on": t.get("picks_used_on"),
+                           # the current season is graded on the weeks played so far; picks-only trades and trades
+                           # under MIN_AGE_DAYS old aren't graded
+                           "in_progress": season >= CURRENT_SEASON, "weeks_counted": weeks_counted, "too_early": too_early,
+                           "gradable": graded_players > 0 and weeks_counted > 0 and not too_early, "picks_used_on": t.get("picks_used_on"),
                            "sides": sides, "winner": None if abs(net) < 15 else sides[0 if net > 0 else 1]["manager"]})
     OUT.write_text(json.dumps({"trades": out_trades, "method": {"replacement_ranks": REPL_RANKS, "playoff_weight": PLAYOFF_WEIGHT,
                                                                 "grades": GRADES}}, separators=(",", ":"), ensure_ascii=False))
