@@ -67,7 +67,8 @@ const QUESTIONS = [
     points: 3,
     tolerance: 4,
     closest_bonus: 1,
-    prompt: "LONGSHOT (3 points): Guess Stover's exact score in Week 9. He's projected for 111.7 as of Tuesday, and his eight scores this season ranged from 73.0 to 143.3. Within 4 points of his real score is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+    // Nov 5 (picks already in): prompt text updated in the database to Thursday's projection; scoring unchanged
+    prompt: "LONGSHOT (3 points): Guess Stover's exact score in Week 9. He's projected for 117.3 as of Thursday (up from 111.7 on Tuesday), and his eight scores this season ranged from 73.0 to 143.3. Within 4 points of his real score is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
   },
 ];
 
