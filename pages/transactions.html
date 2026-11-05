@@ -74,10 +74,20 @@
 .tg-bar span { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
 .tg-bar::after { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--text-muted); }
 .tg-lb-v { font-family: var(--font-mono); font-weight: 600; }
-.mt-path { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 3px; font-size: 0.76rem; color: var(--text-muted); }
-.mt-yr { font-family: var(--font-mono); color: var(--live-bright); }
+.mt-row { border-bottom: 1px solid var(--line); }
+.mt-row:last-child { border-bottom: 0; }
+.mt-row > summary { list-style: none; cursor: pointer; border-bottom: 0; }
+.mt-row > summary::-webkit-details-marker { display: none; }
+.mt-caret { display: inline-block; font-size: 0.7rem; color: var(--text-muted); transition: transform .15s; }
+.mt-row[open] .mt-caret { transform: rotate(90deg); }
+.mt-row > summary:hover .td-name { color: var(--live-bright); }
+.mt-row > summary:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; border-radius: 6px; }
+.mt-path { list-style: none; margin: 0 0 10px 44px; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; }
+.mt-path li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.mt-yr { font-family: var(--font-mono); font-size: 0.78rem; color: var(--live-bright); min-width: 92px; }
+@media (prefers-reduced-motion: reduce) { .mt-caret { transition: none; } }
 .mt-bar::after { display: none; }
-.mt-row { grid-template-columns: 34px minmax(0, 1fr) auto; }
+.mt-row > summary.hx-bar-row { grid-template-columns: 34px minmax(0, 1fr) auto; }
 </style>
 </head>
 <body>
@@ -531,8 +541,9 @@ function mostTradedHTML() {
   return `<div class="hx-section-title"><h2>Most traded players</h2><span>trades since ${first}, 3 or more</span></div>
     <div class="hx-card">${list.map((b, i) => {
       if (b.moves.length !== prev) { rank = i + 1; prev = b.moves.length; }
-      const path = b.moves.sort((x, y) => x.date.localeCompare(y.date)).map(mv => `<span class="mt-move"><span class="mt-yr">’${mv.date.slice(2, 4)}</span> ${mv.from} → ${mv.to}</span>`).join('');
-      return `<div class="hx-bar-row mt-row"><span class="rk">${tied(b.moves.length) ? 'T' : ''}${rank}</span><div><div class="tg-lb-name"><span class="td-name">${b.name}</span> ${posTag(b.pos)}</div><div class="mt-path">${path}</div><div class="tg-bar mt-bar"><span style="left:0;width:${(b.moves.length / max * 100).toFixed(1)}%;background:var(--live)"></span></div></div><span class="tg-lb-v">${b.moves.length}</span></div>`;
+      // Collapsed to the player and count; tapping the row lists each trade (date, from -> to)
+      const path = b.moves.sort((x, y) => x.date.localeCompare(y.date)).map(mv => `<li><span class="mt-yr">${tradeDate({ date: mv.date })}</span> ${managerTag(managers, mv.from)} → ${managerTag(managers, mv.to)}</li>`).join('');
+      return `<details class="mt-row"><summary class="hx-bar-row"><span class="rk">${tied(b.moves.length) ? 'T' : ''}${rank}</span><div><div class="tg-lb-name"><span class="td-name">${b.name}</span> ${posTag(b.pos)}<span class="mt-caret" aria-hidden="true">▸</span></div><div class="tg-bar mt-bar"><span style="left:0;width:${(b.moves.length / max * 100).toFixed(1)}%;background:var(--live)"></span></div></div><span class="tg-lb-v">${b.moves.length}</span></summary><ol class="mt-path">${path}</ol></details>`;
     }).join('')}</div>`;
 }
 
