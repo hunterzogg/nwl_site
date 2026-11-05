@@ -74,6 +74,10 @@
 .tg-bar span { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
 .tg-bar::after { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--text-muted); }
 .tg-lb-v { font-family: var(--font-mono); font-weight: 600; }
+.mt-path { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 3px; font-size: 0.76rem; color: var(--text-muted); }
+.mt-yr { font-family: var(--font-mono); color: var(--live-bright); }
+.mt-bar::after { display: none; }
+.mt-row { grid-template-columns: 34px minmax(0, 1fr) auto; }
 </style>
 </head>
 <body>
@@ -89,7 +93,7 @@
   <div class="tab-row">
     <button class="tab-btn active" data-tab="log">Transaction Log</button>
     <button class="tab-btn" data-tab="trades">Trade Database</button>
-    <button class="tab-btn" data-tab="grades">Best Traders</button>
+    <button class="tab-btn" data-tab="grades">Trade Analysis</button>
     <button class="tab-btn" data-tab="summary">Summary</button>
   </div>
 
@@ -499,11 +503,37 @@ function renderGrades() {
   const max = Math.max(...lb.map(([, b]) => Math.abs(b.net))) || 1;
   const lopsided = [...done].sort((a, b) => Math.abs(b.sides[0].net) - Math.abs(a.sides[0].net)).slice(0, 4).map(g => trades[g.id]).filter(Boolean);
   const seasons = [...new Set(done.map(t => t.season))].sort((a, b) => a - b);
-  el.innerHTML = `<div class="tg-intro">Every graded trade from ${seasons[0]}–${seasons[seasons.length - 1]}, totaled by manager: what each side's players actually scored for that team the rest of the season, over a waiver-level replacement. Current-season trades join once the season ends. Each trade's own grade is in the Trade Database.</div>
+  el.innerHTML = `<div class="tg-intro">Every graded trade from ${seasons[0]}–${seasons[seasons.length - 1]}, totaled by manager: what each side's players actually scored for that team the rest of the season, over a waiver-level replacement. Current-season trades join once the season ends. Each trade's own grade is in the Trade Database. Below that: the players who have changed hands most often.</div>
     <div class="hx-section-title"><h2>Best traders</h2><span>net points over replacement, completed seasons</span></div>
     <div class="hx-card">${lb.map(([m, b], i) => `<div class="hx-bar-row"><span class="rk">${i + 1}</span><div><div class="tg-lb-name">${managerTag(managers, m)} <span class="hx-ctx">${b.n} trade${b.n === 1 ? '' : 's'} · ${b.w}W ${b.l}L ${b.n - b.w - b.l} even</span></div><div class="tg-bar"><span style="${b.net >= 0 ? 'left:50%' : 'right:50%'};width:${(Math.abs(b.net) / max * 50).toFixed(1)}%;background:${b.net >= 0 ? '#4FA876' : '#E0524A'}"></span></div></div><span class="tg-lb-v" style="color:${b.net >= 0 ? '#4FA876' : '#E0524A'}">${tgSgn(b.net)}</span></div>`).join('')}</div>
+    ${mostTradedHTML()}
     <div class="hx-section-title"><h2>Most lopsided</h2><span>biggest net margins</span></div>
     <div class="td-list">${lopsided.map(t => tradeCard(t, '')).join('')}</div>`;
+}
+// Most traded players: how many trades each player has been part of (trades.json, players only; draft picks
+// aren't counted even when the pick became that player). Names are matched loosely so spelling variants in the
+// year-end reports ("Isaiah"/"Isiah" Pacheco) count as one player. Shows everyone traded 3+ times.
+const TRADED_ALIAS = { isaiahpacheco: 'isiahpacheco', breshardsmith: 'brashardsmith' };
+const tradedKey = n => { const k = n.toLowerCase().replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g, '').replace(/[^a-z]/g, ''); return TRADED_ALIAS[k] || k; };
+function mostTradedHTML() {
+  const by = {};
+  trades.forEach(t => [[t.team1_received, t.team2, t.team1], [t.team2_received, t.team1, t.team2]].forEach(([got, from, to]) =>
+    tradeItems(got).forEach(it => {
+      const m = it.match(/^([A-Z/]+) - (.+)$/); if (!m) return;
+      const b = (by[tradedKey(m[2])] ||= { name: m[2], pos: m[1], moves: [] });
+      b.moves.push({ date: t.date, from, to });
+    })));
+  const list = Object.values(by).filter(b => b.moves.length >= 3).sort((a, b) => b.moves.length - a.moves.length || a.name.localeCompare(b.name));
+  if (!list.length) return '';
+  const max = list[0].moves.length, first = Math.min(...trades.map(t => t.season));
+  let rank = 0, prev = null;
+  const tied = n => list.filter(b => b.moves.length === n).length > 1; // shared ranks show as T4
+  return `<div class="hx-section-title"><h2>Most traded players</h2><span>trades since ${first}, 3 or more</span></div>
+    <div class="hx-card">${list.map((b, i) => {
+      if (b.moves.length !== prev) { rank = i + 1; prev = b.moves.length; }
+      const path = b.moves.sort((x, y) => x.date.localeCompare(y.date)).map(mv => `<span class="mt-move"><span class="mt-yr">’${mv.date.slice(2, 4)}</span> ${mv.from} → ${mv.to}</span>`).join('');
+      return `<div class="hx-bar-row mt-row"><span class="rk">${tied(b.moves.length) ? 'T' : ''}${rank}</span><div><div class="tg-lb-name"><span class="td-name">${b.name}</span> ${posTag(b.pos)}</div><div class="mt-path">${path}</div><div class="tg-bar mt-bar"><span style="left:0;width:${(b.moves.length / max * 100).toFixed(1)}%;background:var(--live)"></span></div></div><span class="tg-lb-v">${b.moves.length}</span></div>`;
+    }).join('')}</div>`;
 }
 
 renderNav('transactions');
