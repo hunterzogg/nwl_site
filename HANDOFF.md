@@ -1972,6 +1972,8 @@ by every `fetch_espn_week.py` run, including the scheduled Action) and shows it 
 without a footer (Pick'em admin) are skipped. Versions: `style.css?v=19`, `shared.js?v=25`.
 
 **Commentary subpages (Nov 5, 2026).** A `commentary.json` entry may carry `subpages: [{title, href, blurb}]`; the
-2026 Hub renders each as a gold link card under that week's recap. First use: Week 9 -> `pages/waivers-trades-2026.html`
+2026 Hub shows them as sub-tabs next to that week's recap (Recap | <title>), each loading its page with `?embed=1`
+in a frame (the page hides its nav, header and footer in embed mode and posts its height to the Hub, which sizes
+the frame). First use: Week 9 -> `pages/waivers-trades-2026.html`
 (a static snapshot through Nov 4 waivers: FAAB ledger and bid accuracy, team-by-team best/worst pickups, trade grades,
 trade offers; generated outside the repo, not refreshed by the Action).

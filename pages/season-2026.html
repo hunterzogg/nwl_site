@@ -116,13 +116,13 @@
 .fact-sub { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 .updated-note { color: var(--text-muted); font-size: 0.78rem; margin-bottom: 16px; }
 .comments-section { margin-top: 28px; }
-/* A commentary entry's optional `subpages` ([{title, href, blurb}]): linked deep dives shown under the recap */
-.commentary-subpage { display: grid; gap: 4px; margin-top: 14px; padding: 16px 20px; background: var(--live-bg); border: 1px solid rgba(242, 183, 5, 0.35); border-radius: 12px; text-decoration: none; color: var(--text); }
-.commentary-subpage:hover { border-color: var(--live); }
-.commentary-subpage:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
-.commentary-subpage-eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--live-bright); }
-.commentary-subpage-title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.25rem; }
-.commentary-subpage-blurb { color: var(--text-muted); font-size: 0.92rem; max-width: 70ch; }
+/* A commentary entry's optional `subpages` ([{title, href, blurb}]): sub-tabs next to the recap, each page
+   embedded below (see renderCommentary) */
+.commentary-subtabs { margin-bottom: 14px; }
+.commentary-subtabs .hx-tab:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
+.commentary-subpage-blurb { color: var(--text-muted); font-size: 0.92rem; max-width: 74ch; margin: 0 0 12px; }
+.commentary-subpage-blurb a { color: var(--live-bright); white-space: nowrap; }
+.commentary-subframe { display: block; width: 100%; height: 1600px; border: 0; background: transparent; }
 .comments-title {
   font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--text-muted); margin-bottom: 12px; border-left: 3px solid var(--live); padding-left: 10px;
@@ -582,18 +582,25 @@ function renderCommentary() {
       'No recap published yet', 'Weekly commentary shows up here once Hunter publishes it.');
     return;
   }
+  // An entry's `subpages` become sub-tabs next to the recap; each loads its page in embed mode (no nav,
+  // header or footer) in a frame that sizes itself to the page, so the page's own styles stay separate.
+  const subs = entry.subpages || [];
+  const subTabs = subs.length ? `<nav class="hx-tabs commentary-subtabs" role="tablist" aria-label="Week ${entry.week} commentary">
+      <button class="hx-tab" role="tab" data-sub="" aria-selected="true">Recap</button>
+      ${subs.map((sp, i) => `<button class="hx-tab" role="tab" data-sub="${i}" aria-selected="false">${sp.title}</button>`).join('')}
+    </nav>` : '';
   document.getElementById('commentaryContent').innerHTML = `
-    <div class="commentary-body">
+    ${subTabs}
+    <div class="commentary-body" id="commentaryRecap">
       <div class="commentary-eyebrow">Week ${entry.week} recap</div>
       ${entry.title ? `<h2 class="commentary-title">${entry.title}</h2>` : ''}
       ${commentaryBodyHTML(entry)}
     </div>
-    ${(entry.subpages || []).map(sp => `
-    <a class="commentary-subpage" href="${sp.href}">
-      <span class="commentary-subpage-eyebrow">Week ${entry.week} deep dive</span>
-      <span class="commentary-subpage-title">${sp.title} &rarr;</span>
-      ${sp.blurb ? `<span class="commentary-subpage-blurb">${sp.blurb}</span>` : ''}
-    </a>`).join('')}
+    ${subs.map((sp, i) => `
+    <div class="commentary-subpanel" data-sub-panel="${i}" hidden>
+      ${sp.blurb ? `<p class="commentary-subpage-blurb">${sp.blurb} <a href="${sp.href}">Open full page &rarr;</a></p>` : ''}
+      <iframe class="commentary-subframe" title="${sp.title}" data-src="${sp.href}${sp.href.includes('?') ? '&' : '?'}embed=1" loading="lazy"></iframe>
+    </div>`).join('')}
     <div class="comments-section">
       <div class="comments-title">Discussion</div>
       <div id="giscus-container"></div>
@@ -617,7 +624,26 @@ function renderCommentary() {
   script.setAttribute('crossorigin', 'anonymous');
   script.async = true;
   document.getElementById('giscus-container').appendChild(script);
+
+  document.querySelectorAll('.commentary-subtabs .hx-tab').forEach(btn => btn.addEventListener('click', () => {
+    const sub = btn.dataset.sub;
+    document.querySelectorAll('.commentary-subtabs .hx-tab').forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+    document.getElementById('commentaryRecap').hidden = sub !== '';
+    document.querySelectorAll('.commentary-subpanel').forEach(p => {
+      const on = p.dataset.subPanel === sub;
+      p.hidden = !on;
+      const f = p.querySelector('iframe');
+      if (on && !f.src) f.src = f.dataset.src; // load each subpage the first time its tab opens
+    });
+  }));
 }
+// Embedded subpages report their height so the frame fits them with no inner scrollbar
+window.addEventListener('message', e => {
+  if (e.origin !== location.origin || !e.data || typeof e.data.nwlEmbedHeight !== 'number') return;
+  document.querySelectorAll('.commentary-subframe').forEach(f => {
+    if (f.contentWindow === e.source) f.style.height = Math.ceil(e.data.nwlEmbedHeight) + 'px';
+  });
+});
 
 /* ---------- Matchup previews (all computed, nothing hand-written) ---------- */
 let _playoffStart = null;

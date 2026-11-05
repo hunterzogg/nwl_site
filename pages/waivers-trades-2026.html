@@ -14,6 +14,11 @@
   --good:#4FA876;--bad:#E0524A;--live-bg:rgba(242,183,5,.10)}
 .wt-back{display:inline-block;margin-bottom:10px;font-family:var(--font-mono);font-size:.78rem;color:var(--live-bright);text-decoration:none}
 .wt-back:hover{text-decoration:underline}
+/* ?embed=1: shown inside the 2026 Hub's Commentary tab (a sub-tab of Week 9), so no nav, header, back link or footer */
+html.embed,html.embed body{background:transparent}
+html.embed .wt-back,html.embed .hx-hero,html.embed footer,html.embed .site-nav,html.embed nav.nav{display:none!important}
+html.embed .container{padding:0!important;max-width:none}
+html.embed .wrap{padding-bottom:4px}
 *{box-sizing:border-box}
 
 .wrap{display:grid;gap:40px;padding-bottom:40px}
@@ -75,6 +80,7 @@ li.good{border-color:var(--good)} li.bad{border-color:var(--bad)} li.none{color:
 .caveat{font-size:13px;color:var(--muted);max-width:75ch}
 
 </style>
+<script>if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('embed');</script>
 </head>
 <body>
 
@@ -194,6 +200,17 @@ li.good{border-color:var(--good)} li.bad{border-color:var(--bad)} li.none{color:
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=25"></script>
-<script>renderNav('2026 hub');</script>
+<script>
+if (!document.documentElement.classList.contains('embed')) renderNav('2026 hub');
+else if (parent !== window) {
+  // tell the Hub how tall this page is, so its frame fits with no inner scrollbar
+  // measure the content, not the document: the document is never shorter than the frame, so it couldn't shrink
+  const box = document.querySelector('.container');
+  const send = () => parent.postMessage({ nwlEmbedHeight: box.getBoundingClientRect().bottom + scrollY }, location.origin);
+  new ResizeObserver(send).observe(document.body);
+  addEventListener('load', send);
+  document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', send));
+}
+</script>
 </body>
 </html>
