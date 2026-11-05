@@ -27,16 +27,14 @@ PRO_TEAM_NICKNAME instead of an API call (kona_player_info doesn't carry them).
 
 Losing bids ("offers report"): ESPN doesn't expose a dedicated won/lost report the way its UI's
 waiver summary implies - what it actually returns is every individual claim transaction, win or
-lose, each tagged with its own status. A losing bid shows up as its own transaction with
-status FAILED_INVALIDPLAYERSOURCE or FAILED_PLAYERALREADYDROPPED (ESPN's two ways of saying "someone
-else got there first") and its real bidAmount intact - so the historical won-vs-lost pattern this
-site already tracks (see data/transactions_with_dates.json's 2013-2025 rows) is reconstructible:
-group every WAIVER-type transaction (any status) by the player being added, and for any player
-multiple different teams tried to claim, the EXECUTED one is the winner and every FAILED one
-(excluding FAILED_ROSTERLIMIT, which is a roster-mechanics failure unrelated to being outbid) from
-a losing team is a real competing bid. Zero-dollar FAILED entries are dropped - those are usually a
-stale PENDING claim resolving after someone else's free (uncontested) pickup already took the
-player, not a real dollar amount ever having been on the table.
+lose, each tagged with its own status. A bid that lost to a higher one shows up as its own
+transaction with status FAILED_INVALIDPLAYERSOURCE (the player was no longer available) and its real
+bidAmount intact, stamped with the same processDate as the winning claim in that waiver run. So a lost
+bid is a FAILED_INVALIDPLAYERSOURCE claim in the same run as another team's EXECUTED claim on that
+player (see find_losing_bids). FAILED_PLAYERALREADYDROPPED is NOT a lost bid: it means the claim was
+invalid because the player the bidder meant to drop was already gone (Nov 5, 2026: such claims had
+been logged as lost bids, including some higher than the winning bid). FAILED_ROSTERLIMIT is a
+roster-mechanics failure, and zero-dollar losing claims are dropped, as before.
 
 Setup: identical to fetch_espn_week.py - needs scripts/espn_credentials.json and
 scripts/espn_team_map.json already in place.
@@ -152,24 +150,28 @@ def resolve_player(pid, player_lookup):
 
 def find_losing_bids(all_tx):
     """Real competing losing bids - see module docstring's 'Losing bids' section. Returns
-    (transaction, add_item) tuples, same shape cmd_fetch_transactions already works with."""
-    by_player = {}
+    (transaction, add_item) tuples, same shape cmd_fetch_transactions already works with.
+
+    A bid only counts as lost when it failed FAILED_INVALIDPLAYERSOURCE (the player was already
+    taken) in the same waiver run in which another team's claim on him EXECUTED. Waivers run up to
+    six days a week, so the run is matched by processDate (to the minute - claims in one run are
+    stamped a few ms apart), not by scoringPeriodId."""
+    run = lambda t: (t.get("processDate") or 0) // 60000
+    winners = {}  # (playerId, run) -> winning teamId
     for t in all_tx:
-        if t.get("type") != "WAIVER":
-            continue
-        add = next((i for i in t["items"] if i["type"] == "ADD"), None)
-        if add:
-            by_player.setdefault(add["playerId"], []).append((t, add))
+        if t.get("type") == "WAIVER" and t.get("status") == "EXECUTED":
+            add = next((i for i in t["items"] if i["type"] == "ADD"), None)
+            if add:
+                winners[(add["playerId"], run(t))] = t["teamId"]
 
     losers = []
-    for pid, group in by_player.items():
-        teams = {t["teamId"] for t, _ in group}
-        if len(teams) < 2:
-            continue  # only one team ever went after this player - no competition to log
-        for t, add in group:
-            if (t["status"].startswith("FAILED") and t["status"] != "FAILED_ROSTERLIMIT"
-                    and (t.get("bidAmount") or 0) > 0):
-                losers.append((t, add))
+    for t in all_tx:
+        if t.get("type") != "WAIVER" or t.get("status") != "FAILED_INVALIDPLAYERSOURCE":
+            continue
+        add = next((i for i in t["items"] if i["type"] == "ADD"), None)
+        won_by = winners.get((add["playerId"], run(t))) if add else None
+        if won_by is not None and won_by != t["teamId"] and (t.get("bidAmount") or 0) > 0:
+            losers.append((t, add))
     return losers
 
 
