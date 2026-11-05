@@ -28,11 +28,18 @@
 .td-gets { color: var(--text-muted); font-weight: 500; font-size: 0.8rem; }
 .td-who .manager-tag { font-weight: inherit; }
 .td-assets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; font-size: 0.92rem; }
-.td-assets li { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.td-assets li { padding: 4px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.td-assets li > span:first-child { min-width: 0; }
 .td-assets li:last-child { border-bottom: 0; }
 .td-name { font-weight: 500; }
 .td-assets .pos-tag { font-size: 0.72rem; margin-left: 2px; }
 .pos-FAAB { color: var(--text-muted); }
+.td-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.td-status { color: var(--live-bright); }
+.td-head b { color: var(--text); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.td-total { margin-top: 6px; font-size: 0.78rem; color: var(--text-muted); text-align: right; }
+.td-total b { font-family: var(--font-mono); color: var(--text); }
+.td-grade { margin-left: auto; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; min-width: 38px; text-align: center; border-radius: 6px; padding: 0 8px; line-height: 1.5; cursor: help; }
 .td-other { color: var(--text-muted); }
 .td-note { color: var(--text-muted); font-size: 0.8rem; margin-left: 4px; }
 @media (max-width: 600px) { .td-sides { grid-template-columns: 1fr; } .td-side + .td-side { border-left: 0; border-top: 1px solid var(--line); } }
@@ -82,7 +89,7 @@
   <div class="tab-row">
     <button class="tab-btn active" data-tab="log">Transaction Log</button>
     <button class="tab-btn" data-tab="trades">Trade Database</button>
-    <button class="tab-btn" data-tab="grades">Trade Grades</button>
+    <button class="tab-btn" data-tab="grades">Best Traders</button>
     <button class="tab-btn" data-tab="summary">Summary</button>
   </div>
 
@@ -113,13 +120,9 @@
       <input type="text" id="tradePlayerSearch" placeholder="Search player name...">
     </div>
     <div id="tradesTable"></div>
-  </div>
-
-  <div class="panel" id="panel-grades">
-    <div id="gradesContent"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
     <div class="methodology" style="margin-top: 18px;">
       <details>
-        <summary>Show methodology</summary>
+        <summary>How trades are graded</summary>
         <div style="margin-top: 8px;">
           <p><strong>What counts.</strong> Every player a team received is followed from the week the trade went through (read from ESPN's weekly rosters) to the end of that season, for as long as that team kept him. Weeks after he was dropped or traded away don't count. Points are real NWL scoring from ESPN box scores.</p>
           <p><strong>Points over replacement.</strong> Each week a player earns his points minus what a waiver-level player at his position scored that week (the average of the players ranked just past the league's starters among everyone rostered: 13th–18th at QB, TE and HC, 31st–36th at RB and WR), never below zero. So adding bodies doesn't win a trade by itself. Fantasy playoff weeks (15–17) count 1.5× because they decide titles.</p>
@@ -128,6 +131,10 @@
         </div>
       </details>
     </div>
+  </div>
+
+  <div class="panel" id="panel-grades">
+    <div id="gradesContent"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
   </div>
 
   <div class="panel" id="panel-summary">
@@ -147,7 +154,6 @@
 <script src="../assets/js/shared.js?v=25"></script>
 <script>
 let transactions = [], managers = [], trades = [], tradeGrades = null;
-const tgState = { season: '', manager: '' };
 
 function capitalize(s) {
   if (!s) return '';
@@ -266,6 +272,39 @@ function tradeDate(t) {
   const d = new Date(t.date + 'T12:00:00');
   return isNaN(d) ? t.date : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
+// Trade grades (trade_grades.json, loaded after the first render) are keyed by the trade's index in trades.json.
+const gradeOf = t => (tradeGrades && tradeGrades.trades.find(x => x.id === t._i && x.date === t.date)) || null;
+// One card per trade: date and verdict on top, each side's grade, what it got (player first, with what each
+// player scored for that team since the trade), and its points over replacement. With a manager filter on,
+// his side comes first and is highlighted, as on the SSDL Trade Review.
+function tradeCard(t, manager) {
+  const g = gradeOf(t), graded = g && g.gradable;
+  const flip = manager && t.team2 === manager;
+  const order = flip ? [[t.team2, t.team2_received], [t.team1, t.team1_received]] : [[t.team1, t.team1_received], [t.team2, t.team2_received]];
+  const onlyPicks = g && g.sides.every(sd => !sd.players.length);
+  const verdict = !g ? '' : !g.gradable ? (onlyPicks ? 'Draft picks only' : 'Too early to grade')
+    : (g.winner ? `${tgEsc(g.winner)} ${g.in_progress ? 'leads' : 'won it'} by ${Math.abs(g.sides[0].net).toFixed(0)}` : (g.in_progress ? 'Even so far' : 'Even trade'));
+  const status = graded && g.in_progress ? `<span class="td-status">${g.weeks_counted} week${g.weeks_counted === 1 ? '' : 's'} so far</span>` : '';
+  const side = ([mgr, got], focus) => {
+    if (!mgr) return '';
+    const gs = g && g.sides.find(x => x.manager === mgr);
+    let pi = 0; // graded players come in the same order as the side's player items
+    const items = tradeItems(got).map(it => {
+      const isPlayer = /^[A-Z/]+ - /.test(it), gp = isPlayer && gs ? gs.players[pi++] : null;
+      const nums = !graded || !gp ? '' : gp.weeks
+        ? `<span class="tg-nums" title="${gp.weeks} week${gp.weeks === 1 ? '' : 's'} on the team · ${gp.pts} pts · ${gp.started} started · ${gp.por} over replacement">${gp.pts.toFixed(1)} pts <small>${gp.started.toFixed(1)} started · ${gp.weeks} wk</small></span>`
+        : `<span class="tg-nums"><small>${!gp.matched ? 'no ESPN data' : g.in_progress && !g.weeks_counted ? 'no games yet' : 'never played for him'}</small></span>`;
+      return `<li><span>${tradeItemHTML(t, it)}</span>${nums}</li>`;
+    }).join('') || '<li class="td-other">Nothing recorded</li>';
+    const chip = graded && gs ? `<span class="td-grade" style="color:${tgColor(gs.grade)};background:${tgColor(gs.grade)}22" title="Net ${tgSgn(gs.net)} points over replacement${g.in_progress ? ' so far' : ''}">${gs.grade}</span>` : '';
+    const total = graded && gs ? `<div class="td-total">Over replacement <b>${gs.value.toFixed(0)}</b> · net <b style="color:${gs.net > 0 ? '#4FA876' : gs.net < 0 ? '#E0524A' : 'inherit'}">${tgSgn(gs.net)}</b></div>` : '';
+    return `<div class="td-side${focus ? ' focus' : ''}"><div class="td-who">${managerTag(managers, mgr)} <span class="td-gets">gets</span>${chip}</div><ul class="td-assets">${items}</ul>${total}</div>`;
+  };
+  return `<article class="td-trade">
+    <div class="td-head"><span>${tradeDate(t)}${g && g.gradable ? ` · from week ${g.start_week}` : ''}${status ? ' · ' + status : ''}</span>${verdict ? `<b>${verdict}</b>` : ''}</div>
+    <div class="td-sides">${side(order[0], !!manager)}${side(order[1], false)}</div>
+  </article>`;
+}
 function renderTrades() {
   const season = document.getElementById('tradeSeasonFilter').value;
   const manager = document.getElementById('tradeManagerFilter').value;
@@ -279,25 +318,8 @@ function renderTrades() {
     Object.values(t.picks_used_on || {}).some(n => n.toLowerCase().includes(search)));
 
   rows = rows.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
-
-  const side = (t, mgr, got, focus) => `
-    <div class="td-side${focus ? ' focus' : ''}">
-      <div class="td-who">${managerTag(managers, mgr)} <span class="td-gets">gets</span></div>
-      <ul class="td-assets">${tradeItems(got).map(it => `<li>${tradeItemHTML(t, it)}</li>`).join('') || '<li class="td-other">Nothing recorded</li>'}</ul>
-    </div>`;
   document.getElementById('tradesTable').innerHTML = `
-    <div class="td-list">
-      ${rows.map(t => {
-        // With a manager filter on, his side comes first (and is highlighted), as on the SSDL Trade Review
-        const flip = manager && t.team2 === manager;
-        const [m1, g1, m2, g2] = flip ? [t.team2, t.team2_received, t.team1, t.team1_received] : [t.team1, t.team1_received, t.team2, t.team2_received];
-        return `
-        <article class="td-trade">
-          <div class="td-head">${tradeDate(t)}</div>
-          <div class="td-sides">${side(t, m1, g1, !!manager)}${m2 ? side(t, m2, g2, false) : ''}</div>
-        </article>`;
-      }).join('')}
-    </div>
+    <div class="td-list">${rows.map(t => tradeCard(t, manager)).join('')}</div>
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No trades match these filters.</p>` : ''}
   `;
 }
@@ -408,7 +430,7 @@ async function init() {
   window._leagueTx = leagueTx;
   window._mgrTx = mgrTx;
   transactions.forEach(t => t.season = parseInt(t.season));
-  trades.forEach(t => t.season = parseInt(t.season));
+  trades.forEach((t, i) => { t.season = parseInt(t.season); t._i = i; });
 
   // Header stats
   const totalMoves = leagueTx.reduce((n, r) => n + (+r.total_transactions || 0), 0);
@@ -447,7 +469,7 @@ async function init() {
   renderLog();
   renderTrades();
   renderSummary();
-  loadDataSafe('trade_grades', null).then(g => { tradeGrades = g; renderGrades(); });
+  loadDataSafe('trade_grades', null).then(g => { tradeGrades = g; renderGrades(); renderTrades(); });
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -463,45 +485,22 @@ async function init() {
 const tgColor = g => g[0] === 'A' ? '#4FA876' : g[0] === 'B' ? '#4F86D6' : g[0] === 'C' ? '#D9B23C' : '#E0524A';
 const tgEsc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const tgSgn = n => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(0);
-function tgSide(s, t) {
-  return `<div class="tg-side"><div class="tg-side-head"><span class="tg-who">${managerTag(managers, s.manager)} <span>got</span></span>${t && !t.gradable ? '<span class="hx-pill">not graded</span>' : `<span class="tg-grade" style="color:${tgColor(s.grade)};background:${tgColor(s.grade)}22">${s.grade}</span>`}</div>
-    <ul class="tg-players">${s.players.map(p => `<li><span>${posTag(p.pos)} ${tgEsc(p.name)}</span><span class="tg-nums" title="${p.weeks} week${p.weeks === 1 ? '' : 's'} on the team · ${p.pts} pts · ${p.started} started · ${p.por} over replacement">${p.weeks ? `${p.pts.toFixed(1)} pts <small>${p.started.toFixed(1)} started · ${p.weeks} wk</small>` : `<small>${!p.matched ? 'no ESPN data' : t && t.in_progress && !t.weeks_counted ? 'no completed games yet' : 'never played for him'}</small>`}</span></li>`).join('')}
-      ${s.extras.map(x => `<li class="tg-extra"><span>${tgEsc(x)}${t && t.picks_used_on && t.picks_used_on[x] ? ` <small>(${tgEsc(t.picks_used_on[x])})</small>` : ''}</span><span class="tg-nums"><small>not graded</small></span></li>`).join('')}</ul>
-    ${t && !t.gradable ? '' : `<div class="tg-total">Over replacement <b>${s.value.toFixed(0)}</b> · net <b style="color:${s.net > 0 ? '#4FA876' : s.net < 0 ? '#E0524A' : 'inherit'}">${tgSgn(s.net)}</b></div>`}</div>`;
-}
-function tgCard(t) {
-  const d = t.precision === 'year_only' ? t.date : new Date(t.date + 'T12:00:00').toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-  const onlyPicks = t.sides.every(s => !s.players.length);
-  const verdict = !t.gradable ? (onlyPicks ? 'Draft picks only' : 'Too early to grade')
-    : (t.winner ? `${tgEsc(t.winner)} ${t.in_progress ? 'leads' : 'won it'} by ${Math.abs(t.sides[0].net).toFixed(0)}` : (t.in_progress ? 'Even so far' : 'Even trade'));
-  const status = t.in_progress && !onlyPicks ? ` · <span class="tg-live">in progress, ${t.weeks_counted} week${t.weeks_counted === 1 ? '' : 's'} so far</span>` : '';
-  return `<article class="tg-card"><div class="tg-top"><span>${d} · from week ${t.start_week}${status}</span><b>${verdict}</b></div><div class="tg-sides">${tgSide(t.sides[0], t)}${tgSide(t.sides[1], t)}</div></article>`;
-}
 function renderGrades() {
   const el = document.getElementById('gradesContent');
   if (!tradeGrades || !tradeGrades.trades.length) { el.innerHTML = '<p class="hx-ctx">Trade grades aren\'t available yet. Run scripts/build_history_points.py, then scripts/build_trade_grades.py.</p>'; return; }
   const T = tradeGrades.trades;
   const done = T.filter(t => !t.in_progress && t.gradable); // leaderboards use completed seasons only
-  // trader leaderboard
   const by = {};
   done.forEach(t => t.sides.forEach(s => { const b = (by[s.manager] ||= { n: 0, w: 0, l: 0, net: 0 }); b.n++; b.net += s.net; if (t.winner === s.manager) b.w++; else if (t.winner) b.l++; }));
   const lb = Object.entries(by).sort((a, b) => b[1].net - a[1].net);
   const max = Math.max(...lb.map(([, b]) => Math.abs(b.net))) || 1;
-  const lopsided = [...done].sort((a, b) => Math.abs(b.sides[0].net) - Math.abs(a.sides[0].net)).slice(0, 4);
-  const seasons = [...new Set(T.map(t => t.season))].sort((a, b) => b - a);
-  const list = T.filter(t => (!tgState.season || String(t.season) === tgState.season) && (!tgState.manager || t.sides.some(s => s.manager === tgState.manager)))
-    .sort((a, b) => b.date.localeCompare(a.date));
-  el.innerHTML = `<div class="tg-intro">${T.length} trades from ${Math.min(...seasons)}–${Math.max(...seasons)}, graded on what each side's players actually scored for that team the rest of the season, over a waiver-level replacement. Trades from the current season are graded on the weeks played so far and join the leaderboards once the season ends.</div>
+  const lopsided = [...done].sort((a, b) => Math.abs(b.sides[0].net) - Math.abs(a.sides[0].net)).slice(0, 4).map(g => trades[g.id]).filter(Boolean);
+  const seasons = [...new Set(done.map(t => t.season))].sort((a, b) => a - b);
+  el.innerHTML = `<div class="tg-intro">Every graded trade from ${seasons[0]}–${seasons[seasons.length - 1]}, totaled by manager: what each side's players actually scored for that team the rest of the season, over a waiver-level replacement. Current-season trades join once the season ends. Each trade's own grade is in the Trade Database.</div>
     <div class="hx-section-title"><h2>Best traders</h2><span>net points over replacement, completed seasons</span></div>
     <div class="hx-card">${lb.map(([m, b], i) => `<div class="hx-bar-row"><span class="rk">${i + 1}</span><div><div class="tg-lb-name">${managerTag(managers, m)} <span class="hx-ctx">${b.n} trade${b.n === 1 ? '' : 's'} · ${b.w}W ${b.l}L ${b.n - b.w - b.l} even</span></div><div class="tg-bar"><span style="${b.net >= 0 ? 'left:50%' : 'right:50%'};width:${(Math.abs(b.net) / max * 50).toFixed(1)}%;background:${b.net >= 0 ? '#4FA876' : '#E0524A'}"></span></div></div><span class="tg-lb-v" style="color:${b.net >= 0 ? '#4FA876' : '#E0524A'}">${tgSgn(b.net)}</span></div>`).join('')}</div>
     <div class="hx-section-title"><h2>Most lopsided</h2><span>biggest net margins</span></div>
-    <div class="tg-list">${lopsided.map(tgCard).join('')}</div>
-    <div class="hx-section-title"><h2>Every trade, graded</h2><span>${list.length} shown</span></div>
-    <div class="controls-row"><select id="tgSeason"><option value="">All seasons</option>${seasons.map(s => `<option ${tgState.season === String(s) ? 'selected' : ''}>${s}</option>`).join('')}</select>
-      <select id="tgManager"><option value="">All managers</option>${Object.keys(by).sort().map(m => `<option ${tgState.manager === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-    <div class="tg-list">${list.map(tgCard).join('') || '<p class="hx-ctx">No trades match.</p>'}</div>`;
-  document.getElementById('tgSeason').onchange = e => { tgState.season = e.target.value; renderGrades(); };
-  document.getElementById('tgManager').onchange = e => { tgState.manager = e.target.value; renderGrades(); };
+    <div class="td-list">${lopsided.map(t => tradeCard(t, '')).join('')}</div>`;
 }
 
 renderNav('transactions');
