@@ -31,7 +31,8 @@
 .td-assets li { padding: 4px 0; border-bottom: 1px solid var(--line); }
 .td-assets li:last-child { border-bottom: 0; }
 .td-name { font-weight: 500; }
-.td-pos { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-left: 2px; }
+.td-assets .pos-tag { font-size: 0.72rem; margin-left: 2px; }
+.pos-FAAB { color: var(--text-muted); }
 .td-other { color: var(--text-muted); }
 .td-note { color: var(--text-muted); font-size: 0.8rem; margin-left: 4px; }
 @media (max-width: 600px) { .td-sides { grid-template-columns: 1fr; } .td-side + .td-side { border-left: 0; border-top: 1px solid var(--line); } }
@@ -251,11 +252,12 @@ function renderLog() {
 // first ("Name WR"), picks with the player they were used on, FAAB as dollars.
 function tradeItemHTML(t, it) {
   const m = it.match(/^([A-Z/]+) - (.+)$/);
-  if (m) return `<span class="td-name">${m[2]}</span> <span class="td-pos">${m[1]}</span>`;
+  if (m) return `<span class="td-name">${m[2]}</span> ${posTag(m[1])}`;
   const pick = it.match(/^Pick \d+$/);
   if (pick) return `<span class="td-name">${it}</span>${t.picks_used_on && t.picks_used_on[it] ? ` <span class="td-note">used on ${t.picks_used_on[it]}</span>` : ''}`;
   const faab = it.match(/^(\d+) FAAB$/);
-  if (faab) return `<span class="td-name">$${faab[1]} FAAB</span>`;
+  if (faab) return `<span class="td-name">$${faab[1]}</span> <span class="pos-tag pos-FAAB">FAAB</span>`;
+  if (it === 'FAAB') return '<span class="pos-tag pos-FAAB">FAAB</span> <span class="td-note">amount not recorded</span>';
   return `<span class="td-name td-other">${it}</span>`;
 }
 const tradeItems = txt => (txt || '').split(';').map(x => x.trim()).filter(Boolean);
