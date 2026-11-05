@@ -1527,6 +1527,13 @@
         ],
         "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
       }
+    ],
+    "subpages": [
+      {
+        "title": "Waivers & Trades",
+        "href": "waivers-trades-2026.html",
+        "blurb": "Every waiver claim and trade so far: each team's best and worst pickups for the price, FAAB bid accuracy, trade grades, and trade offers sent and declined."
+      }
     ]
   }
 ]

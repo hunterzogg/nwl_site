@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Waivers &amp; Trades 2026 — National Wayzata League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css?v=18">
+<style>
+/* Week 9 commentary subpage: a snapshot of the season's waivers and trades through Nov 4 waivers.
+   Generated from ESPN transactions (see the commentary entry); the site's own palette and fonts. */
+:root{--muted:var(--text-muted);--raised:var(--surface-raised);--display:var(--font-display);--body:var(--font-body);--mono:var(--font-mono);
+  --good:#4FA876;--bad:#E0524A;--live-bg:rgba(242,183,5,.10)}
+.wt-back{display:inline-block;margin-bottom:10px;font-family:var(--font-mono);font-size:.78rem;color:var(--live-bright);text-decoration:none}
+.wt-back:hover{text-decoration:underline}
+*{box-sizing:border-box}
+
+.wrap{display:grid;gap:40px;padding-bottom:40px}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(30px,6vw,46px)} h2{font-size:24px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap} h3{font-size:20px}
+h2 small{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:none;font-weight:500}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--live)}
+p{margin:0;max-width:68ch} .muted{color:var(--muted)}
+section{display:grid;gap:16px}
+.lede{display:grid;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.stat{background:var(--surface);padding:14px 16px;display:grid;gap:2px}
+.stat b{font-family:var(--display);font-size:28px;font-weight:600;color:var(--live);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+table.narrow{min-width:0}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--raised)}
+tbody th{font-weight:600} tbody tr:last-child>*{border-bottom:0}
+tr.unk>*{color:var(--muted);font-style:italic}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px}
+.method{font-size:13px;color:var(--muted);display:grid;gap:6px;border-left:2px solid var(--live);padding-left:14px}
+.teams{display:grid;gap:8px}
+.team{background:var(--surface);border:1px solid var(--line);border-radius:6px;min-width:0}
+.team summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:12px 16px}
+.team summary::-webkit-details-marker{display:none}
+.team summary::before{content:"▸";color:var(--muted);font-size:12px;transition:transform .15s;display:inline-block}
+.team[open] summary::before{transform:rotate(90deg)}
+.team summary:hover .tname{color:var(--live)}
+.team summary:focus-visible{outline:2px solid var(--live);outline-offset:2px;border-radius:6px}
+.tname{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;font-size:19px;font-weight:600}
+.rec,.tsum{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.faab{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--live);background:var(--live-bg);padding:2px 8px;border-radius:3px}
+.tbody{padding:0 16px 16px;display:grid;gap:12px}
+@media (prefers-reduced-motion:reduce){.team summary::before{transition:none}}
+.note{font-size:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.cols{grid-template-columns:1fr}}
+h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li{padding-left:10px;border-left:2px solid var(--line);min-width:0}
+li.good{border-color:var(--good)} li.bad{border-color:var(--bad)} li.none{color:var(--muted);font-size:13px}
+.pk{font-weight:600;font-size:14px} .pos{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:500}
+.price{font-family:var(--mono);font-size:12px;color:var(--live);margin-left:4px}
+.meta{font-size:12.5px;color:var(--muted)}
+.new{font-size:13px;color:var(--muted)} .new b{color:var(--text);font-weight:600}
+.trades{display:grid;gap:14px}
+.trade{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:10px}
+.trade .when{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.sides{grid-template-columns:1fr}}
+.side{background:var(--raised);border-radius:4px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.side .who{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;font-size:16px}
+.side .got{font-size:14px} .side .n{font-size:12.5px;color:var(--muted)}
+.verdict{font-size:14px} .verdict b{color:var(--live)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:1px}
+.tag.w{background:rgba(63,183,122,.15);color:var(--good)} .tag.l{background:rgba(224,82,74,.15);color:var(--bad)} .tag.e{background:var(--raised);color:var(--muted)}
+.caveat{font-size:13px;color:var(--muted);max-width:75ch}
+
+</style>
+</head>
+<body>
+
+<div class="container" style="padding-top: 24px;">
+  <a class="wt-back" href="season-2026.html#commentary">&larr; Back to commentary</a>
+  <header class="hx-hero live">
+    <div class="hx-eyebrow"><span class="nav-live-dot"></span> 2026 Season · Week 9</div>
+    <h1>Waivers &amp; Trades</h1>
+    <p>Every waiver claim, free-agent add and completed trade this season, plus declined trade offers, through Wednesday's (Nov 4) waivers. Pickups are judged by what they gave the team that paid for them.</p>
+  </header>
+<div class="wrap">
+
+  <div class="stats">
+    <div class="stat"><b>$1,100</b><span>FAAB spent of $2,400</span></div>
+    <div class="stat"><b>214</b><span>pickups (100 waiver, 114 free agent)</span></div>
+    <div class="stat"><b>47</b><span>contested claims, winners paid $11 over the next bid on average</span></div>
+    <div class="stat"><b>5</b><span>completed trades</span></div>
+    <div class="stat"><b>49</b><span>trade offers declined</span></div>
+  </div>
+
+  <section>
+    <h2>FAAB ledger <small>sorted by record</small></h2>
+    <div class="tbl"><table>
+      <thead><tr><th>Manager</th><th>Record</th><th class="num">Spent</th><th class="num">Left</th><th class="num">Adds</th><th class="num">Started pts</th><th class="num">Value</th><th class="num">Value per $</th></tr></thead>
+      <tbody><tr><th scope=row>Ainsworth</th><td>6-2</td><td class=num>$121</td><td class=num>$79</td><td class=num>8</td><td class=num>143</td><td class=num>103</td><td class=num>0.85</td></tr><tr><th scope=row>Glaser</th><td>6-2</td><td class=num>$24</td><td class=num>$176</td><td class=num>13</td><td class=num>67</td><td class=num>53</td><td class=num>2.20</td></tr><tr><th scope=row>Stover</th><td>6-2</td><td class=num>$35</td><td class=num>$165</td><td class=num>10</td><td class=num>40</td><td class=num>16</td><td class=num>0.45</td></tr><tr><th scope=row>Goetz</th><td>5-3</td><td class=num>$69</td><td class=num>$131</td><td class=num>21</td><td class=num>118</td><td class=num>76</td><td class=num>1.10</td></tr><tr><th scope=row>Larson</th><td>5-3</td><td class=num>$30</td><td class=num>$170</td><td class=num>14</td><td class=num>72</td><td class=num>51</td><td class=num>1.69</td></tr><tr><th scope=row>Prodahl</th><td>4-4</td><td class=num>$177</td><td class=num>$23</td><td class=num>10</td><td class=num>64</td><td class=num>37</td><td class=num>0.21</td></tr><tr><th scope=row>Palaia</th><td>4-4</td><td class=num>$120</td><td class=num>$80</td><td class=num>33</td><td class=num>177</td><td class=num>105</td><td class=num>0.88</td></tr><tr><th scope=row>Muenchow</th><td>3-5</td><td class=num>$32</td><td class=num>$168</td><td class=num>14</td><td class=num>32</td><td class=num>30</td><td class=num>0.95</td></tr><tr><th scope=row>Conlin</th><td>3-5</td><td class=num>$184</td><td class=num>$16</td><td class=num>26</td><td class=num>48</td><td class=num>20</td><td class=num>0.11</td></tr><tr><th scope=row>Pfaffinger</th><td>2-6</td><td class=num>$98</td><td class=num>$102</td><td class=num>12</td><td class=num>169</td><td class=num>101</td><td class=num>1.03</td></tr><tr><th scope=row>Hagan</th><td>2-6</td><td class=num>$121</td><td class=num>$79</td><td class=num>9</td><td class=num>93</td><td class=num>62</td><td class=num>0.52</td></tr><tr><th scope=row>Zogg</th><td>2-6</td><td class=num>$89</td><td class=num>$111</td><td class=num>44</td><td class=num>49</td><td class=num>29</td><td class=num>0.32</td></tr></tbody>
+    </table></div>
+    <div class="method">
+      <p><b>Started pts</b> is what a team's pickups scored in its lineup while it rostered them. <b>Value</b> is points over replacement in those starts, the same measure the site's trade grades use: each start counts only what a player scored above the 13th-18th best QB, TE or Head Coach that week (31st-36th for RB and WR).</p>
+      <p><b>For the price</b> compares value with the bid. Across every paid claim, the league got 0.41 points of value per FAAB dollar, so a pickup is judged on its value minus 0.41 × its bid. A $0 pickup that started is always a good deal, and a $70 bid needs about 29 points over replacement to break even.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>FAAB accuracy <small>winning bid vs the next-highest bid</small></h2>
+    <p>A perfect bid is $1 more than the next team was willing to pay, or $0 when nobody else put in a claim. Anything above that was money left on the table. Of the $1,100 spent on waiver claims, $471 went to bidding past the next team on 47 contested claims (the median winner paid $7 more than the next bid), and $200 went to 30 paid claims nobody else bid on. That makes the league 39% accurate overall.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Manager</th><th class="num">Waiver $</th><th class="num">Contested wins</th><th class="num">Over next bid + $1</th><th class="num">Uncontested paid</th><th class="num">Left on table</th><th class="num">Accuracy</th><th>Biggest gap</th></tr></thead>
+      <tbody><tr><th scope=row>Stover</th><td class=num>$35</td><td class=num>1</td><td class=num>$6</td><td class=num>1 · $6</td><td class=num>$12</td><td class=num><b>66%</b></td><td>Will Shipley $29 <span class=muted>vs $22</span></td></tr><tr><th scope=row>Ainsworth</th><td class=num>$121</td><td class=num>6</td><td class=num>$53</td><td class=num>0 · $0</td><td class=num>$53</td><td class=num><b>56%</b></td><td>Caleb Douglas $38 <span class=muted>vs $15</span></td></tr><tr><th scope=row>Hagan</th><td class=num>$121</td><td class=num>4</td><td class=num>$53</td><td class=num>1 · $2</td><td class=num>$55</td><td class=num><b>55%</b></td><td>Ollie Gordon II $99 <span class=muted>vs $59</span></td></tr><tr><th scope=row>Larson</th><td class=num>$30</td><td class=num>2</td><td class=num>$13</td><td class=num>1 · $1</td><td class=num>$14</td><td class=num><b>53%</b></td><td>Seth McGowan $10 <span class=muted>vs $2</span></td></tr><tr><th scope=row>Conlin</th><td class=num>$186</td><td class=num>6</td><td class=num>$96</td><td class=num>1 · $6</td><td class=num>$102</td><td class=num><b>45%</b></td><td>Omar Cooper Jr. $74 <span class=muted>vs $18</span></td></tr><tr><th scope=row>Goetz</th><td class=num>$69</td><td class=num>2</td><td class=num>$7</td><td class=num>6 · $37</td><td class=num>$44</td><td class=num><b>36%</b></td><td>Brenton Strange $18 <span class=muted>vs $12</span></td></tr><tr><th scope=row>Zogg</th><td class=num>$89</td><td class=num>5</td><td class=num>$37</td><td class=num>4 · $20</td><td class=num>$57</td><td class=num><b>36%</b></td><td>Kenny Gainwell $18 <span class=muted>vs $5</span></td></tr><tr><th scope=row>Prodahl</th><td class=num>$177</td><td class=num>5</td><td class=num>$116</td><td class=num>0 · $0</td><td class=num>$116</td><td class=num><b>34%</b></td><td>Adonai Mitchell $67 <span class=muted>vs $17</span></td></tr><tr><th scope=row>Palaia</th><td class=num>$118</td><td class=num>7</td><td class=num>$43</td><td class=num>6 · $41</td><td class=num>$84</td><td class=num><b>29%</b></td><td>Keon Coleman $39 <span class=muted>vs $11</span></td></tr><tr><th scope=row>Muenchow</th><td class=num>$32</td><td class=num>4</td><td class=num>$11</td><td class=num>4 · $15</td><td class=num>$26</td><td class=num><b>19%</b></td><td>Buccaneers Coach $5 <span class=muted>vs $0</span></td></tr><tr><th scope=row>Pfaffinger</th><td class=num>$98</td><td class=num>3</td><td class=num>$33</td><td class=num>4 · $53</td><td class=num>$86</td><td class=num><b>12%</b></td><td>T.J. Hockenson $33 <span class=muted>vs $8</span></td></tr><tr><th scope=row>Glaser</th><td class=num>$24</td><td class=num>2</td><td class=num>$3</td><td class=num>2 · $19</td><td class=num>$22</td><td class=num><b>8%</b></td><td>Bills Coach $4 <span class=muted>vs $0</span></td></tr></tbody>
+    </table></div>
+    <div class="cols">
+      <div><h4>Biggest overpays</h4><ul><li class=bad><div class=pk>Conlin: Omar Cooper Jr. <span class=price>$74</span></div><div class=meta>next bid $18 (Zogg) · $56 over · 4 teams bid</div></li><li class=bad><div class=pk>Prodahl: Adonai Mitchell <span class=price>$67</span></div><div class=meta>next bid $17 (Pfaffinger) · $50 over · 4 teams bid</div></li><li class=bad><div class=pk>Prodahl: Germie Bernard <span class=price>$73</span></div><div class=meta>next bid $27 (Conlin) · $46 over · 5 teams bid</div></li><li class=bad><div class=pk>Hagan: Ollie Gordon II <span class=price>$99</span></div><div class=meta>next bid $59 (Pfaffinger) · $40 over · 5 teams bid</div></li><li class=bad><div class=pk>Palaia: Keon Coleman <span class=price>$39</span></div><div class=meta>next bid $11 (Goetz) · $28 over · 4 teams bid</div></li><li class=bad><div class=pk>Pfaffinger: T.J. Hockenson <span class=price>$33</span></div><div class=meta>next bid $8 (Zogg) · $25 over · 2 teams bid</div></li></ul></div>
+      <div><h4>Won by $1 or less ($5+ bids)</h4><ul><li class=good><div class=pk>Conlin: Pat Freiermuth <span class=price>$9</span></div><div class=meta>next bid $8 (Zogg)</div></li></ul></div>
+    </div>
+    <div class="method"><p><b>Accuracy</b> is the share of a manager's waiver dollars that it actually took to win: 1 minus (dollars over the next bid + $1, plus dollars bid when no one else claimed the player) ÷ dollars spent. The next bid is the highest valid claim on the same player in the same waiver run. ESPN also records bids that failed because the player the bidder meant to drop was already gone; those weren't valid competing bids, so they're left out. Free-agent pickups (no bid) aren't included. Ties go to waiver priority, so a $1 edge is the cheapest sure win.</p></div>
+  </section>
+
+  <section>
+    <h2>Team by team <small>sorted by record · tap a team for details</small></h2>
+    <div class="teams"><details class=team id="ainsworth"><summary><span class=tname>Ainsworth</span><span class=rec>6-2</span><span class=tsum>8 adds · 103 value</span><span class=faab>$121 spent · $79 left</span></summary>
+<div class=tbody><p class=note>The best waiver haul in the league. Jordan Love for nothing turned into a starting QB (84 points in four starts), Tyler Shough at $56 has started twice and now backs Love up. Caleb Douglas at $38 has sat on the bench for seven straight weeks.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Jordan Love <span class=pos>QB</span> <span class=price>$0</span></div><div class=meta>held 6 wk, started 4, 84.0 started pts · ROS 17.8/g</div></li><li class=good><div class=pk>Kyle Pitts Sr. <span class=pos>TE</span> <span class=price>$7</span></div><div class=meta>held 2 wk, started 2, 12.3 started pts · next bid $2 · ROS 8.0/g</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Caleb Douglas <span class=pos>WR</span> <span class=price>$38</span></div><div class=meta>held 7 wk, started 0, 0.0 started pts · next bid $15 · ROS 7.6/g</div></li><li class=bad><div class=pk>Kendre Miller <span class=pos>RB</span> <span class=price>$15</span></div><div class=meta>held 5 wk, started 2, 12.3 started pts · next bid $12 · ROS 8.7/g</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Bears Coach ($4, ROS 2.4/g)</p></div></details><details class=team id="glaser"><summary><span class=tname>Glaser</span><span class=rec>6-2</span><span class=tsum>13 adds · 53 value</span><span class=faab>$24 spent · $176 left</span></summary>
+<div class=tbody><p class=note>Spent $24 all year, the least in the league, and still got real points from free pickups like Juwan Johnson. He has $176 left, the most in the league.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Juwan Johnson <span class=pos>TE</span> <span class=price>$0</span></div><div class=meta>held 8 wk, started 5, 22.3 started pts · ROS 6.0/g</div></li><li class=good><div class=pk>Eagles Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 3 wk, started 3, 5.0 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Kenyon Sadiq <span class=pos>TE</span> <span class=price>$12</span></div><div class=meta>held 5 wk, started 1, -0.7 started pts · since dropped</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Greg Dulcich ($7, ROS 6.7/g)</p></div></details><details class=team id="stover"><summary><span class=tname>Stover</span><span class=rec>6-2</span><span class=tsum>10 adds · 16 value</span><span class=faab>$35 spent · $165 left</span></summary>
+<div class=tbody><p class=note>Barely uses the wire: $35 spent, 10 adds and three still rostered. Six straight wins without leaning on waivers. Will Shipley at $29 is the one miss.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Kalif Raymond <span class=pos>WR</span> <span class=price>$0</span></div><div class=meta>held 3 wk, started 2, 19.6 started pts · since dropped</div></li><li class=good><div class=pk>Jameis Winston <span class=pos>QB</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 6.5 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Will Shipley <span class=pos>RB</span> <span class=price>$29</span></div><div class=meta>held 4 wk, started 1, 7.8 started pts · next bid $22</div></li><li class=bad><div class=pk>Rashid Shaheed <span class=pos>WR</span> <span class=price>$6</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · ROS 6.8/g</div></li></ul></div></div></div></details><details class=team id="goetz"><summary><span class=tname>Goetz</span><span class=rec>5-3</span><span class=tsum>21 adds · 76 value</span><span class=faab>$69 spent · $131 left</span></summary>
+<div class=tbody><p class=note>Emanuel Wilson at $9 was one of the best buys of the year (61 points in four starts) before he was dropped. Short-term QB streams of Cousins and Murray each paid off for a week.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Emanuel Wilson <span class=pos>RB</span> <span class=price>$9</span></div><div class=meta>held 6 wk, started 4, 60.9 started pts · since dropped</div></li><li class=good><div class=pk>Kirk Cousins <span class=pos>QB</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 18.5 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Chris Brooks <span class=pos>RB</span> <span class=price>$14</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · next bid $11 · since dropped</div></li><li class=bad><div class=pk>Michael Mayer <span class=pos>TE</span> <span class=price>$11</span></div><div class=meta>held 2 wk, started 0, 0.0 started pts · ROS 6.1/g</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> J.J. McCarthy ($9, ROS 17.1/g)</p></div></details><details class=team id="larson"><summary><span class=tname>Larson</span><span class=rec>5-3</span><span class=tsum>14 adds · 51 value</span><span class=faab>$30 spent · $170 left</span></summary>
+<div class=tbody><p class=note>Cheap and effective: $30 spent, and nearly every dollar returned points. The Jaguars Coach at $0 has been his Head Coach for six weeks.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Jaguars Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 8 wk, started 6, 15.0 started pts · ROS 2.7/g</div></li><li class=good><div class=pk>Jacoby Brissett <span class=pos>QB</span> <span class=price>$19</span></div><div class=meta>held 3 wk, started 1, 24.8 started pts · next bid $12 · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Seth McGowan <span class=pos>RB</span> <span class=price>$10</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · next bid $2 · ROS 3.9/g</div></li></ul></div></div></div></details><details class=team id="prodahl"><summary><span class=tname>Prodahl</span><span class=rec>4-4</span><span class=tsum>10 adds · 37 value</span><span class=faab>$177 spent · $23 left</span></summary>
+<div class=tbody><p class=note>$177 spent, mostly on two wide receivers: Germie Bernard ($73, next bid $27) and Adonai Mitchell ($67 this week, next bid $17). Both cleared the next bid by about $50. He has $23 left.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Broncos Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 5.0 started pts · since dropped</div></li><li class=good><div class=pk>Dameon Pierce <span class=pos>RB</span> <span class=price>$12</span></div><div class=meta>held 2 wk, started 1, 13.0 started pts · next bid $2 · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Germie Bernard <span class=pos>WR</span> <span class=price>$73</span></div><div class=meta>held 3 wk, started 3, 29.9 started pts · next bid $27 · ROS 9.0/g</div></li><li class=bad><div class=pk>Bengals Coach <span class=pos>HC</span> <span class=price>$15</span></div><div class=meta>held 1 wk, started 1, 5.0 started pts · next bid $8 · ROS 2.3/g</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Adonai Mitchell ($67, ROS 8.7/g)</p></div></details><details class=team id="palaia"><summary><span class=tname>Palaia</span><span class=rec>4-4</span><span class=tsum>33 adds · 105 value</span><span class=faab>$120 spent · $80 left</span></summary>
+<div class=tbody><p class=note>Jared Goff at $24 is the best paid pickup in the league: 96 points in five starts at QB. Keon Coleman at $39 hasn&#x27;t returned much.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Jared Goff <span class=pos>QB</span> <span class=price>$24</span></div><div class=meta>held 6 wk, started 5, 95.8 started pts · next bid $15 · ROS 17.4/g</div></li><li class=good><div class=pk>Vikings Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 5 wk, started 4, 15.0 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Keon Coleman <span class=pos>WR</span> <span class=price>$39</span></div><div class=meta>held 4 wk, started 2, 21.1 started pts · next bid $11 · ROS 4.5/g</div></li><li class=bad><div class=pk>Mack Hollins <span class=pos>WR</span> <span class=price>$12</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · since dropped</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Texans Coach ($4, ROS 0.5/g)</p></div></details><details class=team id="muenchow"><summary><span class=tname>Muenchow</span><span class=rec>3-5</span><span class=tsum>14 adds · 30 value</span><span class=faab>$32 spent · $168 left</span></summary>
+<div class=tbody><p class=note>Mostly streams Head Coaches, at a few dollars each. Few pickups have stuck, and only three are still on his roster. He has $168 left, the third most in the league.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Rams Coach <span class=pos>HC</span> <span class=price>$4</span></div><div class=meta>held 2 wk, started 2, 10.0 started pts · ROS 1.8/g</div></li><li class=good><div class=pk>Steelers Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 5.0 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Buccaneers Coach <span class=pos>HC</span> <span class=price>$5</span></div><div class=meta>held 1 wk, started 1, -5.0 started pts · next bid $0 · since dropped</div></li><li class=bad><div class=pk>Brian Robinson Jr. <span class=pos>RB</span> <span class=price>$5</span></div><div class=meta>held 3 wk, started 0, 0.0 started pts · next bid $2 · since dropped</div></li></ul></div></div></div></details><details class=team id="conlin"><summary><span class=tname>Conlin</span><span class=rec>3-5</span><span class=tsum>26 adds · 20 value</span><span class=faab>$184 spent · $16 left</span></summary>
+<div class=tbody><p class=note>The least efficient FAAB year in the league: $184 spent for about 48 started points. Jaylen Wright ($72) never started and was cut two weeks later, and Omar Cooper Jr. cost $74 when the next bid was $18. He has $16 left.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>J.J. McCarthy <span class=pos>QB</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 10.2 started pts · since dropped</div></li><li class=good><div class=pk>Bam Knight <span class=pos>RB</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 7.8 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Jaylen Wright <span class=pos>RB</span> <span class=price>$72</span></div><div class=meta>held 2 wk, started 0, 0.0 started pts · next bid $48 · since dropped</div></li><li class=bad><div class=pk>Omar Cooper Jr. <span class=pos>WR</span> <span class=price>$74</span></div><div class=meta>held 2 wk, started 2, 20.0 started pts · next bid $18 · ROS 8.0/g</div></li></ul></div></div></div></details><details class=team id="pfaffinger"><summary><span class=tname>Pfaffinger</span><span class=rec>2-6</span><span class=tsum>12 adds · 101 value</span><span class=faab>$98 spent · $102 left</span></summary>
+<div class=tbody><p class=note>Bryce Young for $0 has been his QB answer (65 points in four starts). DeMario Douglas at $18 and T.J. Hockenson at $33 have both been starters since. That&#x27;s solid value for a 2-6 team.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Bryce Young <span class=pos>QB</span> <span class=price>$0</span></div><div class=meta>held 7 wk, started 4, 65.3 started pts · ROS 16.4/g</div></li><li class=good><div class=pk>DeMario Douglas <span class=pos>WR</span> <span class=price>$18</span></div><div class=meta>held 3 wk, started 3, 35.0 started pts · ROS 8.0/g</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>AJ Barner <span class=pos>TE</span> <span class=price>$10</span></div><div class=meta>held 1 wk, started 1, 1.7 started pts · since dropped</div></li><li class=bad><div class=pk>Bo Nix <span class=pos>QB</span> <span class=price>$9</span></div><div class=meta>held 2 wk, started 1, 7.9 started pts · since dropped</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Sione Vaki ($16, ROS 3.8/g)</p></div></details><details class=team id="hagan"><summary><span class=tname>Hagan</span><span class=rec>2-6</span><span class=tsum>9 adds · 62 value</span><span class=faab>$121 spent · $79 left</span></summary>
+<div class=tbody><p class=note>Ollie Gordon II at $99 is the biggest bid of the year ($40 over the next bid), but he projects as a weekly RB2 the rest of the way. Kirk Cousins at $2 scored 28.2 in his one start.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Kirk Cousins <span class=pos>QB</span> <span class=price>$2</span></div><div class=meta>held 1 wk, started 1, 28.2 started pts · ROS 7.6/g</div></li><li class=good><div class=pk>Steelers Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 2 wk, started 2, 10.0 started pts · ROS 1.9/g</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Ollie Gordon II <span class=pos>RB</span> <span class=price>$99</span></div><div class=meta>held 5 wk, started 3, 38.5 started pts · next bid $59 · ROS 14.3/g</div></li><li class=bad><div class=pk>Darren Waller <span class=pos>TE</span> <span class=price>$7</span></div><div class=meta>held 5 wk, started 1, 0.0 started pts · next bid $3 · since dropped</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Treylon Burks ($11, ROS 8.9/g)</p></div></details><details class=team id="zogg"><summary><span class=tname>Zogg</span><span class=rec>2-6</span><span class=tsum>44 adds · 29 value</span><span class=faab>$89 spent · $111 left</span></summary>
+<div class=tbody><p class=note>The busiest manager on the wire with 44 adds, 11 more than anyone else, but only Stover and Conlin have gotten less over-replacement value from their pickups. Makai Lemon for $0 is his best hit. The $22 Oronde Gadsden and $16 Mike Gesicki tight end bids were each dropped after a week.</p><div class=cols><div><h4>Best for the price</h4><ul><li class=good><div class=pk>Makai Lemon <span class=pos>WR</span> <span class=price>$0</span></div><div class=meta>held 2 wk, started 2, 24.9 started pts · ROS 4.7/g</div></li><li class=good><div class=pk>Cowboys Coach <span class=pos>HC</span> <span class=price>$0</span></div><div class=meta>held 1 wk, started 1, 5.0 started pts · since dropped</div></li></ul></div><div><h4>Worst for the price</h4><ul><li class=bad><div class=pk>Oronde Gadsden <span class=pos>TE</span> <span class=price>$22</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · next bid $13 · since dropped</div></li><li class=bad><div class=pk>Mike Gesicki <span class=pos>TE</span> <span class=price>$16</span></div><div class=meta>held 1 wk, started 0, 0.0 started pts · next bid $8 · since dropped</div></li></ul></div></div><p class=new><b>Claimed this week, not played yet:</b> Bam Knight ($12, ROS 10.0/g), Kenny Gainwell ($18, ROS 8.0/g)</p></div></details></div>
+  </section>
+
+  <section>
+    <h2>Completed trades <small>5 trades · points since the trade, then rest-of-season outlook</small></h2>
+    <div class="trades">
+      <article class="trade">
+        <div class="when">Aug 6 · two draft-day swaps · Conlin and Zogg</div>
+        <div class="sides">
+          <div class="side"><div class="who">Conlin</div><div class="got">Ends up with pick 152 instead of 180</div><div class="n">Used on Mike Washington Jr. (36.4 pts, never started, ROS 8.0/g)</div></div>
+          <div class="side"><div class="who">Zogg</div><div class="got">Ends up with pick 180 instead of 152</div><div class="n">Used on Caleb Douglas (dropped; now Ainsworth's $38 claim)</div></div>
+        </div>
+        <p class="verdict">Zogg sent picks 41 and 56 for 37 and 85. Conlin reversed it 90 minutes later and added a swap of the 152nd and 180th picks. <b>Net: close to even.</b> Conlin moved from the 15th round up to the 13th, and neither late pick has started a game.</p>
+      </article>
+      <article class="trade">
+        <div class="when">Oct 14 · Conlin and Palaia</div>
+        <div class="sides">
+          <div class="side"><div class="who">Conlin <span class="tag e">B</span></div><div class="got">Makai Lemon (WR) + $2 FAAB</div><div class="n">3.4 pts, never started, then dropped</div></div>
+          <div class="side"><div class="who">Palaia <span class="tag e">B</span></div><div class="got">Kendrick Bourne (WR)</div><div class="n">13.0 pts (9.6 started); now on IR and unrostered</div></div>
+        </div>
+        <p class="verdict"><b>A wash.</b> Neither side got much. The player who mattered most was Lemon after Conlin cut him: Zogg picked him up for $0, and he has scored 24.9 in two starts there.</p>
+      </article>
+      <article class="trade">
+        <div class="when">Oct 21 · Palaia and Zogg</div>
+        <div class="sides">
+          <div class="side"><div class="who">Palaia <span class="tag l">behind</span></div><div class="got">Jaylen Waddle (WR)</div><div class="n">20.2 pts in 2 weeks (6.8 started) · ROS 9.4/g · value 1,321</div></div>
+          <div class="side"><div class="who">Zogg <span class="tag w">ahead</span></div><div class="got">Jayden Daniels (QB)</div><div class="n">15.0 pts, all started · ROS 21.4/g · value 1,499</div></div>
+        </div>
+        <p class="verdict">Even so far (both B). <b>Going forward Zogg has the edge:</b> Daniels projects at 21.4 points per game, among the best at QB, about 45 points over a waiver QB the rest of the way, against about 31 points over a waiver receiver for Waddle.</p>
+      </article>
+      <article class="trade">
+        <div class="when">Oct 29 · Larson and Zogg</div>
+        <div class="sides">
+          <div class="side"><div class="who">Larson <span class="tag w">B+</span></div><div class="got">Dak Prescott (QB) + Rhamondre Stevenson (RB)</div><div class="n">30.3 pts, all started · ROS 17.7/g and 10.8/g · value 4,457</div></div>
+          <div class="side"><div class="who">Zogg <span class="tag l">C</span></div><div class="got">Jeremiyah Love (RB)</div><div class="n">2.3 pts · now on IR, projected for about 4 more games · value 1,959</div></div>
+        </div>
+        <p class="verdict"><b>Larson's trade so far</b>: +22.1 points over replacement after one week, the clearest result of the five trades. He got two weekly starters for a player now on IR, and projects about 56 points over replacement the rest of the way against about 27 for Love. Zogg made room to start Daniels, but the return is a back who may only be available for the final weeks.</p>
+      </article>
+    </div>
+    <p class="caveat">Grades are the site's trade grades (net points over replacement since the trade; B is within 15 of even). With only one to three weeks played, the rest-of-season outlook says more. It uses ESPN's projections over the 3rd-best healthy free agent at each position, and the Trade Calculator's consensus values.</p>
+  </section>
+
+  <section>
+    <h2>Trade offers <small>106 offers on record</small></h2>
+    <div class="tbl"><table class="narrow">
+      <thead><tr><th>Manager</th><th class="num">Offers sent</th><th class="num">Trades completed</th><th class="num">Offers he declined</th></tr></thead>
+      <tbody><tr><th scope=row>Zogg</th><td class=num>31</td><td class=num>4</td><td class=num>13</td></tr><tr><th scope=row>Conlin</th><td class=num>20+</td><td class=num>3</td><td class=num>12</td></tr><tr><th scope=row>Palaia</th><td class=num>10+</td><td class=num>2</td><td class=num>3</td></tr><tr><th scope=row>Prodahl</th><td class=num>8+</td><td class=num>0</td><td class=num>0</td></tr><tr><th scope=row>Stover</th><td class=num>4+</td><td class=num>0</td><td class=num>9</td></tr><tr><th scope=row>Goetz</th><td class=num>2+</td><td class=num>0</td><td class=num>1</td></tr><tr><th scope=row>Muenchow</th><td class=num>1+</td><td class=num>0</td><td class=num>1</td></tr><tr><th scope=row>Larson</th><td class=num>0+</td><td class=num>1</td><td class=num>0</td></tr><tr><th scope=row>Ainsworth</th><td class=num>0+</td><td class=num>0</td><td class=num>1</td></tr><tr><th scope=row>Glaser</th><td class=num>0+</td><td class=num>0</td><td class=num>4</td></tr><tr><th scope=row>Hagan</th><td class=num>0+</td><td class=num>0</td><td class=num>2</td></tr><tr><th scope=row>Pfaffinger</th><td class=num>0+</td><td class=num>0</td><td class=num>3</td></tr><tr class=unk><th scope=row>Sender not shown</th><td class=num>30</td><td class=num>—</td><td class=num>—</td></tr></tbody>
+    </table></div>
+    <div class="method">
+      <p><b>Offers sent</b> counts every offer ESPN credits to a sender. Zogg's count is exact, because ESPN shows Hunter's login every offer that involves Zogg. Everyone else's is a minimum (marked +). When a manager declines an offer from someone other than Zogg, ESPN records who declined it but not who sent it. Those 30 offers are listed as <b>Sender not shown</b>; looking them up on ESPN returns nothing. Offers between two other managers that simply expired may not be recorded at all.</p>
+      <p><b>Trades completed</b> and <b>Offers he declined</b> are complete for every manager.</p>
+    </div>
+  </section>
+</div>
+</div>
+
+<footer>National Wayzata League &middot; est. 2013</footer>
+
+<script src="../assets/js/shared.js?v=24"></script>
+<script>renderNav('2026 hub');</script>
+</body>
+</html>
