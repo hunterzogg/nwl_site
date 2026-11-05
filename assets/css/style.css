@@ -399,6 +399,7 @@ footer {
   padding: 24px;
   border-top: 1px solid var(--line);
 }
+.footer-updated { margin-top: 6px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.02em; }
 
 @media (max-width: 640px) {
   .scorebug-cell { flex: 1 1 45%; }

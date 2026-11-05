@@ -150,3 +150,27 @@ function posTag(position) {
   const normalized = position.toUpperCase().replace(/[^A-Z]/g, ''); // D/ST -> DST
   return `<span class="pos-tag pos-${normalized}">${position}</span>`;
 }
+
+// Footer "Data last updated" line on every page with a <footer>: the time of the latest ESPN pull
+// (standings.json's updated_at, rewritten by every run of fetch_espn_week.py, including the scheduled
+// GitHub Action), shown in the viewer's own time zone.
+(function footerUpdated() {
+  const run = async () => {
+    const footer = document.querySelector('footer');
+    if (!footer || footer.querySelector('.footer-updated')) return;
+    const base = isInPagesDir() ? '../data/' : 'data/';
+    try {
+      const res = await fetch(base + 'season_2026/standings.json', { cache: 'no-cache' });
+      if (!res.ok) return;
+      const at = (await res.json()).updated_at;
+      const d = at ? new Date(at) : null;
+      if (!d || isNaN(d)) return;
+      const when = d.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+      const el = document.createElement('div');
+      el.className = 'footer-updated';
+      el.innerHTML = `Data last updated <time datetime="${d.toISOString()}">${when}</time>`;
+      footer.appendChild(el);
+    } catch (e) { /* no stamp rather than a broken footer */ }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();

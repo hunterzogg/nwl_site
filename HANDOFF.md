@@ -1965,3 +1965,13 @@ Key context to re-establish:
 | Team name history | All Time Team Ranks tab, "Team Name" column, row 12+ |
 | Opponent PPG (regular season) | All Time Team Ranks tab, "Points Against" table, column U row 11+ |
 | Playoff weeks | Per-year Stats tabs, columns to the right of the regular-season block (already in weekly_scores.json as game_type: 'playoff') |
+
+**Footer "Data last updated" (Nov 5, 2026).** Every page with a `<footer>` gets a second line, "Data last updated
+<time>", added by `shared.js` (`footerUpdated`): it reads `data/season_2026/standings.json`'s `updated_at` (rewritten
+by every `fetch_espn_week.py` run, including the scheduled Action) and shows it in the viewer's time zone. Pages
+without a footer (Pick'em admin) are skipped. Versions: `style.css?v=19`, `shared.js?v=25`.
+
+**Commentary subpages (Nov 5, 2026).** A `commentary.json` entry may carry `subpages: [{title, href, blurb}]`; the
+2026 Hub renders each as a gold link card under that week's recap. First use: Week 9 -> `pages/waivers-trades-2026.html`
+(a static snapshot through Nov 4 waivers: FAAB ledger and bid accuracy, team-by-team best/worst pickups, trade grades,
+trade offers; generated outside the repo, not refreshed by the Action).
