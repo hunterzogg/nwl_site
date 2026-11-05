@@ -16,6 +16,25 @@
 .type-free_agent { background: rgba(124,135,152,0.18); color: var(--text-muted); }
 .type-trade { background: rgba(200,16,46,0.18); color: #F08C9C; }
 .precision-note { font-size: 0.7rem; color: var(--text-muted); }
+/* Trade Database cards: two sides next to each other, stacked on phones (after the SSDL Trade Review) */
+.td-list { display: flex; flex-direction: column; gap: 12px; }
+.td-trade { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.td-head { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); padding: 8px 14px; border-bottom: 1px solid var(--line); }
+.td-sides { display: grid; grid-template-columns: 1fr 1fr; }
+.td-side { padding: 10px 14px 12px; min-width: 0; }
+.td-side + .td-side { border-left: 1px solid var(--line); }
+.td-side.focus { background: var(--surface-raised); }
+.td-who { display: flex; align-items: center; gap: 6px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-bottom: 6px; }
+.td-gets { color: var(--text-muted); font-weight: 500; font-size: 0.8rem; }
+.td-who .manager-tag { font-weight: inherit; }
+.td-assets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; font-size: 0.92rem; }
+.td-assets li { padding: 4px 0; border-bottom: 1px solid var(--line); }
+.td-assets li:last-child { border-bottom: 0; }
+.td-name { font-weight: 500; }
+.td-pos { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-left: 2px; }
+.td-other { color: var(--text-muted); }
+.td-note { color: var(--text-muted); font-size: 0.8rem; margin-left: 4px; }
+@media (max-width: 600px) { .td-sides { grid-template-columns: 1fr; } .td-side + .td-side { border-left: 0; border-top: 1px solid var(--line); } }
 .records-group-title {
   font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--text-muted); margin: 28px 0 10px; border-left: 3px solid var(--red); padding-left: 10px;
@@ -227,8 +246,24 @@ function renderLog() {
   `;
 }
 
-// "Pick 41" -> "Pick 41 (Jaylen Waddle)" when the trade records which player the pick was used on
-const withPicks = (t, txt) => !t.picks_used_on ? txt : txt.replace(/Pick \d+/g, p => t.picks_used_on[p] ? `${p} <span class="precision-note">(${t.picks_used_on[p]})</span>` : p);
+// Trade Database: one card per trade, the two sides next to each other (stacked on phones), like the
+// SSDL Trade Review. trades.json stores each side as "POS - Name; Pick 41; 2 FAAB"; items render player
+// first ("Name WR"), picks with the player they were used on, FAAB as dollars.
+function tradeItemHTML(t, it) {
+  const m = it.match(/^([A-Z/]+) - (.+)$/);
+  if (m) return `<span class="td-name">${m[2]}</span> <span class="td-pos">${m[1]}</span>`;
+  const pick = it.match(/^Pick \d+$/);
+  if (pick) return `<span class="td-name">${it}</span>${t.picks_used_on && t.picks_used_on[it] ? ` <span class="td-note">used on ${t.picks_used_on[it]}</span>` : ''}`;
+  const faab = it.match(/^(\d+) FAAB$/);
+  if (faab) return `<span class="td-name">$${faab[1]} FAAB</span>`;
+  return `<span class="td-name td-other">${it}</span>`;
+}
+const tradeItems = txt => (txt || '').split(';').map(x => x.trim()).filter(Boolean);
+function tradeDate(t) {
+  if (t.precision === 'year_only') return `${t.season} <span class="precision-note">(year only)</span>`;
+  const d = new Date(t.date + 'T12:00:00');
+  return isNaN(d) ? t.date : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 function renderTrades() {
   const season = document.getElementById('tradeSeasonFilter').value;
   const manager = document.getElementById('tradeManagerFilter').value;
@@ -238,38 +273,28 @@ function renderTrades() {
   if (season) rows = rows.filter(t => t.season === parseInt(season));
   if (manager) rows = rows.filter(t => t.team1 === manager || t.team2 === manager);
   if (search) rows = rows.filter(t =>
-    t.team1_received.toLowerCase().includes(search) || t.team2_received.toLowerCase().includes(search));
+    t.team1_received.toLowerCase().includes(search) || t.team2_received.toLowerCase().includes(search) ||
+    Object.values(t.picks_used_on || {}).some(n => n.toLowerCase().includes(search)));
 
   rows = rows.slice().sort((a,b) => (b.date || '').localeCompare(a.date || ''));
 
+  const side = (t, mgr, got, focus) => `
+    <div class="td-side${focus ? ' focus' : ''}">
+      <div class="td-who">${managerTag(managers, mgr)} <span class="td-gets">gets</span></div>
+      <ul class="td-assets">${tradeItems(got).map(it => `<li>${tradeItemHTML(t, it)}</li>`).join('') || '<li class="td-other">Nothing recorded</li>'}</ul>
+    </div>`;
   document.getElementById('tradesTable').innerHTML = `
-    <div class="table-wide" style="overflow-x:auto;">
-    <table>
-      <thead><tr><th>Date</th><th>Team 1</th><th>Received</th><th>Team 2</th><th>Received</th></tr></thead>
-      <tbody>
-        ${rows.map(t => `
-          <tr>
-            <td class="num">${t.date} ${t.precision === 'year_only' ? '<span class="precision-note">(year only)</span>' : ''}</td>
-            <td>${managerTag(managers, t.team1)}</td>
-            <td>${withPicks(t, t.team1_received)}</td>
-            <td>${t.team2 ? managerTag(managers, t.team2) : ''}</td>
-            <td>${withPicks(t, t.team2_received)}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    </div>
-    <div class="table-cards">
-      ${rows.map(t => `
-        <div class="table-card">
-          <div class="table-card-top">
-            <span class="grow mono" style="font-weight:400;">${t.date}</span>
-            ${t.precision === 'year_only' ? '<span class="precision-note">(year only)</span>' : ''}
-          </div>
-          <div class="table-card-sub">${managerTag(managers, t.team1)} got: ${withPicks(t, t.team1_received)}</div>
-          ${t.team2 ? `<div class="table-card-sub">${managerTag(managers, t.team2)} got: ${withPicks(t, t.team2_received)}</div>` : ''}
-        </div>
-      `).join('')}
+    <div class="td-list">
+      ${rows.map(t => {
+        // With a manager filter on, his side comes first (and is highlighted), as on the SSDL Trade Review
+        const flip = manager && t.team2 === manager;
+        const [m1, g1, m2, g2] = flip ? [t.team2, t.team2_received, t.team1, t.team1_received] : [t.team1, t.team1_received, t.team2, t.team2_received];
+        return `
+        <article class="td-trade">
+          <div class="td-head">${tradeDate(t)}</div>
+          <div class="td-sides">${side(t, m1, g1, !!manager)}${m2 ? side(t, m2, g2, false) : ''}</div>
+        </article>`;
+      }).join('')}
     </div>
     ${rows.length === 0 ? `<p style="color:var(--text-muted);font-size:0.9rem;">No trades match these filters.</p>` : ''}
   `;
