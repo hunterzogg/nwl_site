@@ -5,7 +5,7 @@ Pulls each played week's ESPN box scores and prints, for the weekly recap:
   - Best-ball standings: every team AND every opponent plays its highest-scoring legal lineup
     from that week's roster (slots from ESPN's lineupSlotCounts; IR excluded; each player's own
     eligibleSlots), compared with actual records, plus season bench points left on the table.
-  - Per-week: started players (non-HC) who scored 0.0 or less, and started Head Coaches who won
+  - Per-week: started players (non-HC) who scored 0.0 or less, and started Head Coaches who won (a Head Coach on bye counts as not started)
     (+5) - both used for weekly Pick'em props.
   - Optional --json PATH dumps everything (incl. each team's optimal lineup) for further digging.
 
@@ -56,6 +56,13 @@ def _short_key(team, full_name):
     name = SUFFIX.sub("", full_name.strip())
     first, _, last = name.partition(" ")
     return f"{team}-{first[:1]}.{last}".lower().replace(" ", "")
+
+
+def teams_that_played(season, week):
+    """Abbreviations of every NFL team with a game that week (anyone missing was on bye)."""
+    board = _get_json(f"{NFL_API}/scoreboard?week={week}&seasontype=2&year={season}")
+    return {c["team"]["abbreviation"] for ev in board.get("events", [])
+            for c in ev["competitions"][0]["competitors"]}
 
 
 def injured_out(season, week):
@@ -109,7 +116,8 @@ def main():
     for wk in range(1, through + 1):
         d = f.fetch_league_raw(args.league_id, args.season, ["mMatchupScore", f"mBoxscore&scoringPeriodId={wk}"], creds)
         hurt = injured_out(args.season, wk)
-        week = {"week": wk, "games": [], "zero_starters": [], "hc_started": [], "injured_starters": []}
+        played_nfl = teams_that_played(args.season, wk)
+        week = {"week": wk, "games": [], "zero_starters": [], "hc_started": [], "hc_bye": [], "injured_starters": []}
         for m in d["schedule"]:
             if m.get("matchupPeriodId") != wk or not m.get("away"):
                 continue
@@ -137,6 +145,11 @@ def main():
                         continue
                     p = e["playerPoolEntry"]
                     if e["lineupSlotId"] == HC:
+                        # A Head Coach whose team is on bye counts as not started (per Hunter, Nov 10 2026),
+                        # so he's left out of the HC record instead of counting as a loss.
+                        if PRO_TEAM_ABBR.get(p["player"].get("proTeamId")) not in played_nfl:
+                            week["hc_bye"].append({"manager": mgr, "coach": p["player"]["fullName"]})
+                            continue
                         week["hc_started"].append({"manager": mgr, "coach": p["player"]["fullName"], "points": p.get("appliedStatTotal", 0)})
                     elif p.get("appliedStatTotal", 0) <= 0:  # zero OR negative (HCs excluded above)
                         week["zero_starters"].append({"manager": mgr, "player": p["player"]["fullName"],
@@ -166,7 +179,8 @@ def main():
         biggest = max((s for g in w["games"] for s in g.values()), key=lambda s: s["optimal"] - s["actual"])
         print(f"Week {w['week']}: zero-or-negative starters {len(w['zero_starters'])} "
               f"{[z['manager'] + ': ' + z['player'] + ' ' + format(z['points'], '.1f') for z in w['zero_starters']]}")
-        print(f"         HCs started {len(w['hc_started'])}, won {hc_wins}")
+        print(f"         HCs started {len(w['hc_started'])}, won {hc_wins}"
+              + (f" (on bye, not counted: {[h['manager'] + ': ' + h['coach'] for h in w['hc_bye']]})" if w["hc_bye"] else ""))
         print(f"         starters hurt mid-game (never second-guess these in commentary): "
               f"{[i['manager'] + ': ' + i['player'] + ' ' + format(i['points'], '.1f') for i in w['injured_starters']]}")
         print(f"         biggest bench miss: {biggest['manager']} {biggest['optimal'] - biggest['actual']:.2f}")

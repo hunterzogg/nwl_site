@@ -84,7 +84,10 @@
 .cv tr.hl td { background: rgba(61, 95, 224, 0.08); }
 .cv-bars { display: flex; flex-direction: column; gap: 6px; }
 .cv-bar-row { display: grid; grid-template-columns: minmax(90px, 30%) 1fr auto; gap: 10px; align-items: center; font-size: 0.82rem; }
-.cv-bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+/* A manager bar's extra label (e.g. the season) sits on its own line under the name, so a long name can't push it out of view. */
+.cv-bar-name, .cv-bar-sub { display: block; overflow: hidden; text-overflow: ellipsis; }
+.cv-bar-sub { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); line-height: 1.2; }
 .cv-bar-track { height: 14px; }
 .cv-bar-fill { height: 100%; border-radius: 0 3px 3px 0; background: var(--blue); min-width: 2px; }
 .cv-bar-fill.tone-hot { background: var(--live-bright); }
@@ -565,7 +568,7 @@ function commentaryVisualHTML(v) {
       `<span><i class="cv-bar-fill${l.tone ? ' tone-' + l.tone : ''}"></i>${l.label}</span>`).join('')}</div>` : '';
     const bars = v.bars.map(b => `
       <div class="cv-bar-row">
-        <span class="cv-bar-label">${b.manager ? managerTag(managers, b.manager) + (b.label ? ' ' + b.label : '') : b.label}</span>
+        <span class="cv-bar-label">${b.manager ? `<span class="cv-bar-name">${managerTag(managers, b.manager)}</span>` + (b.label ? `<span class="cv-bar-sub">${b.label}</span>` : '') : b.label}</span>
         <div class="cv-bar-track"><div class="cv-bar-fill${b.tone ? ' tone-' + b.tone : ''}" style="width:${(b.value / max * 100).toFixed(1)}%"></div></div>
         <span class="cv-bar-value">${b.display || b.value}${v.unit ? ' ' + v.unit : ''}</span>
       </div>`).join('');

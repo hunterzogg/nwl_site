@@ -1795,7 +1795,7 @@
   },
   {
     "week": 10,
-    "published": false,
+    "published": true,
     "rankings": [
       {
         "rank": 1,

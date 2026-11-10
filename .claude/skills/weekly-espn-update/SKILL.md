@@ -132,7 +132,12 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    rules changed over the eras, so the season-relative rank is the fair one; e.g. Week 6 of 2026 was 9.5%
    below its season, 13th-worst of 185 weeks). Always draft it, show it, and leave it unpublished for
    review.
-   **Add visuals where they help** (tables and bar charts, not decoration): a commentary entry can
+   **Lead with visuals, keep the words short** (per Hunter, Nov 10 2026): aim for 6-8 visuals a week and
+   keep each paragraph to two or three sentences that set up the next chart. Good standing ones: the week's scores, a
+   history comparison for the week's big storyline (streak leaderboard, record-after-N-weeks playoff rates), the
+   Shotgun count by team, best-ball standings, playoff odds from the Playoff Race tab, and a next-week lines table
+   with the all-time series. Week 10 is the worked example.
+   **Visuals** (tables and bar charts, not decoration): a commentary entry can
    carry an optional `visuals` array, each placed in `body` by a paragraph that is exactly
    `{{visual:<id>}}`. Two types, rendered by `commentaryVisualHTML()` in `pages/season-2026.html`:
    `table` (`columns: [{key, label, num?, manager?}]`, `rows: [{...cells, _hl?, _em?: [keys]}]`) and
@@ -145,7 +150,8 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    records plus season bench points left, as a table with flipped records highlighted.
    Run `python3 scripts/compute_best_ball.py` (read-only, ~20s): it prints the best-ball table,
    per-week flips, zero-or-negative starters (a negative score counts as a zero-point game; Head
-   Coaches excluded), started-HC wins (for grading those props), and the
+   Coaches excluded), started-HC wins (for grading those props; a Head Coach whose NFL team is on bye counts as not
+   started and is left out of the HC record, per Hunter, Nov 10 2026), and the
    **starters who got hurt mid-game**. **Never suggest a team should have started someone else over
    a player who got injured during the game.** That rule is for commentary and Fun Facts only: best ball itself is
    pure hindsight and *does* swap injured starters out (Hunter, Oct 20 2026; the script used to lock them in, and
@@ -155,7 +161,9 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    differ from the fantasy ones (Washington is WAS there, WSH in fantasy; mapped in `PBP_TEAM`, a gap that let Terry
    McLaurin's Week 6 knee injury slip through). If a starter's low score looks like an injury and isn't listed,
    spot-check that game before writing the line.
-4. **Draft "Brian's Fun Facts"** for the upcoming week (same look-back convention). Unlike commentary, no script writes
+4. **Draft "Brian's Fun Facts"** (always include a card for last week's longshot result: the real number, whether
+   anyone landed in the window and who, plus who was closest and who was furthest, from the `picks` table once the
+   question has locked) for the upcoming week (same look-back convention). Unlike commentary, no script writes
    `data/season_2026/fun_facts.json` at all, so there's no stub waiting; append a new entry by hand
    (`{"week": N, "published": false, "facts": [...]}`, one array entry per week - see the existing
    week 2 entry for the shape). Each fact is `{label, headline, num, sub, tone, wide}` - `headline`
@@ -272,6 +280,12 @@ rosters (pure facts, no review needed), a Pick'em prop is an editorial judgment 
 storyline, which line, how many questions) that only the user should finalize, and once a manager
 picks it and it locks, a bad line can't be quietly fixed.
 
+**Player props tied to that week's NFL news** (per Hunter, Nov 10 2026): include two or three props on specific
+players in the news that week (e.g. Week 10: players traded at the NFL deadline). Use players on NWL rosters so they
+grade from the box scores (bench players have `appliedStatTotal` too), line them off ESPN's weekly projection, and
+say in the prompt that bench or start doesn't matter and a player who doesn't play scores 0. Confirm the news in
+two sources before the prop goes live.
+
 **Mix the prop types** (per Hunter, Week 9): at most one or two props per week should just pick a game's winner. Fill the rest with other kinds: score over/unders (the week's high and low), counts (shotguns, Head Coach wins, 120+ scores) as over/unders, `pick_manager` questions (most points, biggest bench, top player), spread covers, and yes/no streak questions. Hunter doesn't like game-total over/unders (a game's combined score), so skip those. Each has to be gradable from site data or the box scores.
 
 **Every week includes one 3-point longshot** (per Hunter, from Week 8): one prop with `points = 3` whose prompt
@@ -293,7 +307,7 @@ weeks, the current scoring era; re-measure if the season looks different):
 | Combined score of the game of the week | SD 29 | ±5 | ~14% | Week 8 |
 | The week's highest score | SD 14 | ±2 | ~11% | |
 | The week's lowest score | SD 10 | ±1 | ~8% | |
-| The week's biggest margin of victory | SD 17 | ±2 | ~9% | |
+| The week's biggest margin of victory | SD 17 | ±2 | ~9% | Week 10 |
 | League-wide total points for the week | SD 77 | ±10 | ~10% | |
 | A specific manager's exact score (e.g. the hottest or coldest team) | SD ~22 | ±3 (±4 ~14%) | ~11% | Week 9 (Stover, ±4) |
 | `pick_manager`: whose starter is the week's single top-scoring player | check spread | n/a | check | |

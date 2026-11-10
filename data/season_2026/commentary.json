@@ -1538,8 +1538,596 @@
   },
   {
     "week": 10,
-    "published": false,
-    "title": "",
-    "body": ""
+    "published": true,
+    "title": "Seven Straight for Stover, and Muenchow Hits the Floor",
+    "body": "Stover beat Glaser 127-86 for his seventh straight win, behind Joe Burrow (30), Puka Nacua (28), and Bucky Irving (27). It's the longest streak of his career. He and Prodahl (2020) are the only teams to start 0-2 and then win seven straight. Ainsworth matched him at 7-2, beating Palaia 134-89 with the week's top score and biggest margin (Jordan Love 36, Kenneth Walker III 34). He's the first team to 1,000 points this season.\n\n{{visual:week9-scores}}\n\n{{visual:streaks}}\n\nHagan snapped a five-game skid by beating Muenchow 94-58 and covered the 8-point line by 28. Every Head Coach who played won: 11-0, the first perfect week this season. Hagan's Steelers Head Coach was on bye and doesn't count.\n\nMuenchow's 58 is the season's low. His best starter was Matthew Stafford, at 11.\n\n{{visual:low-top-starter}}\n\nLarson won at Goetz 106-79 for his third straight win, and Prodahl beat Conlin 102-79. Ladd McConkey's 0 was Conlin's sixth shotgun of the season, the most by any team since 2022.\n\n{{visual:shotguns}}\n\nZogg won the battle of the 2-6s, 104-91, behind CeeDee Lamb (29). Pfaffinger left 59 on his bench (Bryce Young 20, KC Concepcion 17). With both lineups maxed out, Pfaffinger wins.\n\n{{visual:best-ball}}\n\nNo one has been eliminated or has clinched a spot yet. Even Pfaffinger can still reach 7-7, the same record both 7-2 teams would have if they lost out. History is harsher than the math: of the 43 teams that were 3-6 or worse after nine weeks (2013-2025), only one made the playoffs.\n\n{{visual:record-history}}\n\n{{visual:playoff-odds}}\n\n{{visual:week10-lines}}\n\nStover goes for eight straight as a home underdog. Chicago, Denver, Philadelphia, and Tampa Bay are on bye. Lines are as of Tuesday and will move after Wednesday's waivers.",
+    "visuals": [
+      {
+        "id": "week9-scores",
+        "type": "bar",
+        "title": "Week 9 Scores",
+        "legend": [
+          {
+            "label": "Won",
+            "tone": ""
+          },
+          {
+            "label": "Lost",
+            "tone": "muted"
+          }
+        ],
+        "bars": [
+          {
+            "manager": "Ainsworth",
+            "value": 133.58,
+            "display": "134",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 126.64,
+            "display": "127",
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 105.8,
+            "display": "106",
+            "tone": ""
+          },
+          {
+            "manager": "Zogg",
+            "value": 103.56,
+            "display": "104",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 101.56,
+            "display": "102",
+            "tone": ""
+          },
+          {
+            "manager": "Hagan",
+            "value": 93.98,
+            "display": "94",
+            "tone": ""
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 91.46,
+            "display": "91",
+            "tone": "muted"
+          },
+          {
+            "manager": "Palaia",
+            "value": 89.1,
+            "display": "89",
+            "tone": "muted"
+          },
+          {
+            "manager": "Glaser",
+            "value": 85.56,
+            "display": "86",
+            "tone": "muted"
+          },
+          {
+            "manager": "Conlin",
+            "value": 79.26,
+            "display": "79",
+            "tone": "muted"
+          },
+          {
+            "manager": "Goetz",
+            "value": 78.88,
+            "display": "79",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 57.62,
+            "display": "58",
+            "tone": "muted"
+          }
+        ]
+      },
+      {
+        "id": "streaks",
+        "type": "bar",
+        "title": "Longest Single-Season Win Streaks",
+        "bars": [
+          {
+            "manager": "Palaia",
+            "label": "2020",
+            "value": 9
+          },
+          {
+            "manager": "Glaser",
+            "label": "2022",
+            "value": 9
+          },
+          {
+            "manager": "Pfaffinger",
+            "label": "2024",
+            "value": 9
+          },
+          {
+            "manager": "Palaia",
+            "label": "2018",
+            "value": 8
+          },
+          {
+            "manager": "Stover",
+            "label": "2026",
+            "value": 7,
+            "display": "7, active",
+            "tone": "hot"
+          }
+        ],
+        "note": "Six other teams have also won seven straight in a season. Stover's best before this year was four."
+      },
+      {
+        "id": "low-top-starter",
+        "type": "table",
+        "title": "Lowest Top Starter in a Week, Since 2022",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "wk",
+            "label": "Week"
+          },
+          {
+            "key": "pts",
+            "label": "Pts",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Goetz",
+            "wk": "2025 Week 14",
+            "pts": "7.6"
+          },
+          {
+            "mgr": "Goetz",
+            "wk": "2023 Week 4",
+            "pts": "10.7"
+          },
+          {
+            "mgr": "Muenchow",
+            "wk": "2026 Week 9",
+            "pts": "11.2",
+            "_hl": true
+          }
+        ],
+        "note": "Head Coaches not counted. Muenchow's 58 was the 15th-lowest of 780 scores since 2022."
+      },
+      {
+        "id": "shotguns",
+        "type": "bar",
+        "title": "Shotguns in 2026, Through Week 9",
+        "bars": [
+          {
+            "manager": "Conlin",
+            "value": 6,
+            "tone": "hot"
+          },
+          {
+            "manager": "Glaser",
+            "value": 4,
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Goetz",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Hagan",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Muenchow",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 1,
+            "tone": ""
+          }
+        ],
+        "note": "Starters (not Head Coaches) who scored 0 or less. Zogg has none. Conlin's 6 is the most in a season since 2022; the previous high was 5."
+      },
+      {
+        "id": "best-ball",
+        "type": "table",
+        "title": "Best-Ball Standings Through Week 9",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "act",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "bb",
+            "label": "Best Ball",
+            "num": true
+          },
+          {
+            "key": "left",
+            "label": "Bench Pts Left",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Ainsworth",
+            "act": "7-2",
+            "bb": "7-2",
+            "left": "127"
+          },
+          {
+            "mgr": "Stover",
+            "act": "7-2",
+            "bb": "7-2",
+            "left": "140"
+          },
+          {
+            "mgr": "Glaser",
+            "act": "6-3",
+            "bb": "5-4",
+            "left": "173",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Larson",
+            "act": "6-3",
+            "bb": "6-3",
+            "left": "152"
+          },
+          {
+            "mgr": "Goetz",
+            "act": "5-4",
+            "bb": "5-4",
+            "left": "77"
+          },
+          {
+            "mgr": "Prodahl",
+            "act": "5-4",
+            "bb": "6-3",
+            "left": "116",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Palaia",
+            "act": "4-5",
+            "bb": "3-6",
+            "left": "85",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Conlin",
+            "act": "3-6",
+            "bb": "3-6",
+            "left": "109"
+          },
+          {
+            "mgr": "Hagan",
+            "act": "3-6",
+            "bb": "3-6",
+            "left": "111"
+          },
+          {
+            "mgr": "Muenchow",
+            "act": "3-6",
+            "bb": "3-6",
+            "left": "172"
+          },
+          {
+            "mgr": "Zogg",
+            "act": "3-6",
+            "bb": "2-7",
+            "left": "121",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Pfaffinger",
+            "act": "2-7",
+            "bb": "4-5",
+            "left": "96",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          }
+        ],
+        "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
+      },
+      {
+        "id": "record-history",
+        "type": "table",
+        "title": "Record After Nine Weeks: Who Made the Playoffs (2013-2025)",
+        "columns": [
+          {
+            "key": "rec",
+            "label": "Record"
+          },
+          {
+            "key": "made",
+            "label": "Made It",
+            "num": true
+          },
+          {
+            "key": "pct",
+            "label": "Rate",
+            "num": true
+          },
+          {
+            "key": "now",
+            "label": "2026 Teams"
+          }
+        ],
+        "rows": [
+          {
+            "rec": "8-1",
+            "made": "4 of 4",
+            "pct": "100%",
+            "now": ""
+          },
+          {
+            "rec": "7-2",
+            "made": "15 of 15",
+            "pct": "100%",
+            "now": "Ainsworth, Stover",
+            "_hl": true
+          },
+          {
+            "rec": "6-3",
+            "made": "20 of 21",
+            "pct": "95%",
+            "now": "Glaser, Larson",
+            "_hl": true
+          },
+          {
+            "rec": "5-4",
+            "made": "24 of 34",
+            "pct": "71%",
+            "now": "Goetz, Prodahl",
+            "_hl": true
+          },
+          {
+            "rec": "4-5",
+            "made": "11 of 34",
+            "pct": "32%",
+            "now": "Palaia",
+            "_hl": true
+          },
+          {
+            "rec": "3-6",
+            "made": "1 of 23",
+            "pct": "4%",
+            "now": "Conlin, Hagan, Muenchow, Zogg",
+            "_hl": true
+          },
+          {
+            "rec": "2-7",
+            "made": "0 of 16",
+            "pct": "0%",
+            "now": "Pfaffinger",
+            "_hl": true
+          },
+          {
+            "rec": "1-8",
+            "made": "0 of 4",
+            "pct": "0%",
+            "now": ""
+          }
+        ],
+        "note": "The only 3-6 team to get in was Goetz in 2020, who finished 3rd."
+      },
+      {
+        "id": "playoff-odds",
+        "type": "bar",
+        "title": "Playoff Odds Going Into Week 10",
+        "bars": [
+          {
+            "manager": "Ainsworth",
+            "value": 99.5,
+            "display": ">99% (+1)",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 99,
+            "display": "99% (+5)",
+            "tone": ""
+          },
+          {
+            "manager": "Glaser",
+            "value": 94,
+            "display": "94% (-2)",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 87,
+            "display": "87% (+14)",
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 83,
+            "display": "83% (+25)",
+            "tone": ""
+          },
+          {
+            "manager": "Goetz",
+            "value": 82,
+            "display": "82% (-8)",
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 37,
+            "display": "37% (-10)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 11,
+            "display": "11% (-20)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Conlin",
+            "value": 2,
+            "display": "2% (-5)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Hagan",
+            "value": 2,
+            "display": "2% (+1)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Zogg",
+            "value": 2,
+            "display": "2% (+1)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 0.5,
+            "display": "<1% (-2)",
+            "tone": "muted"
+          }
+        ],
+        "legend": [
+          {
+            "label": "In the top 6 now",
+            "tone": ""
+          },
+          {
+            "label": "Outside",
+            "tone": "muted"
+          }
+        ],
+        "note": "From the Playoff Race tab's 10,000 simulated seasons. The change in parentheses is percentage points since before Week 9."
+      },
+      {
+        "id": "week10-lines",
+        "type": "table",
+        "title": "Week 10 Lines (as of Tuesday)",
+        "columns": [
+          {
+            "key": "game",
+            "label": "Game"
+          },
+          {
+            "key": "fav",
+            "label": "Favorite",
+            "manager": true
+          },
+          {
+            "key": "line",
+            "label": "Line",
+            "num": true
+          },
+          {
+            "key": "series",
+            "label": "All-Time Series"
+          }
+        ],
+        "rows": [
+          {
+            "game": "Hagan @ Stover",
+            "fav": "Hagan",
+            "line": "6.5",
+            "series": "Hagan leads 9-6",
+            "_hl": true
+          },
+          {
+            "game": "Prodahl @ Glaser",
+            "fav": "Glaser",
+            "line": "12.0",
+            "series": "Prodahl leads 11-10"
+          },
+          {
+            "game": "Larson @ Pfaffinger",
+            "fav": "",
+            "line": "Even",
+            "series": "Pfaffinger leads 11-8"
+          },
+          {
+            "game": "Ainsworth @ Goetz",
+            "fav": "Ainsworth",
+            "line": "10.5",
+            "series": "Goetz leads 12-6"
+          },
+          {
+            "game": "Zogg @ Muenchow",
+            "fav": "Muenchow",
+            "line": "13.5",
+            "series": "Muenchow leads 14-5"
+          },
+          {
+            "game": "Palaia @ Conlin",
+            "fav": "Conlin",
+            "line": "4.0",
+            "series": "Conlin leads 16-8"
+          }
+        ],
+        "note": "Ainsworth's line counts a free-agent Head Coach with Chicago on bye, and Zogg's counts a free-agent WR."
+      }
+    ]
   }
 ]

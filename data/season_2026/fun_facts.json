@@ -600,5 +600,91 @@
         "wide": false
       }
     ]
+  },
+  {
+    "week": 10,
+    "published": true,
+    "facts": [
+      {
+        "label": "Playoff Lock?",
+        "headline": "{{num}} of 15 teams that were 7-2 made the playoffs",
+        "num": "15",
+        "sub": "Every 7-2 team after nine weeks from 2013-2025 got in. Ainsworth and Stover are both 7-2.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "The Long Odds",
+        "headline": "{{num}} of 23 teams that were 3-6 made the playoffs",
+        "num": "1",
+        "sub": "Goetz in 2020, who finished 3rd. Four teams are 3-6 now: Conlin, Hagan, Muenchow, and Zogg. Pfaffinger is 2-7, and 0 of 16 teams that were 2-7 got in.",
+        "tone": "red",
+        "wide": true
+      },
+      {
+        "label": "Seven Straight",
+        "headline": "Stover's {{num}}-game win streak",
+        "num": "7",
+        "sub": "Tied for the fifth-longest in a single season. The record is nine, shared by Palaia (2020), Glaser (2022), and Pfaffinger (2024). Pfaffinger also started 0-2 that year.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Shotgun Specialist",
+        "headline": "Conlin's {{num}} shotguns",
+        "num": "6",
+        "sub": "The most by any team in a season since 2022, with five games left. Ladd McConkey has two of them (Weeks 4 and 9).",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Nobody Showed Up",
+        "headline": "Muenchow's best starter: {{num}}",
+        "num": "11.2",
+        "sub": "Matthew Stafford. Since 2022, only Goetz has had a week where no starter reached 11, and he's done it twice.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Season Low",
+        "headline": "Muenchow: {{num}}",
+        "num": "58",
+        "sub": "The lowest score of 2026 and the 15th-lowest of 780 since 2022. He's lost four straight since scoring 168 in Week 5.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Perfect Coaching",
+        "headline": "Head Coaches went {{num}}",
+        "num": "11-0",
+        "sub": "Every Head Coach who played won, the first perfect week this season. Hagan's Steelers Head Coach was on bye and doesn't count.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Four Digits",
+        "headline": "Ainsworth: {{num}} points",
+        "num": "1,000.9",
+        "sub": "The first team to 1,000 this season, and the fifth-most through nine weeks since 2022. Muenchow's 1,055.9 in 2025 is the high.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Lopsided Rivalries",
+        "headline": "Conlin leads Palaia {{num}}",
+        "num": "16-8",
+        "sub": "And Muenchow leads Zogg 14-5. Both series are on the Week 10 schedule.",
+        "tone": "",
+        "wide": false
+      },
+      {
+        "label": "Longshot",
+        "headline": "Stover scored {{num}}. Nobody hit it.",
+        "num": "126.6",
+        "sub": "No guess landed within 4. Pfaffinger's 117 was closest (9.6 off), worth the 1-point bonus. Conlin's 12 was furthest (114.6 off), and Stover guessed 82 for himself.",
+        "tone": "",
+        "wide": true
+      }
+    ]
   }
 ]
