@@ -141,7 +141,13 @@ writes carry that number. Put the recap in that stub, not in the just-finished w
    carry an optional `visuals` array, each placed in `body` by a paragraph that is exactly
    `{{visual:<id>}}`. Two types, rendered by `commentaryVisualHTML()` in `pages/season-2026.html`:
    `table` (`columns: [{key, label, num?, manager?}]`, `rows: [{...cells, _hl?, _em?: [keys]}]`) and
-   `bar` (`bars: [{manager?, label, value, display?, tone?: 'hot'|'muted'}]`, optional `legend`). Week
+   `bar` (`bars: [{manager?, label, value, display?, tone?: 'hot'|'muted'}]`, optional `legend`).
+   A third type, `scatter` (`x: {label}`, `y: {label}`, `points: [{manager, x, y, tip?}]`, optional `split: {x, y}`
+   (defaults to the averages), `quadrants: {tr, tl, br, bl}`), draws a quadrant chart with dashed split lines,
+   labeled manager dots, and faded corner labels. The **points for vs. points against** scatter is a standing weekly
+   visual (per Hunter, Nov 10 2026), using the standings' `points_for`/`points_against` with the quadrant labels
+   tr "Fireworks" (high PF, high PA), br "BTA (outbound)" (high PF, low PA), tl "BTA (inbound)" (low PF, high PA),
+   and bl "Turn off the TV" (low PF, low PA). Week 10 has the example. Week
    5 is the worked example: Week 4 scores bar chart, all-time points-against bars, a wrong-QB table,
    and the best-ball table. Let the visual carry the numbers and keep the prose around it short.
    **Best-ball standings** are a standing section: every team and every opponent plays its

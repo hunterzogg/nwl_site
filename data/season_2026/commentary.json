@@ -1540,7 +1540,7 @@
     "week": 10,
     "published": true,
     "title": "Seven Straight for Stover, and Muenchow Hits the Floor",
-    "body": "Stover beat Glaser 127-86 for his seventh straight win, behind Joe Burrow (30), Puka Nacua (28), and Bucky Irving (27). It's the longest streak of his career. He and Prodahl (2020) are the only teams to start 0-2 and then win seven straight. Ainsworth matched him at 7-2, beating Palaia 134-89 with the week's top score and biggest margin (Jordan Love 36, Kenneth Walker III 34). He's the first team to 1,000 points this season.\n\n{{visual:week9-scores}}\n\n{{visual:streaks}}\n\nHagan snapped a five-game skid by beating Muenchow 94-58 and covered the 8-point line by 28. Every Head Coach who played won: 11-0, the first perfect week this season. Hagan's Steelers Head Coach was on bye and doesn't count.\n\nMuenchow's 58 is the season's low. His best starter was Matthew Stafford, at 11.\n\n{{visual:low-top-starter}}\n\nLarson won at Goetz 106-79 for his third straight win, and Prodahl beat Conlin 102-79. Ladd McConkey's 0 was Conlin's sixth shotgun of the season, the most by any team since 2022.\n\n{{visual:shotguns}}\n\nZogg won the battle of the 2-6s, 104-91, behind CeeDee Lamb (29). Pfaffinger left 59 on his bench (Bryce Young 20, KC Concepcion 17). With both lineups maxed out, Pfaffinger wins.\n\n{{visual:best-ball}}\n\nNo one has been eliminated or has clinched a spot yet. Even Pfaffinger can still reach 7-7, the same record both 7-2 teams would have if they lost out. History is harsher than the math: of the 43 teams that were 3-6 or worse after nine weeks (2013-2025), only one made the playoffs.\n\n{{visual:record-history}}\n\n{{visual:playoff-odds}}\n\n{{visual:week10-lines}}\n\nStover goes for eight straight as a home underdog. Chicago, Denver, Philadelphia, and Tampa Bay are on bye. Lines are as of Tuesday and will move after Wednesday's waivers.",
+    "body": "Stover beat Glaser 127-86 for his seventh straight win, behind Joe Burrow (30), Puka Nacua (28), and Bucky Irving (27). It's the longest streak of his career. He and Prodahl (2020) are the only teams to start 0-2 and then win seven straight. Ainsworth matched him at 7-2, beating Palaia 134-89 with the week's top score and biggest margin (Jordan Love 36, Kenneth Walker III 34). He's the first team to 1,000 points this season.\n\n{{visual:week9-scores}}\n\n{{visual:streaks}}\n\nHagan snapped a five-game skid by beating Muenchow 94-58 and covered the 8-point line by 28. Every Head Coach who played won: 11-0, the first perfect week this season. Hagan's Steelers Head Coach was on bye and doesn't count.\n\nMuenchow's 58 is the season's low. His best starter was Matthew Stafford, at 11.\n\n{{visual:low-top-starter}}\n\nLarson won at Goetz 106-79 for his third straight win, and Prodahl beat Conlin 102-79. Ladd McConkey's 0 was Conlin's sixth shotgun of the season, the most by any team since 2022.\n\n{{visual:shotguns}}\n\nZogg won the battle of the 2-6s, 104-91, behind CeeDee Lamb (29). Pfaffinger left 59 on his bench (Bryce Young 20, KC Concepcion 17). With both lineups maxed out, Pfaffinger wins.\n\n{{visual:best-ball}}\n\n{{visual:pf-pa}}\n\nNo one has been eliminated or has clinched a spot yet. Even Pfaffinger can still reach 7-7, the same record both 7-2 teams would have if they lost out. History is harsher than the math: of the 43 teams that were 3-6 or worse after nine weeks (2013-2025), only one made the playoffs.\n\n{{visual:record-history}}\n\n{{visual:playoff-odds}}\n\n{{visual:week10-lines}}\n\nStover goes for eight straight as a home underdog. Chicago, Denver, Philadelphia, and Tampa Bay are on bye. Lines are as of Tuesday and will move after Wednesday's waivers.",
     "visuals": [
       {
         "id": "week9-scores",
@@ -1890,6 +1890,98 @@
           }
         ],
         "note": "Every team and every opponent plays its highest-scoring legal lineup from that week's roster (QB, 2 RB, 2 WR, WR/TE, TE, HC, FLEX; IR not eligible). It's pure hindsight, so a starter who got hurt during his game can be swapped out too. Highlighted rows have a different record."
+      },
+      {
+        "id": "pf-pa",
+        "type": "scatter",
+        "title": "Points For vs. Points Against Through Week 9",
+        "x": {
+          "label": "Points For"
+        },
+        "y": {
+          "label": "Points Against"
+        },
+        "points": [
+          {
+            "manager": "Ainsworth",
+            "x": 1000.9,
+            "y": 778.6,
+            "tip": "1,000.9 PF, 778.6 PA (7-2)"
+          },
+          {
+            "manager": "Stover",
+            "x": 941.9,
+            "y": 780.9,
+            "tip": "941.9 PF, 780.9 PA (7-2)"
+          },
+          {
+            "manager": "Glaser",
+            "x": 939.9,
+            "y": 853.2,
+            "tip": "939.9 PF, 853.2 PA (6-3)"
+          },
+          {
+            "manager": "Larson",
+            "x": 849.4,
+            "y": 810.6,
+            "tip": "849.4 PF, 810.6 PA (6-3)"
+          },
+          {
+            "manager": "Goetz",
+            "x": 928.7,
+            "y": 970.5,
+            "tip": "928.7 PF, 970.5 PA (5-4)"
+          },
+          {
+            "manager": "Prodahl",
+            "x": 927.9,
+            "y": 861.8,
+            "tip": "927.9 PF, 861.8 PA (5-4)"
+          },
+          {
+            "manager": "Palaia",
+            "x": 896.8,
+            "y": 929.3,
+            "tip": "896.8 PF, 929.3 PA (4-5)"
+          },
+          {
+            "manager": "Muenchow",
+            "x": 871.4,
+            "y": 931.0,
+            "tip": "871.4 PF, 931.0 PA (3-6)"
+          },
+          {
+            "manager": "Conlin",
+            "x": 820.0,
+            "y": 858.7,
+            "tip": "820.0 PF, 858.7 PA (3-6)"
+          },
+          {
+            "manager": "Hagan",
+            "x": 807.6,
+            "y": 905.4,
+            "tip": "807.6 PF, 905.4 PA (3-6)"
+          },
+          {
+            "manager": "Zogg",
+            "x": 778.1,
+            "y": 880.3,
+            "tip": "778.1 PF, 880.3 PA (3-6)"
+          },
+          {
+            "manager": "Pfaffinger",
+            "x": 833.8,
+            "y": 1035.9,
+            "tip": "833.8 PF, 1,035.9 PA (2-7)"
+          }
+        ],
+        "quadrants": {
+          "tr": "Fireworks",
+          "br": "BTA (outbound)",
+          "tl": "BTA (inbound)",
+          "bl": "Turn off the TV"
+        },
+        "note": "Dashed lines are the league average, 883.0 points (points for and against always average out the same). Hover over a dot for the exact numbers."
       },
       {
         "id": "record-history",

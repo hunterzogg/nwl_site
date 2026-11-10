@@ -93,6 +93,15 @@
 .cv-bar-fill.tone-hot { background: var(--live-bright); }
 .cv-bar-fill.tone-muted { background: var(--line-strong, #33405c); }
 .cv-bar-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.8rem; min-width: 52px; text-align: right; }
+.cv-scatter { display: block; width: 100%; max-width: 620px; margin: 0 auto; height: auto; font-family: var(--font-body); }
+.cv-scatter .sc-grid { stroke: var(--line); stroke-width: 1; }
+.cv-scatter .sc-split { stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.cv-scatter .sc-tick { fill: var(--text-muted); font-family: var(--font-mono); font-size: 10px; }
+.cv-scatter .sc-axis { fill: var(--text-muted); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.cv-scatter .sc-quad { fill: var(--text); opacity: 0.32; font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.cv-scatter .sc-dot { stroke: var(--surface); stroke-width: 2; }
+.cv-scatter .sc-pt:hover .sc-dot { stroke: var(--text); }
+.cv-scatter .sc-label { fill: var(--text); font-size: 11px; font-weight: 600; pointer-events: none; }
 .cv-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.74rem; color: var(--text-muted); margin-bottom: 10px; }
 @media (max-width: 640px) { .commentary-body { padding: 16px; } .cv { padding: 12px 10px; } .cv th, .cv td { padding: 6px 5px; } .cv-bar-row { grid-template-columns: 96px 1fr auto; gap: 6px; } }
 .cv-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
@@ -574,7 +583,76 @@ function commentaryVisualHTML(v) {
       </div>`).join('');
     return `<div class="cv">${title}${legend}<div class="cv-bars">${bars}</div>${note}</div>`;
   }
+  if (v.type === 'scatter') return `<div class="cv">${title}${scatterSVG(v)}${note}</div>`;
   return '';
+}
+
+// Quadrant scatter (e.g. points for vs. points against): one labeled dot per manager in his color, dashed lines
+// at the split (league average unless `split` says otherwise), and a label in each quadrant's outer corner.
+// Shape: {type:'scatter', x:{label}, y:{label}, points:[{manager, x, y, tip?}], split?:{x,y},
+//         quadrants:{tr, tl, br, bl}}. Hover a dot for its exact numbers.
+function scatterSVG(v) {
+  // A smaller drawing on phones, so the text stays readable once the SVG is scaled to the screen.
+  const narrow = window.matchMedia('(max-width: 640px)').matches;
+  const W = narrow ? 320 : 440, H = narrow ? 330 : 380, m = { l: narrow ? 40 : 48, r: 10, t: 14, b: 40 };
+  const pw = W - m.l - m.r, ph = H - m.t - m.b;
+  const xs = v.points.map(p => p.x), ys = v.points.map(p => p.y);
+  const avg = a => a.reduce((s, n) => s + n, 0) / a.length;
+  const split = v.split || { x: avg(xs), y: avg(ys) };
+  // Pad each axis and keep the split near the middle so all four quadrants get room.
+  // Extra vertical headroom keeps the corner labels clear of the dots.
+  const range = (vals, mid, pad) => {
+    const half = Math.max(...vals.map(n => Math.abs(n - mid))) * pad;
+    return [mid - half, mid + half];
+  };
+  const [x0, x1] = range(xs, split.x, 1.12), [y0, y1] = range(ys, split.y, 1.32);
+  const sx = n => m.l + (n - x0) / (x1 - x0) * pw;
+  const sy = n => m.t + ph - (n - y0) / (y1 - y0) * ph;
+  const step = (lo, hi) => { const raw = (hi - lo) / 5, p = 10 ** Math.floor(Math.log10(raw));
+    return [1, 2, 2.5, 5, 10].map(k => k * p).find(s => s >= raw); };
+  const ticks = (lo, hi) => { const s = step(lo, hi), out = [];
+    for (let t = Math.ceil(lo / s) * s; t <= hi; t += s) out.push(t); return out; };
+  const fmt = n => Math.round(n).toLocaleString();
+  const grid = ticks(x0, x1).map(t => `<line class="sc-grid" x1="${sx(t)}" x2="${sx(t)}" y1="${m.t}" y2="${m.t + ph}"/>
+      <text class="sc-tick" x="${sx(t)}" y="${m.t + ph + 15}" text-anchor="middle">${fmt(t)}</text>`).join('')
+    + ticks(y0, y1).map(t => `<line class="sc-grid" x1="${m.l}" x2="${m.l + pw}" y1="${sy(t)}" y2="${sy(t)}"/>
+      <text class="sc-tick" x="${m.l - 6}" y="${sy(t) + 4}" text-anchor="end">${fmt(t)}</text>`).join('');
+  const q = v.quadrants || {};
+  const quad = [[q.tl, m.l + 8, m.t + 18, 'start'], [q.tr, m.l + pw - 8, m.t + 18, 'end'],
+                [q.bl, m.l + 8, m.t + ph - 9, 'start'], [q.br, m.l + pw - 8, m.t + ph - 9, 'end']]
+    .filter(([t]) => t).map(([t, x, y, a]) => `<text class="sc-quad" x="${x}" y="${y}" text-anchor="${a}">${t}</text>`).join('');
+  // Name labels: try right, left, above, below each dot and take the spot with the fewest problems.
+  // Running off the plot is the worst; then hitting another label, a corner label, or a dot.
+  const dots = v.points.map(p => ({ x: sx(p.x), y: sy(p.y) }));
+  const placed = [[m.l + 4, m.t + 4], [m.l + pw / 2, m.t + 4], [m.l + 4, m.t + ph - 22], [m.l + pw / 2, m.t + ph - 22]]
+    .map(([x, y]) => ({ x, y, w: pw / 2 - 4, h: 18, corner: true })).filter((b, k) => [q.tl, q.tr, q.bl, q.br][k]);
+  const hits = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+  const labels = v.points.map((p, i) => {
+    const { x, y } = dots[i], w = p.manager.length * 7.2 + 4, h = 13;
+    const opts = [[x + 8, y - 6, 'start'], [x - 8 - w, y - 6, 'end'], [x - w / 2, y - 20, 'middle'], [x - w / 2, y + 8, 'middle'],
+                  [x - w + 4, y - 20, 'end'], [x - w + 4, y + 8, 'end']];
+    const cost = o => {
+      const box = { x: o[0], y: o[1], w, h };
+      const inside = box.x >= m.l && box.x + w <= m.l + pw && box.y >= m.t && box.y + h <= m.t + ph;
+      return (inside ? 0 : 100) + placed.filter(b => hits(box, b)).reduce((n, b) => n + (b.corner ? 4 : 10), 0)
+        + dots.filter((d, j) => j !== i && hits(box, { x: d.x - 6, y: d.y - 6, w: 12, h: 12 })).length * 20;
+    };
+    const pick = opts.reduce((best, o) => (cost(o) < cost(best) ? o : best));
+    placed.push({ x: pick[0], y: pick[1], w, h });
+    const tx = pick[2] === 'start' ? pick[0] : pick[2] === 'end' ? pick[0] + w : pick[0] + w / 2;
+    return `<text class="sc-label" x="${tx}" y="${pick[1] + 10}" text-anchor="${pick[2]}">${p.manager}</text>`;
+  }).join('');
+  const pts = v.points.map((p, i) => `<g class="sc-pt"><title>${p.manager}: ${p.tip || `${fmt(p.x)} ${v.x.label}, ${fmt(p.y)} ${v.y.label}`}</title>
+      <circle cx="${dots[i].x}" cy="${dots[i].y}" r="12" fill="transparent"/>
+      <circle class="sc-dot" cx="${dots[i].x}" cy="${dots[i].y}" r="5.5" fill="${managerColor(managers, p.manager)}"/></g>`).join('');
+  return `<svg class="cv-scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="${v.title || 'Scatter plot'}">
+    ${grid}
+    <line class="sc-split" x1="${sx(split.x)}" x2="${sx(split.x)}" y1="${m.t}" y2="${m.t + ph}"/>
+    <line class="sc-split" x1="${m.l}" x2="${m.l + pw}" y1="${sy(split.y)}" y2="${sy(split.y)}"/>
+    ${quad}${pts}${labels}
+    <text class="sc-axis" x="${m.l + pw / 2}" y="${H - 6}" text-anchor="middle">${v.x.label} →</text>
+    <text class="sc-axis" transform="translate(12 ${m.t + ph / 2}) rotate(-90)" text-anchor="middle">${v.y.label} →</text>
+  </svg>`;
 }
 
 function renderCommentary() {
