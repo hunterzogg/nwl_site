@@ -12,7 +12,7 @@
 // (Glaser), and Josh Downs (Conlin). Player lines are ESPN's Week 10 projections as of Tuesday.
 // Downs to the Chiefs was on NFL.com first; ESPN confirmed it (his team and the KC roster) before the props went live.
 //
-// The longshot is the week's biggest margin of victory, within 2, plus the closest-guess bonus.
+// The longshot is the week's biggest margin of victory, within 4 (widened from 2 before any picks), plus the closest-guess bonus.
 //
 // Usage:
 //   cd ~/Sites/nwl_site
@@ -75,9 +75,9 @@ const QUESTIONS = [
   {
     type: 'number_guess',
     points: 3,
-    tolerance: 2,
+    tolerance: 4, // widened from 2 on Nov 10, before any picks (per Hunter)
     closest_bonus: 1,
-    prompt: "LONGSHOT (3 points): Guess the biggest margin of victory in Week 10. The first 9 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, and 44.5. Within 2 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 2.",
+    prompt: "LONGSHOT (3 points): Guess the biggest margin of victory in Week 10. The first 9 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, and 44.5. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
   },
 ];
 
