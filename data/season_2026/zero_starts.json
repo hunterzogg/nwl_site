@@ -154,8 +154,24 @@
         "points": 0,
         "hurt": false
       }
+    ],
+    "9": [
+      {
+        "manager": "Conlin",
+        "player": "Ladd McConkey",
+        "team": "LAC",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Prodahl",
+        "player": "Adonai Mitchell",
+        "team": "NYJ",
+        "points": 0,
+        "hurt": false
+      }
     ]
   },
-  "updated_at": "2026-11-09T12:05:11.245680+00:00",
-  "through_week": 8
+  "updated_at": "2026-11-10T11:44:20.120602+00:00",
+  "through_week": 9
 }
