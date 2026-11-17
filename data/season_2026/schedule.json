@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-16T12:01:10.689223+00:00",
-  "current_week": 10,
+  "updated_at": "2026-11-17T12:25:53.311970+00:00",
+  "current_week": 11,
   "regular_season_weeks": 14,
   "playoff_teams": 6,
   "playoff_weeks": [
@@ -15,16 +15,16 @@
   },
   "divisions": {
     "Ainsworth": "Gold",
-    "Stover": "Gold",
     "Glaser": "Silver",
+    "Stover": "Gold",
     "Larson": "Silver",
     "Goetz": "Bronze",
     "Prodahl": "Bronze",
     "Palaia": "Silver",
-    "Muenchow": "Silver",
-    "Conlin": "Gold",
     "Hagan": "Bronze",
     "Zogg": "Bronze",
+    "Muenchow": "Silver",
+    "Conlin": "Gold",
     "Pfaffinger": "Gold"
   },
   "games": [
@@ -464,49 +464,49 @@
       "week": 10,
       "home": "Conlin",
       "away": "Palaia",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 93.04,
+      "away_score": 101.92,
+      "winner": "AWAY"
     },
     {
       "week": 10,
       "home": "Glaser",
       "away": "Prodahl",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 122.48,
+      "away_score": 98.72,
+      "winner": "HOME"
     },
     {
       "week": 10,
       "home": "Goetz",
       "away": "Ainsworth",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 163.72,
+      "away_score": 92.98,
+      "winner": "HOME"
     },
     {
       "week": 10,
       "home": "Muenchow",
       "away": "Zogg",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 78.72,
+      "away_score": 109.16,
+      "winner": "AWAY"
     },
     {
       "week": 10,
       "home": "Pfaffinger",
       "away": "Larson",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 73.5,
+      "away_score": 97.32,
+      "winner": "AWAY"
     },
     {
       "week": 10,
       "home": "Stover",
       "away": "Hagan",
-      "home_score": 0.0,
-      "away_score": 0.0,
-      "winner": "UNDECIDED"
+      "home_score": 86.66,
+      "away_score": 153.56,
+      "winner": "AWAY"
     },
     {
       "week": 11,

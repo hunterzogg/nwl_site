@@ -170,8 +170,24 @@
         "points": 0,
         "hurt": false
       }
+    ],
+    "10": [
+      {
+        "manager": "Glaser",
+        "player": "Greg Dulcich",
+        "team": "MIA",
+        "points": 0,
+        "hurt": false
+      },
+      {
+        "manager": "Conlin",
+        "player": "Omar Cooper Jr.",
+        "team": "NYJ",
+        "points": 0,
+        "hurt": false
+      }
     ]
   },
-  "updated_at": "2026-11-16T12:01:15.536845+00:00",
-  "through_week": 9
+  "updated_at": "2026-11-17T12:25:55.141185+00:00",
+  "through_week": 10
 }
