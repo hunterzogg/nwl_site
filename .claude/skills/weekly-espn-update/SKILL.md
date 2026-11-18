@@ -295,9 +295,9 @@ two sources before the prop goes live.
 **Mix the prop types** (per Hunter, Week 9): at most one or two props per week should just pick a game's winner. Fill the rest with other kinds: score over/unders (the week's high and low), counts (shotguns, Head Coach wins, 120+ scores) as over/unders, `pick_manager` questions (most points, biggest bench, top player), spread covers, and yes/no streak questions. Hunter doesn't like game-total over/unders (a game's combined score), so skip those. Each has to be gradable from site data or the box scores.
 
 **Every week includes one 3-point longshot** (per Hunter, from Week 8): one prop with `points = 3` whose prompt
-starts "LONGSHOT (3 points):". It should be hard but gettable: **about a 20-25% chance for a typical guess, and
-about a third for a well-informed one** (raised from 5-15% on Nov 17 2026, per Hunter, after three straight weeks
-where nobody landed in the window). A lopsided `this_or_that` doesn't work, since anyone can take the safe side.
+starts "LONGSHOT (3 points):". **The goal is a 20% chance for a typical guess** (about a
+third for a well-informed one). Hunter set this on Nov 17 2026, raising it from 5-15% after three straight weeks
+where nobody landed in the window. Size every window to that 20%. A lopsided `this_or_that` doesn't work, since anyone can take the safe side.
 
 **The longshot must be a different question every week** (per Hunter). Before drafting, list the season's earlier
 longshots and don't reuse any of their stats:
@@ -312,12 +312,12 @@ had no winners. Re-measure if the season looks different.
 
 | Longshot (`number_guess` unless noted) | Spread | Window | Typical / best | Used |
 |---|---|---|---|---|
-| Combined score of the game of the week | SD 30 | ±12 | ~22% / ~33% | Week 8 (±5, too tight) |
-| The week's highest score | SD 14 | ±5 | ~21% / ~32% | |
-| The week's lowest score | SD 10 | ±3 | ~20% / ~35% | |
-| The week's biggest margin of victory | SD 17 | ±6 | ~21% / ~35% | Week 10 (±4) |
-| League-wide total points for the week | SD 77 | ±30 | ~23% / ~33% | Week 11 (±30, widened from ±15) |
-| A specific manager's exact score (e.g. the hottest or coldest team) | SD 22 | ±8 | ~20% / ~31% | Week 9 (Stover, ±4, too tight) |
+| Combined score of the game of the week | SD 30 | ±11 | ~20% / ~30% | Week 8 (±5, too tight) |
+| The week's highest score | SD 14 | ±4.5 | ~19% / ~29% | |
+| The week's lowest score | SD 10 | ±3 | ~20% / ~36% | |
+| The week's biggest margin of victory | SD 17 | ±5.5 | ~20% / ~32% | Week 10 (±4, too tight) |
+| League-wide total points for the week | SD 77 | ±25 | ~20% / ~27% | Week 11 (±25, widened from ±15) |
+| A specific manager's exact score (e.g. the hottest or coldest team) | SD 22 | ±7.5 | ~19% / ~29% | Week 9 (Stover, ±4, too tight) |
 | `pick_manager`: whose starter is the week's single top-scoring player | check spread | n/a | check | |
 
 Mark the stat as used in this table when you use one, and add new ideas as they come up. To size a new stat's
