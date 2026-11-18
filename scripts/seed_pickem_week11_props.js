@@ -17,7 +17,7 @@
 // scripts/pickem_week11_references.js. Next week's seed should set `reference` on each question directly (the insert
 // below already writes it).
 //
-// The longshot is league-wide total points for the week, within 15, plus the closest-guess bonus.
+// The longshot is league-wide total points for the week, within 30 (widened from 15 before any picks), plus the closest-guess bonus.
 //
 // Usage:
 //   cd ~/Sites/nwl_site
@@ -80,9 +80,9 @@ const QUESTIONS = [
   {
     type: 'number_guess',
     points: 3,
-    tolerance: 15,
+    tolerance: 30, // widened from 15 on Nov 17, before any picks (per Hunter)
     closest_bonus: 1,
-    prompt: "LONGSHOT (3 points): Guess the league-wide total points in Week 11, all 12 teams combined. The first 10 weeks' totals were 1,311.7, 1,112.0, 1,188.4, 1,212.5, 1,245.1, 1,078.3, 1,145.6, 1,155.9, 1,147.0, and 1,271.8. Within 15 points of the real total is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 15.",
+    prompt: "LONGSHOT (3 points): Guess the league-wide total points in Week 11, all 12 teams combined. The first 10 weeks' totals were 1,311.7, 1,112.0, 1,188.4, 1,212.5, 1,245.1, 1,078.3, 1,145.6, 1,155.9, 1,147.0, and 1,271.8. Within 30 points of the real total is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 30.",
   },
 ];
 
