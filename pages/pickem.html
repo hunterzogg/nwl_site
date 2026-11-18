@@ -48,6 +48,13 @@
 .q-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px; background: var(--live-bg); color: var(--live-bright); font-family: var(--font-display); font-weight: 600; display: flex; align-items: center; justify-content: center; }
 .q-main { flex: 1; min-width: 0; }
 .question-prompt { font-weight: 600; font-size: 1rem; line-height: 1.45; margin-bottom: 6px; }
+/* Reference line under a prompt: past weeks' numbers as chips, plus any fine print */
+.q-ref { margin: 2px 0 8px; }
+.q-ref-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.q-ref-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.q-ref-chip { font-family: var(--font-mono); font-size: 0.72rem; font-variant-numeric: tabular-nums; padding: 2px 7px; border-radius: 6px; background: var(--surface-raised); border: 1px solid var(--line); color: var(--text); white-space: nowrap; }
+.q-ref-chip i { font-style: normal; color: var(--text-muted); margin-right: 4px; }
+.q-ref-note { font-size: 0.78rem; line-height: 1.4; color: var(--text-muted); margin-top: 5px; }
 .question-meta { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
 .q-status { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; background: var(--surface-raised); font-weight: 600; }
 .q-status.open { background: rgba(79, 168, 118, 0.15); color: #4FA876; }
@@ -121,6 +128,6 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=25"></script>
-<script src="../assets/js/pickem.js?v=13"></script>
+<script src="../assets/js/pickem.js?v=14"></script>
 </body>
 </html>

@@ -13,6 +13,10 @@
 // injury; and Brock Bowers (Palaia), day-to-day with an ankle injury. Lines sit a bit under ESPN's Tuesday
 // projections to account for the chance each player sits.
 //
+// Nov 17: prompts shortened after insert; past-week lists and fine print moved to the new `reference` column by
+// scripts/pickem_week11_references.js. Next week's seed should set `reference` on each question directly (the insert
+// below already writes it).
+//
 // The longshot is league-wide total points for the week, within 15, plus the closest-guess bonus.
 //
 // Usage:
@@ -86,8 +90,8 @@ async function main() {
   console.log(`Inserting ${QUESTIONS.length} Week 11 props (week=${WEEK}, season=${SEASON}, lock_at=${LOCK_AT})...\n`);
   for (const q of QUESTIONS) {
     const { rows } = await sql`
-      INSERT INTO questions (week, season, type, prompt, option_a, option_b, points, tolerance, closest_bonus, lock_at, published)
-      VALUES (${WEEK}, ${SEASON}, ${q.type}, ${q.prompt}, ${q.option_a || null}, ${q.option_b || null}, ${q.points || 1}, ${q.tolerance || null}, ${q.closest_bonus || null}, ${LOCK_AT}, false)
+      INSERT INTO questions (week, season, type, prompt, reference, option_a, option_b, points, tolerance, closest_bonus, lock_at, published)
+      VALUES (${WEEK}, ${SEASON}, ${q.type}, ${q.prompt}, ${q.reference ? JSON.stringify(q.reference) : null}::jsonb, ${q.option_a || null}, ${q.option_b || null}, ${q.points || 1}, ${q.tolerance || null}, ${q.closest_bonus || null}, ${LOCK_AT}, false)
       RETURNING id
     `;
     console.log(`  #${rows[0].id} [${q.type}] ${q.prompt}`);

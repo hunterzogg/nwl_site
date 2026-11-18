@@ -335,6 +335,15 @@ inside the window earns 4, and a closest guess outside it still earns 1. Say bot
 nothing extra: write `correct_option` as usual, and the leaderboard and the Pick'em page work out the closest
 guess from the picks. Only `number_guess` questions use it; a `pick_manager` longshot has no "closest".
 
+**Keep prompts short; put context in `reference`** (per Hunter, Nov 17 2026). The prompt is just the question and
+its storyline in a sentence or two. Past weeks' numbers never go in the prompt as a list: put them in the question's
+`reference` JSONB column, `{label, values: [...], start_week?: 1, note?}`, which the Pick'em page shows under the
+prompt as a small label, "W1 68.5" chips, and a muted note (`questionReferenceHTML()` in `assets/js/pickem.js`). Use
+`note` for fine print: "Line as of Tuesday", the all-time series, ESPN's projection, and the player-prop rule
+("Bench or start doesn't matter, and 0 counts if he doesn't play."). A `number_guess` needs no note for its window
+or closest bonus, since the guess box already shows both. Seed scripts set `reference` on each question and insert it
+as `${JSON.stringify(q.reference)}::jsonb`. `scripts/pickem_week11_references.js` is the worked example.
+
 **Use one decimal place for numbers in prop descriptions** (past highs, margins, lines: "165.6", "4.5",
 "Larson by 12.5"). Use two only when the prop's line itself needs it to settle the answer, e.g. a line set
 between two hundredths. **Ground every prop in real data, never invent a line.** The established pattern (see

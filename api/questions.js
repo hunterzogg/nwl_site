@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
 
   const week = req.query.week;
   const rows = (await sql.query(`
-    SELECT q.id, q.week, q.season, q.type, q.prompt, q.option_a, q.option_b, q.points, q.lock_at,
+    SELECT q.id, q.week, q.season, q.type, q.prompt, q.reference, q.option_a, q.option_b, q.points, q.lock_at,
       q.correct_option, q.tolerance, q.closest_bonus,
       (SELECT MIN(ABS(p.choice::numeric - q.correct_option::numeric))
          FROM picks p

@@ -216,6 +216,7 @@ function questionCardHTML(q, idx) {
     <div class="question-card${submittedClass}">
       <div class="q-head"><div class="q-num">${(idx ?? 0) + 1}</div><div class="q-main">
         <div class="question-prompt">${q.prompt}</div>
+        ${questionReferenceHTML(q.reference)}
         <div class="question-meta">${status}<span>${weekLabel(q.week)}</span><span>· ${q.points} pt${q.points === 1 ? '' : 's'}${q.closest_bonus ? ` +${q.closest_bonus} closest` : ''}</span></div>
       </div></div>
       ${body}
@@ -223,6 +224,18 @@ function questionCardHTML(q, idx) {
       ${currentManager && locked && !graded ? '<div class="locked-note">Picks are locked for this question.</div>' : ''}
     </div>
   `;
+}
+
+// A question's optional reference line, shown under the prompt so past numbers don't crowd the question:
+// {label, values: [...], start_week?: 1, note?} renders as small "W1 68.5" chips plus a muted note.
+function questionReferenceHTML(ref) {
+  if (!ref || typeof ref !== 'object') return '';
+  const start = Number(ref.start_week) || 1;
+  const chips = Array.isArray(ref.values) && ref.values.length
+    ? `<div class="q-ref-chips">${ref.values.map((v, i) => `<span class="q-ref-chip"><i>W${start + i}</i>${v}</span>`).join('')}</div>` : '';
+  const label = ref.label ? `<div class="q-ref-label">${ref.label}</div>` : '';
+  const note = ref.note ? `<div class="q-ref-note">${ref.note}</div>` : '';
+  return label || chips || note ? `<div class="q-ref">${label}${chips}${note}</div>` : '';
 }
 
 // Renders one panel's worth of question cards into containerId. showActionBar is only true for
