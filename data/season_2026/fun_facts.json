@@ -686,5 +686,91 @@
         "wide": true
       }
     ]
+  },
+  {
+    "week": 11,
+    "published": true,
+    "facts": [
+      {
+        "label": "Four-Way Tie",
+        "headline": "{{num}} teams tied at 7-3",
+        "num": "4",
+        "sub": "Ainsworth, Glaser, Larson, and Stover. It's the first four-way tie for the best record after ten weeks since 2014. From 2013-2025, all 12 teams that were 7-3 made the playoffs.",
+        "tone": "green",
+        "wide": true
+      },
+      {
+        "label": "Streak Breaker",
+        "headline": "Hagan: {{num}}",
+        "num": "154",
+        "sub": "His best score since at least 2022, by 27 points, and it ended Stover's seven-game win streak. He didn't start a Head Coach.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Top Five",
+        "headline": "Goetz: {{num}}",
+        "num": "164",
+        "sub": "The fourth-highest score since 2022 and 14th of 2,238 all time. Gibbs (41), Pickens (38), and Hubbard (32) all topped 30.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Wrong Week to Switch",
+        "headline": "Pfaffinger's benched QB outscored his starter by {{num}}",
+        "num": "12",
+        "sub": "Week 9: started Stroud (35) over Young (20) and lost anyway. Week 10: switched to Young (8), and Stroud scored 20 on the bench. Best ball says he beats Larson.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Skid",
+        "headline": "Muenchow's {{num}}-game losing streak",
+        "num": "5",
+        "sub": "His longest since seven straight in 2021.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Shotgun Specialist",
+        "headline": "Conlin's {{num}} shotguns",
+        "num": "7",
+        "sub": "Still the most by any team in a season since 2022, with four games left. Omar Cooper Jr. added one in Week 10.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Punching Bag",
+        "headline": "Pfaffinger: {{num}} points against",
+        "num": "1,133",
+        "sub": "The most through ten weeks since 2022, 70 more than anyone else this season.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "No Way Back",
+        "headline": "{{num}} of 21 teams that were 3-7 made the playoffs",
+        "num": "0",
+        "sub": "From 2013-2025. Conlin and Muenchow are 3-7.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Right Call",
+        "headline": "Larson's QB pick: {{num}}",
+        "num": "35 vs. 34",
+        "sub": "He started Patrick Mahomes over Dak Prescott and won his fourth straight.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Longshot",
+        "headline": "Biggest margin: {{num}}. Nobody hit it.",
+        "num": "70.7",
+        "sub": "Goetz over Ainsworth. Every guess came in low, and none landed within 4. Muenchow's 57 was closest (13.7 off), worth the 1-point bonus. Stover's 42 was furthest (28.7 off). Five managers didn't guess.",
+        "tone": "",
+        "wide": true
+      }
+    ]
   }
 ]

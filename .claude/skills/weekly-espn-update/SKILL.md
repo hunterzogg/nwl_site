@@ -314,7 +314,7 @@ weeks, the current scoring era; re-measure if the season looks different):
 | The week's highest score | SD 14 | ±2 | ~11% | |
 | The week's lowest score | SD 10 | ±1 | ~8% | |
 | The week's biggest margin of victory | SD 17 | ±2 (±4 ~15%) | ~9% | Week 10 (±4) |
-| League-wide total points for the week | SD 77 | ±10 | ~10% | |
+| League-wide total points for the week | SD 77 | ±10 (±15 ~16%) | ~10% | Week 11 (±15) |
 | A specific manager's exact score (e.g. the hottest or coldest team) | SD ~22 | ±3 (±4 ~14%) | ~11% | Week 9 (Stover, ±4) |
 | `pick_manager`: whose starter is the week's single top-scoring player | check spread | n/a | check | |
 

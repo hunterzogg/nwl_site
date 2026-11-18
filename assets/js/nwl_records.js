@@ -174,7 +174,11 @@ const NWL_REC = (() => {
       const n = r.nwl || {};
       // name only the NWL team he scored for (known from 2022 on); never who drafted him (Hunter, Oct 20)
       const owner = n.manager ? (n.started ? ` for ${escH(n.manager)}` : `, on ${escH(n.manager)}'s bench`) : ` on ${escH(ownerOf(n))}'s team`;
-      out.player.push({ html: `<b>${r.season}:</b> ${escH(r.player)} (${escH(r.pos)}, ${escH(r.team)}) went off for ${f1(n.manager ? n.points : r.pts)}${n.manager ? '' : ' half-PPR'}${owner} vs ${escH(r.opp)}: ${escH(r.line)}.${r.pos_alltime_top10 ? ` One of the 10 best ${escH(r.pos)} games since 2013.` : ''}` });
+      // "vs" names that week's NWL opponent of the team he was on, not the NFL team he played (Hunter, Nov 17)
+      const mgr = ownerOf(n);
+      const g = h.matchups.find(m => +m.season === r.season && +m.week === wk && (m.winner === mgr || m.loser === mgr));
+      const vs = g ? ` vs ${escH(g.winner === mgr ? g.loser : g.winner)}` : '';
+      out.player.push({ html: `<b>${r.season}:</b> ${escH(r.player)} (${escH(r.pos)}, ${escH(r.team)}) went off for ${f1(n.manager ? n.points : r.pts)}${n.manager ? '' : ' half-PPR'}${owner}${vs}: ${escH(r.line)}.${r.pos_alltime_top10 ? ` One of the 10 best ${escH(r.pos)} games since 2013.` : ''}` });
     }
 
     // a move from around today's date in a past season: a trade, or the biggest winning FAAB bid
