@@ -3,8 +3,9 @@
 // Needs shared.js (managerTag, managerColor). Regular-season games only; pass them in.
 //
 // games: [{ week, a, b, sa, sb }] - one entry per game, a/b the two managers and sa/sb their scores.
-// A swapped record skips the weeks the schedule's owner played that team (two weeks for division rivals who met
-// twice), so it can cover fewer games than the real one. Ties (2013-14) count as half a win.
+// In a week the schedule's owner played that team himself, the team instead plays the league median: a win if he
+// beat that week's median score, a loss if not (per Hunter, Nov 19 2026). So every swapped record covers the same
+// games as the real one. Ties (2013-14) count as half a win.
 (function () {
   const CSS = `
 .ss-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -47,24 +48,25 @@
     });
     const wk = [...weeks].sort((x, y) => x - y);
     const teams = [...new Set(games.flatMap(g => [g.a, g.b]))];
+    // each week's median score: the stand-in opponent for "would have played himself", and the League median row
+    const med = {};
+    wk.forEach(w => {
+      const v = teams.map(t => score[w + '|' + t]).filter(x => x != null).sort((x, y) => x - y);
+      med[w] = v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
+    });
     const rec = (a, b) => {
       const r = { w: 0, l: 0, t: 0 };
       wk.forEach(w => {
         const o = opp[w + '|' + b];
-        if (!o || o === a || score[w + '|' + a] == null) return;
-        const d = score[w + '|' + a] - score[w + '|' + o];
+        if (!o || score[w + '|' + a] == null) return;
+        const d = score[w + '|' + a] - (o === a ? med[w] : score[w + '|' + o]);
         d > 0 ? r.w++ : d < 0 ? r.l++ : r.t++;
       });
       r.n = r.w + r.l + r.t; r.pct = r.n ? (r.w + r.t / 2) / r.n : 0;
       return r;
     };
     const M = {}; teams.forEach(a => { M[a] = {}; teams.forEach(b => { M[a][b] = rec(a, b); }); });
-    // League median: a team that scores exactly that week's median score, played on each schedule (every week counts)
-    const med = {};
-    wk.forEach(w => {
-      const v = teams.map(t => score[w + '|' + t]).filter(x => x != null).sort((x, y) => x - y);
-      med[w] = v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
-    });
+    // League median row: a team that scores exactly that week's median score, played on each schedule
     const median = {};
     teams.forEach(b => {
       const r = { w: 0, l: 0, t: 0 };
@@ -143,7 +145,7 @@
       <p class="ss-note">Positive means his schedule handed him more wins than it would most teams.</p>` : '';
     return `${find}<div class="ss-scroll"><table class="ss-grid"><thead>${head}</thead><tbody>${body}${medRow}${foot}</tbody></table></div>
       <div class="ss-legend"><span><i style="background:rgba(79,168,118,.45)"></i>Higher win rate than his real record</span><span><i style="background:rgba(224,82,74,.45)"></i>Lower</span><span><i style="outline:2px solid var(--live);outline-offset:-2px"></i>Real record</span></div>
-      <p class="ss-note"><b>Avg W%</b> is his win rate across the other ${order.length - 1} schedules. <b>Luck</b> is his real wins minus the wins that rate predicts. <b>League median</b> is a team that scores exactly the league's median score every week, played on that schedule. <b>Others' W%</b> is how everyone else does with that schedule: lower means tougher (hardest: ${hard[0]}, ${p3(schedPct(hard[0]))}; easiest: ${hard.at(-1)}, ${p3(schedPct(hard.at(-1)))}). The weeks a schedule's owner played that team are skipped, so swapped records can cover a game or two fewer.</p>
+      <p class="ss-note"><b>Avg W%</b> is his win rate across the other ${order.length - 1} schedules. <b>Luck</b> is his real wins minus the wins that rate predicts. <b>League median</b> is a team that scores exactly the league's median score every week, played on that schedule. <b>Others' W%</b> is how everyone else does with that schedule: lower means tougher (hardest: ${hard[0]}, ${p3(schedPct(hard[0]))}; easiest: ${hard.at(-1)}, ${p3(schedPct(hard.at(-1)))}). In a week the schedule's owner played that team himself, the team plays the league median instead: a win if he beat that week's median score.</p>
       ${bars}`;
   }
 
