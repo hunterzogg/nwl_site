@@ -94,11 +94,12 @@ html.embed .container{padding:0!important;max-width:none}
   const fmt = r => `${r.w}-${r.l}${r.t ? '-' + r.t : ''}`;
   const short = n => n.length > 6 ? n.slice(0, 5) + '.' : n;
   const color = n => managerColor(managers, n);
-  // Cell shade: wins above or below his real record, scaled to the games played that way
+  // Cell shade: his win rate on that schedule vs. his real win rate. Any difference is shaded, darker the bigger it
+  // is, since a swapped record can cover 9 games (6-3, .667) vs. his real 10 (7-3, .700). Same rate, no shade.
   const shade = (a, r) => {
-    const diff = r.pct * r.n - actual(a).pct * r.n;
-    if (Math.abs(diff) < 0.5) return '';
-    const alpha = Math.min(0.55, 0.12 + Math.abs(diff) * 0.1);
+    const diff = r.pct - actual(a).pct;
+    if (Math.abs(diff) < 0.001) return '';
+    const alpha = Math.min(0.6, 0.1 + Math.abs(diff) * 1.1).toFixed(2);
     return `background:${diff > 0 ? `rgba(79,168,118,${alpha})` : `rgba(224,82,74,${alpha})`}`;
   };
   const luck = a => actual(a).w - avgPct(a) * actual(a).n;
@@ -128,7 +129,7 @@ html.embed .container{padding:0!important;max-width:none}
     <p class="ss-intro">Through Week ${through}. Each row is a team's real weekly scores; each column is whose schedule he plays. The highlighted diagonal is his real record. The week a schedule's owner played that team is skipped, so swapped records cover ${through - 1} or ${through} games.</p>
     <section>
       <div class="ss-scroll"><table class="ss-grid"><thead>${head}</thead><tbody>${body}${foot}</tbody></table></div>
-      <div class="ss-legend"><span><i style="background:rgba(79,168,118,.45)"></i>Better than his real record</span><span><i style="background:rgba(224,82,74,.45)"></i>Worse</span><span><i style="outline:2px solid var(--live);outline-offset:-2px"></i>Real record</span></div>
+      <div class="ss-legend"><span><i style="background:rgba(79,168,118,.45)"></i>Higher win rate than his real record</span><span><i style="background:rgba(224,82,74,.45)"></i>Lower</span><span><i style="outline:2px solid var(--live);outline-offset:-2px"></i>Real record</span></div>
       <p class="ss-note"><b>Avg W%</b> is his win rate across the other 11 schedules. <b>Luck</b> is his real wins minus the wins that rate predicts. <b>Others' W%</b> is how the other 11 teams do with that schedule: lower means a tougher schedule (hardest: ${hardest[0]}, ${schedPct(hardest[0]).toFixed(3).replace(/^0/, '')}; easiest: ${hardest.at(-1)}, ${schedPct(hardest.at(-1)).toFixed(3).replace(/^0/, '')}).</p>
     </section>
     <section>
