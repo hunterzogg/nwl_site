@@ -1977,3 +1977,11 @@ in a frame (the page hides its nav, header and footer in embed mode and posts it
 the frame). First use: Week 9 -> `pages/waivers-trades-2026.html`
 (a static snapshot through Nov 4 waivers: FAAB ledger and bid accuracy, team-by-team best/worst pickups, trade grades,
 trade offers; generated outside the repo, not refreshed by the Action).
+
+### Schedule swap (Nov 19 2026)
+`assets/js/schedule_swap.js` computes and draws every manager's record with each other manager's schedule (the
+weeks a schedule's owner played that team are skipped; ties count half). It's used by the 2026 Schedule Swap page
+(`pages/schedule-swap-2026.html?through=N`, the Week 11 commentary sub-tab) and by the Hall of Fame Seasons tab,
+which shows a Schedule swap section for every past season's regular season, with findings cards (best and worst
+possible schedule, luckiest and unluckiest, hardest and easiest schedule). Nothing is precomputed; both read the
+existing matchup data.

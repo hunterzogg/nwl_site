@@ -60,6 +60,8 @@
 .stand-row .rec { font-family: var(--font-mono); font-weight: 600; }
 .stand-row .meta { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono); }
 .stand-row .meta .hx-bar-track { flex: 1; }
+.ss-h{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.03em;font-size:1.05rem;margin:0 0 8px}
+#seasonContent .ss-scroll{margin-top:4px}
 </style>
 </head>
 <body>
@@ -98,6 +100,7 @@
 <footer>National Wayzata League &middot; est. 2013</footer>
 
 <script src="../assets/js/shared.js?v=25"></script>
+<script src="../assets/js/schedule_swap.js?v=1"></script>
 <script>
 let weekly = [], matchups = [], managers = [], regSeasons = [];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -396,7 +399,20 @@ function buildSeason() {
       ${arr.filter(s => s.division === d).map(s => `<div class="stand-row"><span>${managerTag(managers, s.manager)}</span><span class="rec">${s.w}–${s.l}</span>
         <div class="meta"><span>${fmt(s.pf)} PF</span><div class="hx-bar-track"><div class="hx-bar-fill" style="width:${(s.pf / maxPF * 100).toFixed(1)}%;--accent:${color(s.manager)}"></div></div><span>${fmt(s.pa)} PA</span></div></div>`).join('')}
     </div>`).join('')}</div>
+    ${scheduleSwapSection(season, sm, weeks)}
     <p class="hx-muted" style="font-size:.85rem;margin-top:18px">Looking for ${season}'s draft or moves? Filter the <a href="draft.html" style="color:var(--blue-bright)">Draft</a> and <a href="transactions.html" style="color:var(--blue-bright)">Transactions</a> pages by ${season}.</p>`;
+}
+
+/* Schedule swap for a past season (regular season only): every manager's record with each other manager's schedule.
+   Shared grid and math in assets/js/schedule_swap.js; the 2026 version is the Week 11 commentary sub-tab. */
+function scheduleSwapSection(season, sm, regWeeks) {
+  if (typeof ScheduleSwap === 'undefined') return '';
+  const reg = new Set(regWeeks);
+  const games = sm.filter(m => reg.has(m.week)).map(m => ({ week: m.week, a: m.winner, b: m.loser, sa: +m.winning_score, sb: +m.losing_score }));
+  if (!games.length) return '';
+  const R = ScheduleSwap.compute(games);
+  return `<div class="hx-section-title"><h2>Schedule swap</h2><span>Each manager's regular-season record with every other manager's schedule</span></div>
+    ${ScheduleSwap.html(managers, R, { findings: true, luckBars: true, luckTitle: 'Schedule luck, in wins', luckClass: 'ss-h' })}`;
 }
 
 /* ---------- hero + wiring ---------- */
