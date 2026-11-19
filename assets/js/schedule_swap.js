@@ -17,6 +17,8 @@
 .ss-grid td.c{color:var(--text)}
 .ss-grid td.self{outline:2px solid var(--live);outline-offset:-3px;font-weight:600;color:var(--live-bright)}
 .ss-grid td.sum{border-left:1px solid var(--line);color:var(--text);font-weight:600}
+.ss-grid tr.med td,.ss-grid tr.med th{border-top:1px solid var(--line-strong)}
+.ss-grid tr.med .rowh{color:var(--text-muted);font-style:italic;font-weight:500}
 .ss-grid tr.foot td,.ss-grid tr.foot th{border-bottom:none;border-top:1px solid var(--line-strong);color:var(--text-muted)}
 .ss-grid .pos{color:#4FA876}.ss-grid .neg{color:#E0524A}
 .ss-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.74rem;color:var(--text-muted);margin-top:8px}
@@ -57,6 +59,24 @@
       return r;
     };
     const M = {}; teams.forEach(a => { M[a] = {}; teams.forEach(b => { M[a][b] = rec(a, b); }); });
+    // League median: a team that scores exactly that week's median score, played on each schedule (every week counts)
+    const med = {};
+    wk.forEach(w => {
+      const v = teams.map(t => score[w + '|' + t]).filter(x => x != null).sort((x, y) => x - y);
+      med[w] = v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
+    });
+    const median = {};
+    teams.forEach(b => {
+      const r = { w: 0, l: 0, t: 0 };
+      wk.forEach(w => {
+        const o = opp[w + '|' + b];
+        if (!o) return;
+        const d = med[w] - score[w + '|' + o];
+        d > 0 ? r.w++ : d < 0 ? r.l++ : r.t++;
+      });
+      r.n = r.w + r.l + r.t; r.pct = r.n ? (r.w + r.t / 2) / r.n : 0;
+      median[b] = r;
+    });
     const actual = a => M[a][a];
     const avgPct = a => teams.filter(b => b !== a).reduce((s, b) => s + M[a][b].pct, 0) / (teams.length - 1);
     const schedPct = b => teams.filter(a => a !== b).reduce((s, a) => s + M[a][b].pct, 0) / (teams.length - 1);
@@ -65,7 +85,7 @@
     const EPS = 1e-9;
     const bestOwn = teams.filter(a => teams.every(b => b === a || M[a][b].pct <= actual(a).pct + EPS));
     const worstOwn = teams.filter(a => teams.every(b => b === a || M[a][b].pct >= actual(a).pct - EPS));
-    return { M, teams, order, weeks: wk, actual, avgPct, schedPct, luck, bestOwn, worstOwn };
+    return { M, teams, order, weeks: wk, actual, avgPct, schedPct, luck, bestOwn, worstOwn, median };
   }
 
   const fmt = r => `${r.w}-${r.l}${r.t ? '-' + r.t : ''}`;
@@ -90,6 +110,12 @@
       return a === b ? `<td class="c self" title="${a}'s real record">${fmt(r)}</td>`
         : `<td class="c" style="${shade(a, r)}" title="${a} with ${b}'s schedule: ${fmt(r)}">${fmt(r)}</td>`;
     }).join('')}<td class="sum">${p3(avgPct(a))}</td><td class="sum ${luck(a) >= 0.5 ? 'pos' : luck(a) <= -0.5 ? 'neg' : ''}">${luck(a) > 0 ? '+' : ''}${luck(a).toFixed(1)}</td></tr>`).join('');
+    // League median row: shaded against .500, since a median team should break even on an average schedule
+    const medRow = R.median ? `<tr class="med"><th class="rowh" title="A team that scores the league's median score every week">League median</th>${order.map(b => {
+      const r = R.median[b], d = r.pct - 0.5;
+      const bg = Math.abs(d) < 0.001 ? '' : `background:${d > 0 ? 'rgba(79,168,118,' : 'rgba(224,82,74,'}${Math.min(0.6, 0.1 + Math.abs(d) * 1.1).toFixed(2)})`;
+      return `<td class="c" style="${bg}" title="League-median team with ${b}'s schedule: ${fmt(r)}">${fmt(r)}</td>`;
+    }).join('')}<td class="sum"></td><td class="sum"></td></tr>` : '';
     const foot = `<tr class="foot"><th class="rowh" style="color:var(--text-muted);font-weight:500">Others' W%</th>${order.map(b =>
       `<td title="How the other teams do with ${b}'s schedule">${p3(schedPct(b))}</td>`).join('')}<td></td><td></td></tr>`;
     const hard = [...order].sort((a, b) => schedPct(a) - schedPct(b));
@@ -115,9 +141,9 @@
           <span class="v">${v > 0 ? '+' : ''}${v.toFixed(1)}</span></div>`;
       }).join('')}</div>
       <p class="ss-note">Positive means his schedule handed him more wins than it would most teams.</p>` : '';
-    return `${find}<div class="ss-scroll"><table class="ss-grid"><thead>${head}</thead><tbody>${body}${foot}</tbody></table></div>
+    return `${find}<div class="ss-scroll"><table class="ss-grid"><thead>${head}</thead><tbody>${body}${medRow}${foot}</tbody></table></div>
       <div class="ss-legend"><span><i style="background:rgba(79,168,118,.45)"></i>Higher win rate than his real record</span><span><i style="background:rgba(224,82,74,.45)"></i>Lower</span><span><i style="outline:2px solid var(--live);outline-offset:-2px"></i>Real record</span></div>
-      <p class="ss-note"><b>Avg W%</b> is his win rate across the other ${order.length - 1} schedules. <b>Luck</b> is his real wins minus the wins that rate predicts. <b>Others' W%</b> is how everyone else does with that schedule: lower means tougher (hardest: ${hard[0]}, ${p3(schedPct(hard[0]))}; easiest: ${hard.at(-1)}, ${p3(schedPct(hard.at(-1)))}). The weeks a schedule's owner played that team are skipped, so swapped records can cover a game or two fewer.</p>
+      <p class="ss-note"><b>Avg W%</b> is his win rate across the other ${order.length - 1} schedules. <b>Luck</b> is his real wins minus the wins that rate predicts. <b>League median</b> is a team that scores exactly the league's median score every week, played on that schedule. <b>Others' W%</b> is how everyone else does with that schedule: lower means tougher (hardest: ${hard[0]}, ${p3(schedPct(hard[0]))}; easiest: ${hard.at(-1)}, ${p3(schedPct(hard.at(-1)))}). The weeks a schedule's owner played that team are skipped, so swapped records can cover a game or two fewer.</p>
       ${bars}`;
   }
 
