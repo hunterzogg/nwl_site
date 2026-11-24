@@ -440,9 +440,9 @@ function renderSummary() {
     ${totalOnly ? '' : `<div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span></div>`}
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
       ${totalOnly
-        ? `${yr} only has each manager's total from the league record, with no split between trades and adds.`
+        ? `We don't have trade data before ${loggedFrom}, so ${yr} shows each manager's full transaction count without a split between trades and adds.`
         : `Trades count once for each manager in the deal. Adds are successful waiver claims and free agent pickups; lost bids are not counted. Total is trades plus adds.`}
-      Since 2013 is each manager's total from the league record through 2025, which has no split by type, so it counts more moves than the itemized log (which starts in ${loggedFrom}).
+      We don't have trade data before ${loggedFrom}, so trades and adds are only broken out from ${loggedFrom} on. Since 2013 is each manager's full transaction count through 2025 from the league record, so it includes moves the itemized log doesn't.
     </p>
   `;
 
