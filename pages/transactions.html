@@ -369,7 +369,7 @@ function renderSummary() {
 
   // League totals by season. Total = the league record (2013-2025) or the log (2026). Before 2024 the league didn't
   // separate waiver claims from free agent pickups, so everything that isn't a trade is an add: adds = total - trades.
-  // Trades count once for each manager in the deal, the same way the record counts them. Trade data starts in 2022.
+  // A trade counts as one transaction in the league total (the per-manager record counts it for both teams). Trade data starts in 2022.
   const loggedFromS = Math.min(...transactions.map(x => x.season));
   const lastRecord = Math.max(...leagueTotals.map(s => parseInt(s.season)));
   const seasonTotals = {};
@@ -377,10 +377,11 @@ function renderSummary() {
   transactions.forEach(x => { if (!seasonTotals[x.season]) seasonTotals[x.season] = { season: x.season, record: 0 }; });
   const seasonRows = Object.values(seasonTotals).map(s => {
     if (s.season < loggedFromS) return { ...s, trades: null, adds: null, total: s.record };
-    const trd = trades.filter(x => x.season === s.season).length * 2;
+    const trd = trades.filter(x => x.season === s.season).length;
     const logAdds = transactions.filter(x => x.season === s.season && x.bid_outcome !== 'lost' && ['waiver', 'free_agent'].includes(x.acquisition_type)).length;
-    const total = s.season <= lastRecord ? Math.max(s.record, trd) : trd + logAdds;
-    return { ...s, trades: trd, adds: total - trd, total, partial: s.season > lastRecord };
+    // The record counts a trade once for each team, so a trade is in it twice; count it once here.
+    const adds = s.season <= lastRecord ? Math.max(0, s.record - trd * 2) : logAdds;
+    return { ...s, trades: trd, adds, total: trd + adds, partial: s.season > lastRecord };
   }).sort((x, y) => y.season - x.season);
   const maxSeason = Math.max(1, ...seasonRows.map(s => s.total));
   const sp = (n, s) => (n / s.total * 100).toFixed(1) + '%';
@@ -400,7 +401,7 @@ function renderSummary() {
     </div>
     <div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span><span><i style="background:var(--live-bright);opacity:.55"></i>Total only (no split)</span></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
-      Adds are waiver claims and free agent pickups; before 2024 the league didn't separate the two. A trade counts once for each manager in the deal. We don't have trade data before ${loggedFromS}, so earlier seasons show the total alone.
+      Adds are waiver claims and free agent pickups; before 2024 the league didn't separate the two. Each trade counts as one transaction here, even though it appears on both managers' counts. We don't have trade data before ${loggedFromS}, so earlier seasons show the record total alone, which counts each trade twice.
     </p>
   `;
 
