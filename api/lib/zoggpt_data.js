@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DATA_DIR = path.join(process.cwd(), 'data');
-const SKIP = new Set(['player_weeks', 'nfl_position_finishes', 'scorigami_combos']); // too big / nested for generic queries
+const SKIP = new Set(['player_weeks']); // nested file; exposed below as a flattened table instead
 const cache = {};
 
 function listDatasets() {
@@ -18,12 +18,28 @@ function listDatasets() {
     }
   };
   scan(DATA_DIR, '');
+  out.push('player_weeks'); // virtual flat table built from data/player_weeks.json
   return out.sort();
+}
+
+// player_weeks.json is nested (players by id, seasons -> weeks -> [manager, playerId, slot, points]); flatten to rows.
+function flattenPlayerWeeks() {
+  const raw = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'player_weeks.json'), 'utf8'));
+  const rows = [];
+  for (const [season, s] of Object.entries(raw.seasons || {})) {
+    for (const [week, list] of Object.entries(s.weeks || {})) {
+      for (const [manager, id, slot, points] of list) {
+        const [player, position] = raw.players[id] || [id, ''];
+        rows.push({ season, week, manager, player, position, slot, points });
+      }
+    }
+  }
+  return rows;
 }
 
 function load(name) {
   if (!listDatasets().includes(name)) throw new Error(`Unknown dataset "${name}". Call describe_data to list datasets.`);
-  if (!cache[name]) cache[name] = JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
+  if (!cache[name]) cache[name] = name === 'player_weeks' ? flattenPlayerWeeks() : JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
   return cache[name];
 }
 

@@ -11,7 +11,7 @@ const SYSTEM = `You are ZogGPT, the stats assistant for the NWL (National Wayzat
 - Always call describe_data first if you're unsure which dataset or fields exist. Numbers are often stored as strings; the query tool handles that.
 - Keep answers short and direct: lead with the answer, then one line of context. Use plain text, no tables unless asked. Show scores to one decimal.
 - Compare across the whole league history (2013 onward) by default. Scoring rules changed over the years (see the scoring_era_notes dataset); if a comparison across eras would change the conclusion, mention it briefly.
-- Data caveats: transaction counts per manager (manager_season_tx) count a trade for both teams involved. Trade-by-trade data (trades, transactions_with_dates) only exists from 2022 on. Before 2024 the league did not separate waivers from free agent pickups.
+- Data caveats: transaction counts per manager (manager_season_tx) count a trade for both teams involved. Trade-by-trade data (trades, transactions_with_dates) only exists from 2022 on. Before 2024 the league did not separate waivers from free agent pickups. player_weeks (every rostered player's weekly points, with manager, position and slot S=starter, B=bench, IR) covers 2022 onward only; for points scored by starters, filter slot to S.
 - You only discuss NWL data. Politely decline anything else.`;
 
 const TOOLS = [
@@ -48,8 +48,8 @@ function runTool(name, input) {
 }
 
 async function underLimit(manager) {
-  await sql`CREATE TABLE IF NOT EXISTS zoggpt_usage (manager text NOT NULL, day date NOT NULL DEFAULT CURRENT_DATE, count int NOT NULL DEFAULT 0, PRIMARY KEY (manager, day))`;
-  const r = await sql`INSERT INTO zoggpt_usage (manager, day, count) VALUES (${manager}, CURRENT_DATE, 1)
+  await sql`CREATE TABLE IF NOT EXISTS zoggpt_usage (manager text NOT NULL, day date NOT NULL DEFAULT (now() AT TIME ZONE 'America/New_York')::date, count int NOT NULL DEFAULT 0, PRIMARY KEY (manager, day))`;
+  const r = await sql`INSERT INTO zoggpt_usage (manager, day, count) VALUES (${manager}, (now() AT TIME ZONE 'America/New_York')::date, 1)
     ON CONFLICT (manager, day) DO UPDATE SET count = zoggpt_usage.count + 1 RETURNING count`;
   return r.rows[0].count <= DAILY_LIMIT;
 }
