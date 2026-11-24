@@ -155,7 +155,8 @@
     <div class="records-group-title">League Totals By Season</div>
     <div id="summarySeasonTable"></div>
 
-    <div class="records-group-title">Transactions Per Manager (Career)</div>
+    <div class="records-group-title">Transactions Per Manager</div>
+    <div class="controls-row"><select id="summaryMgrSeason" aria-label="Season"></select></div>
     <div id="summaryManagerTable"></div>
 
     <div class="records-group-title">Acquisition Type Breakdown</div>
@@ -366,34 +367,45 @@ function renderSummary() {
     </p>
   `;
 
-  // Per-manager career totals from Mgr Summary (more complete than counting tx log rows)
+  // Per-manager breakdown: trades (one per trade, counted for both sides), adds (waiver wins + free agent pickups),
+  // and total (trades + adds). The itemized log starts in 2022, so this table covers 2022 onward; the older
+  // per-manager totals (2013-2025, no type split) sit in the last column.
+  const sel = document.getElementById('summaryMgrSeason');
+  if (!sel.options.length) {
+    const yrs = [...new Set(transactions.map(x => x.season))].sort((x, y) => y - x);
+    sel.innerHTML = `<option value="">All seasons (${Math.min(...yrs)}-${Math.max(...yrs)})</option>` + yrs.map(y => `<option value="${y}">${y}</option>`).join('');
+    sel.addEventListener('change', renderSummary);
+  }
+  const yr = sel.value ? parseInt(sel.value) : null;
   const byManager = {};
-  managers.forEach(m => byManager[m.manager] = { manager: m.manager, total: 0, seasons: 0, most: null, fewest: null });
-  mgrTotals.forEach(t => {
-    if (!byManager[t.manager]) return;
-    const count = parseInt(t.count);
-    byManager[t.manager].total += count;
-    byManager[t.manager].seasons++;
-    if (!byManager[t.manager].most || count > byManager[t.manager].most.count) byManager[t.manager].most = { count, season: t.season };
-    if (!byManager[t.manager].fewest || count < byManager[t.manager].fewest.count) byManager[t.manager].fewest = { count, season: t.season };
+  managers.forEach(m => byManager[m.manager] = { manager: m.manager, trades: 0, waiver: 0, fa: 0, career: 0 });
+  const bump = (m, k) => { if (byManager[m]) byManager[m][k]++; };
+  trades.filter(x => !yr || x.season === yr).forEach(x => { bump(x.team1, 'trades'); bump(x.team2, 'trades'); });
+  transactions.filter(x => (!yr || x.season === yr) && x.bid_outcome !== 'lost').forEach(x => {
+    if (x.acquisition_type === 'waiver') bump(x.manager, 'waiver');
+    else if (x.acquisition_type === 'free_agent') bump(x.manager, 'fa');
   });
+  mgrTotals.forEach(x => { if (byManager[x.manager]) byManager[x.manager].career += parseInt(x.count) || 0; });
   const mgrRows = Object.values(byManager)
+    .map(m => ({ ...m, adds: m.waiver + m.fa, total: m.trades + m.waiver + m.fa }))
     .filter(m => m.total > 0)
-    .map(m => ({ ...m, avg: m.seasons ? m.total / m.seasons : 0 }))
-    .sort((a,b) => b.total - a.total);
+    .sort((x, y) => y.total - x.total || y.trades - x.trades);
+  const maxTotal = Math.max(1, ...mgrRows.map(m => m.total));
+  const bar = m => `<div class="tg-bar mt-bar" style="margin-top:4px"><span style="left:0;width:${(m.total / maxTotal * 100).toFixed(1)}%;background:var(--live)"></span></div>`;
+  const split = m => `<span class="precision-note">(${m.waiver} waiver &middot; ${m.fa} free agent)</span>`;
 
   document.getElementById('summaryManagerTable').innerHTML = `
     <div class="table-wide" style="overflow-x:auto;">
     <table>
-      <thead><tr><th>Manager</th><th class="num">Total Transactions</th><th class="num">Avg / Season</th><th class="num">Most in a Season</th><th class="num">Fewest in a Season</th></tr></thead>
+      <thead><tr><th>Manager</th><th class="num">Trades</th><th class="num">Adds</th><th class="num">Total</th><th class="num">Career (2013-25)</th></tr></thead>
       <tbody>
         ${mgrRows.map(m => `
           <tr>
             <td>${managerTag(managers, m.manager)}</td>
-            <td class="num">${m.total}</td>
-            <td class="num">${m.avg.toFixed(1)}</td>
-            <td class="num">${m.most.count} <span class="precision-note">(${m.most.season})</span></td>
-            <td class="num">${m.fewest.count} <span class="precision-note">(${m.fewest.season})</span></td>
+            <td class="num">${m.trades}</td>
+            <td class="num">${m.adds} ${split(m)}</td>
+            <td class="num"><b>${m.total}</b></td>
+            <td class="num" style="color:var(--text-muted);">${m.career || '&mdash;'}</td>
           </tr>
         `).join('')}
       </tbody>
@@ -404,13 +416,16 @@ function renderSummary() {
         <div class="table-card">
           <div class="table-card-top">
             <span class="grow">${managerTag(managers, m.manager)}</span>
-            <span class="mono" style="color:var(--text-muted);">${m.total} total</span>
+            <span class="mono"><b>${m.total}</b> total</span>
           </div>
-          <div class="table-card-sub">Avg ${m.avg.toFixed(1)}/season</div>
-          <div class="table-card-sub">Most ${m.most.count} (${m.most.season}) &middot; Fewest ${m.fewest.count} (${m.fewest.season})</div>
+          <div class="table-card-sub">${m.trades} trade${m.trades === 1 ? '' : 's'} &middot; ${m.adds} add${m.adds === 1 ? '' : 's'} ${split(m)}</div>
+          ${bar(m)}
         </div>
       `).join('')}
     </div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
+      Trades count once for each manager in the deal. Adds are successful waiver claims and free agent pickups; lost bids are not counted. The itemized log starts in 2022. The career column is the older league record of every transaction, 2013-2025, which has no breakdown by type.
+    </p>
   `;
 
   // Acquisition type breakdown (from transaction log, best data we have for this split)
