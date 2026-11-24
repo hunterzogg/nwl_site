@@ -775,7 +775,7 @@
   },
   {
     "week": 12,
-    "published": false,
+    "published": true,
     "facts": [
       {
         "label": "Playoff Swing",

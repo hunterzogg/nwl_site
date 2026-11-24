@@ -107,18 +107,6 @@
       }
     },
     {
-      "type": "over_under",
-      "prompt": "Kenneth Walker III (Ainsworth) is questionable and plays the Bills on Thanksgiving at 8:20 p.m. ET, the same week Ainsworth faces Stover. The site projects him for 19.7. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
-      "option_a": "Over 17.5",
-      "option_b": "Under 17.5",
-      "points": 1,
-      "tolerance": null,
-      "closest_bonus": null,
-      "reference": {
-        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
-      }
-    },
-    {
       "type": "number_guess",
       "prompt": "LONGSHOT (3 points): Guess the biggest margin of victory in Week 12. The first 11 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, 44.5, 70.7, and 54.9. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
       "option_a": null,
