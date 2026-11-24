@@ -1,0 +1,41 @@
+{
+  "grades": [
+    {
+      "id": 102,
+      "correct_option": "Goetz"
+    },
+    {
+      "id": 103,
+      "correct_option": "a"
+    },
+    {
+      "id": 104,
+      "correct_option": "b"
+    },
+    {
+      "id": 105,
+      "correct_option": "a"
+    },
+    {
+      "id": 106,
+      "correct_option": "b"
+    },
+    {
+      "id": 107,
+      "correct_option": "a"
+    },
+    {
+      "id": 108,
+      "correct_option": "a"
+    },
+    {
+      "id": 109,
+      "correct_option": "b"
+    },
+    {
+      "id": 110,
+      "correct_option": "1111.66"
+    }
+  ],
+  "overwrite": false
+}

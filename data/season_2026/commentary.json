@@ -2961,7 +2961,511 @@
   {
     "week": 12,
     "published": false,
-    "title": "",
-    "body": ""
+    "title": "Larson Wins by 0.2, and Muenchow Drops Six Straight",
+    "body": "Larson beat Zogg 76.36-76.16, a 0.20-point margin. It's the second-closest game since 2022 and the closest of 2026, and it gave Larson his fifth straight win. He now sits at 8-3 with 1,023 points, the fewest of any 8-3 team since 2022.\n\nGoetz led the week with 125 against Muenchow (70). Palaia beat Stover 119-106, Conlin beat Glaser 115-63, and Ainsworth beat Hagan 113-67 to reach 8-3. Hagan scored 154 the week before, and the 87-point drop is the second-largest week-to-week fall since 2022.\n\n{{visual:week11-scores}}\n\nThe league scored 1,112 points, an average of 93 per team and the 13th-lowest week of 67 since 2022. Three teams (Hagan, Muenchow, and Glaser) scored under 70, and only Goetz reached 120.\n\nStover has lost two straight at 7-4, and Muenchow has lost six in a row at 3-8, his longest skid since seven in 2021. Pfaffinger is also 3-8.\n\n{{visual:best-ball}}\n\nLarson would be 6-5 and Pfaffinger 5-6 in best ball, while Prodahl would be 7-4 against his actual 5-6. Glaser left 191 points on his bench through Week 11, the most in the league.\n\n{{visual:shotguns}}\n\nNo starter scored a zero in Week 11, so the shotgun counts hold: Conlin still leads with seven.\n\n{{visual:pf-pa}}\n\nThe biggest swing in the playoff race belongs to Palaia and Prodahl. Palaia's odds climbed from 40% to 85% after beating Stover 119-106, while Prodahl's fell from 68% to 23% after losing to Pfaffinger 99-83. Palaia is 6-5 and Prodahl is 5-6, and they sit in different divisions.\n\n{{visual:playoff-odds}}\n\nWeek 12 has Ainsworth visiting Stover in a game that decides first place in the Gold division, and Prodahl is favored by 11.5 over Hagan.\n\nThe Week 11 longshot asked for the league's total points, and it finished at 1,111.66. Glaser and Zogg both guessed 1,111 and tied for closest, each 0.66 away. Pfaffinger's 1,129 was the only other guess inside the 25-point window.\n\n{{visual:week12-lines}}\n\nLines are as of Tuesday and will move after Wednesday's waivers.",
+    "visuals": [
+      {
+        "id": "week11-scores",
+        "type": "bar",
+        "title": "Week 11 Scores",
+        "legend": [
+          {
+            "label": "Won",
+            "tone": ""
+          },
+          {
+            "label": "Lost",
+            "tone": "muted"
+          }
+        ],
+        "bars": [
+          {
+            "manager": "Goetz",
+            "value": 124.6,
+            "display": "125",
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 119.16,
+            "display": "119",
+            "tone": ""
+          },
+          {
+            "manager": "Conlin",
+            "value": 115.3,
+            "display": "115",
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 112.98,
+            "display": "113",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 105.7,
+            "display": "106",
+            "tone": "muted"
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 98.96,
+            "display": "99",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 83.16,
+            "display": "83",
+            "tone": "muted"
+          },
+          {
+            "manager": "Larson",
+            "value": 76.36,
+            "display": "76",
+            "tone": ""
+          },
+          {
+            "manager": "Zogg",
+            "value": 76.16,
+            "display": "76",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 69.74,
+            "display": "70",
+            "tone": "muted"
+          },
+          {
+            "manager": "Hagan",
+            "value": 66.5,
+            "display": "66",
+            "tone": "muted"
+          },
+          {
+            "manager": "Glaser",
+            "value": 63.04,
+            "display": "63",
+            "tone": "muted"
+          }
+        ]
+      },
+      {
+        "id": "best-ball",
+        "type": "table",
+        "title": "Best-Ball Standings Through Week 11",
+        "columns": [
+          {
+            "key": "mgr",
+            "label": "Team",
+            "manager": true
+          },
+          {
+            "key": "act",
+            "label": "Actual",
+            "num": true
+          },
+          {
+            "key": "bb",
+            "label": "Best Ball",
+            "num": true
+          },
+          {
+            "key": "left",
+            "label": "Bench Pts Left",
+            "num": true
+          }
+        ],
+        "rows": [
+          {
+            "mgr": "Ainsworth",
+            "act": "8-3",
+            "bb": "8-3",
+            "left": "138"
+          },
+          {
+            "mgr": "Larson",
+            "act": "8-3",
+            "bb": "6-5",
+            "left": "158",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Goetz",
+            "act": "7-4",
+            "bb": "7-4",
+            "left": "86"
+          },
+          {
+            "mgr": "Stover",
+            "act": "7-4",
+            "bb": "7-4",
+            "left": "143"
+          },
+          {
+            "mgr": "Glaser",
+            "act": "7-4",
+            "bb": "6-5",
+            "left": "191",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Palaia",
+            "act": "6-5",
+            "bb": "5-6",
+            "left": "108",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Prodahl",
+            "act": "5-6",
+            "bb": "7-4",
+            "left": "145",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          },
+          {
+            "mgr": "Conlin",
+            "act": "4-7",
+            "bb": "4-7",
+            "left": "142"
+          },
+          {
+            "mgr": "Hagan",
+            "act": "4-7",
+            "bb": "4-7",
+            "left": "115"
+          },
+          {
+            "mgr": "Zogg",
+            "act": "4-7",
+            "bb": "4-7",
+            "left": "161"
+          },
+          {
+            "mgr": "Muenchow",
+            "act": "3-8",
+            "bb": "3-8",
+            "left": "181"
+          },
+          {
+            "mgr": "Pfaffinger",
+            "act": "3-8",
+            "bb": "5-6",
+            "left": "130",
+            "_hl": true,
+            "_em": [
+              "bb"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shotguns",
+        "type": "bar",
+        "title": "Shotguns in 2026, Through Week 11",
+        "bars": [
+          {
+            "manager": "Conlin",
+            "value": 7,
+            "tone": "hot"
+          },
+          {
+            "manager": "Glaser",
+            "value": 5,
+            "tone": ""
+          },
+          {
+            "manager": "Ainsworth",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Goetz",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 2,
+            "tone": ""
+          },
+          {
+            "manager": "Hagan",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Muenchow",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 1,
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 1,
+            "tone": ""
+          }
+        ],
+        "note": "Starters (not Head Coaches) who scored 0 or less. Zogg has none."
+      },
+      {
+        "id": "pf-pa",
+        "type": "scatter",
+        "title": "Points For vs. Points Against Through Week 11",
+        "x": {
+          "label": "Points For"
+        },
+        "y": {
+          "label": "Points Against"
+        },
+        "points": [
+          {
+            "manager": "Ainsworth",
+            "x": 1206.8,
+            "y": 1008.8,
+            "tip": "1,206.8 PF, 1,008.8 PA (8-3)"
+          },
+          {
+            "manager": "Larson",
+            "x": 1023.1,
+            "y": 960.3,
+            "tip": "1,023.1 PF, 960.3 PA (8-3)"
+          },
+          {
+            "manager": "Goetz",
+            "x": 1217.0,
+            "y": 1133.2,
+            "tip": "1,217.0 PF, 1,133.2 PA (7-4)"
+          },
+          {
+            "manager": "Stover",
+            "x": 1134.3,
+            "y": 1053.7,
+            "tip": "1,134.3 PF, 1,053.7 PA (7-4)"
+          },
+          {
+            "manager": "Glaser",
+            "x": 1125.4,
+            "y": 1067.3,
+            "tip": "1,125.4 PF, 1,067.3 PA (7-4)"
+          },
+          {
+            "manager": "Palaia",
+            "x": 1117.9,
+            "y": 1128.1,
+            "tip": "1,117.9 PF, 1,128.1 PA (6-5)"
+          },
+          {
+            "manager": "Prodahl",
+            "x": 1109.8,
+            "y": 1083.2,
+            "tip": "1,109.8 PF, 1,083.2 PA (5-6)"
+          },
+          {
+            "manager": "Conlin",
+            "x": 1028.3,
+            "y": 1023.7,
+            "tip": "1,028.3 PF, 1,023.7 PA (4-7)"
+          },
+          {
+            "manager": "Hagan",
+            "x": 1027.6,
+            "y": 1105.0,
+            "tip": "1,027.6 PF, 1,105.0 PA (4-7)"
+          },
+          {
+            "manager": "Zogg",
+            "x": 963.4,
+            "y": 1035.4,
+            "tip": "963.4 PF, 1,035.4 PA (4-7)"
+          },
+          {
+            "manager": "Muenchow",
+            "x": 1019.8,
+            "y": 1164.8,
+            "tip": "1,019.8 PF, 1,164.8 PA (3-8)"
+          },
+          {
+            "manager": "Pfaffinger",
+            "x": 1006.3,
+            "y": 1216.3,
+            "tip": "1,006.3 PF, 1,216.3 PA (3-8)"
+          }
+        ]
+      },
+      {
+        "id": "playoff-odds",
+        "type": "bar",
+        "title": "Playoff Odds Going Into Week 12",
+        "bars": [
+          {
+            "manager": "Ainsworth",
+            "value": 100,
+            "display": ">99% (0)",
+            "tone": ""
+          },
+          {
+            "manager": "Goetz",
+            "value": 99.3,
+            "display": "99% (+4)",
+            "tone": ""
+          },
+          {
+            "manager": "Larson",
+            "value": 98.5,
+            "display": "99% (+8)",
+            "tone": ""
+          },
+          {
+            "manager": "Stover",
+            "value": 98.3,
+            "display": "98% (+1)",
+            "tone": ""
+          },
+          {
+            "manager": "Glaser",
+            "value": 94.6,
+            "display": "95% (-4)",
+            "tone": ""
+          },
+          {
+            "manager": "Palaia",
+            "value": 84.5,
+            "display": "85% (+45)",
+            "tone": ""
+          },
+          {
+            "manager": "Prodahl",
+            "value": 23.2,
+            "display": "23% (-45)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Hagan",
+            "value": 1.2,
+            "display": "1% (-5)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Conlin",
+            "value": 0.5,
+            "display": "<1% (0)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Zogg",
+            "value": 0.5,
+            "display": "<1% (-3)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Muenchow",
+            "value": 0.5,
+            "display": "<1% (0)",
+            "tone": "muted"
+          },
+          {
+            "manager": "Pfaffinger",
+            "value": 0.5,
+            "display": "<1% (0)",
+            "tone": "muted"
+          }
+        ],
+        "note": "Changes are from last week's published odds. Simulated from each team's scoring this season and its last five games, with the six-team format and division winners seeded first."
+      },
+      {
+        "id": "week12-lines",
+        "type": "table",
+        "title": "Week 12 Lines (as of Tuesday)",
+        "columns": [
+          {
+            "key": "game",
+            "label": "Game"
+          },
+          {
+            "key": "fav",
+            "label": "Favorite",
+            "manager": true
+          },
+          {
+            "key": "line",
+            "label": "Line",
+            "num": true
+          },
+          {
+            "key": "series",
+            "label": "All-Time Series"
+          }
+        ],
+        "rows": [
+          {
+            "game": "Stover vs. Ainsworth",
+            "fav": "Ainsworth",
+            "line": "5.0",
+            "series": "Stover leads 9-8",
+            "_hl": true
+          },
+          {
+            "game": "Hagan vs. Prodahl",
+            "fav": "Prodahl",
+            "line": "11.5",
+            "series": "Hagan leads 11-8"
+          },
+          {
+            "game": "Pfaffinger vs. Conlin",
+            "fav": "Pfaffinger",
+            "line": "5.5",
+            "series": "Conlin leads 11-10"
+          },
+          {
+            "game": "Zogg vs. Goetz",
+            "fav": "Goetz",
+            "line": "7.0",
+            "series": "Goetz leads 14-9"
+          },
+          {
+            "game": "Palaia vs. Muenchow",
+            "fav": "Muenchow",
+            "line": "10.0",
+            "series": "Muenchow leads 10-9"
+          },
+          {
+            "game": "Larson vs. Glaser",
+            "fav": "Glaser",
+            "line": "8.0",
+            "series": "Larson leads 9-8"
+          }
+        ]
+      }
+    ]
   }
 ]

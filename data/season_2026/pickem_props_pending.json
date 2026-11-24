@@ -1,0 +1,140 @@
+{
+  "season": 2026,
+  "week": 12,
+  "lock_at": "2026-11-26T18:00:00.000Z",
+  "questions": [
+    {
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 12?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null
+    },
+    {
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 12. Weeks 1-11 highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, 133.6, 163.7, and 124.6.",
+      "option_a": "Over 135.5",
+      "option_b": "Under 135.5",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "Highest score by week",
+        "values": [
+          165.6,
+          138.9,
+          132.2,
+          138.8,
+          168.2,
+          114.6,
+          119.8,
+          143.3,
+          133.6,
+          163.7,
+          124.6
+        ]
+      }
+    },
+    {
+      "type": "this_or_that",
+      "prompt": "Game of the week: Stover (7-4, two straight losses) hosts Ainsworth (8-3), who is favored by 5 as of Tuesday. Stover leads the all-time series 9-8. Who wins?",
+      "option_a": "Stover",
+      "option_b": "Ainsworth",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      }
+    },
+    {
+      "type": "this_or_that",
+      "prompt": "Prodahl is favored by 11.5 over Hagan, the week's biggest spread, as of Tuesday. Hagan leads the all-time series 11-8. Does Prodahl cover, winning by more than 11.5?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      }
+    },
+    {
+      "type": "over_under",
+      "prompt": "How many teams score under 70 in Week 12? Three did in Week 11 (Hagan, Muenchow, and Glaser). Weeks 1-10 had 1, 1, 1, 0, 2, 1, 0, 1, 1, and 0.",
+      "option_a": "Over 1.5",
+      "option_b": "Under 1.5",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "Sub-70 scores by week",
+        "values": [
+          1,
+          1,
+          1,
+          0,
+          2,
+          1,
+          0,
+          1,
+          1,
+          0,
+          3
+        ]
+      }
+    },
+    {
+      "type": "this_or_that",
+      "prompt": "Larson (8-3) won Week 11 by 0.2 points, his fifth straight win, and now faces Glaser (7-4), who is favored by 8 as of Tuesday. Larson leads the all-time series 9-8. Who wins?",
+      "option_a": "Larson",
+      "option_b": "Glaser",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      }
+    },
+    {
+      "type": "this_or_that",
+      "prompt": "Muenchow has lost six straight and is 3-8, but he is favored by 10 over Palaia (6-5) as of Tuesday. Muenchow leads the all-time series 10-9. Does Muenchow win?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      }
+    },
+    {
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess the biggest margin of victory in Week 12. The first 11 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, 44.5, 70.7, and 54.9. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "tolerance": "4",
+      "closest_bonus": 1,
+      "reference": {
+        "label": "Biggest margin by week",
+        "values": [
+          "97.1",
+          "63.3",
+          "59.0",
+          "38.7",
+          "86.3",
+          "31.0",
+          "41.9",
+          "44.5",
+          "44.5",
+          "70.7",
+          "54.9"
+        ]
+      }
+    }
+  ]
+}
