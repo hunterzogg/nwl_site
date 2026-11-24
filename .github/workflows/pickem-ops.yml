@@ -1,0 +1,74 @@
+name: Pick'em Ops
+
+# Pick'em work that used to need a laptop with .env.local: snapshot the questions/picks into the repo (read-only),
+# grade, seed next week's props, and publish them. Only "snapshot" runs on a schedule. Grading, seeding and publishing
+# only run when someone presses "Run workflow" on the Actions tab, so nothing reaches the leaderboard without a
+# person approving it. The database URL is the POSTGRES_URL repo secret (the same value as in .env.local).
+#
+# Flow for a week: (1) snapshot -> read data/season_2026/pickem_snapshot.json; (2) a draft of grades or props is
+# committed to data/season_2026/pickem_grades.json or pickem_props_pending.json for review; (3) after sign-off, run
+# "grade" or "seed"; (4) run "publish" with the week number once the unpublished props look right.
+on:
+  schedule:
+    - cron: '30 14 * * 2'   # Tuesday ~9:30am ET, after the weekly ESPN pull (read-only snapshot)
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'What to run'
+        required: true
+        default: 'snapshot'
+        type: choice
+        options: [snapshot, grade, seed, publish]
+      week:
+        description: 'Week number (publish only)'
+        required: false
+        default: ''
+
+# Same group as the weekly ESPN workflow so the two never push at the same moment.
+concurrency:
+  group: nwl-data
+  cancel-in-progress: false
+
+jobs:
+  pickem:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      CMD: ${{ github.event_name == 'schedule' && 'snapshot' || inputs.command }}
+      WEEK: ${{ inputs.week }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run the Pick'em command
+        run: |
+          if [ "$CMD" = "publish" ]; then
+            node scripts/pickem_ops.js publish --week "$WEEK"
+          else
+            node scripts/pickem_ops.js "$CMD"
+          fi
+
+      - name: Refresh the snapshot after any change
+        if: env.CMD != 'snapshot'
+        run: node scripts/pickem_ops.js snapshot
+
+      - name: Commit the snapshot if it changed
+        run: |
+          git config user.name "nwl-site-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/season_2026/pickem_snapshot.json
+          if git diff --cached --quiet; then
+            echo "No snapshot changes."
+          else
+            git commit -m "Pick'em snapshot ($CMD, $(date -u +%Y-%m-%dT%H:%M:%SZ))"
+            git pull --rebase
+            git push
+          fi
