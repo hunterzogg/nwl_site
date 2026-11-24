@@ -789,7 +789,7 @@
         "label": "Closest Call",
         "headline": "Larson wins by {{num}} points",
         "num": "0.20",
-        "sub": "76.36 to 76.16 over Zogg. It's the closest game of 2026 and the second-closest since 2022.",
+        "sub": "76.36 to 76.16 over Zogg. It's the closest game of 2026 and tied for the fifth-closest decided game in league history.",
         "tone": "hot",
         "wide": true
       },
@@ -797,7 +797,7 @@
         "label": "Thin Eight",
         "headline": "Larson: {{num}} points at 8-3",
         "num": "1,023",
-        "sub": "The fewest of any 8-3 team since 2022. He has won five straight.",
+        "sub": "The fewest of any 8-3 team relative to its league's scoring since 2013. Only Ainsworth's 2013 team had fewer points (916), when teams averaged 84 per game. Larson has won five straight.",
         "tone": "green",
         "wide": false
       },
@@ -805,7 +805,7 @@
         "label": "Biggest Drop",
         "headline": "Hagan fell {{num}} points",
         "num": "87",
-        "sub": "From 154 in Week 10 to 66.5 in Week 11, the second-largest week-to-week drop since 2022.",
+        "sub": "From 154 in Week 10 to 66.5 in Week 11, the seventh-largest week-to-week drop in league history.",
         "tone": "cold",
         "wide": false
       },
@@ -821,7 +821,7 @@
         "label": "Low Tide",
         "headline": "{{num}} teams under 70",
         "num": "3",
-        "sub": "Hagan, Muenchow, and Glaser. The league averaged 93 points per team, the 13th-lowest week since 2022.",
+        "sub": "Hagan, Muenchow, and Glaser. It's the most in any week this season, and the league averaged 93 points per team, the lowest since Week 6.",
         "tone": "cold",
         "wide": true
       },

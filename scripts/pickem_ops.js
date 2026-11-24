@@ -80,6 +80,16 @@ async function seed() {
   }
 }
 
+// update: rewrite the prompt/reference of existing questions from data/season_2026/pickem_updates.json
+// ({"updates":[{"id":N,"prompt":"...","reference":{...}}]}). Only unlocked questions are touched.
+async function update() {
+  const spec = JSON.parse(fs.readFileSync(path.join(DATA, 'pickem_updates.json'), 'utf8'));
+  for (const u of spec.updates || []) {
+    const r = await sql`UPDATE questions SET prompt = ${u.prompt}, reference = ${u.reference ?? null} WHERE id = ${u.id} AND lock_at > now() RETURNING id`;
+    console.log(`question ${u.id}: ${r.rowCount ? 'updated' : 'skipped (missing or already locked)'}`);
+  }
+}
+
 async function publish(week) {
   if (!week) throw new Error('publish needs --week N');
   const r = await sql`UPDATE questions SET published = true WHERE week = ${week} AND season = 2026 AND published = false RETURNING id`;
@@ -95,6 +105,7 @@ async function publish(week) {
   else if (cmd === 'grade') await grade();
   else if (cmd === 'seed') await seed();
   else if (cmd === 'publish') await publish(week);
-  else throw new Error('usage: pickem_ops.js snapshot | grade | seed | publish --week N');
+  else if (cmd === 'update') await update();
+  else throw new Error('usage: pickem_ops.js snapshot | grade | seed | publish --week N | update');
   process.exit(0);
 })().catch((e) => { console.error(e.message); process.exit(1); });

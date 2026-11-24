@@ -18,7 +18,7 @@ on:
         required: true
         default: 'snapshot'
         type: choice
-        options: [snapshot, grade, seed, publish]
+        options: [snapshot, grade, seed, publish, update]
       week:
         description: 'Week number (publish only)'
         required: false
