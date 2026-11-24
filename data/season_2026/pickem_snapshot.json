@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T18:26:51.394Z",
+  "generated_at": "2026-11-24T18:27:16.945Z",
   "questions": [
     {
       "id": 36,
@@ -5703,6 +5703,198 @@
           "choice": "1111"
         }
       ]
+    },
+    {
+      "id": 111,
+      "week": 12,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 12? Thanksgiving weeks since 2022 produced top scores of 125.9 (Palaia), 152.1 (Muenchow), 123.7 (Larson), and 140.8 (Muenchow).",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Top score in each Thanksgiving week: 2022 Palaia 125.9, 2023 Muenchow 152.1, 2024 Larson 123.7, 2025 Muenchow 140.8."
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 112,
+      "week": 12,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 12. The first 11 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, 133.6, 163.7, and 124.6.",
+      "option_a": "Over 135.5",
+      "option_b": "Under 135.5",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "Highest score by week",
+        "values": [
+          165.6,
+          138.9,
+          132.2,
+          138.8,
+          168.2,
+          114.6,
+          119.8,
+          143.3,
+          133.6,
+          163.7,
+          124.6
+        ]
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 113,
+      "week": 12,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: Stover (7-4, two straight losses) hosts Ainsworth (8-3), who is favored by 5 as of Tuesday. Stover leads the all-time series 9-8. Who wins?",
+      "option_a": "Stover",
+      "option_b": "Ainsworth",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 114,
+      "week": 12,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Prodahl is favored by 11.5 over Hagan, the week's biggest spread, as of Tuesday. Hagan leads the all-time series 11-8. Does Prodahl cover, winning by more than 11.5?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 115,
+      "week": 12,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Average score per team in Week 12. Thanksgiving weeks since 2022 averaged 100.2 (101.9, 106.4, 104.2, and 88.5), compared with 97.9 in all other weeks. 2026 is averaging 98.3.",
+      "option_a": "Over 98.5",
+      "option_b": "Under 98.5",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "Average team score in Thanksgiving week",
+        "values": [
+          101.9,
+          106.4,
+          104.2,
+          88.5
+        ]
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 116,
+      "week": 12,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Thanksgiving: Jahmyr Gibbs (Goetz) plays the Bears at 1:00 p.m. ET on Thanksgiving. He scored 41 in Week 10, and the site projects him for 23.4. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "option_a": "Over 22.5",
+      "option_b": "Under 22.5",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 117,
+      "week": 12,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Thanksgiving quarterbacks: who scores more fantasy points, Dak Prescott (Conlin, at home against the Eagles at 4:30 p.m. ET) or Josh Allen (Prodahl, at home against the Chiefs at 8:20 p.m. ET)? The site projects Prescott for 19.5 and Allen for 18.1. Bench or start doesn't matter.",
+      "option_a": "Dak Prescott",
+      "option_b": "Josh Allen",
+      "points": 1,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
+      },
+      "pick_count": 0,
+      "locked": false
+    },
+    {
+      "id": 118,
+      "week": 12,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess the biggest margin of victory in Week 12. The first 11 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, 44.5, 70.7, and 54.9. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-11-26T01:00:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": "4",
+      "closest_bonus": 1,
+      "reference": {
+        "label": "Biggest margin by week",
+        "values": [
+          "97.1",
+          "63.3",
+          "59.0",
+          "38.7",
+          "86.3",
+          "31.0",
+          "41.9",
+          "44.5",
+          "44.5",
+          "70.7",
+          "54.9"
+        ]
+      },
+      "pick_count": 0,
+      "locked": false
     }
   ]
 }
