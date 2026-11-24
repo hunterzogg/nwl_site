@@ -1,0 +1,5708 @@
+{
+  "generated_at": "2026-11-24T18:09:56.797Z",
+  "questions": [
+    {
+      "id": 36,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will Ainsworth's regular-season point total break the all-time NWL single-season scoring record (1764.9, set by Goetz in 2018)? Ainsworth's 283.8 through two weeks is already their own career-best start, by 46 points.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Ainsworth, Glaser, and Larson all started 2-0 - will one of them go on to win the championship? History says it's rare: only 4 of 37 teams that started 2-0 since 2013 won it all, and 13 of those 37 missed the playoffs entirely.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "This year's two hottest starts, head to head - who finishes the regular season with the better record: Ainsworth or Glaser?",
+      "option_a": "Ainsworth",
+      "option_b": "Glaser",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Larson is 2-0 despite having the league's easiest schedule so far (dead last, 12th of 12, in strength of schedule) - once the slate evens out, will they still make the playoffs (top 6)?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Zogg absorbed the biggest Week 1-2 beating in 13 years of NWL history (97.06 points) - will they still make the playoffs (top 6) this season?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "QB has claimed 3x its normal share of the waiver budget this year (37.5% of all FAAB spent vs. a 12.4% historical average), driven by real bidding wars over Tyler Shough and Jared Goff. Will QB still be the single most FAAB-spent position by season's end?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Ainsworth beat out 4 competing bids (totaling $81 more) to win Tyler Shough for $56 on waivers. Will Tyler Shough finish the season as a top-12 fantasy QB?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "week": -2,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Total league-wide FAAB spent this season - the last 3 full-season totals were $1892 (2025), $2251 (2024), and $2065 (2023), a 3-year average of about $2069.",
+      "option_a": "Over 2069.5",
+      "option_b": "Under 2069.5",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "week": -2,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "How many managers will spend their full $200 FAAB budget (or more) by season's end? The cap gets hit more than you'd think - 5 managers hit it in 2022, 5 in 2024, but only 2 in 2023 and 2 in 2025.",
+      "option_a": "Over 3.5",
+      "option_b": "Under 3.5",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "week": -2,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Ainsworth's 97.06-point Week 1 win over Zogg is the biggest season-opening blowout in league history - but not the biggest ever (that's still Conlin's 128-point win over Zogg in 2019). Will an even bigger margin happen later this season?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-27T17:00:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "week": -1,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Who will win the 2026 NWL Championship?",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Palaia"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "week": -1,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Who will finish as this year's Sacko (last place)?",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Conlin"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Larson"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Most regular-season wins by a single manager - Muenchow led with 12 wins last year, but the previous 2 seasons the highest was only 9 and 10 wins.",
+      "option_a": "Over 10.5",
+      "option_b": "Under 10.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Most total points scored, regular season - Muenchow led with 1619.1 points last year.",
+      "option_a": "Over 1618.5",
+      "option_b": "Under 1618.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest single-game score of the season - last year's high was 161.2 (Larson).",
+      "option_a": "Over 159.5",
+      "option_b": "Under 159.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "week": -1,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager will rack up the most total transactions this season?",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "Conlin"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Conlin"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Total trades league-wide this season - 27 trades happened last year.",
+      "option_a": "Over 17.5",
+      "option_b": "Under 17.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Widest margin of victory in a single matchup this season - last year's widest margin was 101 points.",
+      "option_a": "Over 83.5",
+      "option_b": "Under 83.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "week": -1,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will any regular-season matchup be decided by under 0.5 points?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Lowest score to still win a matchup this season - last year's lowest winning score was 66.",
+      "option_a": "Over 72.5",
+      "option_b": "Under 72.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "week": -1,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will any manager go winless across a full calendar month this season?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "week": -1,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will an undrafted or late-round waiver pickup finish as a top-12 player at their position this season?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "week": -1,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will a manager voluntarily bench a player they drafted in the first 3 rounds for a full game (not injury/bye-related)?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "week": -1,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will any manager start the season either 4-0 or 0-4?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "week": -1,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "How many different starting QBs will be used league-wide, across all teams, all season?",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "43"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "26"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "25"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "week": -1,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Most FAAB spent on a single waiver pickup this season.",
+      "option_a": "Over 74.5",
+      "option_b": "Under 74.5",
+      "points": 3,
+      "lock_at": "2026-09-10T00:20:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 3,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "week": 0,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager ends the draft with the highest ESPN grade?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "Hagan",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "Hagan"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "Pfaffinger"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Hagan"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Muenchow"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Total WRs taken in Round 1?",
+      "option_a": "Over 5.5",
+      "option_b": "Under 5.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "week": 0,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager is the first to draft a rookie?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "Larson",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "Zogg"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Stover"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "Zogg"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Pfaffinger"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Glaser"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Total RBs taken across the first 3 rounds?",
+      "option_a": "Over 18.5",
+      "option_b": "Under 18.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "How many teams start their draft 3 RBs or 3 WRs in a row?",
+      "option_a": "Over 1.5",
+      "option_b": "Under 1.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Are both of the draft's first two picks running backs?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Who drafts a Packer first?",
+      "option_a": "Larson",
+      "option_b": "Stover",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Is the first TE drafted before pick 20?",
+      "option_a": "Over 20.5",
+      "option_b": "Under 20.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Is the first QB drafted before pick 25?",
+      "option_a": "Over 25.5",
+      "option_b": "Under 25.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Total rookies drafted this year?",
+      "option_a": "Over 9.5",
+      "option_b": "Under 9.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "week": 0,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "How many of the 50 tendies are consumed on draft night? (±2 wins)",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "50",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "48"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "48"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "48"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "50"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "50"
+        },
+        {
+          "manager": "Larson",
+          "choice": "48"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "50"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "48"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "50"
+        },
+        {
+          "manager": "Stover",
+          "choice": "50"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "38"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "week": 0,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "What's the biggest reach vs. ADP tonight (in picks)?",
+      "option_a": "Over 29.5",
+      "option_b": "Under 29.5",
+      "points": 1,
+      "lock_at": "2026-08-08T00:00:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 11,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "week": 3,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 3?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "Palaia",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Ainsworth"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "week": 3,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 3 - Ainsworth's 165.56 was the Week 1 high, Zogg's 138.86 the Week 2 high.",
+      "option_a": "Over 152.5",
+      "option_b": "Under 152.5",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "week": 3,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 3 - Larson/Prodahl was decided by 13.94 in Week 1, Prodahl/Stover by 11.94 in Week 2.",
+      "option_a": "Over 12.5",
+      "option_b": "Under 12.5",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "week": 3,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Total combined points scored across all 6 Week 3 games - the sum of this week’s own projected matchup totals.",
+      "option_a": "Over 1223.5",
+      "option_b": "Under 1223.5",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "week": 3,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will Ainsworth cover the week's largest spread, favored by 25 points over Stover?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "week": 3,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Will Goetz/Prodahl - the week's highest projected total at 211.5 - go over that number?",
+      "option_a": "Over 211.5",
+      "option_b": "Under 211.5",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "week": 3,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Week 3's only unbeaten-vs-unbeaten matchup: who stays perfect?",
+      "option_a": "Larson",
+      "option_b": "Glaser",
+      "points": 1,
+      "lock_at": "2026-09-25T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "week": 4,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 4?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "Goetz",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Goetz"
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "week": 4,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 4 - the last 3 weeks' highs were 165.56, 138.86, and 132.16. The all-time Week 4 record is 173.9, set by Palaia in 2019.",
+      "option_a": "Over 142.5",
+      "option_b": "Under 142.5",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "week": 4,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 4 - the last 3 weeks were decided by 13.94, 11.94, and 2.18.",
+      "option_a": "Over 9.5",
+      "option_b": "Under 9.5",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "week": 4,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Total combined points scored across all 6 Week 4 games - the sum of this week's own projected matchup totals.",
+      "option_a": "Over 1220.5",
+      "option_b": "Under 1220.5",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "week": 4,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Glaser (3-0, the league's only unbeaten team) hosts Ainsworth in a real rivalry renewal - Ainsworth vs. Glaser is one of the most-played matchups in league history (24 meetings, one behind Conlin vs. Palaia's 25), and the all-time series is dead even at 12-12. Ainsworth took the most recent meeting, a 113.54-112.20 nail-biter in 2025. Who wins?",
+      "option_a": "Glaser",
+      "option_b": "Ainsworth",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "week": 4,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Pfaffinger is 0-3 - will they avoid dropping to 0-4? Historically, teams that start 0-3 have gone exactly 9-9 in their Week 4 game - a true coin flip.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "week": 4,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will Prodahl cover the week's largest spread, favored by 18 points over Zogg?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "week": 4,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will a trade happen in Week 4? The league has completed zero trades through three full weeks this season.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-02T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "week": 5,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 5?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "Muenchow",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Stover"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Glaser"
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 5 - the first 4 weeks' highs were 165.56, 138.86, 132.16, and 138.78. The all-time Week 5 record is 175.22, set by Ainsworth in 2021.",
+      "option_a": "Over 140.5",
+      "option_b": "Under 140.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 5 - the first 4 weeks were decided by 13.94, 11.94, 2.18, and 18.22. ESPN has Glaser vs. Hagan as a 1-point game.",
+      "option_a": "Over 10.5",
+      "option_b": "Under 10.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Total FAAB spent on winning waiver claims processed Wed 10/7 through Tue 10/13. 2026's three in-season waiver weeks so far cost $96, $140, and $227. The same post-Week 4 waiver week cost $155 in 2023, $172 in 2024, and $204 in 2025.",
+      "option_a": "Over $170.5",
+      "option_b": "Under $170.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "How many started players (not counting Head Coaches) score 0.0 or less in Week 5? Weeks 1-4 had 3, 2, 0, and 2. Carolina and Kansas City are on bye.",
+      "option_a": "Over 1.5",
+      "option_b": "Under 1.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "How many started Head Coaches win their NFL game (+5) in Week 5? Coaches on the bench don't count. Weeks 1-4 had 7, 8, 5, and 7. Carolina and Kansas City are on bye.",
+      "option_a": "Over 6.5",
+      "option_b": "Under 6.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "week": 5,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Four teams are tied at 3-1 (Ainsworth, Glaser, Goetz, Larson), and ESPN has three of them as underdogs this week. How many of the four win in Week 5?",
+      "option_a": "Over 1.5",
+      "option_b": "Under 1.5",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "week": 5,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will a trade happen in Week 5? The league has completed zero trades through four weeks, despite 34 proposals.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-09T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Hagan",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "week": 6,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 6?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "Prodahl",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Hagan"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Muenchow"
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "week": 6,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 6 - the first 5 weeks' highs were 165.56, 138.86, 132.16, 138.78, and 168.22.",
+      "option_a": "Over 145.5",
+      "option_b": "Under 145.5",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "week": 6,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 6 - the first 5 weeks were decided by 13.94, 11.94, 2.18, 18.22, and 11.90. The closest projected game is Palaia vs. Goetz (3.5).",
+      "option_a": "Over 10.5",
+      "option_b": "Under 10.5",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "week": 6,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "#4 Muenchow, coming off a 168.22 (the highest score in the league since 2022), hosts #2 Ainsworth. Based on each team's best projected lineup, Ainsworth is favored by 9.5, but Muenchow leads the all-time series 12-7. Who wins?",
+      "option_a": "Muenchow",
+      "option_b": "Ainsworth",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "week": 6,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Pfaffinger is 0-5. Will he fall to 0-6 against Conlin, who is favored by 12.5? Conlin leads that series 11-10. Only two teams have ever started 0-6: Larson (2015) and Goetz (2025).",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "week": 6,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Zogg's Week 6 score - so far: 68.50, 138.86, 68.84, 121.10, 69.84. Zogg's best projected lineup against Glaser is 82.0.",
+      "option_a": "Over 81.5",
+      "option_b": "Under 81.5",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "week": 6,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Brock Purdy has outscored Jalen Hurts from Hagan's bench three weeks in a row (28.0 points total). Does Hagan start Purdy at QB in Week 6?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-16T00:15:00.000Z",
+      "correct_option": null,
+      "published": false,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 0,
+      "locked": true,
+      "picks": []
+    },
+    {
+      "id": 69,
+      "week": 6,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Will a trade happen in Week 6? Still zero trades through five weeks.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-14T19:44:53.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 6,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "void:a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "void:a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "void:a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "week": 7,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 7?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "Goetz",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "Stover"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Muenchow"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "week": 7,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 7 - the first 6 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, and 114.6.",
+      "option_a": "Over 137.5",
+      "option_b": "Under 137.5",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "week": 7,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 7 - the first 6 weeks were decided by 13.9, 11.9, 2.2, 18.2, 11.9, and 4.5. After Wednesday's waivers, the closest projected game is Ainsworth vs. Prodahl (dead even).",
+      "option_a": "Over 8.5",
+      "option_b": "Under 8.5",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "week": 7,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: #1 Ainsworth (5-1) vs. #5 Prodahl (3-3), the highest projected game of the week (221.0). After Wednesday's waivers the projected line is dead even (it was Prodahl by 1.0 on Tuesday). Prodahl leads the all-time series 14-2. Who wins?",
+      "option_a": "Ainsworth",
+      "option_b": "Prodahl",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "week": 7,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Conlin has Buffalo on bye (Josh Allen and James Cook III). Larson was favored by 26.5 on Tuesday; after Wednesday's waivers the line is Larson by 12.5. Does Larson win by more than 26.5?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "week": 7,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Stover has won four straight, the longest active streak in the league. He's favored by 2.5 over Muenchow, who leads their all-time series 8-7. Does Stover make it five in a row?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "week": 7,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Pfaffinger finally won in Week 6. Can he win two straight? After Wednesday's waivers Glaser (5-1) is favored by 21.5 (Pfaffinger was a 1.0 favorite on Tuesday). Pfaffinger leads their all-time series 13-6.",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-23T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "week": 8,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 8?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "Stover",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 9,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "Stover"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Ainsworth"
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "week": 8,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 8 - the first 7 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, and 119.8. Houston, New Orleans, the Giants, and San Francisco are on bye.",
+      "option_a": "Over 132.5",
+      "option_b": "Under 132.5",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "week": 8,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Closest margin of victory in Week 8 - the first 7 weeks were decided by 13.9, 11.9, 2.2, 18.2, 11.9, 4.5, and 4.5. As of Tuesday the closest projected game is Prodahl vs. Muenchow (dead even).",
+      "option_a": "Over 7.5",
+      "option_b": "Under 7.5",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "week": 8,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: #2 Goetz (5-2) vs. #3 Glaser (5-2). As of Tuesday Glaser is favored by 2.0, but Goetz leads the all-time series 12-5. Who wins?",
+      "option_a": "Goetz",
+      "option_b": "Glaser",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "week": 8,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Stover has won five straight, the longest single-season streak of his career. He's a 24.5-point favorite over Pfaffinger as of Tuesday, the biggest spread of the week, and Pfaffinger has won two straight himself. Does Stover make it six in a row?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "week": 8,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Hagan has San Francisco on bye (Christian McCaffrey and Brock Purdy), no other QB on his roster, and four straight losses. Counting the best available free-agent QB (Geno Smith), Palaia is favored by 12.0 as of Tuesday. Does Palaia win by more than 12.0?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "a"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "week": 8,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Battle of the 2-5s: Conlin vs. Zogg. Zogg is favored by 8.0 as of Tuesday and leads the all-time series 13-10. Only one 2-5 team in league history has made the playoffs (Muenchow, 2023). Who wins?",
+      "option_a": "Conlin",
+      "option_b": "Zogg",
+      "points": 1,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "b"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "week": 8,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess the combined score of Goetz vs. Glaser, the game of the week. It's projected at 213.5 as of Tuesday, and this season's games have totaled anywhere from 142.3 to 259.3. Within 5 points of the real total is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 5.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-10-30T00:15:00.000Z",
+      "correct_option": "193.4",
+      "published": true,
+      "tolerance": "5",
+      "closest_bonus": 1,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Ainsworth",
+          "choice": "201"
+        },
+        {
+          "manager": "Conlin",
+          "choice": "7"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "230"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "207"
+        },
+        {
+          "manager": "Larson",
+          "choice": "244"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "203"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "212"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "238"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "221"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "217"
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "week": 9,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 9?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "Ainsworth",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Conlin"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Goetz"
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "week": 9,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 9 - the first 8 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, and 143.3. Only Pittsburgh and Tennessee are on bye.",
+      "option_a": "Over 135.5",
+      "option_b": "Under 135.5",
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "week": 9,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Lowest individual score in Week 9 - the first 8 weeks' lows were 68.5, 58.8, 68.8, 73.2, 63.4, 61.1, 70.3, and 67.2.",
+      "option_a": "Over 66.5",
+      "option_b": "Under 66.5",
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "week": 9,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: Stover (6-2) has won six straight and visits Glaser (6-2). Stover is favored by 6.0 as of Tuesday, but Glaser leads the all-time series 13-7. Who wins?",
+      "option_a": "Stover",
+      "option_b": "Glaser",
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "week": 9,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Hagan has lost five straight, and Muenchow has lost three straight. Hagan is favored by 8.0 as of Tuesday, counting the best free-agent Head Coach with Pittsburgh on bye. Does Hagan cover, winning by more than 8.0?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "week": 9,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Shotguns in Week 9: starters (not Head Coaches) who score 0 or less, injured or not. Weeks 1-8 had 3, 2, 0, 2, 2, 3, 2, and 6. Over or under 2.5?",
+      "option_a": "Over 2.5",
+      "option_b": "Under 2.5",
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Larson",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "week": 9,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Whose bench scores the most total points in Week 9? (Bench only, not IR.) Last week it was Larson's, at 66.3, with Tyler Allgeier (33.6) and Patrick Mahomes (25.4) sitting.",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "Pfaffinger",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Zogg"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Larson",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Larson"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Zogg"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Ainsworth"
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "week": 9,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess Stover's exact score in Week 9. He's projected for 117.3 as of Thursday (up from 111.7 on Tuesday), and his eight scores this season ranged from 73.0 to 143.3. Within 4 points of his real score is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-11-06T01:15:00.000Z",
+      "correct_option": "126.64",
+      "published": true,
+      "tolerance": "4",
+      "closest_bonus": 1,
+      "reference": null,
+      "pick_count": 10,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "12"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "102.5"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "102"
+        },
+        {
+          "manager": "Larson",
+          "choice": "98.8"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "92"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "108"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "117"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "112"
+        },
+        {
+          "manager": "Stover",
+          "choice": "82"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "113"
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "week": 10,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 10?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "Goetz",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "Muenchow"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Palaia"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Ainsworth"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Ainsworth"
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "week": 10,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Highest individual score in Week 10 - the first 9 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, and 133.6. Chicago, Denver, Philadelphia, and Tampa Bay are on bye.",
+      "option_a": "Over 135.5",
+      "option_b": "Under 135.5",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "week": 10,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: Stover (7-2) goes for eight straight at home against Hagan (3-6). Hagan is favored by 6.5 as of Tuesday and leads the all-time series 9-6. Who wins?",
+      "option_a": "Stover",
+      "option_b": "Hagan",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "week": 10,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Muenchow has lost four straight but is favored by 13.5 over Zogg as of Tuesday, the week's biggest spread. Muenchow leads the all-time series 14-5. Does Muenchow cover, winning by more than 13.5?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "b",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "week": 10,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "How many started Head Coaches win their NFL game in Week 10? Weeks 1-9 had 7, 8, 5, 7, 5, 5, 7, 7, and 11 (Week 9 was a perfect 11-0). A Head Coach whose team is on bye counts as not started.",
+      "option_a": "Over 6.5",
+      "option_b": "Under 6.5",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "week": 10,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Trade deadline QB swap: the Vikings traded J.J. McCarthy (Goetz) to the Giants in September and traded for Kirk Cousins (Hagan) on Tuesday. Who scores more fantasy points in Week 10? ESPN projects McCarthy for 15.6 and Cousins for 13.0 as of Tuesday. Bench or start doesn't matter, and a player who doesn't play scores 0.",
+      "option_a": "J.J. McCarthy",
+      "option_b": "Kirk Cousins",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "week": 10,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Keenan Allen (Glaser) was traded from the Colts to the 49ers on Tuesday. How many fantasy points does he score in Week 10? ESPN projects him for 7.1. Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "option_a": "Over 6.5",
+      "option_b": "Under 6.5",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "week": 10,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Josh Downs (Conlin), the most-traded player in NWL history (six trades), was traded from the Colts to the Chiefs on Tuesday. How many fantasy points does he score in Week 10? ESPN projected him for 7.4 before the trade. Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "option_a": "Over 7.5",
+      "option_b": "Under 7.5",
+      "points": 1,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "a",
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "week": 10,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess the biggest margin of victory in Week 10. The first 9 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, and 44.5. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-11-13T01:15:00.000Z",
+      "correct_option": "70.74",
+      "published": true,
+      "tolerance": "4",
+      "closest_bonus": 1,
+      "reference": null,
+      "pick_count": 7,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "47"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "44"
+        },
+        {
+          "manager": "Muenchow",
+          "choice": "57"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "47"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "53"
+        },
+        {
+          "manager": "Stover",
+          "choice": "42"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "49"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "week": 11,
+      "season": 2026,
+      "type": "pick_manager",
+      "prompt": "Which manager scores the most total points in Week 11?",
+      "option_a": null,
+      "option_b": null,
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": null,
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "Goetz"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "Prodahl"
+        },
+        {
+          "manager": "Stover",
+          "choice": "Glaser"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "Prodahl"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "week": 11,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Lowest individual score in Week 11. Six NFL teams are on bye: Atlanta, Cleveland, Green Bay, the Rams, New England, and Seattle.",
+      "option_a": "Over 62.5",
+      "option_b": "Under 62.5",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "Lowest score by week",
+        "values": [
+          68.5,
+          58.8,
+          68.8,
+          73.2,
+          63.4,
+          61.1,
+          70.3,
+          67.2,
+          57.6,
+          73.5
+        ]
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "week": 11,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Game of the week: Glaser (7-3) visits Conlin (3-7), and Conlin is favored by 4.5. Who wins?",
+      "option_a": "Glaser",
+      "option_b": "Conlin",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday. Glaser leads the all-time series 9-7."
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "week": 11,
+      "season": 2026,
+      "type": "this_or_that",
+      "prompt": "Ainsworth is favored by 13.5 over Hagan, who just scored 153.6, his best since at least 2022. Does Ainsworth win by more than 13.5?",
+      "option_a": "Yes",
+      "option_b": "No",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Line as of Tuesday."
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "a"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "a"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "week": 11,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "How many teams score 120 or more in Week 11?",
+      "option_a": "Over 2.5",
+      "option_b": "Under 2.5",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "label": "120+ scores by week",
+        "values": [
+          4,
+          1,
+          2,
+          3,
+          3,
+          0,
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "week": 11,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "David Montgomery (Ainsworth) is expected back from a groin injury for Thursday night's Colts-Texans game. How many fantasy points does he score?",
+      "option_a": "Over 10.5",
+      "option_b": "Under 10.5",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "ESPN projects 12.8. Bench or start doesn't matter, and 0 counts if he doesn't play."
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "a"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "a"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "a"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "a"
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "week": 11,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Mike Evans (Muenchow) is questionable as he works back from an Achilles injury. How many fantasy points does he score?",
+      "option_a": "Over 6.5",
+      "option_b": "Under 6.5",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "ESPN projects 10.0. Bench or start doesn't matter, and 0 counts if he doesn't play."
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "b"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "b"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "week": 11,
+      "season": 2026,
+      "type": "over_under",
+      "prompt": "Brock Bowers (Palaia) is day-to-day with an ankle injury after scoring 2.8 in Week 10. How many fantasy points does he score?",
+      "option_a": "Over 9.5",
+      "option_b": "Under 9.5",
+      "points": 1,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "ESPN projects 12.3. Bench or start doesn't matter, and 0 counts if he doesn't play."
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "b"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "b"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "b"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "b"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "a"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "b"
+        },
+        {
+          "manager": "Stover",
+          "choice": "a"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "b"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "week": 11,
+      "season": 2026,
+      "type": "number_guess",
+      "prompt": "LONGSHOT (3 points): Guess the league-wide total points in Week 11, all 12 teams combined.",
+      "option_a": null,
+      "option_b": null,
+      "points": 3,
+      "lock_at": "2026-11-20T01:15:00.000Z",
+      "correct_option": null,
+      "published": true,
+      "tolerance": "25",
+      "closest_bonus": 1,
+      "reference": {
+        "label": "League total by week",
+        "values": [
+          "1,311.7",
+          "1,112.0",
+          "1,188.4",
+          "1,212.5",
+          "1,245.1",
+          "1,078.3",
+          "1,145.6",
+          "1,155.9",
+          "1,147.0",
+          "1,271.8"
+        ]
+      },
+      "pick_count": 8,
+      "locked": true,
+      "picks": [
+        {
+          "manager": "Conlin",
+          "choice": "1738"
+        },
+        {
+          "manager": "Glaser",
+          "choice": "1111"
+        },
+        {
+          "manager": "Goetz",
+          "choice": "1143"
+        },
+        {
+          "manager": "Palaia",
+          "choice": "1290"
+        },
+        {
+          "manager": "Pfaffinger",
+          "choice": "1129"
+        },
+        {
+          "manager": "Prodahl",
+          "choice": "1197"
+        },
+        {
+          "manager": "Stover",
+          "choice": "1208"
+        },
+        {
+          "manager": "Zogg",
+          "choice": "1111"
+        }
+      ]
+    }
+  ]
+}
