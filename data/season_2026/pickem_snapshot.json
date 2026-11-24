@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T18:42:50.466Z",
+  "generated_at": "2026-11-24T19:08:58.332Z",
   "questions": [
     {
       "id": 36,
@@ -5868,29 +5868,29 @@
       "week": 12,
       "season": 2026,
       "type": "number_guess",
-      "prompt": "LONGSHOT (3 points): Guess the biggest margin of victory in Week 12. The first 11 weeks' biggest margins were 97.1, 63.3, 59.0, 38.7, 86.3, 31.0, 41.9, 44.5, 44.5, 70.7, and 54.9. Within 4 points of the real margin is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 4.",
+      "prompt": "LONGSHOT (3 points): Guess the total fantasy points scored on Thanksgiving Day by every player and Head Coach on NWL rosters in the three Thursday games (Bears at Lions, Eagles at Cowboys, Chiefs at Bills), starters and bench combined, using the rosters at Wednesday's 8 p.m. ET lock. As of Tuesday that is 40 players, projected for 386 points in total. Within 30 points is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 30.",
       "option_a": null,
       "option_b": null,
       "points": 3,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
       "published": true,
-      "tolerance": "4",
+      "tolerance": "30",
       "closest_bonus": 1,
       "reference": {
-        "label": "Biggest margin by week",
+        "note": "Projection by game: Bears at Lions 141, Eagles at Cowboys 112, Chiefs at Bills 132. The three Thursday games have averaged 139.6 total NFL points since 2006 (19 seasons with three Thursday games, excluding 2020), and 2026's combined betting total is 153.5.",
+        "label": "Thursday NFL games: total points in all three Thanksgiving Day games",
         "values": [
-          "97.1",
-          "63.3",
-          "59.0",
-          "38.7",
-          "86.3",
-          "31.0",
-          "41.9",
-          "44.5",
-          "44.5",
-          "70.7",
-          "54.9"
+          "2016: 121",
+          "2017: 117",
+          "2018: 141",
+          "2019: 129",
+          "2021: 136",
+          "2022: 160",
+          "2023: 150",
+          "2024: 137",
+          "2025: 160",
+          "2026 lines: 153.5"
         ]
       },
       "pick_count": 0,
