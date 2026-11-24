@@ -26,6 +26,11 @@ on:
     - cron: '45 3 * * 2'        # Mon post-MNF (~11:45pm ET Mon = Tue 03:45 UTC)
   workflow_dispatch: {}  # lets you trigger a manual run from the Actions tab any time
 
+# Same group as pickem-ops.yml so the two never push at the same moment.
+concurrency:
+  group: nwl-data
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -60,6 +65,12 @@ jobs:
           python3 scripts/build_history_points.py --seasons 2026
           python3 scripts/build_trade_grades.py
 
+      - name: Best ball, zero starters, started HCs and mid-game injuries (for commentary/Fun Facts)
+        # Read-only ESPN calls (box scores + NFL play-by-play). Written to the repo so an editorial session
+        # that cannot reach ESPN directly can still read them. A failure here never blocks the rest of the pull.
+        continue-on-error: true
+        run: python3 scripts/compute_best_ball.py --json data/season_2026/best_ball.json
+
       - name: Commit and push if data changed
         run: |
           git config user.name "nwl-site-bot"
@@ -70,6 +81,7 @@ jobs:
                   data/season_2026/schedule.json data/season_2026/zero_starts.json \
                   data/transactions_with_dates.json data/trades.json \
                   data/player_weeks.json data/trade_grades.json
+          git add data/season_2026/best_ball.json 2>/dev/null || true  # missing if that step failed
           if git diff --cached --quiet; then
             echo "No data changes this run."
           else

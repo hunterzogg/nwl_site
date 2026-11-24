@@ -1987,3 +1987,24 @@ which shows a Schedule swap section for every past season's regular season, with
 possible schedule, luckiest and unluckiest, hardest and easiest schedule). A League median row plays a team that scores
 the week's median score on every schedule (a neutral difficulty check). Nothing is precomputed; both read the
 existing matchup data.
+
+---
+
+## Running the weekly editorial work without a laptop (added Nov 24, 2026)
+
+Two gaps kept the weekly update tied to the desktop: player-level ESPN extras for commentary, and Pick'em database
+work. Both now run in GitHub Actions, which already hold the secrets.
+
+- **ESPN extras:** `weekly-espn-update.yml` now also runs `scripts/compute_best_ball.py --json
+  data/season_2026/best_ball.json` (best-ball standings, per-week flips, zero/negative starters, started-HC wins,
+  mid-game injuries). `data/player_weeks.json` already carries every player's weekly points and starter/bench slot.
+  A session with no ESPN access reads both from the repo. The step is `continue-on-error`.
+- **Pick'em:** `.github/workflows/pickem-ops.yml` + `scripts/pickem_ops.js`. Needs one new repo secret,
+  `POSTGRES_URL` (same value as in `.env.local`). `snapshot` runs Tuesdays and by hand (read-only, writes
+  `data/season_2026/pickem_snapshot.json`; individual picks only for locked questions, since the repo is public).
+  `grade`, `seed` and `publish` run only when someone presses "Run workflow": `grade` applies
+  `data/season_2026/pickem_grades.json`, `seed` inserts `pickem_props_pending.json` as unpublished, `publish` takes a
+  week number. Sign-off still comes first: the draft file is committed and shown, and the run is the approval.
+- Both workflows share a `nwl-data` concurrency group so they never push at the same time. A workflow only shows up
+  under the Actions tab's "Run workflow" button once it is on the default branch.
+- Still manual: the ADMIN_PASSCODE (never typed by Claude), and refreshing ESPN cookies when they expire.

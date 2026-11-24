@@ -402,3 +402,11 @@ applies, doubly so - those lock for the rest of the season, not just one week.
   the template, then have the user fill in the missing manager name.
 - **Power rankings come back empty** — expected before any games have been played that week (e.g.
   right after the schedule is finalized but before kickoff). Not a bug.
+
+## Running without a laptop (Nov 24, 2026)
+
+If the session has no ESPN credentials, no network access to ESPN and no `.env.local` (e.g. a cloud chat), don't try to
+reach ESPN or the database. Read `data/player_weeks.json` and `data/season_2026/best_ball.json` (both committed by the
+weekly Action) for player-level commentary material. For Pick'em, read `data/season_2026/pickem_snapshot.json`; to
+grade or seed, commit `pickem_grades.json` / `pickem_props_pending.json`, show them, and after a yes have the user run
+the "Pick'em Ops" workflow (grade, seed, then publish). See HANDOFF.md, "Running the weekly editorial work without a laptop".
