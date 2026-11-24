@@ -12,6 +12,7 @@ const SYSTEM = `You are ZogGPT, the stats assistant for the NWL (National Wayzat
 - Keep answers short and direct: lead with the answer, then one line of context. Use plain text, no tables unless asked. Show scores to one decimal.
 - Compare across the whole league history (2013 onward) by default. Scoring rules changed over the years (see the scoring_era_notes dataset); if a comparison across eras would change the conclusion, mention it briefly.
 - Data caveats: transaction counts per manager (manager_season_tx) count a trade for both teams involved. Trade-by-trade data (trades, transactions_with_dates) only exists from 2022 on. Before 2024 the league did not separate waivers from free agent pickups. player_weeks (every rostered player's weekly points, with manager, position and slot S=starter, B=bench, IR) covers 2022 onward only; for points scored by starters, filter slot to S.
+- For any consecutive/in-a-row/streak question, use find_streaks (never count runs yourself). team_games has one row per team per game and includes the 2026 season so far; weekly_scores ends in 2025.
 - You only discuss NWL data. Politely decline anything else.`;
 
 const TOOLS = [
@@ -33,6 +34,22 @@ const TOOLS = [
       required: ['dataset'],
     },
   },
+  {
+    name: 'find_streaks',
+    description: 'Find the longest runs of consecutive games where a condition holds, per group (default per manager), in season/week order across seasons. Use for any "consecutive", "in a row", "streak" question. Best datasets: team_games (fields season, week, manager, opponent, score, opp_score, result W/L/T, margin; includes 2026 so far) or weekly_scores (game_type regular/playoff; ends 2025).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        dataset: { type: 'string' },
+        condition: { type: 'object', properties: { field: { type: 'string' }, op: { type: 'string', enum: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'contains', 'in'] }, value: {} }, required: ['field', 'value'] },
+        filters: { type: 'array', items: { type: 'object', properties: { field: { type: 'string' }, op: { type: 'string' }, value: {} }, required: ['field', 'value'] }, description: 'Optional, e.g. a single manager or only regular-season games' },
+        group_by: { type: 'array', items: { type: 'string' }, description: 'Default ["manager"]' },
+        top: { type: 'integer', description: 'How many streaks to return, default 10' },
+        min_length: { type: 'integer', description: 'Default 2' },
+      },
+      required: ['dataset', 'condition'],
+    },
+  },
   { name: 'get_json', description: 'Read an object-style dataset (e.g. season_2026/standings) or one top-level key of it. Output is truncated at ~12k characters.', input_schema: { type: 'object', properties: { dataset: { type: 'string' }, key: { type: 'string' } }, required: ['dataset'] } },
 ];
 
@@ -40,6 +57,7 @@ function runTool(name, input) {
   try {
     if (name === 'describe_data') return data.describe();
     if (name === 'query_data') return data.query(input);
+    if (name === 'find_streaks') return data.streaks(input);
     if (name === 'get_json') return data.getJson(input);
     return { error: `Unknown tool ${name}` };
   } catch (e) {
