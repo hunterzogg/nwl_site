@@ -772,5 +772,91 @@
         "wide": true
       }
     ]
+  },
+  {
+    "week": 12,
+    "published": true,
+    "facts": [
+      {
+        "label": "Playoff Swing",
+        "headline": "Palaia up {{num}} points, Prodahl down 33",
+        "num": "36",
+        "sub": "Palaia's playoff odds went from 34% to 70% after beating Stover. Prodahl's went from 69% to 37% after losing to Pfaffinger.",
+        "tone": "hot",
+        "wide": true
+      },
+      {
+        "label": "Closest Call",
+        "headline": "Larson wins by {{num}} points",
+        "num": "0.20",
+        "sub": "76.36 to 76.16 over Zogg. It's the closest game of 2026 and the second-closest since 2022.",
+        "tone": "hot",
+        "wide": true
+      },
+      {
+        "label": "Thin Eight",
+        "headline": "Larson: {{num}} points at 8-3",
+        "num": "1,023",
+        "sub": "The fewest of any 8-3 team since 2022. He has won five straight.",
+        "tone": "green",
+        "wide": false
+      },
+      {
+        "label": "Biggest Drop",
+        "headline": "Hagan fell {{num}} points",
+        "num": "87",
+        "sub": "From 154 in Week 10 to 66.5 in Week 11, the second-largest week-to-week drop since 2022.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Only One",
+        "headline": "Goetz: {{num}}",
+        "num": "125",
+        "sub": "The only team to reach 120 in Week 11.",
+        "tone": "hot",
+        "wide": false
+      },
+      {
+        "label": "Low Tide",
+        "headline": "{{num}} teams under 70",
+        "num": "3",
+        "sub": "Hagan, Muenchow, and Glaser. The league averaged 93 points per team, the 13th-lowest week since 2022.",
+        "tone": "cold",
+        "wide": true
+      },
+      {
+        "label": "Skid",
+        "headline": "Muenchow's {{num}}-game losing streak",
+        "num": "6",
+        "sub": "His longest since seven straight in 2021.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Bench Press",
+        "headline": "Glaser left {{num}} on his bench",
+        "num": "191",
+        "sub": "The most in the league through Week 11. Best ball has him 6-5 instead of 7-4.",
+        "tone": "red",
+        "wide": false
+      },
+      {
+        "label": "Two-Game Slide",
+        "headline": "Stover has lost {{num}} straight",
+        "num": "2",
+        "sub": "After a seven-game win streak, he is 7-4 and visits Ainsworth in Week 12.",
+        "tone": "cold",
+        "wide": false
+      },
+      {
+        "label": "Longshot",
+        "headline": "Glaser and Zogg tie at {{num}}",
+        "num": "1,111",
+        "sub": "Both guessed it for the Week 11 league total, which finished at 1,111.66. Each was 0.66 away, so both get the closest-guess bonus.",
+        "tone": "green",
+        "wide": true
+      }
+    ]
   }
 ]
