@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T18:27:16.945Z",
+  "generated_at": "2026-11-24T18:27:44.562Z",
   "questions": [
     {
       "id": 36,
@@ -5715,7 +5715,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5735,7 +5735,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5768,7 +5768,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5788,7 +5788,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5808,7 +5808,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5834,7 +5834,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5854,7 +5854,7 @@
       "points": 1,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
@@ -5874,7 +5874,7 @@
       "points": 3,
       "lock_at": "2026-11-26T01:00:00.000Z",
       "correct_option": null,
-      "published": false,
+      "published": true,
       "tolerance": "4",
       "closest_bonus": 1,
       "reference": {
