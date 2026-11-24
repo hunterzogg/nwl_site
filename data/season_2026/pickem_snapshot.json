@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T19:11:53.056Z",
+  "generated_at": "2026-11-24T19:13:59.876Z",
   "questions": [
     {
       "id": 36,
@@ -5709,7 +5709,7 @@
       "week": 12,
       "season": 2026,
       "type": "pick_manager",
-      "prompt": "Which manager scores the most total points in Week 12? Thanksgiving weeks since 2022 produced top scores of 125.9 (Palaia), 152.1 (Muenchow), 123.7 (Larson), and 140.8 (Muenchow).",
+      "prompt": "Which manager scores the most total points in Week 12?",
       "option_a": null,
       "option_b": null,
       "points": 1,
@@ -5729,7 +5729,7 @@
       "week": 12,
       "season": 2026,
       "type": "over_under",
-      "prompt": "Highest individual score in Week 12. The first 11 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, 133.6, 163.7, and 124.6.",
+      "prompt": "Highest individual score in Week 12.",
       "option_a": "Over 135.5",
       "option_b": "Under 135.5",
       "points": 1,
@@ -5802,7 +5802,7 @@
       "week": 12,
       "season": 2026,
       "type": "over_under",
-      "prompt": "Average score per team in Week 12. Thanksgiving weeks since 2013 have scored about 1% above the rest of the season, and nine of 13 were higher, including 101.9, 106.4, and 104.2 from 2022 to 2024 and 88.5 last year. 2026 is averaging 98.3.",
+      "prompt": "Average score per team in Week 12.",
       "option_a": "Over 98.5",
       "option_b": "Under 98.5",
       "points": 1,
@@ -5812,6 +5812,7 @@
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
+        "note": "Thanksgiving weeks since 2013 have scored about 1% above the rest of the season, and nine of 13 were higher. 2026 is averaging 98.3.",
         "label": "Thanksgiving week average vs. rest of season",
         "values": [
           "2022: 101.9 vs. 97.3",
@@ -5828,7 +5829,7 @@
       "week": 12,
       "season": 2026,
       "type": "over_under",
-      "prompt": "Thanksgiving: Jahmyr Gibbs (Goetz) plays the Bears at 1:00 p.m. ET on Thanksgiving. He scored 41 in Week 10, and the site projects him for 23.4. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "prompt": "Thanksgiving: Jahmyr Gibbs (Goetz) plays the Bears at 1:00 p.m. ET on Thanksgiving. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
       "option_a": "Over 22.5",
       "option_b": "Under 22.5",
       "points": 1,
@@ -5838,7 +5839,7 @@
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
-        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
+        "note": "Scored 41 in Week 10. The site projects him for 23.4 as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
       },
       "pick_count": 1,
       "locked": false
@@ -5848,7 +5849,7 @@
       "week": 12,
       "season": 2026,
       "type": "this_or_that",
-      "prompt": "Thanksgiving quarterbacks: who scores more fantasy points, Dak Prescott (Conlin, at home against the Eagles at 4:30 p.m. ET) or Josh Allen (Prodahl, at home against the Chiefs at 8:20 p.m. ET)? The site projects Prescott for 19.5 and Allen for 18.1. Bench or start doesn't matter.",
+      "prompt": "Thanksgiving quarterbacks: who scores more fantasy points, Dak Prescott (Conlin, at home against the Eagles at 4:30 p.m. ET) or Josh Allen (Prodahl, at home against the Chiefs at 8:20 p.m. ET)? Bench or start doesn't matter.",
       "option_a": "Dak Prescott",
       "option_b": "Josh Allen",
       "points": 1,
@@ -5858,7 +5859,7 @@
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
-        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
+        "note": "The site projects Prescott for 19.5 and Allen for 18.1 as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
       },
       "pick_count": 1,
       "locked": false
@@ -5868,7 +5869,7 @@
       "week": 12,
       "season": 2026,
       "type": "number_guess",
-      "prompt": "LONGSHOT (3 points): Guess the total fantasy points scored on Thanksgiving Day by every player and Head Coach on NWL rosters in the three Thursday games (Bears at Lions, Eagles at Cowboys, Chiefs at Bills), starters and bench combined, using the rosters at Wednesday's 8 p.m. ET lock. As of Tuesday that is 40 players, projected for 386 points in total. Within 30 points is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 30.",
+      "prompt": "LONGSHOT (3 points): Guess the total fantasy points scored on Thanksgiving Day by every player and Head Coach on NWL rosters in the three Thursday games (Bears at Lions, Eagles at Cowboys, Chiefs at Bills), starters and bench combined, using the rosters at Wednesday's 8 p.m. ET lock. Within 30 points is worth 3 points, and the closest guess gets 1 bonus point, even if it misses by more than 30.",
       "option_a": null,
       "option_b": null,
       "points": 3,
@@ -5878,7 +5879,7 @@
       "tolerance": "30",
       "closest_bonus": 1,
       "reference": {
-        "note": "Projection by game: Bears at Lions 141, Eagles at Cowboys 112, Chiefs at Bills 132. The three Thursday games have averaged 139.6 total NFL points since 2006 (19 seasons with three Thursday games, excluding 2020), and 2026's combined betting total is 153.5.",
+        "note": "As of Tuesday: 40 players, projected for 386 points in total. Projection by game: Bears at Lions 141, Eagles at Cowboys 112, Chiefs at Bills 132. The three Thursday games have averaged 139.6 total NFL points since 2006 (19 seasons with three Thursday games, excluding 2020), and 2026's combined betting total is 153.5.",
         "label": "Thursday NFL games: total points in all three Thanksgiving Day games",
         "values": [
           "2016: 121",
