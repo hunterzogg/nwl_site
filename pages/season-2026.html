@@ -65,6 +65,15 @@
 .rank-stats li b { color: var(--text); font-family: var(--font-mono); font-weight: 600; font-size: 0.92rem; letter-spacing: 0; text-transform: none; }
 .rank-stats li small { font-size: 0.66rem; text-transform: none; letter-spacing: 0; }
 @media (max-width: 560px) { .rank-card { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; } .rank-num-big { font-size: 1.9rem; } .rank-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rank-card { display: block; padding: 0; }
+.rank-card > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto 18px; gap: 14px; align-items: center; padding: 12px 16px 12px 18px; }
+.rank-card > summary::-webkit-details-marker { display: none; }
+.rank-card > summary::after { content: ""; width: 8px; height: 8px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: rotate(45deg); transition: transform .15s; justify-self: center; margin-top: -3px; }
+.rank-card[open] > summary::after { transform: rotate(-135deg); margin-top: 3px; }
+.rank-card > summary:focus-visible { outline: 2px solid var(--live-bright); outline-offset: -2px; border-radius: 14px; }
+.rank-card .rank-body { padding: 0 16px 14px 88px; }
+.rank-card .rank-stats { margin-top: 0; }
+@media (max-width: 560px) { .rank-card > summary { grid-template-columns: 40px minmax(0, 1fr) auto 14px; gap: 10px; padding: 10px 12px 10px 14px; } .rank-card .rank-body { padding: 0 12px 12px 14px; } }
 .commentary-body { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; line-height: 1.75; font-size: 1rem; }
 .commentary-body > * { max-width: 74ch; }
 .commentary-body .cv { max-width: none; }
@@ -464,14 +473,14 @@ function renderPower() {
     return;
   }
   document.getElementById('powerContent').innerHTML = entry.rankings.map(r => `
-    <div class="rank-card hover-lift${r.rank <= 3 ? ' top3' : ''}" style="--mc:${managerColor(managers, r.manager)}">
-      <div class="rank-num-big">${r.rank}</div>
-      <div class="rank-body">
-        <div class="rank-name-row">
-          <span class="rank-name">${managerTagWithDivision(managers, r.manager)}</span>
-          <span class="rank-trend ${r.trend}">${trendLabel(r)}</span>
-        </div>
-        ${r.record_actual ? `
+    <details class="rank-card hover-lift${r.rank <= 3 ? ' top3' : ''}" style="--mc:${managerColor(managers, r.manager)}">
+      <summary>
+        <div class="rank-num-big">${r.rank}</div>
+        <span class="rank-name">${managerTagWithDivision(managers, r.manager)}</span>
+        <span class="rank-trend ${r.trend}">${trendLabel(r)}</span>
+      </summary>
+      ${r.record_actual ? `
+        <div class="rank-body">
           <ul class="rank-stats">
             <li>Record<b>${r.record_actual}</b></li>
             <li>Expected wins<b>${r.expected_wins}</b></li>
@@ -480,9 +489,9 @@ function renderPower() {
             <li>Strength of schedule<b>${sosLabel(r.sos_rank, r.sos_total)}</b></li>
             ${r.remaining_sos_rank ? `<li>Remaining SoS<b>${sosLabel(r.remaining_sos_rank, r.sos_total)}</b><small>next ${r.remaining_games} games</small></li>` : ''}
           </ul>
-        ` : ''}
-      </div>
-    </div>
+        </div>
+      ` : ''}
+    </details>
   `).join('');
 }
 
