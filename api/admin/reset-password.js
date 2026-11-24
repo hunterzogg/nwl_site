@@ -1,5 +1,5 @@
-const { sql } = require('../lib/db');
-const { requireAdmin } = require('../lib/session');
+const { sql } = require('../../server_lib/db');
+const { requireAdmin } = require('../../server_lib/session');
 
 // The friends-league equivalent of "forgot password": no email flow, Hunter just clears the
 // hash back to NULL so the manager's next login re-claims the account with a new password.

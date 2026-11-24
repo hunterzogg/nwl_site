@@ -1,6 +1,6 @@
-const { sql } = require('./lib/db');
-const { getManagerSession } = require('./lib/session');
-const data = require('./lib/zoggpt_data');
+const { sql } = require('../server_lib/db');
+const { getManagerSession } = require('../server_lib/session');
+const data = require('../server_lib/zoggpt_data');
 
 const MODEL = process.env.ZOGGPT_MODEL || 'claude-haiku-5-5';
 const DAILY_LIMIT = parseInt(process.env.ZOGGPT_DAILY_LIMIT || '10', 10);

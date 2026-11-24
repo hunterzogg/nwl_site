@@ -1,4 +1,4 @@
-const { sql } = require('./lib/db');
+const { sql } = require('../server_lib/db');
 
 // Public: returns published questions for a given week (default: all published, most recent week first).
 // closest_diff is the smallest miss on a graded number_guess question with a closest_bonus, so the page

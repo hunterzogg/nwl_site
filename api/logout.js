@@ -1,4 +1,4 @@
-const { clearManagerSession } = require('./lib/session');
+const { clearManagerSession } = require('../server_lib/session');
 
 module.exports = async (req, res) => {
   clearManagerSession(res);

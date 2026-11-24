@@ -8,7 +8,7 @@
 //   export $(grep -v '^#' .env.local | xargs)
 //   node scripts/pickem_week11_references.js
 
-const { sql } = require('../api/lib/db');
+const { sql } = require('../server_lib/db');
 
 const fine = "Bench or start doesn't matter, and 0 counts if he doesn't play.";
 const UPDATES = {

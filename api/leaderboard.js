@@ -1,4 +1,4 @@
-const { sql } = require('./lib/db');
+const { sql } = require('../server_lib/db');
 
 // A pick is correct if it exactly matches the graded answer - except number_guess questions,
 // which are "correct" within +/-2 of the real number (e.g. "how many tendies get eaten"),

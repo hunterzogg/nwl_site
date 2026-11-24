@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { sql } = require('./lib/db');
-const { setManagerSession } = require('./lib/session');
+const { sql } = require('../server_lib/db');
+const { setManagerSession } = require('../server_lib/session');
 
 // Self-service accounts: a manager's first successful login sets their password (passcode_hash
 // starts NULL after seeding) - no admin-distributed codes needed. Every login after that verifies
