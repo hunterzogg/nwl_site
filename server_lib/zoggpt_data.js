@@ -18,8 +18,29 @@ function listDatasets() {
     }
   };
   scan(DATA_DIR, '');
-  out.push('player_weeks'); // virtual flat table built from data/player_weeks.json
+  out.push('player_weeks', 'team_games'); // virtual tables built below
   return out.sort();
+}
+
+// One row per team per game (both sides of every matchup), 2013 through the games finished so far in 2026.
+function buildTeamGames() {
+  const rows = [];
+  const push = (season, week, manager, opponent, score, opp) => rows.push({
+    season: String(season), week: String(week), manager, opponent, score, opp_score: opp,
+    result: score > opp ? 'W' : score < opp ? 'L' : 'T', margin: Math.round((score - opp) * 100) / 100,
+  });
+  for (const m of JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'matchup_results.json'), 'utf8'))) {
+    push(m.season, m.week, m.winner, m.loser, +m.winning_score, +m.losing_score);
+    push(m.season, m.week, m.loser, m.winner, +m.losing_score, +m.winning_score);
+  }
+  for (const wk of JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'season_2026', 'matchups.json'), 'utf8'))) {
+    for (const g of wk.games) {
+      if (g.winner !== 'HOME' && g.winner !== 'AWAY') continue; // not finished yet
+      push(2026, wk.week, g.home_manager, g.away_manager, g.home_score, g.away_score);
+      push(2026, wk.week, g.away_manager, g.home_manager, g.away_score, g.home_score);
+    }
+  }
+  return rows;
 }
 
 // player_weeks.json is nested (players by id, seasons -> weeks -> [manager, playerId, slot, points]); flatten to rows.
@@ -39,7 +60,7 @@ function flattenPlayerWeeks() {
 
 function load(name) {
   if (!listDatasets().includes(name)) throw new Error(`Unknown dataset "${name}". Call describe_data to list datasets.`);
-  if (!cache[name]) cache[name] = name === 'player_weeks' ? flattenPlayerWeeks() : JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
+  if (!cache[name]) cache[name] = name === 'player_weeks' ? flattenPlayerWeeks() : name === 'team_games' ? buildTeamGames() : JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
   return cache[name];
 }
 
@@ -126,6 +147,38 @@ function query({ dataset, filters = [], select, group_by, metrics, order_by, lim
   return { total_matching, returned: out.length, rows: out };
 }
 
+// Longest runs of consecutive games (in season/week order) where `condition` holds, per group (default: per manager).
+function streaks({ dataset, condition, filters = [], group_by = ['manager'], top = 10, min_length = 2 }) {
+  const d = load(dataset);
+  if (!Array.isArray(d)) throw new Error(`"${dataset}" is not a table.`);
+  if (!condition || !condition.field) throw new Error('condition {field, op, value} is required');
+  top = Math.min(Math.max(1, top | 0 || 10), 50);
+  const rows = d.filter((r) => filters.every((f) => matches(r, f)));
+  const groups = new Map();
+  for (const r of rows) {
+    const key = group_by.map((g) => r[g]).join(' / ');
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  }
+  const latest = rows.reduce((m, r) => Math.max(m, +r.season * 100 + +r.week), 0);
+  const out = [];
+  for (const [key, list] of groups) {
+    list.sort((a, b) => (+a.season - +b.season) || (+a.week - +b.week));
+    let run = [];
+    const flush = () => {
+      if (run.length >= min_length) {
+        const a = run[0], b = run[run.length - 1];
+        out.push({ group: key, length: run.length, from: `${a.season} Wk ${a.week}`, to: `${b.season} Wk ${b.week}`, ongoing: +b.season * 100 + +b.week === latest });
+      }
+      run = [];
+    };
+    for (const r of list) { if (matches(r, condition)) run.push(r); else flush(); }
+    flush();
+  }
+  out.sort((a, b) => b.length - a.length);
+  return { note: 'Streaks run through consecutive games in season/week order, including across seasons. Filters remove games before the streak is computed.', total_streaks: out.length, streaks: out.slice(0, top) };
+}
+
 function getJson({ dataset, key }) {
   let d = load(dataset);
   if (key) d = d[key];
@@ -133,4 +186,4 @@ function getJson({ dataset, key }) {
   return s.length > 12000 ? { truncated: true, text: s.slice(0, 12000) } : d;
 }
 
-module.exports = { describe, query, getJson, listDatasets };
+module.exports = { describe, query, streaks, getJson, listDatasets };
