@@ -85,11 +85,12 @@ async function seed() {
 async function update() {
   const spec = JSON.parse(fs.readFileSync(path.join(DATA, 'pickem_updates.json'), 'utf8'));
   for (const u of spec.updates || []) {
-    // Never rewrite a question that is locked or already has picks (the picks would no longer match the question).
+    // Never rewrite a locked question, or one that already has picks, unless the update sets "force": true (for wording-only
+    // edits that don't change what is being asked).
     const r = await sql`
       UPDATE questions SET prompt = ${u.prompt}, reference = ${u.reference ?? null},
              tolerance = COALESCE(${u.tolerance ?? null}, tolerance), closest_bonus = COALESCE(${u.closest_bonus ?? null}, closest_bonus)
-      WHERE id = ${u.id} AND lock_at > now() AND NOT EXISTS (SELECT 1 FROM picks WHERE question_id = ${u.id})
+      WHERE id = ${u.id} AND lock_at > now() AND (${u.force === true} OR NOT EXISTS (SELECT 1 FROM picks WHERE question_id = ${u.id}))
       RETURNING id`;
     console.log(`question ${u.id}: ${r.rowCount ? 'updated' : 'skipped (missing, locked, or already has picks)'}`);
   }

@@ -5,7 +5,8 @@
       "prompt": "Which manager scores the most total points in Week 12?",
       "reference": {
         "note": "Top score in each Thanksgiving week: 2022 Palaia 125.9, 2023 Muenchow 152.1, 2024 Larson 123.7, 2025 Muenchow 140.8."
-      }
+      },
+      "force": true
     },
     {
       "id": 112,
@@ -25,7 +26,8 @@
           163.7,
           124.6
         ]
-      }
+      },
+      "force": true
     },
     {
       "id": 115,
@@ -39,21 +41,24 @@
           "2025: 88.5 vs. 97.6"
         ],
         "note": "Thanksgiving weeks since 2013 have scored about 1% above the rest of the season, and nine of 13 were higher. 2026 is averaging 98.3."
-      }
+      },
+      "force": true
     },
     {
       "id": 116,
       "prompt": "Thanksgiving: Jahmyr Gibbs (Goetz) plays the Bears at 1:00 p.m. ET on Thanksgiving. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
       "reference": {
         "note": "Scored 41 in Week 10. The site projects him for 23.4 as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
-      }
+      },
+      "force": true
     },
     {
       "id": 117,
       "prompt": "Thanksgiving quarterbacks: who scores more fantasy points, Dak Prescott (Conlin, at home against the Eagles at 4:30 p.m. ET) or Josh Allen (Prodahl, at home against the Chiefs at 8:20 p.m. ET)? Bench or start doesn't matter.",
       "reference": {
         "note": "The site projects Prescott for 19.5 and Allen for 18.1 as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
-      }
+      },
+      "force": true
     },
     {
       "id": 118,
@@ -75,7 +80,8 @@
         "note": "As of Tuesday: 40 players, projected for 386 points in total. Projection by game: Bears at Lions 141, Eagles at Cowboys 112, Chiefs at Bills 132. The three Thursday games have averaged 139.6 total NFL points since 2006 (19 seasons with three Thursday games, excluding 2020), and 2026's combined betting total is 153.5."
       },
       "tolerance": "30",
-      "closest_bonus": 1
+      "closest_bonus": 1,
+      "force": true
     }
   ]
 }
