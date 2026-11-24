@@ -174,3 +174,10 @@ function posTag(position) {
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
+
+// ZogGPT chat widget (loads on every page; hidden on the GitHub Pages mirror)
+(function () {
+  const s = document.createElement('script');
+  const base = document.currentScript && document.currentScript.src ? document.currentScript.src.replace(/shared\.js.*$/, '') : '/assets/js/';
+  s.src = base + 'zoggpt.js?v=1'; s.defer = true; document.head.appendChild(s);
+})();
