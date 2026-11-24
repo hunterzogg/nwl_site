@@ -779,9 +779,9 @@
     "facts": [
       {
         "label": "Playoff Swing",
-        "headline": "Palaia up {{num}} points, Prodahl down 45",
-        "num": "45",
-        "sub": "Palaia's playoff odds went from 40% to 85% after beating Stover. Prodahl's went from 68% to 23% after losing to Pfaffinger.",
+        "headline": "Palaia up {{num}} points, Prodahl down 33",
+        "num": "36",
+        "sub": "Palaia's playoff odds went from 34% to 70% after beating Stover. Prodahl's went from 69% to 37% after losing to Pfaffinger.",
         "tone": "hot",
         "wide": true
       },

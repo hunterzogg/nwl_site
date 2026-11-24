@@ -1,21 +1,23 @@
 {
   "season": 2026,
   "week": 12,
-  "lock_at": "2026-11-26T18:00:00.000Z",
+  "lock_at": "2026-11-26T01:00:00.000Z",
   "questions": [
     {
       "type": "pick_manager",
-      "prompt": "Which manager scores the most total points in Week 12?",
+      "prompt": "Which manager scores the most total points in Week 12? Thanksgiving weeks since 2022 produced top scores of 125.9 (Palaia), 152.1 (Muenchow), 123.7 (Larson), and 140.8 (Muenchow).",
       "option_a": null,
       "option_b": null,
       "points": 1,
       "tolerance": null,
       "closest_bonus": null,
-      "reference": null
+      "reference": {
+        "note": "Top score in each Thanksgiving week: 2022 Palaia 125.9, 2023 Muenchow 152.1, 2024 Larson 123.7, 2025 Muenchow 140.8."
+      }
     },
     {
       "type": "over_under",
-      "prompt": "Highest individual score in Week 12. Weeks 1-11 highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, 133.6, 163.7, and 124.6.",
+      "prompt": "Highest individual score in Week 12. The first 11 weeks' highs were 165.6, 138.9, 132.2, 138.8, 168.2, 114.6, 119.8, 143.3, 133.6, 163.7, and 124.6.",
       "option_a": "Over 135.5",
       "option_b": "Under 135.5",
       "points": 1,
@@ -64,51 +66,56 @@
     },
     {
       "type": "over_under",
-      "prompt": "How many teams score under 70 in Week 12? Three did in Week 11 (Hagan, Muenchow, and Glaser). Weeks 1-10 had 1, 1, 1, 0, 2, 1, 0, 1, 1, and 0.",
-      "option_a": "Over 1.5",
-      "option_b": "Under 1.5",
+      "prompt": "Average score per team in Week 12. Thanksgiving weeks since 2022 averaged 100.2 (101.9, 106.4, 104.2, and 88.5), compared with 97.9 in all other weeks. 2026 is averaging 98.3.",
+      "option_a": "Over 98.5",
+      "option_b": "Under 98.5",
       "points": 1,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
-        "label": "Sub-70 scores by week",
+        "label": "Average team score in Thanksgiving week",
         "values": [
-          1,
-          1,
-          1,
-          0,
-          2,
-          1,
-          0,
-          1,
-          1,
-          0,
-          3
+          101.9,
+          106.4,
+          104.2,
+          88.5
         ]
       }
     },
     {
-      "type": "this_or_that",
-      "prompt": "Larson (8-3) won Week 11 by 0.2 points, his fifth straight win, and now faces Glaser (7-4), who is favored by 8 as of Tuesday. Larson leads the all-time series 9-8. Who wins?",
-      "option_a": "Larson",
-      "option_b": "Glaser",
+      "type": "over_under",
+      "prompt": "Thanksgiving: Jahmyr Gibbs (Goetz) plays the Bears at 1:00 p.m. ET on Thanksgiving. He scored 41 in Week 10, and the site projects him for 23.4. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "option_a": "Over 22.5",
+      "option_b": "Under 22.5",
       "points": 1,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
-        "note": "Line as of Tuesday."
+        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
       }
     },
     {
       "type": "this_or_that",
-      "prompt": "Muenchow has lost six straight and is 3-8, but he is favored by 10 over Palaia (6-5) as of Tuesday. Muenchow leads the all-time series 10-9. Does Muenchow win?",
-      "option_a": "Yes",
-      "option_b": "No",
+      "prompt": "Thanksgiving quarterbacks: who scores more fantasy points, Dak Prescott (Conlin, at home against the Eagles at 4:30 p.m. ET) or Josh Allen (Prodahl, at home against the Chiefs at 8:20 p.m. ET)? The site projects Prescott for 19.5 and Allen for 18.1. Bench or start doesn't matter.",
+      "option_a": "Dak Prescott",
+      "option_b": "Josh Allen",
       "points": 1,
       "tolerance": null,
       "closest_bonus": null,
       "reference": {
-        "note": "Line as of Tuesday."
+        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
+      }
+    },
+    {
+      "type": "over_under",
+      "prompt": "Kenneth Walker III (Ainsworth) is questionable and plays the Bills on Thanksgiving at 8:20 p.m. ET, the same week Ainsworth faces Stover. The site projects him for 19.7. How many fantasy points does he score? Bench or start doesn't matter, and 0 counts if he doesn't play.",
+      "option_a": "Over 17.5",
+      "option_b": "Under 17.5",
+      "points": 1,
+      "tolerance": null,
+      "closest_bonus": null,
+      "reference": {
+        "note": "Projection as of Tuesday. Thanksgiving Day games: Bears at Lions (1:00 p.m. ET), Eagles at Cowboys (4:30), Chiefs at Bills (8:20)."
       }
     },
     {
