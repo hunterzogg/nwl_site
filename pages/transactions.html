@@ -45,18 +45,20 @@
 @media (max-width: 600px) { .td-sides { grid-template-columns: 1fr; } .td-side + .td-side { border-left: 0; border-top: 1px solid var(--line); } }
 
 .txs { display: flex; flex-direction: column; }
-.txs-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px 56px 56px; gap: 4px 12px; align-items: center; padding: 9px 4px; border-top: 1px solid var(--line); }
+.txs-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 56px 56px 56px 72px; gap: 4px 12px; align-items: center; padding: 9px 4px; border-top: 1px solid var(--line); }
 .txs-head { border-top: 0; padding-bottom: 4px; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-display); }
 .txs-row .n { text-align: right; font-family: var(--font-mono); }
 .txs-row .tr { color: var(--live-bright); }
 .txs-row .tot { font-weight: 600; }
+.txs-row .car { color: var(--text-muted); }
+.txs-bar .u { background: var(--live-bright); opacity: 0.55; }
 .txs-bar { display: flex; height: 12px; border-radius: 3px; overflow: hidden; background: var(--bg); }
 .txs-bar .t { background: var(--live-bright); }
 .txs-bar .a { background: var(--line-strong); }
 .txs-key { display: flex; gap: 14px; font-size: 0.74rem; color: var(--text-muted); margin-top: 8px; }
 .txs-key i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
 @media (max-width: 600px) {
-  .txs-row { grid-template-columns: minmax(0, 1fr) 46px 46px 48px; gap: 6px 8px; }
+  .txs-row { grid-template-columns: minmax(0, 1fr) 42px 42px 44px 52px; gap: 6px 6px; }
   .txs-row .txs-track { grid-column: 1 / -1; grid-row: 2; }
   .txs-head .txs-track { display: none; }
 }
@@ -384,46 +386,63 @@ function renderSummary() {
     </p>
   `;
 
-  // Per-manager breakdown: trades (one per trade, counted for both sides), adds (waiver wins + free agent pickups),
-  // and total (trades + adds). The itemized log starts in 2022, so this covers 2022 onward.
+  // Per-manager breakdown. 2022 onward is itemized (trades = one per trade, counted for both sides; adds = waiver wins +
+  // free agent pickups; total = trades + adds). 2013-2021 only have each manager's total from the league record, with
+  // no split by type, so those seasons show the total alone. "Since 2013" is that league record's career total.
   const sel = document.getElementById('summaryMgrSeason'), sortSel = document.getElementById('summaryMgrSort');
   if (!sel.options.length) {
-    const yrs = [...new Set(transactions.map(x => x.season))].sort((x, y) => y - x);
-    sel.innerHTML = `<option value="">All seasons (${Math.min(...yrs)}-${Math.max(...yrs)})</option>` + yrs.map(y => `<option value="${y}">${y}</option>`).join('');
+    const logYrs = [...new Set(transactions.map(x => x.season))];
+    const yrs = [...new Set([...logYrs, ...mgrTotals.map(x => parseInt(x.season))])].sort((x, y) => y - x);
+    sel.innerHTML = `<option value="">All seasons (${Math.min(...logYrs)}-${Math.max(...logYrs)})</option>` + yrs.map(y => `<option value="${y}">${y}${y < Math.min(...logYrs) ? ' (total only)' : ''}</option>`).join('');
     sel.addEventListener('change', renderSummary);
     sortSel.addEventListener('change', renderSummary);
   }
-  const yr = sel.value ? parseInt(sel.value) : null, sortKey = sortSel.value || 'total';
+  const loggedFrom = Math.min(...transactions.map(x => x.season));
+  const yr = sel.value ? parseInt(sel.value) : null, totalOnly = yr !== null && yr < loggedFrom;
+  const sortKey = totalOnly ? 'total' : (sortSel.value || 'total');
+  sortSel.disabled = totalOnly;
   const byManager = {};
-  managers.forEach(m => byManager[m.manager] = { manager: m.manager, trades: 0, waiver: 0, fa: 0 });
+  managers.forEach(m => byManager[m.manager] = { manager: m.manager, trades: 0, waiver: 0, fa: 0, career: 0, yearTotal: 0 });
   const bump = (m, k) => { if (byManager[m]) byManager[m][k]++; };
   trades.filter(x => !yr || x.season === yr).forEach(x => { bump(x.team1, 'trades'); bump(x.team2, 'trades'); });
   transactions.filter(x => (!yr || x.season === yr) && x.bid_outcome !== 'lost').forEach(x => {
     if (x.acquisition_type === 'waiver') bump(x.manager, 'waiver');
     else if (x.acquisition_type === 'free_agent') bump(x.manager, 'fa');
   });
+  mgrTotals.forEach(x => {
+    const m = byManager[x.manager]; if (!m) return;
+    const c = parseInt(x.count) || 0; m.career += c;
+    if (parseInt(x.season) === yr) m.yearTotal += c;
+  });
   const mgrRows = Object.values(byManager)
-    .map(m => ({ ...m, adds: m.waiver + m.fa, total: m.trades + m.waiver + m.fa }))
+    .map(m => totalOnly
+      ? { ...m, adds: null, trades: null, total: m.yearTotal }
+      : { ...m, adds: m.waiver + m.fa, total: m.trades + m.waiver + m.fa })
     .filter(m => m.total > 0)
-    .sort((x, y) => y[sortKey] - x[sortKey] || y.total - x.total || y.trades - x.trades);
+    .sort((x, y) => (y[sortKey] || 0) - (x[sortKey] || 0) || y.total - x.total);
   const maxTotal = Math.max(1, ...mgrRows.map(m => m.total));
+  const cell = v => v === null ? '&mdash;' : v;
+  const barHTML = m => totalOnly
+    ? `<div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="u" style="width:100%"></div></div>`
+    : `<div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="t" style="width:${(m.trades / m.total * 100).toFixed(1)}%"></div><div class="a" style="width:${(m.adds / m.total * 100).toFixed(1)}%"></div></div>`;
 
   document.getElementById('summaryManagerTable').innerHTML = `
     <div class="txs">
-      <div class="txs-row txs-head"><span>Manager</span><span class="txs-track"></span><span class="n">Trades</span><span class="n">Adds</span><span class="n">Total</span></div>
+      <div class="txs-row txs-head"><span>Manager</span><span class="txs-track"></span><span class="n">Trades</span><span class="n">Adds</span><span class="n">Total</span><span class="n">Since 2013</span></div>
       ${mgrRows.map(m => `
         <div class="txs-row">
           <span>${managerTag(managers, m.manager)}</span>
-          <div class="txs-track" title="${m.waiver} waiver and ${m.fa} free agent adds">
-            <div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="t" style="width:${(m.trades / m.total * 100).toFixed(1)}%"></div><div class="a" style="width:${(m.adds / m.total * 100).toFixed(1)}%"></div></div>
-          </div>
-          <span class="n tr">${m.trades}</span><span class="n">${m.adds}</span><span class="n tot">${m.total}</span>
+          <div class="txs-track"${totalOnly ? '' : ` title="${m.waiver} waiver and ${m.fa} free agent adds"`}>${barHTML(m)}</div>
+          <span class="n tr">${cell(m.trades)}</span><span class="n">${cell(m.adds)}</span><span class="n tot">${m.total}</span><span class="n car">${m.career || '&mdash;'}</span>
         </div>
       `).join('')}
     </div>
-    <div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span></div>
+    ${totalOnly ? '' : `<div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span></div>`}
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
-      Trades count once for each manager in the deal. Adds are successful waiver claims and free agent pickups; lost bids are not counted. Total is trades plus adds. The itemized log starts in 2022, so earlier seasons aren't included here.
+      ${totalOnly
+        ? `${yr} only has each manager's total from the league record, with no split between trades and adds.`
+        : `Trades count once for each manager in the deal. Adds are successful waiver claims and free agent pickups; lost bids are not counted. Total is trades plus adds.`}
+      Since 2013 is each manager's total from the league record through 2025, which has no split by type, so it counts more moves than the itemized log (which starts in ${loggedFrom}).
     </p>
   `;
 
