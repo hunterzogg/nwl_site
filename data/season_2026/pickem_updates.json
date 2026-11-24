@@ -1,0 +1,17 @@
+{
+  "updates": [
+    {
+      "id": 115,
+      "prompt": "Average score per team in Week 12. Thanksgiving weeks since 2013 have scored about 1% above the rest of the season, and nine of 13 were higher, including 101.9, 106.4, and 104.2 from 2022 to 2024 and 88.5 last year. 2026 is averaging 98.3.",
+      "reference": {
+        "label": "Thanksgiving week average vs. rest of season",
+        "values": [
+          "2022: 101.9 vs. 97.3",
+          "2023: 106.4 vs. 96.4",
+          "2024: 104.2 vs. 100.4",
+          "2025: 88.5 vs. 97.6"
+        ]
+      }
+    }
+  ]
+}
