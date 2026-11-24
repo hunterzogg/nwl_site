@@ -367,20 +367,20 @@ function renderSummary() {
   const leagueTotals = window._leagueTx || [];
   const mgrTotals = window._mgrTx || [];
 
-  // League totals by season: the league record's total (2013-2025) plus 2026 from the log. Trades and adds are itemized
-  // from 2022 on (trades = one per trade; adds = waiver wins + free agent pickups); earlier seasons only have the total.
+  // League totals by season. Total = the league record (2013-2025) or the log (2026). Before 2024 the league didn't
+  // separate waiver claims from free agent pickups, so everything that isn't a trade is an add: adds = total - trades.
+  // Trades count once for each manager in the deal, the same way the record counts them. Trade data starts in 2022.
   const loggedFromS = Math.min(...transactions.map(x => x.season));
+  const lastRecord = Math.max(...leagueTotals.map(s => parseInt(s.season)));
   const seasonTotals = {};
   leagueTotals.forEach(s => seasonTotals[parseInt(s.season)] = { season: parseInt(s.season), record: +s.total_transactions || 0 });
   transactions.forEach(x => { if (!seasonTotals[x.season]) seasonTotals[x.season] = { season: x.season, record: 0 }; });
-  Object.values(seasonTotals).forEach(s => { s.trades = null; s.adds = null; });
-  Object.values(seasonTotals).filter(s => s.season >= loggedFromS).forEach(s => {
-    s.trades = trades.filter(x => x.season === s.season).length;
-    s.adds = transactions.filter(x => x.season === s.season && x.bid_outcome !== 'lost' && ['waiver', 'free_agent'].includes(x.acquisition_type)).length;
-  });
   const seasonRows = Object.values(seasonTotals).map(s => {
-    const itemized = s.trades === null ? 0 : s.trades + s.adds;
-    return { ...s, total: s.record ? Math.max(s.record, itemized) : itemized, partial: !s.record };
+    if (s.season < loggedFromS) return { ...s, trades: null, adds: null, total: s.record };
+    const trd = trades.filter(x => x.season === s.season).length * 2;
+    const logAdds = transactions.filter(x => x.season === s.season && x.bid_outcome !== 'lost' && ['waiver', 'free_agent'].includes(x.acquisition_type)).length;
+    const total = s.season <= lastRecord ? Math.max(s.record, trd) : trd + logAdds;
+    return { ...s, trades: trd, adds: total - trd, total, partial: s.season > lastRecord };
   }).sort((x, y) => y.season - x.season);
   const maxSeason = Math.max(1, ...seasonRows.map(s => s.total));
   const sp = (n, s) => (n / s.total * 100).toFixed(1) + '%';
@@ -388,19 +388,19 @@ function renderSummary() {
     <div class="txs">
       <div class="txs-row txs-head"><span>Season</span><span class="txs-track"></span><span class="n">Trades</span><span class="n">Adds</span><span class="n">Total</span></div>
       ${seasonRows.map(s => {
-        const split = s.trades !== null, other = split ? Math.max(0, s.total - s.trades - s.adds) : 0;
+        const split = s.trades !== null;
         return `<div class="txs-row">
           <span style="font-family:var(--font-display);font-size:1.05rem;">${s.season}${s.partial ? ' <small class="precision-note">so far</small>' : ''}</span>
           <div class="txs-track"><div class="txs-bar" style="width:${(s.total / maxSeason * 100).toFixed(1)}%">${split
-            ? `<div class="t" style="width:${sp(s.trades, s)}"></div><div class="a" style="width:${sp(s.adds, s)}"></div><div class="o" style="width:${sp(other, s)}"></div>`
+            ? `<div class="t" style="width:${sp(s.trades, s)}"></div><div class="a" style="width:${sp(s.adds, s)}"></div>`
             : `<div class="u" style="width:100%"></div>`}</div></div>
           <span class="n tr">${split ? s.trades : '&mdash;'}</span><span class="n">${split ? s.adds : '&mdash;'}</span><span class="n tot">${s.total}</span>
         </div>`;
       }).join('')}
     </div>
-    <div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span><span><i style="background:var(--live-bright);opacity:.55"></i>Total only (no split)</span><span><i style="box-shadow:inset 0 0 0 1px var(--line-strong)"></i>Not itemized in the log</span></div>
+    <div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span><span><i style="background:var(--live-bright);opacity:.55"></i>Total only (no split)</span></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
-      Totals are every transaction from the league record (2013-2025) and the log (2026). We don't have trade data before ${loggedFromS}, so earlier seasons show the total alone. Trades count once per deal.
+      Adds are waiver claims and free agent pickups; before 2024 the league didn't separate the two. A trade counts once for each manager in the deal. We don't have trade data before ${loggedFromS}, so earlier seasons show the total alone.
     </p>
   `;
 
@@ -419,37 +419,33 @@ function renderSummary() {
   const yr = sel.value ? parseInt(sel.value) : null, totalOnly = yr !== null && yr < loggedFrom;
   const sortKey = totalOnly ? 'total' : (sortSel.value || 'total');
   sortSel.disabled = totalOnly;
+  const lastRec = Math.max(...recordSeasons);
   const byManager = {};
-  managers.forEach(m => byManager[m.manager] = { manager: m.manager, trades: 0, waiver: 0, fa: 0, record: 0, yearTotal: 0, logLast: 0 });
-  const bump = (m, k) => { if (byManager[m]) byManager[m][k]++; };
-  trades.filter(x => !yr || x.season === yr).forEach(x => { bump(x.team1, 'trades'); bump(x.team2, 'trades'); });
-  transactions.filter(x => x.bid_outcome !== 'lost' && ['waiver', 'free_agent'].includes(x.acquisition_type)).forEach(x => {
-    if (!yr || x.season === yr) bump(x.manager, x.acquisition_type === 'waiver' ? 'waiver' : 'fa');
-    if (x.season > Math.max(...recordSeasons)) bump(x.manager, 'logLast');
-  });
-  trades.filter(x => x.season > Math.max(...recordSeasons)).forEach(x => { bump(x.team1, 'logLast'); bump(x.team2, 'logLast'); });
+  managers.forEach(m => byManager[m.manager] = { manager: m.manager, trades: 0, logAdds: 0, record: 0, yearRecord: 0 });
+  trades.filter(x => !yr || x.season === yr).forEach(x => { [x.team1, x.team2].forEach(n => { if (byManager[n]) byManager[n].trades++; }); });
+  transactions.filter(x => x.bid_outcome !== 'lost' && ['waiver', 'free_agent'].includes(x.acquisition_type) && x.season > lastRec && (!yr || x.season === yr))
+    .forEach(x => { if (byManager[x.manager]) byManager[x.manager].logAdds++; });
   mgrTotals.forEach(x => {
     const m = byManager[x.manager]; if (!m) return;
     const c = parseInt(x.count) || 0; m.record += c;
-    if (parseInt(x.season) === yr) m.yearTotal += c;
+    if (parseInt(x.season) === yr) m.yearRecord += c;
   });
+  // Total = league record (+ 2026 from the log); adds = total - trades, so every transaction is either a trade or an add.
   const mgrRows = Object.values(byManager)
     .map(m => {
-      if (totalOnly) return { ...m, adds: null, trades: null, total: m.yearTotal, other: 0 };
-      const adds = m.waiver + m.fa, itemized = m.trades + adds;
-      // single season with a league-record total (2022-2025): use the record; 2026 and the all-seasons view add the log
-      const total = yr === null ? m.record + m.logLast : (yr <= Math.max(...recordSeasons) ? Math.max(m.yearTotal, itemized) : itemized);
-      return { ...m, adds, total, other: Math.max(0, total - itemized) };
+      if (totalOnly) return { ...m, adds: null, trades: null, total: m.yearRecord };
+      const base = yr === null ? m.record + m.logAdds : (yr <= lastRec ? m.yearRecord : m.logAdds);
+      const total = yr !== null && yr > lastRec ? m.trades + base : Math.max(base, m.trades);
+      return { ...m, total, adds: total - m.trades };
     })
     .filter(m => m.total > 0)
     .sort((x, y) => (y[sortKey] || 0) - (x[sortKey] || 0) || y.total - x.total);
   const maxTotal = Math.max(1, ...mgrRows.map(m => m.total));
-  const cell = (v, m) => v === null || (m && m.other > 0 && m.trades + m.adds === 0) ? '&mdash;' : v;
+  const cell = (v, m) => v === null || (m && m.trades === 0 && m.adds === m.total && yr === null && m.record === 0) ? '&mdash;' : v;
   const pct = (n, m) => (n / m.total * 100).toFixed(1) + '%';
   const barHTML = m => totalOnly
     ? `<div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="u" style="width:100%"></div></div>`
-    : `<div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="t" style="width:${pct(m.trades, m)}"></div><div class="a" style="width:${pct(m.adds, m)}"></div><div class="o" style="width:${pct(m.other, m)}"></div></div>`;
-  const hasOther = !totalOnly && mgrRows.some(m => m.other > 0);
+    : `<div class="txs-bar" style="width:${(m.total / maxTotal * 100).toFixed(1)}%"><div class="t" style="width:${pct(m.trades, m)}"></div><div class="a" style="width:${pct(m.adds, m)}"></div></div>`;
 
   document.getElementById('summaryManagerTable').innerHTML = `
     <div class="txs">
@@ -457,16 +453,16 @@ function renderSummary() {
       ${mgrRows.map(m => `
         <div class="txs-row">
           <span>${managerTag(managers, m.manager)}</span>
-          <div class="txs-track"${totalOnly ? '' : ` title="${m.waiver} waiver and ${m.fa} free agent adds"`}>${barHTML(m)}</div>
+          <div class="txs-track">${barHTML(m)}</div>
           <span class="n tr">${cell(m.trades, m)}</span><span class="n">${cell(m.adds, m)}</span><span class="n tot">${m.total}</span>
         </div>
       `).join('')}
     </div>
-    ${totalOnly ? '' : `<div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span>${hasOther ? `<span><i style="box-shadow:inset 0 0 0 1px var(--line-strong)"></i>Not split by type</span>` : ''}</div>`}
+    ${totalOnly ? '' : `<div class="txs-key"><span><i style="background:var(--live-bright)"></i>Trades</span><span><i style="background:var(--line-strong)"></i>Adds</span></div>`}
     <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">
       ${totalOnly
         ? `We don't have trade data before ${loggedFrom}, so ${yr} shows each manager's full transaction count without a split between trades and adds.`
-        : `Trades count once for each manager in the deal. Adds are successful waiver claims and free agent pickups; lost bids are not counted. We don't have trade data before ${loggedFrom}, so trades and adds are only broken out from ${loggedFrom} on.${yr === null ? ` Totals include every transaction back to ${firstSeason} from the league record, so they are larger than trades plus adds.` : ''}`}
+        : `Adds are waiver claims and free agent pickups; before 2024 the league didn't separate the two. A trade counts once for each manager in the deal. We don't have trade data before ${loggedFrom}.${yr === null ? ` Adds in the all-seasons view include every move from ${firstSeason} to ${loggedFrom - 1}, since those seasons have no trade data.` : ''}`}
     </p>
   `;
 
