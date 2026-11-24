@@ -10,7 +10,7 @@
 //   export $(grep -v '^#' .env.local | xargs)
 //   node scripts/seed_pickem_week6_props.js
 
-const { sql } = require('../api/lib/db');
+const { sql } = require('../server_lib/db');
 
 const SEASON = 2026;
 const WEEK = 6;

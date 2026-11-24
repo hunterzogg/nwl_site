@@ -1,4 +1,4 @@
-const { getManagerSession } = require('./lib/session');
+const { getManagerSession } = require('../server_lib/session');
 
 module.exports = async (req, res) => {
   const manager = getManagerSession(req);

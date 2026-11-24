@@ -1,5 +1,5 @@
-const { sql } = require('../lib/db');
-const { requireAdmin } = require('../lib/session');
+const { sql } = require('../../server_lib/db');
+const { requireAdmin } = require('../../server_lib/session');
 
 // Marks a question's correct option. Grading is a read-time SUM in api/leaderboard.js,
 // so this is the only write needed to grade every submitted pick for the question at once.

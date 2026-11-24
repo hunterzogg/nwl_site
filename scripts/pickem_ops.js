@@ -20,7 +20,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { sql } = require('../api/lib/db');
+const { sql } = require('../server_lib/db');
 
 const ROOT = path.join(__dirname, '..');
 const DATA = path.join(ROOT, 'data', 'season_2026');

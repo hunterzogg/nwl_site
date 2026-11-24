@@ -1,5 +1,5 @@
-const { sql } = require('../lib/db');
-const { requireAdmin } = require('../lib/session');
+const { sql } = require('../../server_lib/db');
+const { requireAdmin } = require('../../server_lib/session');
 
 module.exports = async (req, res) => {
   if (!requireAdmin(req)) return res.status(401).json({ error: 'Admin auth required' });

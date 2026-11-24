@@ -14,7 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { sql } = require('../api/lib/db');
+const { sql } = require('../server_lib/db');
 
 // Stowe is a former manager (2013-2016) kept in data/managers.json for the historical archive,
 // but doesn't play in the live season - skip him so he never gets a login.

@@ -1,5 +1,5 @@
-const { sql } = require('./lib/db');
-const { getManagerSession } = require('./lib/session');
+const { sql } = require('../server_lib/db');
+const { getManagerSession } = require('../server_lib/session');
 
 module.exports = async (req, res) => {
   const manager = getManagerSession(req);
