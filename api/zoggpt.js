@@ -3,7 +3,7 @@ const { getManagerSession } = require('../server_lib/session');
 const data = require('../server_lib/zoggpt_data');
 
 const MODEL = process.env.ZOGGPT_MODEL || 'claude-haiku-5-5';
-const DAILY_LIMIT = parseInt(process.env.ZOGGPT_DAILY_LIMIT || '10', 10);
+const DAILY_LIMIT = parseInt(process.env.ZOGGPT_DAILY_LIMIT || '20', 10);
 const MAX_TOOL_ROUNDS = 8;
 
 const SYSTEM = `You are ZogGPT, the stats assistant for the NWL (National Wayzata League), a 13-team fantasy football league that has played since 2013. You answer questions about league history using the data tools. Rules:
