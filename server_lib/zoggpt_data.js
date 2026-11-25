@@ -18,7 +18,7 @@ function listDatasets() {
     }
   };
   scan(DATA_DIR, '');
-  out.push('player_weeks', 'team_games'); // virtual tables built below
+  out.push('player_weeks', 'team_games', 'trade_assets'); // virtual tables built below
   return out.sort();
 }
 
@@ -43,6 +43,22 @@ function buildTeamGames() {
   return rows;
 }
 
+// One row per asset moved in a trade (2022+): who sent it, who received it, its position, and when.
+function buildTradeAssets() {
+  const rows = [];
+  for (const tr of JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trades.json'), 'utf8'))) {
+    const month = parseInt(String(tr.date).slice(5, 7), 10);
+    for (const [receiver, sender, text] of [[tr.team1, tr.team2, tr.team1_received], [tr.team2, tr.team1, tr.team2_received]]) {
+      for (const part of String(text || '').split(';')) {
+        const s = part.trim(); if (!s) continue;
+        const i = s.indexOf(' - ');
+        rows.push({ season: tr.season, date: tr.date, month, sender, receiver, position: i > 0 ? s.slice(0, i).trim() : 'OTHER', asset: i > 0 ? s.slice(i + 3).trim() : s });
+      }
+    }
+  }
+  return rows;
+}
+
 // player_weeks.json is nested (players by id, seasons -> weeks -> [manager, playerId, slot, points]); flatten to rows.
 function flattenPlayerWeeks() {
   const raw = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'player_weeks.json'), 'utf8'));
@@ -60,7 +76,7 @@ function flattenPlayerWeeks() {
 
 function load(name) {
   if (!listDatasets().includes(name)) throw new Error(`Unknown dataset "${name}". Call describe_data to list datasets.`);
-  if (!cache[name]) cache[name] = name === 'player_weeks' ? flattenPlayerWeeks() : name === 'team_games' ? buildTeamGames() : JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
+  if (!cache[name]) cache[name] = name === 'player_weeks' ? flattenPlayerWeeks() : name === 'team_games' ? buildTeamGames() : name === 'trade_assets' ? buildTradeAssets() : JSON.parse(fs.readFileSync(path.join(DATA_DIR, name + '.json'), 'utf8'));
   return cache[name];
 }
 
