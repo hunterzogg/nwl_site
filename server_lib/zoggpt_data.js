@@ -93,7 +93,7 @@ function describe() {
     const d = load(name);
     if (Array.isArray(d)) {
       const keys = d[0] && typeof d[0] === 'object' ? Object.keys(d[0]) : [];
-      return { dataset: name, kind: 'table', rows: d.length, fields: keys, sample: d[0] };
+      return { dataset: name, kind: 'table', rows: d.length, fields: keys };
     }
     return { dataset: name, kind: 'object', top_level_keys: Object.keys(d).slice(0, 15) };
   });
@@ -120,7 +120,7 @@ function matches(row, f) {
 function query({ dataset, filters = [], select, group_by, metrics, order_by, limit = 25 }) {
   const d = load(dataset);
   if (!Array.isArray(d)) throw new Error(`"${dataset}" is not a table; use get_json instead.`);
-  limit = Math.min(Math.max(1, limit | 0 || 25), 100);
+  limit = Math.min(Math.max(1, limit | 0 || 15), 50);
   let rows = d.filter((r) => filters.every((f) => matches(r, f)));
   const total_matching = rows.length;
 

@@ -36,7 +36,7 @@
       const r = await fetch('/api/zoggpt', { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ messages: history }) });
       const j = await r.json().catch(() => ({}));
       wait.remove();
-      if (!r.ok) { add('bot err', j.error || 'Something went wrong.'); history.pop(); }
+      if (!r.ok) { add('bot err', (j.error || (r.status === 504 ? 'That took too long. Try again.' : 'Something went wrong.')) + (j.detail ? ' [' + j.detail + ']' : '')); history.pop(); }
       else { add('bot', j.answer); history.push({ role: 'assistant', content: j.answer }); }
     } catch (e) { wait.remove(); add('bot err', 'Couldn’t reach ZogGPT.'); history.pop(); }
     busy = false; input.focus();
