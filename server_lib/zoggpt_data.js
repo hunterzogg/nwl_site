@@ -120,7 +120,7 @@ function matches(row, f) {
 function query({ dataset, filters = [], select, group_by, metrics, order_by, limit = 25 }) {
   const d = load(dataset);
   if (!Array.isArray(d)) throw new Error(`"${dataset}" is not a table; use get_json instead.`);
-  limit = Math.min(Math.max(1, limit | 0 || 25), 100);
+  limit = Math.min(Math.max(1, limit | 0 || 15), 50);
   let rows = d.filter((r) => filters.every((f) => matches(r, f)));
   const total_matching = rows.length;
 
