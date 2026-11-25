@@ -4,7 +4,7 @@ const data = require('../server_lib/zoggpt_data');
 
 const MODEL = process.env.ZOGGPT_MODEL || 'claude-haiku-5-5';
 const DAILY_LIMIT = parseInt(process.env.ZOGGPT_DAILY_LIMIT || '10', 10);
-const MAX_TOOL_ROUNDS = 6;
+const MAX_TOOL_ROUNDS = 8;
 
 const SYSTEM = `You are ZogGPT, the stats assistant for the NWL (National Wayzata League), a 13-team fantasy football league that has played since 2013. You answer questions about league history using the data tools. Rules:
 - Ground every claim in tool results. Never invent numbers or facts from memory. If the data can't answer, say so plainly.
@@ -75,14 +75,32 @@ async function underLimit(manager) {
   return r.rows[0].count <= DAILY_LIMIT;
 }
 
-async function callClaude(messages) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: MODEL, max_tokens: 1024, system: SYSTEM, tools: TOOLS, messages }),
-  });
-  if (!res.ok) throw new Error(`Anthropic API ${res.status}`);
-  return res.json();
+async function callClaude(messages, { finalAnswer = false } = {}) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 25000);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: ctl.signal,
+      headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL, max_tokens: 2000, system: SYSTEM, tools: TOOLS, messages,
+        ...(finalAnswer ? { tool_choice: { type: 'none' } } : {}),
+      }),
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      const err = new Error(`Anthropic API ${res.status}: ${(j.error && (j.error.type + ' ' + j.error.message)) || ''}`.slice(0, 300));
+      err.status = res.status; throw err;
+    }
+    return await res.json();
+  } finally { clearTimeout(timer); }
+}
+
+const textOf = (out) => (out.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n').trim();
+
+async function refund(manager) {
+  try { await sql`UPDATE zoggpt_usage SET count = GREATEST(count - 1, 0) WHERE manager = ${manager} AND day = (now() AT TIME ZONE 'America/New_York')::date`; } catch (e) { /* ignore */ }
 }
 
 module.exports = async (req, res) => {
@@ -99,26 +117,32 @@ module.exports = async (req, res) => {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 1000) }));
   if (!messages.length || messages[messages.length - 1].role !== 'user') return res.status(400).json({ error: 'Ask a question.' });
 
+  let counted = false;
   try {
     if (!(await underLimit(manager))) return res.status(429).json({ error: `Daily limit of ${DAILY_LIMIT} questions reached. Try again tomorrow.` });
+    counted = true;
 
     for (let i = 0; i < MAX_TOOL_ROUNDS; i++) {
       const out = await callClaude(messages);
       if (out.stop_reason !== 'tool_use') {
-        const text = (out.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('\n').trim();
-        return res.status(200).json({ answer: text || 'I couldn’t find an answer to that.' });
+        return res.status(200).json({ answer: textOf(out) || 'I couldn\u2019t find an answer to that.' });
       }
       messages.push({ role: 'assistant', content: out.content });
       messages.push({
         role: 'user',
         content: out.content.filter((b) => b.type === 'tool_use').map((b) => ({
-          type: 'tool_result', tool_use_id: b.id, content: JSON.stringify(runTool(b.name, b.input || {})).slice(0, 30000),
+          type: 'tool_result', tool_use_id: b.id, content: JSON.stringify(runTool(b.name, b.input || {})).slice(0, 15000),
         })),
       });
     }
-    res.status(200).json({ answer: 'That question needed too many lookups. Try asking it more narrowly.' });
+    // Ran out of lookups: make the model answer with what it already gathered instead of giving up.
+    messages.push({ role: 'user', content: 'Answer the question now using only what you have already found. State any assumptions in plain language.' });
+    const last = await callClaude(messages, { finalAnswer: true });
+    return res.status(200).json({ answer: textOf(last) || 'That one needed more digging than I could do. Try asking it a bit more narrowly.' });
   } catch (e) {
-    console.error('zoggpt', e);
-    res.status(500).json({ error: 'ZogGPT hit an error. Try again.' });
+    console.error('zoggpt error:', e.message);
+    if (counted) await refund(manager); // a failed question shouldn't use up the daily allowance
+    const timedOut = e.name === 'AbortError';
+    res.status(timedOut ? 504 : 500).json({ error: timedOut ? 'That took too long. Try asking it again, or a bit more narrowly.' : 'ZogGPT hit an error. Try again.', detail: String(e.message || e).slice(0, 200) });
   }
 };

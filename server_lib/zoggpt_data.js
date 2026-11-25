@@ -93,7 +93,7 @@ function describe() {
     const d = load(name);
     if (Array.isArray(d)) {
       const keys = d[0] && typeof d[0] === 'object' ? Object.keys(d[0]) : [];
-      return { dataset: name, kind: 'table', rows: d.length, fields: keys, sample: d[0] };
+      return { dataset: name, kind: 'table', rows: d.length, fields: keys };
     }
     return { dataset: name, kind: 'object', top_level_keys: Object.keys(d).slice(0, 15) };
   });
